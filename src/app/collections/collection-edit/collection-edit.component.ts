@@ -303,11 +303,15 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
     modal.componentInstance.config = config;
-    modal.componentInstance.leftAction.subscribe((action) => {
+    let leftSubscribe =  modal.componentInstance.leftAction.subscribe((action) => {
+      leftSubscribe.unsubscribe();
+      rightSubscribe.unsubscribe();
       modal.close();
     })
-    modal.componentInstance.rightAction.subscribe((action) => {
+    let rightSubscribe = modal.componentInstance.rightAction.subscribe((action) => {
       callback();
+      leftSubscribe.unsubscribe();
+      rightSubscribe.unsubscribe();
       modal.close();
     })
   }

@@ -1,0 +1,105 @@
+<div id="form" class="full-flex" *ngIf="!selectPackables">
+  <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()"></app-mobile-nav>
+
+  <div class="ff-row-main">
+    <div class="text-center text-sm-left small text-muted mb-1" *ngIf="profile">
+        <span *ngIf="profile">{{profile.name || "New Profile"}} <i class="fas fa-angle-right align-text-bottom"></i></span>
+        <span>{{editMode? editingCollection.name : "New Collection"}}</span>
+    </div>
+    <form [formGroup]="collectionForm">
+      <div class="form-border" style="background-color: rgba(0,0,0,.03);" *ngIf="editMode && profile">
+        <div class="form-row">
+          <div class="col-12">
+            <p class="small text-center m-0">
+              Changes you make will only affect the collection in this profile.
+              <br>
+              <small class="text-muted">To make changes to the collection's default settings please visit the
+                <a routerLink="/collections">Collection List</a> page.</small>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-border" *ngIf="!advanceForm">
+        <div class="form-row">
+          <div class="col-12 col-sm-8 col-md-6">
+            <div class="form-group m-0">
+              <label for="name">Collection Name</label>
+              <input type="text" class="form-control" name="name" placeholder="e.g Winter Clothes" formControlName="name" #nameInput>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="help-block" *ngIf="collectionForm.get('name').errors && collectionForm.get('name').touched">
+              <div class="invalid-feedback d-block" *ngIf="collectionForm.get('name').errors['pattern']">
+                The name may consist of regular alphabet, numbers and some basic special characters.
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="collectionForm.get('name').errors['required']">
+                This collection needs a name...
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="collectionForm.get('name').errors['nameUsed']">
+                This collection name is already taken
+              </div>
+            </div>
+          </div>
+          <div class="col-12 d-flex flex-sm-row-reverse justify-content-between justify-content-sm-end mt-2">
+            <span>
+              Set as an Activity
+              <a (click)="openModal(activityModal)">
+                <i class="far fa-question-circle small text-info"></i>
+              </a>
+
+            </span>
+            <span class="mr-1">
+              <mat-slide-toggle name="activity" formControlName="activity" color="primary" aria-label="Set as activity">
+              </mat-slide-toggle>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-border" [ngClass]="{orangeBorder: packables_warning_style() }">
+        <div class="form-border-header pointer" (click)="editSelection()">
+          <h5>Packables:</h5>
+          <span class="text-primary">Edit
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        </div>
+        <div class="form-row">
+          <div class="col-12">
+            <h5>
+              <span *ngFor="let packable of usedPackables; let i = index" class="tag" [ngClass]="{'clickable':profile!=null}" (click)="editPackable(packable,i)">
+                {{packable.name}}
+                <a (click)="removePackableFromCollection(i)">
+                  <i class="far fa-times-circle"></i>
+                </a>
+              </span>
+            </h5>
+            <span *ngIf="usedPackables.length == 0">
+                <p class="text-danger small m-0 text-center" [ngClass]="{'text-muted': !packables_warning_style()}">Please add at least one Packable to this collection.
+                <br><a class="inline-link" (click)="editSelection()">Add Packables?</a></p>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-border">
+        <h5 class="form-border-header">Conditions:</h5>
+        <div class="form-row">
+          <div class="col-12">
+            -- Set Rules like weather and activity --
+          </div>
+        </div>
+      </div>
+      <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" (optionAction)="onOption($event)"></app-desktop-nav>
+
+    </form>
+  </div>
+
+</div>
+
+<ng-template #activityModal>
+    <H5>Activities</H5>
+    <p>If you mark a Collection as an Activity, the items inside it will only show on trips where that activity is selected. <br>Note: You must add this Activity to each profile that may need to use it on a future trip.</p>
+    <p class="alert alert-info">E.g A Diving Collection can contain your diving equipment, sunscreen and a towel. If you mark it as an Activity and add it to a Profile, it would appear as an option in your Trip Settings. Selecting that option when creating your trip would add the Collection Packables to your packing list on that Trip.</p>
+    <i>Changing this setting will affect all the profiles that already contain this Collection</i>
+  </ng-template>

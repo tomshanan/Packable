@@ -1,0 +1,166 @@
+<div id="form" class="full-flex">
+  <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()"></app-mobile-nav>
+  <div class="ff-row-main">
+    <div class="text-center text-sm-left small text-muted mb-1" *ngIf="profile || collection">
+      <span *ngIf="profile">{{profile.name || "New Profile"}}
+        <i class="fas fa-angle-right align-text-bottom"></i>
+      </span>
+      <span *ngIf="collection">{{collection.name || "New Collection"}}
+        <i class="fas fa-angle-right align-text-bottom"></i>
+      </span>
+      <span>{{editMode ? editingPackable.name : "New Packable"}}</span>
+    </div>
+    <form [formGroup]="packableForm" (ngSubmit)="onSubmit()">
+      <div class="form-border" style="background-color: rgba(0,0,0,.03);" *ngIf="editMode && advancedForm">
+        <div class="form-row">
+          <div class="col-12">
+            <p class="small text-center m-0">
+              Changes you make will only affect the packable in this profile.
+              <br>
+              <small class="text-muted">You can change the name and default settings for this Packable in the
+                <a routerLink="/packables">Packable List</a> page.</small>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="form-border" *ngIf="!editMode || !advancedForm">
+        <div class="form-row">
+          <div class="col">
+            <div class="form-group mb-0">
+              <label for="name">Name your Packable</label>
+              <div class="position-relative">
+                <input type="text" class="form-control pr-2" name="name" placeholder="e.g T-Shirt" formControlName="name">
+                <a class="pointer input-reset" (click)="packableForm.get('name').setValue('')" *ngIf="packableForm.get('name').invalid && packableForm.get('name').touched">
+                  <i class="fa fa-times text-danger"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="form-group mb-0">
+              <label for="icon">Select Icon</label>
+              <input type="text" class="form-control" name="icon" placeholder="" formControlName="icon" disabled>
+            </div>
+          </div>
+          <div class="col-12">
+            <span class="small text-muted" *ngIf="editMode && advancedForm">You can only change the name and icon if you edit the original Packable, or create a new one.</span>
+            <div class="" *ngIf="packableForm.get('name').invalid && packableForm.get('name').touched">
+              <span class="invalid-feedback d-block" *ngIf="packableForm.get('name').errors['usedName']">
+                Sorry, this Packable name already exists...
+              </span>
+              <span class="invalid-feedback d-block" *ngIf="packableForm.get('name').invalid && !packableForm.get('name').errors['usedName']">
+                Please select a valid name (a-z, A-Z, 0-9)
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-border">
+        <div class="form-border-header">
+          <h5>Quantity</h5>
+          <a (click)="openModal(quantityModal)" class="mr-auto ml-1">
+            <i class="far fa-question-circle small text-info"></i>
+          </a>
+        </div>
+        <div class="form-row" formArrayName="quantityRules">
+          <div class="col-12 my-1">
+            <label>How many would you need?</label>
+          </div>
+          <div class="col-12 my-1 rule-row" *ngFor="let qRule of packableForm.get('quantityRules').controls; let i = index">
+            <div class="my-1" [formGroupName]='i'>
+              <div class="d-flex align-items-end flex-wrap justify-content-between justify-content-sm-start">
+                <div class="d-flex align-items-end rule-input-group">
+                  <span *ngIf="i != 0">
+                    <span class="d-block d-sm-none">+</span>
+                    <span class="d-none d-sm-block">and </span>
+                  </span>
+                  <input type="number" class="form-control rule-input" name="amount" placeholder="" formControlName="amount" min="1">
+                  <span> for every </span>
+                </div>
+                <div class="d-flex align-items-end rule-input-group" style="flex-grow: 1">
+                  <span *ngIf="qRule.controls.type.value == 'period'">
+                    <input type="number" class="form-control rule-input" name="repAmount" placeholder="" formControlName="repAmount" min="1">
+                  </span>
+                  <select class="form-control rule-input" name="type" formControlName="type">
+                    <option selected value="period" class="form-control">Day{{qRule.controls.repAmount.value>1 ? "s" : ""}}</option>
+                    <option value="profile" class="form-control">Profile</option>
+                    <option value="trip" class="form-control">Trip</option>
+                  </select>
+                  <a (click)="openModal(periodsModal)">
+                    <i class="far fa-question-circle small text-info"></i>
+                  </a>
+                  <a class="text-danger ml-auto pr-2 pl-2" *ngIf="i != 0" (click)="removeQuantityRule(i)">
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="help-block" *ngIf="qRule.invalid">
+              <span class="invalid-feedback" *ngIf="qRule.get('amount').invalid">
+                Please enter a valid quantity
+              </span>
+              <span class="invalid-feedback" *ngIf="qRule.get('repAmount').invalid">
+                Number of days must be at least 1
+              </span>
+            </div>
+          </div>
+          <div class="col-12 mt-2 text-center">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="addNewRule()">
+              Add Quantity Rule
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="form-border" *ngIf="advancedForm">
+        <div class="form-border-header">
+          <h5>Conditions</h5>
+        </div>
+        <div class="form-row">
+          This is an advanced form
+          <div class="col-12 mt-2 text-center">
+            <button type="button" class="btn btn-sm btn-outline-primary">
+              Add Condition
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" (optionAction)="onOption($event)"></app-desktop-nav>
+
+    </form>
+  </div>
+
+</div>
+
+<ng-template #periodsModal>
+  <H5>Repetition Types</H5>
+  <H6>Items per Day(s)</H6>
+  <p>Select
+    <i>Day(s)</i> to set the number of items you wish to pack for each Day of the trip.</p>
+    <p>Choose this for your daily clean clothes, like a 1 T-shirt per day, or 1 pair of Jeans per 4 days.</p>
+  <H6>Items per Profile</H6>
+  <p>Select <i>Profile</i> to set the number of items you wish to pack for each profile in a trip containing this item. </p>
+  <p>This is useful for items that you only need a few of for every trip, like a Towel, a USB charger or a Toothbrush.</p>
+  <p class="alert alert-info">E.g. If 2 different Profiles in a Trip have 1 x Toothbrush each, each of them would need to bring 1 toothbrush to the trip, meaining <b>2 x Toothbrushes in Total</b></p>
+  <H6>Items per Trip</H6>
+  <p>Select <i>Trip</i> to set the number of items you wish to pack for each Trip, no matter how many profiles have this item.
+    <p>Think of this as communal Packables, to share with everyone on the trip, like sunscreen or a hair-dryer.</p>
+    <p>If one profile in the trip has a higher quantity of the item than another profile, the packing list would favour the higher amount.</p>
+  <p class="alert alert-info">E.g. If <i>Tom</i> has 1 x Toothpaste per Trip and <i>Jane</i> has 2 x Toothpaste per trip, the packing list would recommend packing <b> 2 x Toothpaste</b> for the trip.</p>
+</ng-template>
+<ng-template #quantityModal>
+  <H5>Quantity Rules</H5>
+  <p>Set the default quantity rules for this Packable.</p>
+  <p>Each Quantity rule adds on top of the previous one when calculated</p>
+  <p class="alert alert-info">E.g.
+    <b class="d-inline-block">1 x Shirt per Day</b>, AND
+    <b class="d-inline-block">1 x Shirt per Profile</b> for a duration of 3 days would result in
+    <span class="d-inline-block">1 x 3 + 1 =
+      <b>4 Shirts</b>
+    </span> for the whole trip.</p>
+</ng-template>
+
+<ng-template #deleteModal>
+  <p>If you delete this Packable you will also remove it from all your Profiles and Collections.</p>
+  <p class="text-danger">Are you sure you want to delete this packable?</p>
+</ng-template>

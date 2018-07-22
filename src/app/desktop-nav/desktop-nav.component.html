@@ -1,0 +1,28 @@
+<div class="row d-none d-sm-flex ">
+    <div class="col-12 mt-2 d-flex justify-content-start align-items-center">
+        <button type="button" class="btn btn-outline-secondary" [disabled]="!nav.left.enabled" (click)="onLeft()" *ngIf="nav.left.text && nav.left.text!=''">
+            {{nav.left.text}}
+        </button>
+        <div ngbDropdown class="d-inline ml-2" *ngIf="nav.options && nav.options.length > 0">
+            <a class="text-secondary pointer" ngbDropdownToggle>
+                <i class="fas fa-cog"></i> More</a>
+            <div ngbDropdownMenu>
+                <button type="button" class="dropdown-item" *ngFor="let option of nav.options" (click)="onOption(option)">{{option.name}}</button>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary ml-auto" [disabled]="!nav.right.enabled" (click)="onRight()" *ngIf="nav.right.text && nav.right.text!=''">
+            {{nav.right.text}}
+        </button>
+    </div>
+</div>
+<div class="row d-flex d-sm-none ">
+    <div class="col-12 mt-2 d-flex justify-content-center align-items-center">
+        <div ngbDropdown class="d-inline ml-2" placement="top" *ngIf="nav.options && nav.options.length > 0">
+            <a class="text-secondary pointer" ngbDropdownToggle>
+                <i class="fas fa-cog"></i> More</a>
+            <div ngbDropdownMenu>
+                <button type="button" class="dropdown-item pointer" *ngFor="let option of nav.options" (click)="onOption(option)">{{option.name}}</button>
+            </div>
+        </div>
+    </div>
+</div>

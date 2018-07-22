@@ -1,0 +1,12 @@
+<div class="modal-body">
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.close()" *ngIf="config.close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  <h4 *ngIf="config.header">{{config.header}}</h4>
+  <p *ngIf="config.content">{{config.content}}</p>
+  <div #htmlContent></div>
+  <div class="modal-footer" *ngIf="config.left || config.right">
+    <button type="button" class="btn {{config.left.class}}" *ngIf="config.left" (click)="onLeft()">{{config.left.name}}</button>
+    <button type="button" class="btn {{config.right.class}}" *ngIf="config.right" (click)="onRight()">{{config.right.name}}</button>
+  </div>
+</div>

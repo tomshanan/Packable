@@ -3,36 +3,42 @@
   <div class="ff-row-main">
     <form>
       <div class="form-border">
-        <div class="from-group">
-          <label for="destination">Destination</label>
-          <input type="text" name="destination" class="form-control" placeholder="Enter city or country">
-        </div>
-        <div class="form-group">
-          <label for="dates">Dates</label>
-          <div class="form-row">
-            <div class="col" [ngClass]="{'activeInput':d.isOpen()}">
-              <input ngbDatepicker class="hidden-datepicker" placeholder="dd-mm-yyyy" name="dp"
-                [dayTemplate]="t" [displayMonths]="datepickerSize" [outsideDays]="visible" [placement]="['bottom']" [navigation]="arrows" [autoClose]="false" #d="ngbDatepicker"
-                (dateSelect)="onDateSelection($event,d)" (focus)="toggleDatePicker()">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text custom-prepend-text" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
-                    <i class="fas fa-plane-departure"></i>
-                  </span>
+        <div class="form-row">
+          <div class="col-12 col-sm-7 col-lg-8">
+              <div class="from-group">
+                  <label for="destination">Destination</label>
+                  <input type="text" name="destination" class="form-control" placeholder="Enter city or country">
                 </div>
-                <input class="form-control custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="d.open()" [value]="fromDate ? fromDate.day + '/'+fromDate.month : ''"
-                  placeholder="Select start Date" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
-                <div class="input-group-prepend">
-                  <span class="input-group-text custom-prepend-text" [ngClass]="{'border-primary': (d.isOpen() && fromDate && !toDate)}">
-                    <i class="fas fa-plane-arrival"></i>
-                  </span>
+        
+          </div>
+          <div class="col-12 col-sm-5 col-lg-4">
+              <div class="form-group">
+                  <label for="dates">Dates</label>
+                  <div class="form-row">
+                    <div class="col" [ngClass]="{'activeInput':d.isOpen()}">
+                      <input ngbDatepicker class="hidden-datepicker" placeholder="dd-mm-yyyy" name="dp"
+                        [dayTemplate]="t" [displayMonths]="datepickerSize" [outsideDays]="visible" [placement]="[( this.innerWidth > 575 ? 'bottom-right' : 'bottom')]" [navigation]="arrows" [autoClose]="false" #d="ngbDatepicker"
+                        (dateSelect)="onDateSelection($event,d)" (focus)="toggleDatePicker()">
+                      <div class="input-group">
+                        <input class="form-control custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="d.open()" [value]="(formattedDate || 'Select Dates')"
+                        placeholder="Select start Date" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
+                            <div class="input-group-append">
+                              <span class="input-group-text custom-append-text" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
+                                <i class="fas fa-plane-departure"></i>
+                              </span>
+                            </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <input class="form-control custom-date-input" type="text" name="toDate" id="toDate" (focus)="d.open()" [value]="toDate ? toDate.day + '/'+toDate.month: ''"
-                  placeholder="Select End Date" [ngClass]="{'border-primary': (d.isOpen() && fromDate && !toDate)}">
-              </div>
-            </div>
           </div>
         </div>
+
+
+
+
+
+        
       </div>
 
     </form>

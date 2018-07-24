@@ -25,7 +25,6 @@ export class EditTripComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.innerWidth = window.innerWidth;
-    console.log(this.innerWidth);
     this.datepickerSize = this.innerWidth > 500 ? 2 : 1;
   }
 
@@ -35,6 +34,7 @@ export class EditTripComponent implements OnInit {
   hoveredDate: NgbDateStruct;
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
+  formattedDate: string;
 
   constructor(calendar: NgbCalendar) { 
     this.fromDate = calendar.getToday();
@@ -55,6 +55,7 @@ export class EditTripComponent implements OnInit {
       this.fromDate = date;
     } else if (this.fromDate && !this.toDate && after(date, this.fromDate)) {
       this.toDate = date;
+      this.formattedDate = this.formatDate(this.fromDate, this.toDate)
       d.toggle();
     } else {
       this.toDate = null;
@@ -66,4 +67,16 @@ export class EditTripComponent implements OnInit {
   isFrom = date => equals(date, this.fromDate);
   isTo = date => equals(date, this.toDate);
 
+  formatDate(from:NgbDateStruct, to:NgbDateStruct){
+    if(from.month == to.month){
+      return `${from.day} - ${to.day} ${this.getShortMonth(from.month)}`
+    } else {
+      return `${from.day} ${this.getShortMonth(from.month)} - ${to.day} ${this.getShortMonth(to.month)}`
+    }
+  }
+
+  getShortMonth(month:number):string{
+    let months= {1:'Jan',2:"Feb",3:'Mar',4:"Apr", 5:"May", 6:"Jun",7:"Jul", 8: "Aug", 9:"Sep", 10:"Oct",11:"Nov", 12:"Dec"}
+    return months[month];
+  }
 }

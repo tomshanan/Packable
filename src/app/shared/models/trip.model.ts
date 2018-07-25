@@ -1,7 +1,5 @@
-import { Profile } from "./profile.model";
-import { CollectionPrivate } from './collection.model';
 
-export class Trip{
+export class Trip {
     constructor(
         public id: string,
         public startDate: string,
@@ -10,6 +8,6 @@ export class Trip{
         public profiles: string[],
         public activities: string[],
         public updated: string
-    ){
+    ) {
     }
 }

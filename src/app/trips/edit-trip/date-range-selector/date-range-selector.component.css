@@ -64,5 +64,5 @@
       box-shadow: none;
   }
   .quick{
-    transition: opacity 100ms ease-in-out!important;
+    transition: opacity 100ms linear!important;
   }

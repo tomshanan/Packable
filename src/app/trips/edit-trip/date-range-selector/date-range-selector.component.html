@@ -1,6 +1,6 @@
 <div class="form-row">
   <div class="col" [ngClass]="{'activeInput':d.isOpen()}">
-    <input ngbDatepicker class="hidden-datepicker" container="body" placeholder="dd-mm-yyyy" name="dp" [dayTemplate]="t" [displayMonths]="datepickerSize"
+    <input ngbDatepicker class="hidden-datepicker" placeholder="dd-mm-yyyy" name="dp" [dayTemplate]="t" [displayMonths]="datepickerSize"
       [outsideDays]="visible" [placement]="[( this.innerWidth > 575 ? 'bottom-right' : 'bottom')]" [navigation]="arrows" [autoClose]="false"
       #d="ngbDatepicker" (dateSelect)="onDateSelection($event)" (focus)="toggleDatePicker('open')">
     <div class="input-group">

@@ -1,5 +1,5 @@
 <div id="profileForm" class="full-flex">
-  <div class="ff-row-header">Header</div>
+  <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()"></app-mobile-nav>
   <div class="ff-row-main">
     <form>
       <div class="form-border">
@@ -20,5 +20,6 @@
         </div>
       </div>
     </form>
+    <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" (optionAction)="onOption($event)"></app-desktop-nav>
   </div>
 </div>

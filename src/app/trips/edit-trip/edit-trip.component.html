@@ -5,53 +5,20 @@
       <div class="form-border">
         <div class="form-row">
           <div class="col-12 col-sm-7 col-lg-8">
-              <div class="from-group">
-                  <label for="destination">Destination</label>
-                  <input type="text" name="destination" class="form-control" placeholder="Enter city or country">
-                </div>
-        
+            <div class="from-group">
+              <label for="destination">Destination</label>
+              <input type="text" name="destination" class="form-control" placeholder="Enter city or country">
+            </div>
+
           </div>
           <div class="col-12 col-sm-5 col-lg-4">
-              <div class="form-group">
-                  <label for="dates">Dates</label>
-                  <div class="form-row">
-                    <div class="col" [ngClass]="{'activeInput':d.isOpen()}">
-                      <input ngbDatepicker class="hidden-datepicker" placeholder="dd-mm-yyyy" name="dp"
-                        [dayTemplate]="t" [displayMonths]="datepickerSize" [outsideDays]="visible" [placement]="[( this.innerWidth > 575 ? 'bottom-right' : 'bottom')]" [navigation]="arrows" [autoClose]="false" #d="ngbDatepicker"
-                        (dateSelect)="onDateSelection($event,d)" (focus)="toggleDatePicker()">
-                      <div class="input-group">
-                        <input class="form-control custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="d.open()" [value]="(formattedDate || 'Select Dates')"
-                        placeholder="Select start Date" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
-                            <div class="input-group-append">
-                              <span class="input-group-text custom-append-text" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
-                                <i class="fas fa-plane-departure"></i>
-                              </span>
-                            </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            <div class="form-group">
+              <label for="dates">Dates</label>
+              <app-date-range-selector (datesSelected)="onDatesSelected($event)"></app-date-range-selector>
+            </div>
           </div>
         </div>
-
-
-
-
-
-        
       </div>
-
     </form>
   </div>
-
 </div>
-
-
-<ng-template #t let-date="date" let-focused="focused">
-  <span class="custom-day" [class.focused]="focused" [class.range]="isFrom(date) || isTo(date) || isInside(date) || isHovered(date)"
-    [class.betweenDates]="isInside(date)|| isHovered(date)" [class.selected]="isFrom(date) || isTo(date)" [class.fromDate]="isFrom(date) || (hoveredDate == date && !fromDate)"
-    [class.toDate]="isTo(date) || (hoveredDate == date && !toDate)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
-    {{ date.day }}
-  </span>
-</ng-template>
-<div class="modal-backdrop fade" *ngIf="d.isOpen()" [class.show]="d.isOpen()" (click)="d.close()" style="z-index: 900;"></div>

@@ -33,6 +33,7 @@ import { DesktopNavComponent } from './desktop-nav/desktop-nav.component';
 import { ModalComponent } from './modal/modal.component';
 import { NavListComponent } from './nav/nav-list/nav-list.component';
 import { EditTripComponent } from './trips/edit-trip/edit-trip.component';
+import { DateRangeSelectorComponent } from './trips/edit-trip/date-range-selector/date-range-selector.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { EditTripComponent } from './trips/edit-trip/edit-trip.component';
     DesktopNavComponent,
     ModalComponent,
     NavListComponent,
-    EditTripComponent
+    EditTripComponent,
+    DateRangeSelectorComponent
       ],
   imports: [
     BrowserModule,

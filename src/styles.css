@@ -213,6 +213,35 @@ input.rule-input{
     border-color: #343a40;
 }
 
+.btn-borderless{
+    border: none;
+    background: none;
+}
+.btn-borderless:hover,
+.btn-borderless:active,
+.btn-borderless.active{
+    background: initial;
+}
+.text-primary-hover:hover{
+    color: #0069d9!important;
+}
+.text-success-hover:hover{
+    color: #218838!important;
+}
+.text-danger-hover:hover{
+    color: #c82333!important;
+}
+.text-warning-hover:hover{
+    color: #e0a800!important;
+}
+.text-info-hover:hover{
+    color: #17a2b8!important;
+}
+.text-secondary-hover:hover{
+    color: #6c757d!important;
+}
+
+
 .collection{
     padding: 10px;
     border-radius: 0.5em;

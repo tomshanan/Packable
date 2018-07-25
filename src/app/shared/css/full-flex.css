@@ -13,7 +13,7 @@
     display:flex;
     flex-shrink: 0;
 }
-button.ff-header-action {
+.ff-header-action {
     background: none;
     border: none;
     -webkit-flex-grow: 0;
@@ -24,9 +24,9 @@ button.ff-header-action {
     color:#007bff;
     transition: color 300ms;
 }
-button.ff-header-action:hover,
-button.ff-header-action:active,
-button.ff-header-action:focus
+.ff-header-action:hover,
+.ff-header-action:active,
+.ff-header-action:focus
 {
     color:#007bff9a;
     cursor: pointer;
@@ -52,11 +52,11 @@ button.ff-header-action[disabled]{
     text-overflow: ellipsis;
 }
 
-button.ff-header-action:first-of-type{
+.ff-header-action:first-of-type{
     text-align: left;
     padding-left: 0;
 }
-button.ff-header-action:last-of-type{
+.ff-header-action:last-of-type{
     text-align: right;
     padding-right: 0;
 }

@@ -61,13 +61,13 @@ export class ItemSelectorComponent implements OnInit {
       header: "Select "+this.title,
       left: {
         enabled: true,
-        text: 'Back',
+        text: 'Done',
         iconClass:'fas fa-chevron-left'
       },
       right: {
-        enabled: true,
-        text: 'New',
-        iconClass:'fas fa-plus'
+        enabled: false,
+        text: '',
+        iconClass:''
       },
     }
     this.desktopNavParams = {

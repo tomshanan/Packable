@@ -53,6 +53,7 @@
       background-color: white;
       border-left: none;
       padding-left: 0.1em;
+      transition: border-color .15s;
   }
   .activeInput {
       z-index: 999;

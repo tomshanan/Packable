@@ -5,7 +5,7 @@
       #d="ngbDatepicker" (dateSelect)="onDateSelection($event)" (focus)="toggleDatePicker('open')">
     <div class="input-group">
       <input class="form-control custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="toggleDatePicker('open')" [value]="(formattedDate || 'Select Dates')"
-        placeholder="Select travel dates" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
+        placeholder="Select travel dates" [ngClass]="{'border-primary': d.isOpen()}">
       <div class="input-group-append">
         <span class="input-group-text custom-append-text" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
           <i class="far fa-calendar-alt"></i>

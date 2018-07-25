@@ -32,12 +32,17 @@ export class DateRangeSelectorComponent implements OnInit {
   hoveredDate: NgbDateStruct;
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
+  wasDates: {from:NgbDateStruct, to:NgbDateStruct};
   formattedDate: string;
   selectorOpen = false;
 
   constructor(calendar: NgbCalendar) { 
     this.fromDate = calendar.getToday();
     this.toDate = calendar.getNext(calendar.getToday(), 'd', 3);
+    this.wasDates = {
+      from:this.fromDate,
+      to: this.toDate
+    }
   }
 
   ngOnInit() {
@@ -48,15 +53,21 @@ export class DateRangeSelectorComponent implements OnInit {
   toggleDatePicker(state?:string){
     switch(state){
       case 'open':
-      this.d.open()
-      setTimeout(()=>{this.selectorOpen = true;},1)
-      break;
+        this.d.open()
+        this.wasDates.from = this.fromDate;
+        this.wasDates.to = this.toDate;
+        setTimeout(()=>{this.selectorOpen = true;},1)
+        break;
       case 'close':
-      this.selectorOpen = false;
-      setTimeout(()=>this.d.close(),100)
-      break;
+        if (this.fromDate && !this.toDate) {
+          this.fromDate = this.wasDates.from;
+          this.toDate = this.wasDates.to;
+        }
+        this.selectorOpen = false;
+        setTimeout(()=>this.d.close(),100)
+        break;
       default:
-      this.d.isOpen() ? this.toggleDatePicker('close') : this.toggleDatePicker('open');
+        this.d.isOpen() ? this.toggleDatePicker('close') : this.toggleDatePicker('open');
     }
   }
 

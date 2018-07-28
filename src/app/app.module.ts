@@ -34,6 +34,8 @@ import { ModalComponent } from './modal/modal.component';
 import { NavListComponent } from './nav/nav-list/nav-list.component';
 import { EditTripComponent } from './trips/edit-trip/edit-trip.component';
 import { DateRangeSelectorComponent } from './trips/edit-trip/date-range-selector/date-range-selector.component';
+import { DestinationDataService } from './shared/location-data.service';
+import { FullPlaceNamePipe } from './shared/pipes/full-place-name.pipe';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,8 @@ import { DateRangeSelectorComponent } from './trips/edit-trip/date-range-selecto
     ModalComponent,
     NavListComponent,
     EditTripComponent,
-    DateRangeSelectorComponent
+    DateRangeSelectorComponent,
+    FullPlaceNamePipe
       ],
   imports: [
     BrowserModule,
@@ -68,7 +71,7 @@ import { DateRangeSelectorComponent } from './trips/edit-trip/date-range-selecto
     StoreModule.forRoot(reducers)
 
   ],
-  providers: [ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory],
+  providers: [ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory, DestinationDataService],
   bootstrap: [AppComponent],
   entryComponents: [ModalComponent]
 })

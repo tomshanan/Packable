@@ -1,13 +1,21 @@
 <div id="profileForm" class="full-flex">
   <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()"></app-mobile-nav>
   <div class="ff-row-main">
-    <form>
+    <form [formGroup]="tripForm">
       <div class="form-border">
         <div class="form-row">
           <div class="col-12 col-sm-7 col-lg-8">
-            <div class="from-group">
+            <div class="form-group">
               <label for="destination">Destination</label>
-              <input type="text" name="destination" class="form-control" placeholder="Enter city or country">
+              <input formControlName="destinationId" type="text" 
+              name="destination" class="form-control" placeholder="Enter city or country" 
+              [matAutocomplete]="auto" 
+              [value]="tripForm.get('destinationId').value | fullPlaceName">
+              <mat-autocomplete #auto="matAutocomplete">
+                  <mat-option *ngFor="let option of filteredDestOptions | async" [value]="option.id">
+                    {{option.destination}}
+                  </mat-option>
+              </mat-autocomplete>
             </div>
 
           </div>

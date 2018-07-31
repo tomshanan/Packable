@@ -137,7 +137,9 @@ export class ItemSelectorComponent implements OnInit {
       let config: modalConfig = {
         right: { name: 'Remove', class: 'btn-outline-danger' },
         header: 'Remove this item?',
-        content: 'When you remove '+this.title+" from a Profile you lose all the changes you made to their settings.\nAre you sure you want to remove this?"
+        content: 
+        `When you remove ${this.title} from a Profile you lose all the changes you made to their settings.
+        <br><span class="text-danger">Are you sure you want to remove <b>${this.listSelected[id]['name']}</b>?</span>`
       }
       this.openConfirmModal(null, config, () => {
         this.listSelected.splice(id, 1);

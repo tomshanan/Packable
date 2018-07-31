@@ -3,11 +3,14 @@ import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Trip } from '../../shared/models/trip.model';
 import { Router, ActivatedRoute } from '@angular/router';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { DestinationDataService, Destination, DestinationConcatinated } from '../../shared/location-data.service';
-import { Observable } from 'rxjs/Observable';
-import {  map,startWith } from 'rxjs/operators';
+import { DestinationDataService, Destination } from '../../shared/location-data.service';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { tap } from "rxjs/operators";
+
+
 
 
 
@@ -23,10 +26,10 @@ export class EditTripComponent implements OnInit {
   editMode = false;
 
   destination: string;
-  destArray: DestinationConcatinated[];
-  filteredDestOptions: Observable<DestinationConcatinated[]>;
+  destArray: Destination[];
+  filteredDestOptions: Observable<Destination[]>;
 
-  tripForm:FormGroup;
+  tripForm: FormGroup;
   editingTrip: Trip = {
     id: '',
     startDate: '',
@@ -41,25 +44,25 @@ export class EditTripComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
-    private destService:DestinationDataService
+    private destService: DestinationDataService
   ) {
     this.tripForm = fb.group({
       destinationId: [''],
       startDate: [''],
-      endDate: [''], 
+      endDate: [''],
       profiles: this.fb.array([]),
       activities: this.fb.array([])
     })
   }
 
   ngOnInit() {
-    this.destArray = this.destService.concatDestinations;
+    this.destArray = this.destService.destinations;
     this.destinationAutoComplete();
     this.navSetup();
   }
   navSetup() {
     this.navParams = {
-      header: this.destination ? 'Trip to '+this.destination : 'New Trip',
+      header: this.destination ? 'Trip to ' + this.destination : 'New Trip',
       left: {
         enabled: true,
         text: 'Cancel',
@@ -92,45 +95,36 @@ export class EditTripComponent implements OnInit {
     this.fromDate = newDates.from;
     this.toDate = newDates.to;
   }
-  displayPlace(dest?: DestinationConcatinated): string | undefined {
-    return dest ? dest.destination : undefined;
+  displayPlace(dest?: Destination): string | undefined {
+    return dest ? dest.fullName : undefined;
   }
 
-  findIndexInDestination(search:string,dest:DestinationConcatinated):number{
-    const regex = /[^a-zA-Z0-9\-]+/g;
-    let destination = dest.destination.toLowerCase().replace(regex,'');
-    let index = -1;
-    if(regex.test(search)){
-      let searchWords = search.split(regex);
-      searchWords.forEach(searchWord=>{
-        let i = destination.indexOf(searchWord);
-        index = i > -1 && i < index ? i : index;
-      })
-    } else{
-      index = destination.indexOf(search);
-    }
-    return index;
-  }
-  
-  destinationAutoComplete(){
+
+  destinationAutoComplete() {
     this.filteredDestOptions = this.tripForm.get('destinationId').valueChanges
-    .pipe(
-      startWith<string | Destination>(''),
-      map(value => typeof value === 'string' ? value : value.city),
-      map(val => {
-        val = val.toLowerCase().trim();
-        if(val.length>2){
-          return this.destArray.filter(dest=>{
-            return this.findIndexInDestination(val,dest) > -1;
-          }).sort((a,b)=>{
-            let aIndex = this.findIndexInDestination(val,a)
-            let bIndex  = this.findIndexInDestination(val,b)
-            return aIndex - bIndex;
-          })
-        } else {
-          return []
-        }
-      }),
+      .pipe(
+        //tap(search=>console.warn(`Searching "${search}"`)),
+        startWith<string | Destination>(''),
+        map(value => typeof value === 'string' ? value : value.city),
+        map(val => {
+          val = val.toLowerCase().trim();
+          if (val.length > 2) {
+            return this.destArray.filter(dest => {
+              return this.destService.getScoreOfSearch(val, dest) > 0;
+            }).sort((a, b) => {
+              let aRank = (a.cityRank && a.cityRank != b.cityRank) ? a.cityRank/2 : (a.countryRank ? a.countryRank*3 : 1000);
+              let bRank = (b.cityRank && a.cityRank != b.cityRank) ? b.cityRank/2 : (b.countryRank ? b.countryRank*3 : 1000);
+              let aScore = this.destService.getScoreOfSearch(val, a) + (1000 / aRank)
+              let bScore = this.destService.getScoreOfSearch(val, b) + (1000 / bRank)
+              return bScore != aScore ? bScore - aScore :  aRank - bRank ;
+            }).slice(0, 10)
+            // .map(dest => {
+            //   return { ...dest, fullName: `${dest.fullName.substring(0,15)} (${this.destService.getScoreOfSearch(val, dest)}) (${dest.cityRank} | ${dest.countryRank})` }
+            // })
+          } else {
+            return []
+          }
+        })
     )
   }
 

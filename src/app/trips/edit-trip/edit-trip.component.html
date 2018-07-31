@@ -13,7 +13,7 @@
               [value]="tripForm.get('destinationId').value | fullPlaceName">
               <mat-autocomplete #auto="matAutocomplete">
                   <mat-option *ngFor="let option of filteredDestOptions | async" [value]="option.id">
-                    {{option.destination}}
+                    {{option.fullName}}
                   </mat-option>
               </mat-autocomplete>
             </div>

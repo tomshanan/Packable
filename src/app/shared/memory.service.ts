@@ -1,6 +1,7 @@
 import { ProfileComplete } from './models/profile.model';
 import { CollectionComplete } from './models/collection.model';
 import { PackableBlueprint } from './models/packable.model';
+import { Trip } from './models/trip.model';
 
 
 export class MemoryService {
@@ -9,7 +10,19 @@ export class MemoryService {
     private _editingProfile: ProfileComplete;
     private _editingCollection: CollectionComplete;
     private _editingPackable: PackableBlueprint;
+    private _editingTrip: Trip;
     
+    setTrip(trip: Trip) {
+        this._editingTrip = trip;
+        console.log('updated trip in memory:', trip);
+    }
+    resetTrip() {
+        this._editingTrip = null;
+    }
+    getTrip(): Trip {
+        return this._editingTrip ? {...this._editingTrip} : null;
+    }
+
     setPackable(packable: PackableBlueprint) {
         this._editingPackable = packable;
         console.log('updated packable:', packable);
@@ -52,7 +65,7 @@ export class MemoryService {
         
     }
     get editState(): boolean {
-        return (this._editingCollection != null || this._editingProfile != null || this._editingPackable != null);
+        return (!!this._editingCollection || !!this._editingProfile || !!this._editingPackable || !!this._editingTrip);
     }
 
 

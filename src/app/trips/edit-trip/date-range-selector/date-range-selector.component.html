@@ -1,10 +1,23 @@
 <div class="form-row">
   <div class="col" [ngClass]="{'activeInput':d.isOpen()}">
-    <input ngbDatepicker class="hidden-datepicker" placeholder="dd-mm-yyyy" name="dp" [dayTemplate]="t" [displayMonths]="datepickerSize"
-      [outsideDays]="visible" [placement]="[( this.innerWidth > 575 ? 'bottom-right' : 'bottom')]" [navigation]="arrows" [autoClose]="false"
-      #d="ngbDatepicker" (dateSelect)="onDateSelection($event)" (focus)="toggleDatePicker('open')">
+    <input 
+    ngbDatepicker 
+    class="hidden-datepicker" 
+    placeholder="dd-mm-yyyy" 
+    name="dp" 
+    [dayTemplate]="t" 
+    [displayMonths]="datepickerSize"
+    [outsideDays]="visible" 
+    [placement]="[( this.innerWidth > 575 ? 'bottom-right' : 'bottom')]" 
+    [minDate] = "minDate"
+    [navigation]="arrows" 
+    [autoClose]="false"
+    #d="ngbDatepicker" 
+    (dateSelect)="onDateSelection($event)" 
+    (focus)="toggleDatePicker('open')">
+
     <div class="input-group">
-      <input class="form-control custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="toggleDatePicker('open')" [value]="(formattedDate || 'Select Dates')"
+      <input class="form-control custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="toggleDatePicker('open')" [value]="(formattedDate || '')"
         placeholder="Select travel dates" [ngClass]="{'border-primary': d.isOpen()}">
       <div class="input-group-append">
         <span class="input-group-text custom-append-text" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
@@ -18,7 +31,7 @@
 <ng-template #t let-date="date" let-focused="focused">
   <span class="custom-day" [class.focused]="focused" [class.range]="isFrom(date) || isTo(date) || isInside(date) || isHovered(date)"
     [class.betweenDates]="isInside(date)|| isHovered(date)" [class.selected]="isFrom(date) || isTo(date)" [class.fromDate]="isFrom(date) || (hoveredDate == date && !fromDate)"
-    [class.toDate]="isTo(date) || (hoveredDate == date && !toDate)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
+    [class.toDate]="isTo(date) || (hoveredDate == date && !toDate)" [class.disabled]="isBeforeMin(date)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
     {{ date.day }}
   </span>
 </ng-template>

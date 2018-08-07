@@ -7,22 +7,75 @@
           <div class="col-12 col-sm-7 col-lg-8">
             <div class="form-group">
               <label for="destination">Destination</label>
-              <input formControlName="destinationId" type="text" 
-              name="destination" class="form-control" placeholder="Enter city or country" 
-              [matAutocomplete]="auto" 
-              [value]="tripForm.get('destinationId').value | fullPlaceName">
-              <mat-autocomplete #auto="matAutocomplete">
-                  <mat-option *ngFor="let option of filteredDestOptions | async" [value]="option.id">
-                    {{option.fullName}}
-                  </mat-option>
-              </mat-autocomplete>
+    <input formControlName="destinationId" 
+        type="text" name="destination" 
+        class="form-control" placeholder="Enter city or country"
+        [matAutocomplete]="auto" 
+        [value]="tripForm.get('destinationId').value | fullPlaceName" 
+        (blur)="confirmDestination()">
+    <mat-autocomplete 
+        [autoActiveFirstOption]="true" 
+        #auto="matAutocomplete">
+        <mat-option 
+            *ngFor="let option of filteredDestOptions | async" 
+            [value]="option.id">
+            {{option.fullName}}
+        </mat-option>
+    </mat-autocomplete>
             </div>
-
           </div>
           <div class="col-12 col-sm-5 col-lg-4">
             <div class="form-group">
               <label for="dates">Dates</label>
-              <app-date-range-selector (datesSelected)="onDatesSelected($event)"></app-date-range-selector>
+              <app-date-range-selector (datesSelected)="onDatesSelected($event)" [setFromDate]="fromDate" [setToDate]="toDate"></app-date-range-selector>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-border" *ngIf="true">
+        <!-- Add click event to open item selector-->
+        <div class="form-border-header" [class.pointer]="profiles" (click)="allProfiles.length > sortedProfiles.length && onMoreProfiles()">
+          <h5>Profiles</h5>
+          <!-- add conditional if too many items to display-->
+          <span class="text-primary" *ngIf="allProfiles && sortedProfiles && allProfiles.length > sortedProfiles.length">More
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        </div>
+        <div class="form-row">
+          <div class="col-4 col-sm-3 col-lg-2 m-0 p-1" *ngFor="let profile of sortedProfiles; let i=index">
+            <div class="grid-sizing grid-border" [ngClass]="{'border-success':isProfileSelected(profile.id)}">
+              <a class="pointer grid-content d-flex flex-column justify-content-center align-content-center" (click)="onToggleProfile(profile.id)">
+                <div class="text-center">
+                  <i class="fas fa-user fa-3x"></i>
+                  <br>
+                  <h6>{{profile.name}}</h6>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="form-border" *ngIf="true">
+        <!-- Add click event to open item selector-->
+        <div class="form-border-header" [class.pointer]="activities" (click)="null">
+          <h5>Activities</h5>
+          <!-- add conditional if too many items to display-->
+          <span class="text-primary" *ngIf="activities && activities.length<item_limit">More
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        </div>
+        <div class="form-row">
+          <div class="col-4 col-sm-3 col-lg-2 m-0 p-1" *ngFor="let activity of sortedActivities; let i=index">
+            <div class="grid-sizing grid-border" [ngClass]="{'border-success':isActivitySelected(activity.collectionId)}">
+              <a class="pointer grid-content d-flex flex-column justify-content-center align-content-center" (click)="onToggleActivity(activity.collectionId)">
+                <div class="text-center">
+                  <i class="fas fa-swimmer fa-3x"></i>
+                  <br>
+                  <h6>{{activity.name}}</h6>
+                </div>
+              </a>
             </div>
           </div>
         </div>

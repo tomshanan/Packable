@@ -15,6 +15,8 @@ const appRoutes:Routes = [
     {path: 'trips', pathMatch: 'full', component:TripsComponent},
     {path: 'trips/new', pathMatch: 'full', component:EditTripComponent},
     {path: 'trips/:trip', pathMatch: 'full', component:EditTripComponent},
+    {path: 'trips/:trip/profiles', pathMatch: 'full', component:ItemSelectorComponent},
+    {path: 'trips/:trip/activities', pathMatch: 'full', component:ItemSelectorComponent},
     {path: 'profiles', pathMatch: 'full', component:ProfilesComponent},
     {path: 'profiles/new', pathMatch: 'full', component:ProfileEditComponent},
     {path: 'profiles/:profile', pathMatch: 'full', component:ProfileEditComponent},

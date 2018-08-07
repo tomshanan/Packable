@@ -30,10 +30,10 @@ export class CollectionOriginal {
 
 export class CollectionPrivate {
     constructor(
-        public weatherRules: WeatherRule[],
-        public activityRules: ActivityRule[],
-        public packables: PackablePrivate[],
-        public id: string
+        public id: string = '',
+        public packables: PackablePrivate[] = [],
+        public weatherRules: WeatherRule[] = [],
+        public activityRules: ActivityRule[] = [],
     ){
     }
 }
@@ -47,29 +47,43 @@ export class CollectionFactory {
         private storeSelector: StoreSelectorService,
         private packableFactory: PackableFactory
     ) { }
-    public newPrivateCollection = function (original: CollectionOriginal): CollectionPrivate {
-        let newCollection = new CollectionPrivate([],[],[],'');
-        newCollection.packables = original.packables.map(p => {
+    public isOriginal = (collection: CollectionAny): collection is CollectionOriginal => {
+        return (<CollectionOriginal>collection).name !== undefined;
+    }
+
+    public newPrivateCollection = (original: CollectionOriginal): CollectionPrivate => {
+        let privatePackables = original.packables.map(p => {
             return this.packableFactory.makePrivateFromId(p);
         })
-        newCollection.activityRules = [...original.activityRules];
-        newCollection.weatherRules = [...original.weatherRules]
-        newCollection.id = original['id'];
-
+        let newCollection = new CollectionPrivate(
+            original['id'], 
+            privatePackables,
+            original.weatherRules.slice(),
+            original.activityRules.slice()
+        );
         return newCollection
     }
-    public restorePrivate = function (collection: CollectionPrivate): CollectionPrivate {
+    public restorePrivate = (collection: CollectionPrivate): CollectionPrivate => {
         let original = this.storeSelector.getCollectionById(collection.id);
         return this.newPrivateCollection(original);
     }
-    public makePrivate = function (collection: CollectionPrivate | CollectionOriginal): CollectionPrivate {
-        if (collection.hasOwnProperty('name')) {
+    public makePrivate = (collection: CollectionPrivate | CollectionOriginal): CollectionPrivate => {
+        if (this.isOriginal(collection)) {
             return this.newPrivateCollection(collection);
+        } else {
+            return collection
         }
-        return <CollectionPrivate>collection;
     }
-    public makeComplete = function (collection: CollectionAny): CollectionComplete {
+    public makeComplete =  (collection: CollectionAny): CollectionComplete => {
         let completeCollection = this.storeSelector.getCompleteCollections([collection])[0]
         return completeCollection;
+    }
+    public getActivityCollections = (collections: CollectionAny[]): {name:string,collectionId:string}[] =>{
+        return collections
+            .map(c => this.storeSelector.getCollectionById(c.id))
+            .filter(c => c.activity == true)
+            .map(c => {
+                return {name: c.name, collectionId:c.id}
+            })
     }
 }

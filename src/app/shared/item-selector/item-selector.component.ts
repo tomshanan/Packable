@@ -33,7 +33,7 @@ export class ItemSelectorComponent implements OnInit {
   alertCounter:number = 0;
   navParams: navParams;
   desktopNavParams: navParams;
-
+  addNew: boolean;
 
   constructor(
     private store: Store<fromApp.appState>,
@@ -52,6 +52,7 @@ export class ItemSelectorComponent implements OnInit {
       this.listOriginal = params.originalList;
       this.listSelected = params.usedList;
       this.title = params.itemName;
+      this.addNew = params.addNew;
       this.listFiltered.original = this.listOriginal;
       this.navSetup();
     }

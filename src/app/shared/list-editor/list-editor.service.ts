@@ -12,7 +12,8 @@ export interface listEditorParams {
   itemName: string,
   listType: string,
   usedList: item[],
-  originalList: item[]
+  originalList: item[],
+  addNew?:boolean
 }
 export type item = {
   id: string
@@ -32,12 +33,17 @@ export class ListEditorService {
   private _originalList: item[];
   private _listType: string;
   private _itemName: string;
-
+  private _addNew: boolean;
+  
+  addNew(){
+    return this.params
+  }
   setParams(newParams: listEditorParams) {
     this._usedList = [...newParams.usedList];
     this._originalList = [...newParams.originalList];
     this._listType = newParams.listType;
     this._itemName = newParams.itemName;
+    this._addNew = newParams.addNew != undefined ? newParams.addNew : true;
     this.params_set = true;
     this.updateListParams.next(this.params);
     console.log('params set:', this.params)
@@ -65,7 +71,8 @@ export class ListEditorService {
         itemName: this._itemName ? this._itemName.slice() : null,
         listType: this._listType ? this._listType : null,
         usedList: this._usedList ? this._usedList.slice() : null,
-        originalList: this._originalList ? this._originalList.slice() : null
+        originalList: this._originalList ? this._originalList.slice() : null,
+        addNew: this._addNew
       }
     } else {
       return null;

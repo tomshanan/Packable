@@ -29,14 +29,16 @@
               <p class=" col-12 text-secondary text-center" *ngIf="listOriginal.length > 0 && listOriginal.length <= listSelected.length">Looks like you added all the {{title}}</p>
           </ng-template>
         </ng-template>
+
       <a class="list-item d-flex justify-content-start text-primary align-items-center col-12 col-sm-6 col-lg-4" 
-      (click)="createNew()">
+      (click)="createNew()" *ngIf="addNew">
         <i class="fas fa-plus text-primary"></i>
         <div class="item-name align-self-stretch d-flex flex-column justify-content-center">
           <span>Create new</span>
         </div>
         <i class="fas fa-chevron-right"></i>
       </a>
+
       <a class="list-item d-flex justify-content-start align-items-center col-12 col-sm-6 col-lg-4" 
       *ngFor="let item of listFiltered.filtered; let i = index"
       [ngClass]="{'list-item-used': objectUsed(item), 'border border-primary rounded': searchFilterInput!='' && i==0 && !objectUsed(item)}"

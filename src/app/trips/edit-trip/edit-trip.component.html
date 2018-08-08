@@ -7,18 +7,18 @@
           <div class="col-12 col-sm-7 col-lg-8">
             <div class="form-group">
               <label for="destination">Destination</label>
-    <input formControlName="destinationId" 
+    <input formControlName="destination" 
         type="text" name="destination" 
         class="form-control" placeholder="Enter city or country"
         [matAutocomplete]="auto" 
-        [value]="tripForm.get('destinationId').value | fullPlaceName" 
-        (blur)="confirmDestination()">
+         #inputDestination>
     <mat-autocomplete 
         [autoActiveFirstOption]="true" 
-        #auto="matAutocomplete">
+        #auto="matAutocomplete"
+        [displayWith]="displayDestination">
         <mat-option 
             *ngFor="let option of filteredDestOptions | async" 
-            [value]="option.id">
+            [value]="option">
             {{option.fullName}}
         </mat-option>
     </mat-autocomplete>
@@ -35,7 +35,7 @@
 
       <div class="form-border" *ngIf="true">
         <!-- Add click event to open item selector-->
-        <div class="form-border-header" [class.pointer]="profiles" (click)="allProfiles.length > sortedProfiles.length && onMoreProfiles()">
+        <div class="form-border-header" [class.pointer]="allProfiles && sortedProfiles && allProfiles.length > sortedProfiles.length" (click)="allProfiles.length > sortedProfiles.length && onMoreProfiles()">
           <h5>Profiles</h5>
           <!-- add conditional if too many items to display-->
           <span class="text-primary" *ngIf="allProfiles && sortedProfiles && allProfiles.length > sortedProfiles.length">More
@@ -59,17 +59,17 @@
       </div>
       <div class="form-border" *ngIf="true">
         <!-- Add click event to open item selector-->
-        <div class="form-border-header" [class.pointer]="activities" (click)="null">
+        <div class="form-border-header" [class.pointer]="allActivities.length > item_limit" (click)="onMoreActivities()">
           <h5>Activities</h5>
           <!-- add conditional if too many items to display-->
-          <span class="text-primary" *ngIf="activities && activities.length<item_limit">More
+          <span class="text-primary" *ngIf="allActivities && allActivities.length > sortedActivities.length">More
             <i class="fas fa-chevron-right"></i>
           </span>
         </div>
         <div class="form-row">
           <div class="col-4 col-sm-3 col-lg-2 m-0 p-1" *ngFor="let activity of sortedActivities; let i=index">
-            <div class="grid-sizing grid-border" [ngClass]="{'border-success':isActivitySelected(activity.collectionId)}">
-              <a class="pointer grid-content d-flex flex-column justify-content-center align-content-center" (click)="onToggleActivity(activity.collectionId)">
+            <div class="grid-sizing grid-border" [ngClass]="{'border-success':isActivitySelected(activity.id)}">
+              <a class="pointer grid-content d-flex flex-column justify-content-center align-content-center" (click)="onToggleActivity(activity.id)">
                 <div class="text-center">
                   <i class="fas fa-swimmer fa-3x"></i>
                   <br>
@@ -82,5 +82,12 @@
       </div>
     </form>
     <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" (optionAction)="onOption($event)"></app-desktop-nav>
+    <div class="row">
+      Destination: {{tripForm.get('destination').value.city || 'null'}} - {{tripForm.get('destination').status}} <br>
+      startDate: {{tripForm.get('startDate').value}} - {{tripForm.get('startDate').status}} <br>
+      endDate: {{tripForm.get('endDate').value}} - {{tripForm.get('endDate').status}} <br>
+      profiles: {{tripForm.get('profiles').value.length}} - {{tripForm.get('profiles').status}} <br>
+      activities: {{tripForm.get('activities').value.length}} - {{tripForm.get('activities').status}} <br>
+    </div>
   </div>
 </div>

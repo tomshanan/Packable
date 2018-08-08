@@ -38,6 +38,11 @@ export class CollectionPrivate {
     }
 }
 
+export interface Activity {
+    id: string,
+    name: string
+}
+
 export type CollectionAny = CollectionPrivate | CollectionOriginal;
 
 

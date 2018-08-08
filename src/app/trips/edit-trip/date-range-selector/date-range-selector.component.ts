@@ -75,6 +75,11 @@ export class DateRangeSelectorComponent implements OnInit {
           this.fromDate = this.prevDates.from;
           this.toDate = this.prevDates.to;
         }
+        this.formattedDate = this.formatDate(this.fromDate, this.toDate)
+        this.datesSelected.emit({
+          from: this.momentFromDatepicker(this.fromDate),
+          to: this.momentFromDatepicker(this.toDate)
+        })
         this.selectorOpen = false;
         setTimeout(() => this.d.close(), 100)
         break;
@@ -88,11 +93,6 @@ export class DateRangeSelectorComponent implements OnInit {
       this.fromDate = date;
     } else if (this.fromDate && !this.toDate && after(date, this.fromDate)) {
       this.toDate = date;
-      this.formattedDate = this.formatDate(this.fromDate, this.toDate)
-      this.datesSelected.emit({
-        from: this.momentFromDatepicker(this.fromDate),
-        to: this.momentFromDatepicker(this.toDate)
-      })
       this.toggleDatePicker('close');
     } else {
       this.toDate = null;

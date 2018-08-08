@@ -61,6 +61,7 @@ export class MemoryService {
         this.resetCollection();
         this.resetPackable();
         this.resetProfile();
+        this.resetTrip();
         console.log('> reset memory');
         
     }

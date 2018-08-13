@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ProfileComplete } from '../../shared/models/profile.model';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { MemoryService } from '../../shared/memory.service';
-import { ListEditorService } from '../../shared/list-editor/list-editor.service';
+import { ListEditorService } from '../../shared/list-editor.service';
 import { StoreSelectorService } from '../../shared/store-selector.service';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

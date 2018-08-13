@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, Type, TemplateRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
-import * as fromApp from '../../shared/app.reducers';
-import { FilteredArray, objectInArray } from '../../shared/global-functions';
-import { ListEditorService, listEditorParams, item } from '../list-editor/list-editor.service';
+import * as fromApp from '../app.reducers';
+import { FilteredArray, objectInArray } from '../global-functions';
+import { ListEditorService, listEditorParams, item } from '../list-editor.service';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { Location } from '@angular/common';
 import { MemoryService } from '../memory.service';

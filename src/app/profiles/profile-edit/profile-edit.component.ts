@@ -9,7 +9,7 @@ import { CollectionPrivate, CollectionOriginal, CollectionFactory } from '../../
 import { Subscription } from 'rxjs/Subscription';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import { Profile, ProfileComplete } from '../../shared/models/profile.model';
-import { ListEditorService, listEditorParams } from '../../shared/list-editor/list-editor.service';
+import { ListEditorService, listEditorParams } from '../../shared/list-editor.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MemoryService } from '../../shared/memory.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -17,7 +17,7 @@ import { StoreSelectorService } from '../../shared/store-selector.service';
 import { Guid } from '../../shared/global-functions';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { modalConfig, ModalComponent } from '../../modal/modal.component';
-import { NgbModal } from '../../../../node_modules/@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-profile-edit',

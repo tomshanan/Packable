@@ -1,5 +1,5 @@
 import { destinations, cityRanks, countryRanks } from './location-data-object';
-import { Injectable } from '../../../node_modules/@angular/core';
+import { Injectable } from '@angular/core';
 import { Pipe } from '@angular/core';
 export interface Destination {
   country: string,

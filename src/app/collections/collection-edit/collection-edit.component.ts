@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import { Guid } from '../../shared/global-functions';
 import * as collectionActions from '../store/collections.actions';
-import { ListEditorService, listEditorParams, item } from '../../shared/list-editor/list-editor.service';
+import { ListEditorService, listEditorParams, item } from '../../shared/list-editor.service';
 import { MemoryService } from '../../shared/memory.service';
 import { ProfileComplete } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '../../shared/store-selector.service';
@@ -81,19 +81,16 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
           if (this.profile){
             this.advanceForm = true;
           }
-          console.log("edit mode = true");
         } else {
           this.router.navigate(['../new'], { relativeTo: this.activeRoute })
         }
       } else {
         this.editMode = false;
-        console.log("edit mode = false");
         if (params['collection']) {
           this.router.navigate(['../new'], { relativeTo: this.activeRoute })
         }
       }
       if (collection) {
-        console.log("collection:",collection)
         this.editingCollection = collection;
         this.usedPackables = this.editingCollection.packables;
       }
@@ -129,7 +126,6 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
     })
   }
   onOption(action:string){
-    console.log(action);
     switch (action){
       case 'delete':
       this.onDelete();
@@ -150,7 +146,6 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
       name: name,
       activity: activity
     })
-    console.log(this.usedPackables);
 
     //check if it has activity rules. if there is, loop and push to rules formArray
     //check if it has weather rules. if there is, loop and push to rules formArray
@@ -252,9 +247,6 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
       packables: this.usedPackables
     }
 
-    console.log("newOriginalCollection:",newOriginalCollection); // for state
-    console.log("newCompleteCollection:",newCompleteCollection); // for memory
-    
     let profile = this.profile;
     if (!this.editMode) {
       // --> do we need to make sure newOriginalCollection has only original packables?

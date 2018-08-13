@@ -83,12 +83,12 @@ export class CollectionFactory {
         let completeCollection = this.storeSelector.getCompleteCollections([collection])[0]
         return completeCollection;
     }
-    public getActivityCollections = (collections: CollectionAny[]): {name:string,collectionId:string}[] =>{
+    public getActivityCollections = (collections: CollectionAny[]): Activity[] =>{
         return collections
             .map(c => this.storeSelector.getCollectionById(c.id))
             .filter(c => c.activity == true)
             .map(c => {
-                return {name: c.name, collectionId:c.id}
+                return {name: c.name, id:c.id}
             })
     }
 }

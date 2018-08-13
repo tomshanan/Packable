@@ -11,3 +11,13 @@ export class Trip {
     ) {
     }
 }
+
+export interface displayTrip {
+    id: string,
+    displayDate: string,
+    temp: string,
+    destinationName: string,
+    profileNames: string[],
+    activityNames: string[],
+    updated: string
+}

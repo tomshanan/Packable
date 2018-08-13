@@ -1,4 +1,4 @@
-import { item } from './list-editor/list-editor.service';
+import { item } from './list-editor.service';
 
 export function objectInArray(array: Object[], object: Object, property: string) {
     array = array.filter(x => x[property] == object[property])

@@ -8,21 +8,6 @@ export interface State {
 
 const initialState: State = {
     packables: [
-        new PackableOriginal('Ski Pants', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Shorts', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Jumper', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Socks', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Radio', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Sunglasses', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Towel', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Gloves', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('lip balm', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Earphones', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('t-shirt', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Jacket', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Ski Goggles', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Hat', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }]),
-        new PackableOriginal('Helmet', 'suitcase', [{ amount: 1, type: 'period', repAmount: 2 }])
     ]
 }
 export function packablesReducers(state = initialState, action: PackableActions.theActions) {

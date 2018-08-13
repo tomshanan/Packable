@@ -1,24 +1,22 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ApplicationRef, ChangeDetectorRef, Renderer2, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { Trip } from '../../shared/models/trip.model';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl, AbstractControl } from '@angular/forms';
 import { DestinationDataService, Destination } from '../../shared/location-data.service';
 import { Observable, Subscription } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { tap } from "rxjs/operators";
 import * as FromApp from '../../shared/app.reducers'
 import { Store } from '@ngrx/store';
 import { Profile } from '../../shared/models/profile.model';
 import { CollectionOriginal, Activity } from '../../shared/models/collection.model';
 import { combineLatest } from 'rxjs/observable/combineLatest';
 import * as moment from 'moment';
-import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material';
-import { listEditorParams, ListEditorService } from '../../shared/list-editor/list-editor.service';
-import { StoreSelectorService } from '../../shared/store-selector.service';
+import { MatAutocompleteTrigger } from '@angular/material';
+import { listEditorParams, ListEditorService } from '../../shared/list-editor.service';
 import { MemoryService } from '../../shared/memory.service';
 import { Guid } from '../../shared/global-functions';
+import * as tripActions from '../store/trip.actions';
 
 
 
@@ -69,10 +67,8 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private destService: DestinationDataService,
     private store: Store<FromApp.appState>,
-    private storeSelector: StoreSelectorService,
     private memoryService: MemoryService,
     private listEditorService: ListEditorService,
-    private renderer: Renderer2
   ) {
     this.tripForm = fb.group({
       destination: ['', [Validators.required,this.validator_destinationInvalid.bind(this)]],
@@ -99,6 +95,9 @@ export class EditTripComponent implements OnInit, AfterViewInit {
       this.profiles_obs)
       .subscribe(([params, collectionsState, profilesState]) => {
         this.routeParams = params;
+        if(params['trip'] && params['trip'] != 'new'){
+          this.editMode = true
+        }
         this.allProfiles = profilesState.profiles;
         this.allActivities = collectionsState.collections.filter(x => x.activity == true).map(col => {
           return {
@@ -109,8 +108,8 @@ export class EditTripComponent implements OnInit, AfterViewInit {
       })
     this.destArray = this.destService.destinations;
     this.editingTrip = this.memoryService.getTrip() || null;
-    this.navSetup();
     this.formInit();
+    this.navSetup();
   }
 
   navSetup() {
@@ -122,7 +121,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
         iconClass: 'fas fa-times'
       },
       right: {
-        enabled: false,
+        enabled: this.tripForm.valid,
         text: this.editMode ? 'Save' : 'Create',
         iconClass: 'fas fa-check'
       },
@@ -135,8 +134,8 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     //   })
     //   && this.advancedForm
     //   && this.navParams.options.push({ name: 'Restore Default Settings', actionName: 'restore' });
-    this.tripForm.statusChanges.subscribe(status => {
-      this.navParams.right.enabled = status == 'VALID' ? true : false;
+    this.tripForm.statusChanges.subscribe(() => {
+      this.navParams.right.enabled = this.tripForm.valid;
     })
   }
 
@@ -158,9 +157,6 @@ export class EditTripComponent implements OnInit, AfterViewInit {
       this.destinationName = this.destService.cityById(this.editingTrip.id);
       this.fromDate = this.editingTrip.startDate ? moment(this.editingTrip.startDate, 'YYYY-MM-DD') : null;
       this.toDate = this.editingTrip.endDate ? moment(this.editingTrip.endDate, 'YYYY-MM-DD') : null;
-      
-      
-      console.log(this.tripForm.value)
     }
     this.sortProfiles()
     this.sortActivities();
@@ -333,6 +329,20 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     )
   }
   return() {
+    this.memoryService.resetAll();
     this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+  }
+
+  onSubmit(){
+    if(this.tripForm.valid){
+      const trip = this.getTripObject();
+      if(this.editMode){
+        this.store.dispatch(new tripActions.editTrip(trip))
+      } else {
+        this.store.dispatch(new tripActions.addTrip(trip))
+      }
+      this.memoryService.resetAll();
+      this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+    }
   }
 }

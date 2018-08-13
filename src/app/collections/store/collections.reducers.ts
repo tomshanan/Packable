@@ -9,22 +9,7 @@ export interface State {
 }
 
 const initialState = {
-    collections: [
-        new CollectionOriginal(
-            'Winter Clothes',
-            false,
-            [],
-            [],
-            []
-        ),
-        new CollectionOriginal(
-            'Summer Clothes',
-            true,
-            [],
-            [],
-            []
-        )
-    ],
+    collections: [],
 }
 
 export function collectionsReducers(state: State = initialState, action: CollectionActions.theActions) {
@@ -35,7 +20,6 @@ export function collectionsReducers(state: State = initialState, action: Collect
                 collections: [...state.collections, action.payload]
             }
         case CollectionActions.EDIT_ORIGINAL_COLLECTION:
-            console.log('Payload:',action.payload);
             const editId = action.payload.id;
             const editIndex = state.collections.findIndex(c => c.id == editId);
             const collection = state.collections[editIndex]

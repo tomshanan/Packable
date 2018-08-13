@@ -8,11 +8,8 @@ export interface State {
     profiles: Profile[];
 }
 
-let profile1 = new Profile(Guid.newGuid(),'Tom',[],[])
-let profile2 = new Profile(Guid.newGuid(),'Dan',[],[])
-
 const initialState: State = {
-    profiles: [ profile1, profile2]
+    profiles: []
 }
 export function profileReducers(state = initialState, action: ProfileActions.theActions) {
     switch (action.type) {

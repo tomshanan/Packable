@@ -35,9 +35,7 @@ export class CollectionsComponent implements OnInit,OnDestroy {
     this.collectionState_obs = this.store.select('collections');
     this.collectionState_sub = this.collectionState_obs.subscribe(state =>{
       this.collections = [...state.collections];
-      console.log('before getCompleteCollections:',this.collections)
       this.collections = this.selectorService.getCompleteCollections(this.collections);
-      console.log('after getCompleteCollections:',this.collections)
     })
   }
 

@@ -11,24 +11,24 @@
         <h4 class="text-center text-success p-2 font-weight-light">New Trip</h4>
     </div>
   </a>
-  <div class="trip-sizing" *ngFor="let number of iterator">
+  <div class="trip-sizing" *ngFor="let trip of trips">
     <div class="grid-border trip-content py-3 py-1 d-flex flex-column justify-content-between align-content-center">
       <span class="text-center">
-        <h1 class="m-0 font-weight-light">San Francisco</h1>
+        <h1 class="m-0 font-weight-light">{{trip.destinationName}}</h1>
         <h5 class="m-0 font-weight-light">
-          7-14 November
-          <br> 13-24ºC
+          {{trip.displayDate}}
+          <br> {{trip.temp}}
         </h5>
       </span>
       <span class="text-center">
-        <h6 class="">Tom, Steven, Daniel
+        <h6 class="">{{trip.profileNames | join:', '}}
           <br>
-          <span class="font-weight-normal">Hiking, Swimming, Car Hire</span>
+          <span class="font-weight-normal">{{trip.activityNames | join:', '}}</span>
         </h6>
       </span>
       <span class="d-flex flex-column align-content-stretch trip-buttons">
-        <button class="btn btn-outline-primary" type="button">See Packing List</button>
-        <a class="inline-link text-center p-2">Edit Trip</a>
+        <button class="btn btn-outline-primary" type="button" (click)="viewPackingList(trip)">See Packing List</button>
+        <a class="inline-link text-center p-2" (click)="editTrip(trip)">Edit Trip</a>
       </span>
     </div>
   </div>

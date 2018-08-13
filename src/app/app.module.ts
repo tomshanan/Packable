@@ -23,7 +23,7 @@ import { CollectionsComponent } from './collections/collections.component';
 import { CollectionEditComponent } from './collections/collection-edit/collection-edit.component';
 import { ItemSelectorComponent } from './shared/item-selector/item-selector.component';
 import { ProfileEditComponent } from './profiles/profile-edit/profile-edit.component';
-import { ListEditorService } from './shared/list-editor/list-editor.service';
+import { ListEditorService } from './shared/list-editor.service';
 import { MemoryService } from './shared/memory.service';
 import { StoreSelectorService } from './shared/store-selector.service';
 import { CollectionFactory } from './shared/models/collection.model';
@@ -36,6 +36,7 @@ import { EditTripComponent } from './trips/edit-trip/edit-trip.component';
 import { DateRangeSelectorComponent } from './trips/edit-trip/date-range-selector/date-range-selector.component';
 import { DestinationDataService } from './shared/location-data.service';
 import { FullPlaceNamePipe } from './shared/pipes/full-place-name.pipe';
+import { PackingListComponent } from './trips/packing-list/packing-list.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { FullPlaceNamePipe } from './shared/pipes/full-place-name.pipe';
     NavListComponent,
     EditTripComponent,
     DateRangeSelectorComponent,
-    FullPlaceNamePipe
+    FullPlaceNamePipe,
+    PackingListComponent
       ],
   imports: [
     BrowserModule,

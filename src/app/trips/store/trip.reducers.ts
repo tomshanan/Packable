@@ -32,6 +32,15 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
                 ...state,
                 trips: [...updatedTrips]
             }
+        case TripActions.REMOVE_TRIP:
+            let removeId = action.payload;
+            let removeIndex = state.trips.findIndex(p=>p.id == removeId)
+            const removeTrips = state.trips.slice();
+            removeTrips.splice(removeIndex,1);
+            return {
+                ...state,
+                trips: [...removeTrips]
+            }
         case TripActions.UPDATE_PACKING_LIST:
             const newList = action.payload;
             const updateListIndex = state.packingLists.findIndex(p=>p.tripId === newList.tripId);
@@ -48,16 +57,7 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
                     packingLists: [...state.packingLists, newList]
                 }
             }
-        case TripActions.REMOVE_TRIP:
-            let removeId = action.payload;
-            let removeIndex = state.trips.findIndex(p=>p.id == removeId)
-            const removeTrips = state.trips.slice();
-            removeTrips.splice(removeIndex,1);
-            return {
-                ...state,
-                trips: [...removeTrips]
-            }
         default:
             return state;
-    }
+        }
 }

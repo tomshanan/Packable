@@ -2,6 +2,8 @@ import { MatSlideToggleModule, MatChipsModule, MatAutocompleteModule } from '@an
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { NgModule } from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 
 
 @NgModule({
@@ -10,7 +12,8 @@ import {MatIconModule} from '@angular/material/icon';
         MatAutocompleteModule,
         MatChipsModule,
         MatFormFieldModule,
-        MatIconModule
+        MatIconModule,
+        MatCheckboxModule
     ],
 })
 export class AppMaterialModule { }

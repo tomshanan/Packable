@@ -100,6 +100,10 @@ export class StoreSelectorService{
             }
         })
     }
+    getCompleteProfilesByIds(ids:string[]): ProfileComplete[]{
+        let profiles = ids.map(id=>this.getProfileById(id))
+        return this.getCompleteProfiles(profiles);
+    }
     getCollectionById(id:string):CollectionOriginal {
         let index = this.originalCollections.findIndex(x => x.id === id);
         return index >= 0 ? this.originalCollections[index]: null;

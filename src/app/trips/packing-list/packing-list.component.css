@@ -1,0 +1,10 @@
+.strikeThrough {
+    text-decoration-line: line-through;
+    color: rgb(170, 170, 170);
+}
+ul.packingList {
+    padding: 0;
+}
+ul.packingList>li{
+    list-style: none;
+}

@@ -1,3 +1,31 @@
-<p>
-  packing-list works!
-</p>
+<div *ngIf="sortedList">
+  <h1>Trip Info</h1>
+  <p>number of days: {{packingList.data.totalDays}}</p>
+  <p>number of nights: {{packingList.data.totalNights}}</p>
+  <p>Last Save: {{lastSave}}</p>
+  <button class="btn btn-info" type="button" (click)="generateList(trip)">Update and Reset List</button>
+  <div class="row">
+    <div *ngFor="let profile of sortedList" class="col-12 col-md-6 col-lg-4">
+      <h1>{{profile.header}}</h1>
+      <div *ngFor="let collection of profile.collections">
+        <h5>{{collection.header}}</h5>
+        <ul class="packingList">
+          <li *ngFor="let packable of collection.packables">
+            <mat-checkbox [checked]="packable.checked" (change)="toggleCheck(packable)">
+              {{packable.quantity}} x 
+              <span style="text-transform: capitalize">
+                   {{getPackableName(packable)}} 
+              </span>
+            </mat-checkbox>
+            <span [ngbPopover]="quantityReasons" placement="right" triggers="click:click">
+              <i class="far fa-question-circle text-muted pointer"></i>
+            </span>
+            <ng-template #quantityReasons>
+              <p class="p-0 m-0 small" *ngFor="let reason of packable.quantityReasons" [class.strikeThrough]="!reason.active">{{reason.text}}</p>
+            </ng-template>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

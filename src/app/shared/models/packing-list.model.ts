@@ -1,3 +1,13 @@
+import { Destination } from '../location-data.service';
+export class packingListData {
+    destination:Destination = null;
+    totalDays:number = null;
+    totalNights:number = null;
+    
+    constructor(){
+    }
+}
+
 export class Reason {
     constructor(
         public text: string,
@@ -18,7 +28,7 @@ export class PackingList {
     constructor(
         public tripId: string,
         public updated: string,
-        public data: {},
+        public data: packingListData,
         public packables: PackingListPackable[] =[],
     ){}
 

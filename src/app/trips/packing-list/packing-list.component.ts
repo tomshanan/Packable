@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Pipe } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../shared/app.reducers'
 import * as tripActions from '../store/trip.actions';
 import { Observable } from 'rxjs/Observable';
-import { PackingList, PackingListPackable, Reason } from '../../shared/models/packing-list.model';
+import { PackingList, PackingListPackable, Reason, packingListData } from '../../shared/models/packing-list.model';
 import { Subscription } from 'rxjs';
 import { State as tripState} from '../store/trip.reducers';
 import { MemoryService } from '../../shared/memory.service';
@@ -14,6 +14,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { StoreSelectorService } from '../../shared/store-selector.service';
 import { DestinationDataService } from '../../shared/location-data.service';
 import { PackableBlueprint, ActivityRule, WeatherRule } from '../../shared/models/packable.model';
+import { WindowService } from '../../shared/window.service';
+import { Profile } from '../../shared/models/profile.model';
+import { navParams } from '../../mobile-nav/mobile-nav.component';
+import { WeatherService } from '../../shared/weather.service';
 
 
 interface collectionList{
@@ -30,18 +34,18 @@ interface profileList {
 @Component({
   selector: 'app-packing-list',
   templateUrl: './packing-list.component.html',
-  styleUrls: ['./packing-list.component.css']
+  styleUrls: ['../../shared/css/full-flex.css','./packing-list.component.css']
 })
 export class PackingListComponent implements OnInit, OnDestroy {
   trip_obs: Observable<tripState>
-  
   state_subscription: Subscription;
-
-
   packingList: PackingList;
   sortedList: profileList[];
-
+  saveTimeout;
+  lastSave:string;
   trip: Trip;
+  navParams:navParams;
+
   constructor(
     private store: Store<fromApp.appState>,
     private memoryService: MemoryService,
@@ -49,25 +53,48 @@ export class PackingListComponent implements OnInit, OnDestroy {
     private activatedRoute:ActivatedRoute,
     private selectorService: StoreSelectorService,
     private destService: DestinationDataService,
+    private windowService: WindowService,
+    private weatherService: WeatherService
   ) { }
 
   ngOnInit() {
     // get packinglist for trip
-    let memoryTrip = this.memoryService.getTrip();
+    let memoryTrip = this.memoryService.getTrip()
     if(!!memoryTrip){
-      this.trip_obs = this.store.select('trips');
+      this.trip_obs = this.store.select('trips')
+      
       this.state_subscription = this.trip_obs.subscribe(tripState =>{
         this.packingList = tripState.packingLists.find(pl=> pl.tripId == memoryTrip.id);
         this.trip = tripState.trips.find(trip => trip.id == memoryTrip.id);
+        
         if(!this.packingList){
           this.generateList(this.trip);
         } else {
-          this.sortedList = this.sortPackingList(this.packingList)
+          if(!this.sortedList){
+            this.sortedList = this.sortPackingList(this.packingList)
+          }
           this.lastSave = moment().format('MMM Do YYYY, H:mm:ss')
         }
       })
+      this.navSetup();
     } else {
-      this.router.navigate(['/trips'])
+      this.return();
+    }
+  }
+  navSetup() {
+    this.navParams = {
+      header:  this.packingList.data.destination.fullName,
+      left: {
+        enabled: true,
+        text: 'Trips',
+        iconClass: 'fas fa-chevron-left'
+      },
+      right: {
+        enabled: true,
+        text: '',
+        iconClass: 'fas fa-ellipsis-h'
+      },
+      options: []
     }
   }
   toggleCheck(packabale:PackingListPackable){
@@ -77,8 +104,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     this.packingList.packables[index].checked = !this.packingList.packables[index].checked;
     this.delayedSave();
   }
-  saveTimeout;
-  lastSave:string;
+  
   delayedSave(){
     clearTimeout(this.saveTimeout)
     this.saveTimeout = setTimeout(()=>{
@@ -87,12 +113,8 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   generateList(trip: Trip):void{
-    let newPackingList =  new PackingList(trip.id,moment().format(),{});
-    let data = {
-      destination: null,
-      totalDays: null,
-      totalNights: null,
-    }
+    let newPackingList =  new PackingList(trip.id,moment().format(),null);
+    let data = new packingListData()
     let dates = this.getAllDates(trip.startDate,trip.endDate);
     data.totalDays = dates.length;
     data.totalNights = dates.length-1;
@@ -201,7 +223,8 @@ export class PackingListComponent implements OnInit, OnDestroy {
     })
     newPackingList.data = data;
     this.store.dispatch(new tripActions.updatePackingList(newPackingList))
-    //return newPackingList
+    this.packingList = newPackingList;
+    this.sortedList = this.sortPackingList(this.packingList)
   }
 
   sortPackingList(packingList:PackingList):profileList[]{
@@ -263,12 +286,28 @@ export class PackingListComponent implements OnInit, OnDestroy {
       return 'General'
     }
   }
+
+  countCompleted(profile:profileList):number{
+    return profile.collections.reduce((total,col,i,arr)=>{
+      return total + col.packables.reduce((subtotal,packable)=>{
+        return packable.checked ? subtotal + 1 : subtotal;
+      }, 0)
+    }, 0)
+  }
+  countPackables(profile:profileList):number{
+    return profile.collections.reduce((total,col,i,arr)=>{
+      return total + col.packables.length
+    },0);
+  }
+  checkCompleted(profile:profileList):boolean{
+    return this.countPackables(profile)===this.countCompleted(profile)
+  }
+
   ngOnDestroy(){
     this.state_subscription && this.state_subscription.unsubscribe();
   }
 
-
-
-
-
+  return(){
+    this.router.navigate(['/trips'])
+  }
 }

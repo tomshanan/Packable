@@ -1,7 +1,8 @@
-export type QuantityType = "period" | "profile" | "trip";
 import { Guid } from '../global-functions';
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../store-selector.service';
+
+export type QuantityType = "period" | "profile" | "trip";
 
 export interface QuantityRule {
     amount: number,

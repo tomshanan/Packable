@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import {HttpClientModule} from '@angular/common/http'
 import { AppRoutingModule } from './app-routing.module';
@@ -37,6 +38,9 @@ import { DateRangeSelectorComponent } from './trips/edit-trip/date-range-selecto
 import { DestinationDataService } from './shared/location-data.service';
 import { FullPlaceNamePipe } from './shared/pipes/full-place-name.pipe';
 import { PackingListComponent } from './trips/packing-list/packing-list.component';
+import { WindowService } from './shared/window.service';
+import { WeatherService } from './shared/weather.service';
+
 
 @NgModule({
   declarations: [
@@ -68,12 +72,13 @@ import { PackingListComponent } from './trips/packing-list/packing-list.componen
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
+    BrowserAnimationsModule,
     AppMaterialModule,
     NgbModule.forRoot(),
     StoreModule.forRoot(reducers)
 
   ],
-  providers: [ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory, DestinationDataService],
+  providers: [WindowService, ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory, DestinationDataService, WeatherService],
   bootstrap: [AppComponent],
   entryComponents: [ModalComponent]
 })

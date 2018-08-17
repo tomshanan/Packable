@@ -43,7 +43,7 @@ export class DestinationDataService {
   }
   cityById(id: string): string {
     let dest = this._destinations.find(x => x.id == id);
-    return dest ? this._destinations.find(x => x.id == id).city : undefined;
+    return dest ? dest.city : undefined;
   }
   countryById(id: string): string {
     return this._destinations.find(x => x.id == id).country

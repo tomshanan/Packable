@@ -299,3 +299,39 @@ button:hover+.conditional-danger{
 .dropdown-toggle::after{
     border:none!important;
 }
+@keyframes fadeup {
+    0%{
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    50%{
+        opacity: 1;
+    }
+    100%{
+        transform: translateY(0);
+        opacity:1;
+    }
+}
+@keyframes fadein {
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity:1;
+    }
+}
+.modal>.modal-dialog{
+    animation-name: fadeup;
+    animation-duration: 300ms;
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+}
+.modal .modal-body {
+    animation-name: fadein;
+    animation-duration: 300ms;
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+    animation-delay: 100ms;
+    animation-fill-mode: both;
+}

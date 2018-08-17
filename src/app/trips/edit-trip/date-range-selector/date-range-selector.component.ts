@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, HostListener, Output, EventEmitter, Input } from '@angular/core';
 import { NgbDateStruct, NgbCalendar, NgbInputDatepicker, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
+import { WindowService } from '../../../shared/window.service';
 
 const equals = (one: NgbDateStruct, two: NgbDateStruct) =>
   one && two && two.year === one.year && two.month === one.month && two.day === one.day;
@@ -21,11 +22,11 @@ const after = (one: NgbDateStruct, two: NgbDateStruct) =>
 })
 export class DateRangeSelectorComponent implements OnInit {
   @ViewChild('d') d: NgbInputDatepicker;
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    this.innerWidth = window.innerWidth;
-    this.datepickerSize = this.innerWidth > 500 ? 2 : 1;
-  }
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event) {
+  //   this.innerWidth = window.innerWidth;
+  //   this.datepickerSize = this.innerWidth > 500 ? 2 : 1;
+  // }
   @Output() datesSelected = new EventEmitter<{ from: moment.Moment, to: moment.Moment }>();
 
   public innerWidth: any;
@@ -40,7 +41,7 @@ export class DateRangeSelectorComponent implements OnInit {
   selectorOpen = false;
   minDate: NgbDateStruct;
 
-  constructor(private calendar: NgbCalendar) {
+  constructor(private calendar: NgbCalendar, private windowSize:WindowService) {
     this.minDate = calendar.getToday();
   }
 

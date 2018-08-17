@@ -23,8 +23,8 @@
           </div>
         </div>
       </div>
-      <div class="form-border" *ngIf="!editMode || !advancedForm">
-        <div class="form-row">
+      <div class="form-border" >
+        <div class="form-row mb-3" *ngIf="!editMode || !advancedForm">
           <div class="col">
             <div class="form-group mb-0">
               <label for="name">Name your Packable</label>
@@ -54,17 +54,11 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="form-border">
-        <div class="form-border-header">
-          <h5>Quantity</h5>
-          <a (click)="openModal(quantityModal)" class="mr-auto ml-1">
-            <i class="far fa-question-circle small text-info"></i>
-          </a>
-        </div>
         <div class="form-row" formArrayName="quantityRules">
-          <div class="col-12 my-1">
-            <label>How many would you need?</label>
+          <div class="col-12 mb-1">
+            <label class="m-0">How many would you need?</label> <a (click)="openModal(quantityModal)" class="mr-auto ml-1">
+                <i class="far fa-question-circle small text-info"></i>
+              </a>
           </div>
           <div class="col-12 my-1 rule-row" *ngFor="let qRule of packableForm.get('quantityRules').controls; let i = index">
             <div class="my-1" [formGroupName]='i'>
@@ -89,8 +83,8 @@
                   <a (click)="openModal(periodsModal)">
                     <i class="far fa-question-circle small text-info"></i>
                   </a>
-                  <a class="text-danger ml-auto pr-2 pl-2" *ngIf="i != 0" (click)="removeQuantityRule(i)">
-                    <i class="fas fa-trash"></i>
+                  <a class="text-danger ml-auto pr-2 pl-2" *ngIf="packableForm.get('quantityRules').controls.length >1" (click)="removeQuantityRule(i)">
+                    <i class="fas fa-times"></i>
                   </a>
                 </div>
               </div>

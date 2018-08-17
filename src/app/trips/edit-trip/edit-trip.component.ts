@@ -109,7 +109,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     this.destArray = this.destService.destinations;
     this.editingTrip = this.memoryService.getTrip() || null;
     this.formInit();
-    this.navSetup();
+    
   }
 
   navSetup() {
@@ -154,12 +154,14 @@ export class EditTripComponent implements OnInit, AfterViewInit {
       this.editingTrip.activities.forEach(activityId => {
         this.onToggleActivity(activityId)
       })
-      this.destinationName = this.destService.cityById(this.editingTrip.id);
+      this.destinationName = this.destService.cityById(this.editingTrip.destinationId);
       this.fromDate = this.editingTrip.startDate ? moment(this.editingTrip.startDate, 'YYYY-MM-DD') : null;
       this.toDate = this.editingTrip.endDate ? moment(this.editingTrip.endDate, 'YYYY-MM-DD') : null;
     }
+    
     this.sortProfiles()
     this.sortActivities();
+    this.navSetup();
   }
 
   // PROFILE SELECTOR

@@ -1,31 +1,75 @@
-<div *ngIf="sortedList">
-  <h1>Trip Info</h1>
-  <p>number of days: {{packingList.data.totalDays}}</p>
-  <p>number of nights: {{packingList.data.totalNights}}</p>
-  <p>Last Save: {{lastSave}}</p>
-  <button class="btn btn-info" type="button" (click)="generateList(trip)">Update and Reset List</button>
-  <div class="row">
-    <div *ngFor="let profile of sortedList" class="col-12 col-md-6 col-lg-4">
-      <h1>{{profile.header}}</h1>
-      <div *ngFor="let collection of profile.collections">
-        <h5>{{collection.header}}</h5>
-        <ul class="packingList">
-          <li *ngFor="let packable of collection.packables">
-            <mat-checkbox [checked]="packable.checked" (change)="toggleCheck(packable)">
-              {{packable.quantity}} x 
-              <span style="text-transform: capitalize">
-                   {{getPackableName(packable)}} 
-              </span>
-            </mat-checkbox>
-            <span [ngbPopover]="quantityReasons" placement="right" triggers="click:click">
-              <i class="far fa-question-circle text-muted pointer"></i>
-            </span>
-            <ng-template #quantityReasons>
-              <p class="p-0 m-0 small" *ngFor="let reason of packable.quantityReasons" [class.strikeThrough]="!reason.active">{{reason.text}}</p>
-            </ng-template>
-          </li>
-        </ul>
+<div class="full-flex">
+    <div class="ff-row" *ngIf="windowService.min_sm && windowService.max_sm">
+        <a class="inline-link" (click)="return()"><i class="fas fa-chevron-left"></i> Trips</a>
+  </div>
+  <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="null" *ngIf="navParams"></app-mobile-nav>
+  <div class="ff-row-main">
+    <ng-template #loading><i class="fas fa-sync-alt fa-spin"></i>Loading List...</ng-template>
+    <div *ngIf="sortedList; else loading" class="mt-1">
+      <div class="row pb-2" *ngIf="windowService.min_sm">
+        <div class="col-12">
+          <div class="row">
+            <div *ngFor="let profile of sortedList; let i = index" class="col-sm-6 col-lg-4">
+              <h1>{{profile.header}}
+                <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
+              </h1>
+              <div *ngFor="let collection of profile.collections">
+                <h5>{{collection.header}}</h5>
+                <ng-content *ngTemplateOutlet="packingListTemplate,context:{$implicit:collection}">
+                </ng-content>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row pb-2" *ngIf="windowService.max_xs">
+        <div class="col-12">
+          <mat-accordion multi="true">
+            <mat-expansion-panel *ngFor="let profile of sortedList; let i = index">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <h5 class="m-0">{{profile.header}}
+                    <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
+                  </h5>
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{countCompleted(profile)}} / {{countPackables(profile)}}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <div *ngFor="let collection of profile.collections">
+                <h6>{{collection.header}}</h6>
+                <ng-content *ngTemplateOutlet="packingListTemplate,context:{$implicit:collection}">
+                </ng-content>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+
+
+<ng-template #packingListTemplate let-collection let-i>
+  <ul class="packingList">
+    <li *ngFor="let packable of collection.packables">
+      <mat-checkbox [checked]="packable.checked" (change)="toggleCheck(packable)">
+        <span class="packableText" [class.completed]="packable.checked">
+          {{packable.quantity}} x
+          <span style="text-transform: capitalize">
+            {{getPackableName(packable)}}
+          </span>
+        </span>
+
+      </mat-checkbox>
+      <span [ngbPopover]="quantityReasons" placement="{{windowService.max_xs ? 'bottom' : 'right'}}" triggers="click:mouseleave"
+        container="body">
+        <i class="far fa-question-circle calculation-popover-trigger"></i>
+      </span>
+      <ng-template #quantityReasons>
+        <p class="p-0 m-0 small" *ngFor="let reason of packable.quantityReasons" [class.strikeThrough]="!reason.active">{{reason.text}}</p>
+      </ng-template>
+    </li>
+  </ul>
+</ng-template>

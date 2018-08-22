@@ -18,6 +18,9 @@ import { StoreSelectorService } from '../../shared/store-selector.service';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent, modalConfig } from '../../modal/modal.component';
+import { WindowService } from '../../shared/window.service';
+import { WeatherRule, weatherOptions } from '../../shared/models/weather.model';
+import { Guid } from '../../shared/global-functions';
 
 @Component({
   selector: 'app-packable-edit',
@@ -36,11 +39,9 @@ export class PackableEditComponent implements OnInit, OnDestroy {
   usedNames = [];
   profile: ProfileComplete;
   collection: CollectionComplete;
-
   packablesState_obs: Observable<{ packables: PackableOriginal[] }>;
-
   RoutesAndPackablesSub: Subscription;
-
+  weatherRules = new WeatherRule();
   constructor(
     private store: Store<fromApp.appState>,
     private router: Router,
@@ -48,8 +49,11 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     private memoryService: MemoryService,
     private listService: ListEditorService,
     private packableFactory: PackableFactory,
-    private modalService: NgbModal
-  ) { }
+    private modalService: NgbModal,
+    private windowService: WindowService
+  ) { 
+    
+  }
 
   ngOnInit() {
     this.packableForm = new FormGroup({
@@ -57,7 +61,7 @@ export class PackableEditComponent implements OnInit, OnDestroy {
       'icon': new FormControl({ value: 'baseball-ball', disabled: false }, [Validators.required]), // has default
       'quantityRules': new FormArray([]),
       'activityRules': new FormArray([]),
-      'weatherRules': new FormArray([])
+      'weatherRules': new FormControl(null)
     });
     this.profile = this.memoryService.getProfile();
     this.collection = this.memoryService.getCollection();
@@ -80,6 +84,7 @@ export class PackableEditComponent implements OnInit, OnDestroy {
           if (memoryPackable) {
             this.editMode = true;
             this.editingPackable = memoryPackable;
+            this.weatherRules = this.editingPackable.weatherRules;
             this.editingId = this.editingPackable.id;
             this.initForm()
           } else {
@@ -158,6 +163,15 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     } else {
       this.addNewRule();
     }
+    if (this.editMode == true && this.editingPackable.weatherRules != null) {
+      this.packableForm.patchValue({
+        weatherRules: this.editingPackable.weatherRules
+      })
+    } else {
+      this.packableForm.patchValue({
+        weatherRules: new WeatherRule()
+      })
+    }
   }
 
   validate_usedName(control: FormControl): { [s: string]: boolean } {
@@ -196,6 +210,7 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     (<FormArray>this.packableForm.get('quantityRules')).removeAt(i);
   }
 
+  
   onSubmit() {
     if (this.advancedForm && this.editMode) {
       this.packableForm.get('name').enable();
@@ -203,13 +218,10 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     }
     let formData = this.packableForm.value;
     let newPackableOriginal = new PackableOriginal(formData.name, formData.icon, formData.quantityRules);
-    if (this.editMode) {
-      newPackableOriginal.id = this.editingPackable.id;
-    }
-    if (this.advancedForm) {
-      newPackableOriginal.activityRules = formData.activityRules;
-      newPackableOriginal.weatherRules = formData.weatherRules;
-    }
+    newPackableOriginal.weatherRules = formData.weatherRules;
+    newPackableOriginal.id = this.editMode ? this.editingPackable.id : Guid.newGuid();
+    
+    
     let newPackablePrivate = this.packableFactory.newPrivatePackable(newPackableOriginal);
     let newPackableComplete = this.packableFactory.makeComplete(newPackablePrivate)
     let profile = this.profile;
@@ -283,7 +295,11 @@ export class PackableEditComponent implements OnInit, OnDestroy {
       })
     }
   }
-
+  setWeatherRules(weatherRule: WeatherRule){
+    this.packableForm.patchValue({
+      weatherRules: weatherRule
+    })
+  }
   return() {
     this.memoryService.resetPackable();
     if (this.profile && this.editMode) {

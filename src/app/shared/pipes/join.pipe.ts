@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
     name: 'join'
 })
-
 export class joinPipe implements PipeTransform {
     transform(array:any[], del: string, prop?: 'string') {
         if (array.length === 0){

@@ -1,0 +1,42 @@
+<div class="form-row py-1">
+  <div class="col-12">
+    <mat-slide-toggle #minTempToggle [checked]="weatherRule.minTemp != null">
+    </mat-slide-toggle>&ensp;
+    <span [class.text-disabled]="!minTempToggle.checked">Pack if {{ windowService.max_xs ? "temp'" : 'temperature'}} is over</span>&ensp;
+    <mat-form-field class="mini-mat-form-field tempSelector" floatLabel="never">
+      <mat-select (selectionChange)="minChange($event)" [disabled]="!minTempToggle.checked" [value]="!minTempToggle.checked ? null : (weatherRule.minTemp || 20)" (click)="minTempToggle.checked=true">
+        <mat-option>Any</mat-option>
+        <mat-option *ngFor="let t of tempOptions" [value]="t">{{t}}&#176;C</mat-option>
+      </mat-select>
+      <mat-label>Any</mat-label>
+    </mat-form-field>
+  </div>
+</div>
+
+<div class="form-row py-1">
+  <div class="col-12">
+    <mat-slide-toggle #maxTempToggle [checked]="weatherRule.maxTemp != null">
+    </mat-slide-toggle>&ensp;
+    <span [class.text-disabled]="!maxTempToggle.checked">Pack if {{ windowService.max_xs ? "temp'" : 'temperature'}} is below</span>&ensp;
+    <mat-form-field class="mini-mat-form-field tempSelector" floatLabel="never" appearance="legacy">
+      <mat-select (selectionChange)="maxChange($event)" [disabled]="!maxTempToggle.checked" [value]="!maxTempToggle.checked ? null : (weatherRule.maxTemp || 19)" (click)="maxTempToggle.checked=true">
+        <mat-option>Any</mat-option>
+        <mat-option *ngFor="let t of tempOptions" [value]="t">{{t}}&#176;C</mat-option>
+      </mat-select>
+      <mat-label>Any</mat-label>
+    </mat-form-field>
+  </div>
+</div>
+<div class="form-row pt-2 pb-1">
+  <div class="col-12">
+    Only pack for trips with:
+  </div>
+</div>
+<div class="form-row py-1">
+  <div class="col-4 col-sm-3 col-md-4 col-lg-2" *ngFor="let weather of weatherOptions">
+    <mat-checkbox [checked]="isChecked(weather)" (change)="toggleCheckbox(weather)">{{weather | titlecase}}</mat-checkbox>
+  </div>
+  <div class="col-12">
+    <small><a class="inline-link" (click)="select('all')">Select All</a> | <a class="inline-link" (click)="select('none')">Select None</a></small>
+  </div>
+</div>

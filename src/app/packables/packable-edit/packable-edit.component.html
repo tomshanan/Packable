@@ -23,10 +23,21 @@
           </div>
         </div>
       </div>
-      <div class="form-border" >
+      <div class="form-border">
         <div class="form-row mb-3" *ngIf="!editMode || !advancedForm">
-          <div class="col">
-            <div class="form-group mb-0">
+          <div class="col-12">
+              <mat-form-field class="w-100">
+                  <input matInput placeholder="Name your Packable" name="name" formControlName="name">
+                  <mat-hint>(a-z, A-Z, 0-9)</mat-hint>
+                  <mat-error *ngIf="packableForm.get('name').hasError('pattern') && !emailFormControl.hasError('usedName')">
+                      Please select a valid name (a-z, A-Z, 0-9)
+                  </mat-error>
+                  <mat-error *ngIf="packableForm.get('name').hasError('usedName')">
+                      This Packable name is already used
+                  </mat-error>
+                </mat-form-field>
+
+            <!-- <div class="form-group mb-0" *ngIf="false">
               <label for="name">Name your Packable</label>
               <div class="position-relative">
                 <input type="text" class="form-control pr-2" name="name" placeholder="e.g T-Shirt" formControlName="name">
@@ -34,15 +45,15 @@
                   <i class="fa fa-times text-danger"></i>
                 </a>
               </div>
-            </div>
-          </div>
+            </div>-->
+          </div> 
           <div class="col-4">
             <div class="form-group mb-0">
               <label for="icon">Select Icon</label>
               <input type="text" class="form-control" name="icon" placeholder="" formControlName="icon" disabled>
             </div>
           </div>
-          <div class="col-12">
+          <!-- <div class="col-12">
             <span class="small text-muted" *ngIf="editMode && advancedForm">You can only change the name and icon if you edit the original Packable, or create a new one.</span>
             <div class="" *ngIf="packableForm.get('name').invalid && packableForm.get('name').touched">
               <span class="invalid-feedback d-block" *ngIf="packableForm.get('name').errors['usedName']">
@@ -52,42 +63,46 @@
                 Please select a valid name (a-z, A-Z, 0-9)
               </span>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="form-row" formArrayName="quantityRules">
           <div class="col-12 mb-1">
-            <label class="m-0">How many would you need?</label> <a (click)="openModal(quantityModal)" class="mr-auto ml-1">
+            <label class="m-0">How many would you need?</label>
+            <a (click)="openModal(quantityModal)" class="mr-auto ml-1">
+              <i class="far fa-question-circle small text-info"></i>
+            </a>
+          </div>
+          <div class="col-12 rule-row py-1 my-1" *ngFor="let qRule of packableForm.get('quantityRules').controls; let i = index" [formGroupName]='i'>
+            <div class="rule-input-group">
+              <span *ngIf="i != 0">
+                <span class="d-block d-sm-none">+</span>
+                <span class="d-none d-sm-block">and </span>
+              </span>
+              <input type="number" class="form-control rule-input" name="amount" placeholder="" formControlName="amount" min="1">
+              <span> for every </span>
+            </div>
+            <div class="rule-input-group" style="flex-grow: 1">
+              <span *ngIf="qRule.controls.type.value == 'period'">
+                <input type="number" class="form-control rule-input" name="repAmount" placeholder="" formControlName="repAmount" min="1">
+              </span>
+              <select class="form-control rule-input" name="type" formControlName="type">
+                <option selected value="period" class="form-control">Day{{qRule.controls.repAmount.value>1 ? "s" : ""}}</option>
+                <option value="profile" class="form-control">Profile</option>
+                <option value="trip" class="form-control">Trip</option>
+              </select>
+              <a (click)="openModal(periodsModal)">
                 <i class="far fa-question-circle small text-info"></i>
               </a>
-          </div>
-          <div class="col-12 my-1 rule-row" *ngFor="let qRule of packableForm.get('quantityRules').controls; let i = index">
-            <div class="my-1" [formGroupName]='i'>
-              <div class="d-flex align-items-end flex-wrap justify-content-between justify-content-sm-start">
-                <div class="d-flex align-items-end rule-input-group">
-                  <span *ngIf="i != 0">
-                    <span class="d-block d-sm-none">+</span>
-                    <span class="d-none d-sm-block">and </span>
-                  </span>
-                  <input type="number" class="form-control rule-input" name="amount" placeholder="" formControlName="amount" min="1">
-                  <span> for every </span>
-                </div>
-                <div class="d-flex align-items-end rule-input-group" style="flex-grow: 1">
-                  <span *ngIf="qRule.controls.type.value == 'period'">
-                    <input type="number" class="form-control rule-input" name="repAmount" placeholder="" formControlName="repAmount" min="1">
-                  </span>
-                  <select class="form-control rule-input" name="type" formControlName="type">
-                    <option selected value="period" class="form-control">Day{{qRule.controls.repAmount.value>1 ? "s" : ""}}</option>
-                    <option value="profile" class="form-control">Profile</option>
-                    <option value="trip" class="form-control">Trip</option>
-                  </select>
-                  <a (click)="openModal(periodsModal)">
-                    <i class="far fa-question-circle small text-info"></i>
-                  </a>
-                  <a class="text-danger ml-auto pr-2 pl-2" *ngIf="packableForm.get('quantityRules').controls.length >1" (click)="removeQuantityRule(i)">
-                    <i class="fas fa-times"></i>
-                  </a>
-                </div>
-              </div>
+
+              <a class="text-secondary ml-auto pr-2 pl-2" *ngIf="packableForm.get('quantityRules').controls.length >1; else cantDelete"
+                (click)="removeQuantityRule(i)">
+                <i class="fas fa-times"></i>
+              </a>
+              <ng-template #cantDelete>
+                <span class="text-secondary ml-auto pr-2 pl-2 o-02">
+                  <i class="fas fa-times"></i>
+                </span>
+              </ng-template>
             </div>
             <div class="help-block" *ngIf="qRule.invalid">
               <span class="invalid-feedback" *ngIf="qRule.get('amount').invalid">
@@ -99,28 +114,28 @@
             </div>
           </div>
           <div class="col-12 mt-2 text-center">
-            <button type="button" class="btn btn-sm btn-outline-primary" (click)="addNewRule()">
-              Add Quantity Rule
+            <button type="button" class="btn btn-rule text-primary" (click)="addNewRule()">
+              <i class="fas fa-plus"></i> Add Quantity Rule
             </button>
           </div>
         </div>
       </div>
-      <div class="form-border" *ngIf="advancedForm">
+      <div class="form-border" *ngIf="true">
         <div class="form-border-header">
-          <h5>Conditions</h5>
+          <h5>Weather Conditions</h5> 
+          <a (click)="openModal(weatherModal)" class="mr-auto ml-1">
+              <i class="far fa-question-circle small text-info"></i>
+            </a>
         </div>
         <div class="form-row">
-          This is an advanced form
-          <div class="col-12 mt-2 text-center">
-            <button type="button" class="btn btn-sm btn-outline-primary">
-              Add Condition
-            </button>
+          <div class="col-12 mt-1 mb-2 small text-muted">
+            This Packable will only be added to a trip if
+            <b>all</b> the conditions below are met:
           </div>
         </div>
+        <app-weather-conditions-form [inputWeatherRule]="weatherRules" (change)="setWeatherRules($event)"></app-weather-conditions-form>
       </div>
-
       <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" (optionAction)="onOption($event)"></app-desktop-nav>
-
     </form>
   </div>
 
@@ -131,16 +146,25 @@
   <H6>Items per Day(s)</H6>
   <p>Select
     <i>Day(s)</i> to set the number of items you wish to pack for each Day of the trip.</p>
-    <p>Choose this for your daily clean clothes, like a 1 T-shirt per day, or 1 pair of Jeans per 4 days.</p>
+  <p>Choose this for your daily clean clothes, like a 1 T-shirt per day, or 1 pair of Jeans per 4 days.</p>
   <H6>Items per Profile</H6>
-  <p>Select <i>Profile</i> to set the number of items you wish to pack for each profile in a trip containing this item. </p>
+  <p>Select
+    <i>Profile</i> to set the number of items you wish to pack for each profile in a trip containing this item. </p>
   <p>This is useful for items that you only need a few of for every trip, like a Towel, a USB charger or a Toothbrush.</p>
-  <p class="alert alert-info">E.g. If 2 different Profiles in a Trip have 1 x Toothbrush each, each of them would need to bring 1 toothbrush to the trip, meaining <b>2 x Toothbrushes in Total</b></p>
+  <p class="alert alert-info">E.g. If 2 different Profiles in a Trip have 1 x Toothbrush each, each of them would need to bring 1 toothbrush to the trip,
+    meaining
+    <b>2 x Toothbrushes in Total</b>
+  </p>
   <H6>Items per Trip</H6>
-  <p>Select <i>Trip</i> to set the number of items you wish to pack for each Trip, no matter how many profiles have this item.
+  <p>Select
+    <i>Trip</i> to set the number of items you wish to pack for each Trip, no matter how many profiles have this item.
     <p>Think of this as communal Packables, to share with everyone on the trip, like sunscreen or a hair-dryer.</p>
-    <p>If one profile in the trip has a higher quantity of the item than another profile, the packing list would favour the higher amount.</p>
-  <p class="alert alert-info">E.g. If <i>Tom</i> has 1 x Toothpaste per Trip and <i>Jane</i> has 2 x Toothpaste per trip, the packing list would recommend packing <b> 2 x Toothpaste</b> for the trip.</p>
+    <p>If one profile in the trip has a higher quantity of the item than another profile, the packing list would favour the
+      higher amount.</p>
+    <p class="alert alert-info">E.g. If
+      <i>Tom</i> has 1 x Toothpaste per Trip and
+      <i>Jane</i> has 2 x Toothpaste per trip, the packing list would recommend packing
+      <b> 2 x Toothpaste</b> for the trip.</p>
 </ng-template>
 <ng-template #quantityModal>
   <H5>Quantity Rules</H5>
@@ -157,4 +181,21 @@
 <ng-template #deleteModal>
   <p>If you delete this Packable you will also remove it from all your Profiles and Collections.</p>
   <p class="text-danger">Are you sure you want to delete this packable?</p>
+</ng-template>
+
+<ng-template #weatherModal>
+  <H5>Weather Conditions</H5>
+  <p>Set certain conditions for adding this packable to a trip. This packable will be added with the quantity you set, if all the conditions are met.</p>
+  <h6>Minimum Temperature</h6>
+  <p>Only add this packable if the temperature in a trip will ever be <b>equal to</b> or <b>over</b> the set value.</p>
+  <h6>Maximum Temperature</h6>
+  <p>Only add this packable if the temperature in a trip will ever be <b>less than</b> the set value.</p>
+  <h6>Weather Types</h6>
+  <p>Only add this packable if <b>at least one</b> of the selected weather conditions are forecasted for the trip.<br>
+  Selecting All will require at least one of the listed weather conditions to be forecasted.<br>
+  Selecting None will not restrict the packable to a weather condition. I.e. it will be added no matter what the forecast will be.</p>
+  <p class="alert alert-info">
+    <b>E.g.</b> Your "Poncho" packable conditions are Minimum 5&#176;C, and Maximum 17&#176;C, and you selected only 'Rain'.<br>
+    The trip you are going on will have 14&#176;C temperature, some snowfall, and sunny weather, but no rain. Therefore, the Poncho will not be added to the trip.
+  </p>
 </ng-template>

@@ -76,13 +76,10 @@ export class StoreSelectorService{
         let index = this.originalPackables.findIndex(x => x.id === id);
         return index >= 0 ? this.originalPackables[index]: null;
     }
-    getPackablesByIds(ids:string[]):PackableBlueprint[] {
-        let originalPackables:PackableOriginal[] = [];
-        ids.forEach((id,i,arr)=>{
-            let packable = this.getPackableById(id);
-            originalPackables.push(packable);
+    getPackablesByIds(ids:string[]):PackableOriginal[] {
+        return ids.map((id)=>{
+            return this.getPackableById(id);
         })
-        return originalPackables;
     }
     getProfileById(id:string):Profile{
         let foundPorfile:Profile;

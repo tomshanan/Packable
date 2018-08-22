@@ -1,7 +1,8 @@
-import { PackablePrivate, ActivityRule, WeatherRule, PackableOriginal, PackableFactory } from './packable.model';
+import { PackablePrivate, ActivityRule, PackableOriginal, PackableFactory } from './packable.model';
 import { Guid } from '../global-functions';
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../store-selector.service';
+import { WeatherRule } from './weather.model';
 
 export class CollectionComplete {
     constructor(
@@ -10,7 +11,7 @@ export class CollectionComplete {
         public activity: boolean,
         public packables: any[],
         public activityRules: ActivityRule[] = [],
-        public weatherRules: WeatherRule[] = []
+        public weatherRules: WeatherRule = new WeatherRule()
     ) {
     }
 }
@@ -22,7 +23,7 @@ export class CollectionOriginal {
         public activity: boolean,
         public packables: string[],
         public activityRules: ActivityRule[] = [],
-        public weatherRules: WeatherRule[] = []
+        public weatherRules: WeatherRule = new WeatherRule()
     ) {
         this.id = Guid.newGuid();
     }
@@ -32,7 +33,7 @@ export class CollectionPrivate {
     constructor(
         public id: string = '',
         public packables: PackablePrivate[] = [],
-        public weatherRules: WeatherRule[] = [],
+        public weatherRules: WeatherRule = new WeatherRule(),
         public activityRules: ActivityRule[] = [],
     ){
     }
@@ -63,7 +64,7 @@ export class CollectionFactory {
         let newCollection = new CollectionPrivate(
             original['id'], 
             privatePackables,
-            original.weatherRules.slice(),
+            original.weatherRules.deepCopy(),
             original.activityRules.slice()
         );
         return newCollection

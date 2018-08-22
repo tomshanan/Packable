@@ -1,6 +1,7 @@
 import { Guid } from '../global-functions';
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../store-selector.service';
+import { WeatherRule } from './weather.model';
 
 export type QuantityType = "period" | "profile" | "trip";
 
@@ -12,9 +13,7 @@ export interface QuantityRule {
 export interface ActivityRule {
     id: string
 }
-export interface WeatherRule {
-    [s:string]:any;
-}
+
 
 export class PackableBlueprint {
     constructor(
@@ -23,7 +22,7 @@ export class PackableBlueprint {
         public icon: string,
         public quantityRules: QuantityRule[],
         public activityRules: ActivityRule[] = [],
-        public weatherRules: WeatherRule[] = []
+        public weatherRules: WeatherRule = new WeatherRule()
     ) { }
 }
 export class PackableOriginal extends PackableBlueprint {
@@ -33,7 +32,7 @@ export class PackableOriginal extends PackableBlueprint {
         public icon: string,
         public quantityRules: QuantityRule[],
         public activityRules: ActivityRule[] = [],
-        public weatherRules: WeatherRule[] = []
+        public weatherRules: WeatherRule = new WeatherRule()
     ) {
         super(Guid.newGuid(),name, icon, quantityRules, activityRules, weatherRules)
     }
@@ -44,7 +43,7 @@ export class PackablePrivate {
         public id:string,
         public quantityRules: QuantityRule[] = [],
         public activityRules: ActivityRule[] = [],
-        public weatherRules: WeatherRule[] = []) 
+        public weatherRules: WeatherRule = new WeatherRule()) 
         {}
 }
 export type PackableAny = PackablePrivate | PackableOriginal;
@@ -58,7 +57,7 @@ export class PackableFactory{
             original.id,
             original.quantityRules.slice(),
             original.activityRules.slice(),
-            original.weatherRules.slice()
+            original.weatherRules.deepCopy()
         )
         return newPackable;
     }

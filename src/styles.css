@@ -88,12 +88,19 @@ a.grid-content:hover{
 }
 .rule-row {
     background: #f9f9f9;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+
+}
+.rule-input-group {
+    display: flex;
+    align-items: baseline;
 }
 .rule-input-group > * {
     padding: 0 3px;
     margin:0 3px;
     white-space: nowrap;
-    
 }
 
 .rule-input{
@@ -111,7 +118,14 @@ a.grid-content:hover{
     border-bottom: 1px solid #80bdff;
     box-shadow:none;
 }
-
+.btn-rule {
+    background: none;
+    border: 1px dashed #d0e3f9;
+    width: 100%;
+    padding: 2px 0px;
+    text-align: center;
+    font-size: 80%;
+}
 .ng-invalid.ng-touched{
     border-color: red;
 }
@@ -335,3 +349,37 @@ button:hover+.conditional-danger{
     animation-delay: 100ms;
     animation-fill-mode: both;
 }
+.modal-content  .h6, .modal-content  h6 {
+    font-size: 1rem;
+    color: #17a2b8;
+    margin-bottom: 0.1em;
+}
+
+input.no-spinner::-webkit-outer-spin-button,
+input.no-spinner-align::-webkit-inner-spin-button {
+  display: none;
+}
+.mini-mat-form-field > .mat-form-field-wrapper {
+    padding: 0;
+}
+.mini-mat-form-field > .mat-input-subscript-wrapper {
+    display: none;
+}
+.mini-mat-form-field .mat-form-field-underline {
+    bottom: 0;
+}
+.mini-mat-form-field .mat-form-field-infix {
+    border: 0;
+    padding: 0;
+}
+.mini-mat-form-field .mat-form-field-label-wrapper, .mini-mat-form-field .mat-form-field-label {
+    top: 0;
+    padding-top: 0;
+}
+
+
+.text-disabled{
+    color: lightgrey;
+}
+.o-00{opacity: 0;} .o-01{opacity: 0.1;} .o-02{opacity: 0.2;} .o-03{opacity: 0.3} .o-04{opacity: 0.4;} .o-05{opacity: 0.5} .o-06{opacity: 0.6} .o-07{opacity: 0.7} .o-09{opacity: 0.9} .o-10{opacity: 1}
+.transition{transition: all 300ms}

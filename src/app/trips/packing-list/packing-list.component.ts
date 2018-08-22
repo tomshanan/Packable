@@ -13,11 +13,12 @@ import { CollectionFactory } from '../../shared/models/collection.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { StoreSelectorService } from '../../shared/store-selector.service';
 import { DestinationDataService } from '../../shared/location-data.service';
-import { PackableBlueprint, ActivityRule, WeatherRule } from '../../shared/models/packable.model';
+import { PackableBlueprint, ActivityRule } from '../../shared/models/packable.model';
 import { WindowService } from '../../shared/window.service';
 import { Profile } from '../../shared/models/profile.model';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { WeatherService } from '../../shared/weather.service';
+import { WeatherRule } from '../../shared/models/weather.model';
 
 
 interface collectionList{
@@ -191,7 +192,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
         }
       }
     }
-    let checkWeatherRules = (object:{weatherRules: WeatherRule[]}):boolean=>{
+    let checkWeatherRules = (object:{weatherRules: WeatherRule}):boolean=>{
       return true
     }
     let checkActivityId = (id:string):boolean=>{

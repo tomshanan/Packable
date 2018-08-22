@@ -40,6 +40,7 @@ import { FullPlaceNamePipe } from './shared/pipes/full-place-name.pipe';
 import { PackingListComponent } from './trips/packing-list/packing-list.component';
 import { WindowService } from './shared/window.service';
 import { WeatherService } from './shared/weather.service';
+import { WeatherConditionsFormComponent } from './shared/weather-conditions-form/weather-conditions-form.component';
 
 
 @NgModule({
@@ -64,7 +65,8 @@ import { WeatherService } from './shared/weather.service';
     EditTripComponent,
     DateRangeSelectorComponent,
     FullPlaceNamePipe,
-    PackingListComponent
+    PackingListComponent,
+    WeatherConditionsFormComponent
       ],
   imports: [
     BrowserModule,

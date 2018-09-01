@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 import { PackableFactory } from './models/packable.model';
 import { CollectionFactory } from './models/collection.model';
 import { objectInArray } from './global-functions';

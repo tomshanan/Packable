@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, Type, TemplateRef } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../app.reducers';
 import { FilteredArray, objectInArray } from '../global-functions';

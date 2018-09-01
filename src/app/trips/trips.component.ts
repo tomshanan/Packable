@@ -6,8 +6,7 @@ import { MemoryService } from '../shared/memory.service';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../shared/app.reducers'
 import { Trip, displayTrip } from '../shared/models/trip.model';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs';
+import { Observable ,  Subscription } from 'rxjs';
 import { StoreSelectorService } from '../shared/store-selector.service';
 
 @Component({

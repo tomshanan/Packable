@@ -4,13 +4,12 @@ import { Trip } from '../../shared/models/trip.model';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl, AbstractControl } from '@angular/forms';
 import { DestinationDataService, Destination } from '../../shared/location-data.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription ,  combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import * as FromApp from '../../shared/app.reducers'
 import { Store } from '@ngrx/store';
 import { Profile } from '../../shared/models/profile.model';
 import { CollectionOriginal, Activity } from '../../shared/models/collection.model';
-import { combineLatest } from 'rxjs/observable/combineLatest';
 import * as moment from 'moment';
 import { MatAutocompleteTrigger } from '@angular/material';
 import { listEditorParams, ListEditorService } from '../../shared/list-editor.service';

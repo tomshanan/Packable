@@ -1,14 +1,12 @@
 import { Component, OnInit, Renderer2, OnDestroy, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Store} from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { Observable ,  Subscription ,  combineLatest } from 'rxjs';
 
 import { PackableOriginal, PackablePrivate, PackableBlueprint, PackableFactory } from '../../shared/models/packable.model';
 import * as fromApp from '../../shared/app.reducers';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CollectionOriginal, CollectionComplete, CollectionFactory } from '../../shared/models/collection.model';
-import { Subscription } from 'rxjs/Subscription';
-import { combineLatest } from 'rxjs/observable/combineLatest';
 import { Guid } from '../../shared/global-functions';
 import * as collectionActions from '../store/collections.actions';
 import { ListEditorService, listEditorParams, item } from '../../shared/list-editor.service';

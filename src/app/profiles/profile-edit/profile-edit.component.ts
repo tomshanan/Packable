@@ -3,11 +3,9 @@ import { Store } from '@ngrx/store';
 import * as fromApp from '../../shared/app.reducers';
 import * as profileActions from '../store/profile.actions';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable ,  Subscription ,  combineLatest } from 'rxjs';
 import { PackableOriginal, PackablePrivate, PackableFactory } from '../../shared/models/packable.model';
 import { CollectionPrivate, CollectionOriginal, CollectionFactory } from '../../shared/models/collection.model';
-import { Subscription } from 'rxjs/Subscription';
-import { combineLatest } from 'rxjs/observable/combineLatest';
 import { Profile, ProfileComplete } from '../../shared/models/profile.model';
 import { ListEditorService, listEditorParams } from '../../shared/list-editor.service';
 import { ActivatedRoute, Router } from '@angular/router';

@@ -2,9 +2,8 @@ import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../shared/app.reducers'
 import * as tripActions from '../store/trip.actions';
-import { Observable } from 'rxjs/Observable';
+import { Observable ,  Subscription ,  Subject } from 'rxjs';
 import { PackingList, PackingListPackable, Reason, packingListData } from '../../shared/models/packing-list.model';
-import { Subscription } from 'rxjs';
 import { State as tripState } from '../store/trip.reducers';
 import { MemoryService } from '../../shared/memory.service';
 import { Trip } from '../../shared/models/trip.model';
@@ -19,7 +18,6 @@ import { WeatherService, tempOptions, weatherData, absoluteMax, absoluteMin } fr
 import { WeatherRule, weatherType, weatherOptions } from '../../shared/models/weather.model';
 import { take } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs/Subject';
 
 
 interface collectionList {

@@ -1,7 +1,7 @@
 import { Store } from "@ngrx/store";
 import * as fromApp from './app.reducers'
 import { Injectable } from '@angular/core';
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { PackableOriginal, PackablePrivate, PackableAny, PackableBlueprint, ActivityRule } from './models/packable.model';
 import { CollectionOriginal, CollectionAny, CollectionComplete } from './models/collection.model';
 import { Profile, ProfileComplete } from "./models/profile.model";

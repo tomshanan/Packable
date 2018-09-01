@@ -1,15 +1,13 @@
 import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import { combineLatest } from 'rxjs/observable/combineLatest';
+import { Observable ,  combineLatest ,  Subscription } from 'rxjs';
 import { PackableOriginal, PackableBlueprint, PackableFactory } from '../../shared/models/packable.model';
 import * as packableActions from '../store/packables.actions';
 import * as collectionActions from '../../collections/store/collections.actions'
 import * as profileActions from '../../profiles/store/profile.actions'
 import * as fromApp from '../../shared/app.reducers';
 import { Router, ActivatedRoute, Params } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
 import { ProfileComplete } from '../../shared/models/profile.model';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { MemoryService } from '../../shared/memory.service';

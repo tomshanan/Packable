@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy, Output, TemplateRef } from '@angular/core';
 import * as fromApp from '../shared/app.reducers';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { Observable ,  Subscription } from 'rxjs';
 import { CollectionPrivate, CollectionOriginal, CollectionComplete, CollectionFactory } from '../shared/models/collection.model';
-import { Subscription } from 'rxjs/Subscription';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MemoryService } from '../shared/memory.service';
 import { StoreSelectorService } from '../shared/store-selector.service';

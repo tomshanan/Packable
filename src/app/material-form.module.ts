@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatInputModule} from '@angular/material/input';
+import {MatCardModule} from '@angular/material/card';
 
 
 
@@ -18,7 +19,8 @@ import {MatInputModule} from '@angular/material/input';
         MatCheckboxModule,
         MatExpansionModule,
         MatInputModule,
-        MatSelectModule
+        MatSelectModule,
+        MatCardModule
     ],
 })
 export class AppMaterialModule { }

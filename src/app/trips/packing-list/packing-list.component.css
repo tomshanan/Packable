@@ -11,26 +11,14 @@
         width: 100%;
     }
 }
-@keyframes popin {
-    0% {
-        font-size: 70%;
-        opacity: 0;
-        transform: rotate(-600deg);
-    }
-    100% {
-        font-size: 100%;
-        opacity: 1;
-        transform: rotate(0deg);
-    }
 
-}
 .strikeThrough {
     text-decoration:line-through;
     color: rgb(170, 170, 170);
 }
 .packableText.completed{
     position: relative;
-    color: rgb(170, 170, 170);
+    color: rgb(170, 170, 170)!important;
 }
 .packableText.completed::before {
     background: #ff4081;
@@ -45,6 +33,19 @@
     animation-timing-function: cubic-bezier(.67,.01,.4,1);
     animation-iteration-count: 1;
 }
+@keyframes popin {
+    0% {
+        font-size: 70%;
+        opacity: 0;
+        transform: rotate(-600deg);
+    }
+    100% {
+        font-size: 100%;
+        opacity: 1;
+        transform: rotate(0deg);
+    }
+
+}
 .completedTick{
     color:#ff4081;
     animation-name: popin;
@@ -52,19 +53,27 @@
     animation-timing-function: cubic-bezier(.33,1.26,.39,1.02);
     animation-iteration-count: 1;
 }
+
+
+
 ul.packingList {
     padding: 0;
 }
 ul.packingList>li{
     list-style: none;
+    margin-bottom: 0.5rem;
 }
+
 .mat-expansion-panel-header-description{
     flex-grow: 0;
     align-self: center;
 }
 .calculation-popover-trigger {
-    font-size: 80%;
-    vertical-align: text-top;
     color: rgb(170, 170, 170);
     cursor: help;
+}
+
+.setting_header{
+    padding: 0 4px;
+    font-size: 80%;
 }

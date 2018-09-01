@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { WindowService } from '../window.service';
 import { weatherOptions, WeatherRule, weatherType } from '../models/weather.model';
 import { MatSelectChange, MatCheckboxChange } from '@angular/material';
+import { tempOptions, absoluteMax, absoluteMin } from '../weather.service';
 
 @Component({
   selector: 'app-weather-conditions-form',
@@ -11,17 +12,15 @@ import { MatSelectChange, MatCheckboxChange } from '@angular/material';
 export class WeatherConditionsFormComponent implements OnInit {
   @Input() inputWeatherRule:WeatherRule = new WeatherRule();
   @Output() change = new EventEmitter<WeatherRule>();
-  tempOptions = [];
+  tempOptions = tempOptions 
   weatherOptions = weatherOptions;
   weatherRule:WeatherRule;
+  absoluteMaxTemp = absoluteMax;
+  absoluteMinTemp = absoluteMin;
 
   constructor(
     private windowService: WindowService,
-  ) {
-    for (let t = -60; t <= 50; t++) { // min temperature is -60 and max is 50
-      this.tempOptions.push(t)
-    }
-  }
+  ) {}
 
   indexOfWeather(weather:weatherType){
     return this.inputWeatherRule.weatherTypes.indexOf(weather)
@@ -29,12 +28,20 @@ export class WeatherConditionsFormComponent implements OnInit {
   isChecked(weather:weatherType){
     return !!~this.indexOfWeather(weather);
   }
-  minChange(select:MatSelectChange){
-    this.weatherRule.minTemp = +select.value;
+  minChange(select:MatSelectChange|number|string){
+    if(typeof select == 'number' || typeof select == 'string'){
+      this.weatherRule.minTemp = select
+    } else {
+      this.weatherRule.minTemp = select.value;
+    }    
     this.emitUpdate()
   }
-  maxChange(select:MatSelectChange){
-    this.weatherRule.maxTemp = +select.value;
+  maxChange(select:MatSelectChange|number|string){
+    if(typeof select == 'number' || typeof select == 'string'){
+      this.weatherRule.maxTemp = select
+    } else {
+      this.weatherRule.maxTemp = select.value;
+    }
     this.emitUpdate();
   }
   addWeatherType(weather:weatherType){
@@ -69,6 +76,10 @@ export class WeatherConditionsFormComponent implements OnInit {
 
   emitUpdate(){
     this.change.emit(this.weatherRule)
+    console.log(this.weatherRule)
   }
 
+  isNumber(t):boolean{
+    return typeof t == 'number'
+  }
 }

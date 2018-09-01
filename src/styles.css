@@ -376,6 +376,12 @@ input.no-spinner-align::-webkit-inner-spin-button {
     top: 0;
     padding-top: 0;
 }
+.packingList .mat-checkbox-layout {
+    margin-bottom: 0!important;
+}
+.changedAfterChecked .mat-checkbox-frame {
+    border-color: rgb(255, 68, 0);
+}
 
 
 .text-disabled{
@@ -383,3 +389,4 @@ input.no-spinner-align::-webkit-inner-spin-button {
 }
 .o-00{opacity: 0;} .o-01{opacity: 0.1;} .o-02{opacity: 0.2;} .o-03{opacity: 0.3} .o-04{opacity: 0.4;} .o-05{opacity: 0.5} .o-06{opacity: 0.6} .o-07{opacity: 0.7} .o-09{opacity: 0.9} .o-10{opacity: 1}
 .transition{transition: all 300ms}
+.border-orange{border-color: rgb(255, 68, 0);} .text-orange{color:rgb(255, 68, 0)} .bg-orange{background-color: rgb(255, 68, 0)}

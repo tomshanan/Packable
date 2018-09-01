@@ -1,15 +1,74 @@
 <div class="full-flex">
-    <div class="ff-row" *ngIf="windowService.min_sm && windowService.max_sm">
-        <a class="inline-link" (click)="return()"><i class="fas fa-chevron-left"></i> Trips</a>
+  <div class="ff-row" *ngIf="windowService.min_sm && windowService.max_sm">
+    <a class="inline-link" (click)="return()"><i class="fas fa-chevron-left"></i> Trips</a>
   </div>
   <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="null" *ngIf="navParams"></app-mobile-nav>
   <div class="ff-row-main">
     <ng-template #loading><i class="fas fa-sync-alt fa-spin"></i>Loading List...</ng-template>
     <div *ngIf="sortedList; else loading" class="mt-1">
+      <div class="row">
+        <mat-accordion class="w-100">
+          <mat-expansion-panel (opened)="settingsOpen = true" (closed)="settingsOpen = false" [expanded]="settingsOpen">
+            <mat-expansion-panel-header>
+              <mat-panel-description class="d-flex w-100" *ngIf="!settingsOpen">
+                <span class="setting_header">
+                  Min: {{packingList.data.weatherData.minTemp || '? '}}&#176;C
+                </span>
+                <span class="setting_header">
+                  Max: {{packingList.data.weatherData.maxTemp || '? '}}&#176;C
+                </span>
+                <span class="setting_header">
+                  Type: {{packingList.data.weatherData.weatherTypes.length>0 ? (packingList.data.weatherData.weatherTypes | join:', ') : 'None'}}
+                </span>
+                <span class="setting_header" *ngIf="packingList.dataInput == 'manual'">
+                   (Manual Input)
+                </span>
+                <span class="setting_header ml-auto">
+                  <i>Updated: {{ moment(packingList.updated).format('MMM Do, hh:mm')}}</i>
+                </span>
+              </mat-panel-description>
+              <mat-panel-title *ngIf="settingsOpen">
+                Manually enter weather settings
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <form [formGroup]="customWeatherForm">
+              <mat-form-field style="width:110px;">
+                <mat-label>Min Temp</mat-label>
+                <mat-select [value]="packingList.data.weatherData.minTemp || null" formControlName="min">
+                  <mat-option>Any</mat-option>
+                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t}}&#176;C</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field style="width:110px;">
+                <mat-label>Max Temp</mat-label>
+                <mat-select [value]="packingList.data.weatherData.maxTemp || null" formControlName="max">
+                  <mat-option>Any</mat-option>
+                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t}}&#176;C</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field style="width:200px;">
+                <mat-label>Weather Types</mat-label>
+                <mat-select [value]="packingList.data.weatherData.weatherTypes || null" multiple formControlName="types">
+                  <mat-option *ngFor="let w of weatherTypeOptions" [value]="w">{{w | titlecase}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </form>
+            <mat-action-row>
+              <span class="p-2 align-self-center"><b>Update Using:</b></span>
+              <button type="button" class="btn btn-primary" (click)="updatePackingListWithCustomWeather(trip)" (click)="settingsOpen = false">Manual Input</button>
+              <button type="button" class="btn btn-outline-primary ml-1" (click)="updatePackingListWithWeatherAPI(trip)" (click)="settingsOpen = false">Forecast</button>
+            </mat-action-row>
+
+
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
       <div class="row pb-2" *ngIf="windowService.min_sm">
         <div class="col-12">
           <div class="row">
             <div *ngFor="let profile of sortedList; let i = index" class="col-sm-6 col-lg-4">
+
               <h1>{{profile.header}}
                 <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
               </h1>
@@ -54,17 +113,34 @@
 <ng-template #packingListTemplate let-collection let-i>
   <ul class="packingList">
     <li *ngFor="let packable of collection.packables">
-      <mat-checkbox [checked]="packable.checked" (change)="toggleCheck(packable)">
-        <span class="packableText" [class.completed]="packable.checked">
+      <mat-checkbox [checked]="packable.checked" (change)="toggleCheck(packable)" [class.changedAfterChecked]="packable.changedAfterChecked">
+        <span class="packableText" [class.completed]="packable.checked" [class.text-success]="packable.recentlyAdded">
           {{packable.quantity}} x
           <span style="text-transform: capitalize">
             {{getPackableName(packable)}}
           </span>
         </span>
-
       </mat-checkbox>
+      <span [ngbPopover]="weatherNotChecked" placement="{{windowService.max_xs ? 'bottom' : 'right'}}" triggers="click:mouseleave"
+        container="body" class="pointer" *ngIf="packable.weatherNotChecked">
+        <i class="fas fa-umbrella text-orange"></i>
+      </span>
+      <ng-template #weatherNotChecked>
+        <p class="p-0 m-0 small text-orange">
+          The weather conditions could not be checked. Please enter the weather information manually and update the packing list.
+        </p>
+      </ng-template>
+      <span [ngbPopover]="changedAfterChecked" placement="{{windowService.max_xs ? 'bottom' : 'right'}}" triggers="click:mouseleave"
+        container="body" class="pointer" *ngIf="packable.changedAfterChecked">
+        <i class="fas fa-sync-alt text-orange"></i>
+      </span>
+      <ng-template #changedAfterChecked>
+        <p class="p-0 m-0 small text-orange">
+          The quantity of this Packable changed after it has been ticked. Please check if you packed the updated quantity.
+        </p>
+      </ng-template>
       <span [ngbPopover]="quantityReasons" placement="{{windowService.max_xs ? 'bottom' : 'right'}}" triggers="click:mouseleave"
-        container="body">
+        container="body" class="pointer">
         <i class="far fa-question-circle calculation-popover-trigger"></i>
       </span>
       <ng-template #quantityReasons>

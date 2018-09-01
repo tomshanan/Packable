@@ -31,7 +31,7 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
   originalCollections: CollectionOriginal[];
   routesAndStates_sub: Subscription;
   editingId: string = null;
-  editingCollection: CollectionComplete = new CollectionComplete('','', false, [], [], []);
+  editingCollection: CollectionComplete = new CollectionComplete('','', false, [], []);
   editMode: boolean = false;
   profile: ProfileComplete;
   advanceForm: boolean = false;

@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <div class="form-border" [ngClass]="{orangeBorder: packables_warning_style() }">
+      <div class="form-border" [ngClass]="{'border-orange': packables_warning_style() }">
         <div class="form-border-header pointer" (click)="editSelection()">
           <h5>Packables:</h5>
           <span class="text-primary">Edit

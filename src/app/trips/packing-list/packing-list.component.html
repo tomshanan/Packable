@@ -34,16 +34,15 @@
             <form [formGroup]="customWeatherForm">
               <mat-form-field style="width:110px;">
                 <mat-label>Min Temp</mat-label>
-                <mat-select [value]="packingList.data.weatherData.minTemp || null" formControlName="min">
-                  <mat-option>Any</mat-option>
-                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t}}&#176;C</mat-option>
+                <mat-select [value]="packingList.data.weatherData.minTemp || absoluteMinTemp" formControlName="min">
+                  
+                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t!=absoluteMinTemp ? t+'&#176;C' : 'Any'}}</mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field style="width:110px;">
                 <mat-label>Max Temp</mat-label>
-                <mat-select [value]="packingList.data.weatherData.maxTemp || null" formControlName="max">
-                  <mat-option>Any</mat-option>
-                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t}}&#176;C</mat-option>
+                <mat-select [value]="packingList.data.weatherData.maxTemp || absoluteMaxTemp" formControlName="max">
+                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t!=absoluteMaxTemp ? t+'&#176;C' : 'Any'}}</mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field style="width:200px;">
@@ -81,7 +80,7 @@
           </div>
         </div>
       </div>
-      <div class="row pb-2" *ngIf="windowService.max_xs">
+      <div class="row py-2" *ngIf="windowService.max_xs">
         <div class="col-12">
           <mat-accordion multi="true">
             <mat-expansion-panel *ngFor="let profile of sortedList; let i = index">

@@ -50,13 +50,13 @@ export class TripsComponent implements OnInit {
   editTrip(displayTrip: displayTrip){
     let trip = this.storeSelector.getTripById(displayTrip.id)
     let TripName = this.makeTripName(displayTrip,trip)
-    this.memoryService.setTrip(trip);
+    this.memoryService.set('TRIP',trip);
     this.router.navigate([TripName], {relativeTo: this.activeRoute})
   }
   viewPackingList(displayTrip: displayTrip){
     let trip = this.storeSelector.getTripById(displayTrip.id)
     let TripName = this.makeTripName(displayTrip,trip)
-    this.memoryService.setTrip(trip);
+    this.memoryService.set('TRIP',trip);
     this.router.navigate([TripName,'packing-list'], {relativeTo: this.activeRoute})
   }
 }

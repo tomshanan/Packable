@@ -1,5 +1,5 @@
 import { Guid } from '../global-functions';
-import { Injectable } from '@angular/core';
+import { Injectable, Type } from '@angular/core';
 import { StoreSelectorService } from '../store-selector.service';
 import { WeatherRule } from './weather.model';
 
@@ -14,73 +14,48 @@ export interface ActivityRule {
     id: string
 }
 
-
-export class PackableBlueprint {
+export type packableType = 'original' | 'private' | 'complete';
+export class PackableComplete {
+    type:packableType = 'complete';
     constructor(
-        public id:string,
-        public name: string,
-        public icon: string,
-        public quantityRules: QuantityRule[],
-        public activityRules: ActivityRule[] = [],
-        public weatherRules: WeatherRule = new WeatherRule()
+        public id:string = '',
+        public name: string = '',
+        public icon: string = '',
+        public quantityRules: QuantityRule[] = [],
+        public weatherRules: WeatherRule = new WeatherRule(),
+        public sameAsOriginal: boolean = true,
+        public parent: PackableAny = new PackableOriginal()
     ) { }
 }
-export class PackableOriginal extends PackableBlueprint {
-    public id:string;
+export class PackableOriginal {
+    type:packableType = 'original';
     constructor(
-        public name: string,
-        public icon: string,
-        public quantityRules: QuantityRule[],
-        public activityRules: ActivityRule[] = [],
+        public id: string = '',
+        public name: string ='',
+        public icon: string = '',
+        public quantityRules: QuantityRule[] = [],
         public weatherRules: WeatherRule = new WeatherRule()
     ) {
-        super(Guid.newGuid(),name, icon, quantityRules, activityRules, weatherRules)
     }
 }
 
 export class PackablePrivate {
+    type:packableType = 'private';
     constructor(
         public id:string,
         public quantityRules: QuantityRule[] = [],
-        public activityRules: ActivityRule[] = [],
-        public weatherRules: WeatherRule = new WeatherRule()) 
-        {}
+        public weatherRules: WeatherRule = new WeatherRule(),
+        public subscribeToOriginal: boolean = true
+    ){}
 }
 export type PackableAny = PackablePrivate | PackableOriginal;
 
-
-@Injectable()
-export class PackableFactory{
-    constructor(private storeSelector:StoreSelectorService){}
-    public newPrivatePackable = function (original:PackableOriginal):PackablePrivate{
-        let newPackable = new PackablePrivate(
-            original.id,
-            original.quantityRules.slice(),
-            original.activityRules.slice(),
-            original.weatherRules.deepCopy()
-        )
-        return newPackable;
-    }
-    public restorePrivate = function(packable:PackablePrivate):PackablePrivate{
-        let original = this.storeSelector.getPackableById(packable.id);
-        return this.newPrivatePackable(original);
-    }
-    public makePrivate = function(packable: PackableAny):PackablePrivate{
-        if(packable.hasOwnProperty('name')){
-            return this.newPrivatePackable(packable);
-        } 
-        return packable;
-    }
-    public makePrivateFromId = function(id:string){
-        let original = this.storeSelector.getPackableById(id);
-        return this.newPrivatePackable(original);
-    }
-    public makeComplete = function(packable: PackableAny): PackableBlueprint {
-        let completePackable = this.storeSelector.getCompletePackables([packable])[0];
-        return completePackable;
-    }
-    public makeCompleteFromArray = function(packables: PackableAny[]): PackableBlueprint[] {
-        let completePackables = this.storeSelector.getCompletePackables(packables);
-        return completePackables;
-    }
+export function isPackableOriginal(p:{type:packableType}):p is PackableOriginal {
+    return p.type == 'original'
+}
+export function isPackablePrivate(p:{type:packableType}):p is PackablePrivate {
+    return p.type == 'private'
+}
+export function isPackableComplete(p:{type:packableType}):p is PackableComplete {
+    return p.type == 'complete'
 }

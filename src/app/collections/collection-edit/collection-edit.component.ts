@@ -1,21 +1,27 @@
 import { Component, OnInit, Renderer2, OnDestroy, TemplateRef } from '@angular/core';
 import { FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
-import { Store} from '@ngrx/store';
-import { Observable ,  Subscription ,  combineLatest } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable, Subscription, combineLatest } from 'rxjs';
 
-import { PackableOriginal, PackablePrivate, PackableBlueprint, PackableFactory } from '../../shared/models/packable.model';
+import { PackableOriginal, PackablePrivate, PackableComplete } from '../../shared/models/packable.model';
 import * as fromApp from '../../shared/app.reducers';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CollectionOriginal, CollectionComplete, CollectionFactory } from '../../shared/models/collection.model';
-import { Guid } from '../../shared/global-functions';
+import { CollectionOriginal, CollectionComplete, CollectionPrivate, CollectionAny, isCollectionOriginal } from '../../shared/models/collection.model';
+import { Guid, slugName } from '../../shared/global-functions';
 import * as collectionActions from '../store/collections.actions';
 import { ListEditorService, listEditorParams, item } from '../../shared/list-editor.service';
-import { MemoryService } from '../../shared/memory.service';
-import { ProfileComplete } from '../../shared/models/profile.model';
+import { MemoryService, memoryObject } from '../../shared/memory.service';
+import { ProfileComplete, Profile } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '../../shared/store-selector.service';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { ModalComponent, modalConfig } from '../../modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { WeatherRule } from '../../shared/models/weather.model';
+import { MatSlideToggleChange } from '@angular/material';
+import { absoluteMax, absoluteMin } from '../../shared/weather.service';
+import { take } from 'rxjs/operators';
+import { PackableFactory } from '../../shared/factories/packable.factory';
+import { CollectionFactory } from '../../shared/factories/collection.factory';
 
 @Component({
   selector: 'app-collection-edit',
@@ -23,22 +29,35 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['../../shared/css/full-flex.css', './collection-edit.component.css']
 })
 export class CollectionEditComponent implements OnInit, OnDestroy {
+  state_subscription: Subscription;
   collectionsState_obs: Observable<{ collections: CollectionOriginal[] }>;
   originalPackables_obs: Observable<{ packables: PackableOriginal[] | null }>;
   originalPackables: PackableOriginal[];
   originalCollections: CollectionOriginal[];
-  routesAndStates_sub: Subscription;
+
+  originalCollection = new CollectionComplete();
   editingId: string = null;
-  editingCollection: CollectionComplete = new CollectionComplete('','', false, [], []);
+  memory: memoryObject;
+  profile: Profile; //used in template
+
   editMode: boolean = false;
-  profile: ProfileComplete;
-  advanceForm: boolean = false;
   collectionForm: FormGroup;
+  advancedForm: boolean = false;
   selectPackables = false;
-  usedPackables: PackableBlueprint[] = [];
+  customPackables: PackableComplete[] = [];
   usedNames = [];
+  customWeatherRules = new WeatherRule();
+  absoluteMax = absoluteMax;
+  absoluteMin = absoluteMin;
+
+  navParams: navParams;
   listSelectorParams: listEditorParams;
-  navParams:navParams;
+
+
+
+  getSubscribeToOriginal():boolean { return this.collectionForm.get('subscribeToOriginal').value }
+  getPackables():PackableComplete[] { return (this.advancedForm && this.getSubscribeToOriginal()) ?  this.originalCollection.packables :this.customPackables }
+  getWeatherRules():WeatherRule { return (this.advancedForm && this.getSubscribeToOriginal()) ? this.originalCollection.weatherRules :  this.customWeatherRules }
 
   constructor(private store: Store<fromApp.appState>,
     private router: Router,
@@ -46,7 +65,8 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
     private listEditorService: ListEditorService,
     private memoryService: MemoryService,
     private storeSelectorService: StoreSelectorService,
-    private packableFactory:PackableFactory,
+    private packableFactory: PackableFactory,
+    private collectionFactory: CollectionFactory,
     private modalService: NgbModal
   ) { }
 
@@ -54,162 +74,182 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
     this.collectionForm = new FormGroup({
       'name': new FormControl('', [Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), Validators.required, this.validate_usedName.bind(this)]),
       'activity': new FormControl(false),
-      'activityRules': new FormArray([]),
-      'weatherRules': new FormArray([]),
-    }, this.validate_min_packables.bind(this))
+      'subscribeToOriginal': new FormControl(true),
+    })
 
-    this.profile = this.memoryService.getProfile();
+    this.memory = this.memoryService.getAll;
     this.collectionsState_obs = this.store.select('collections');
     this.originalPackables_obs = this.store.select('packables');
     let params = this.activeRoute.params;
-
-    this.routesAndStates_sub = combineLatest(
+    this.state_subscription = combineLatest(
       params,
       this.collectionsState_obs,
       this.originalPackables_obs
-    ).subscribe(([params, collectionState, packableState]) => {
+    ).pipe(take(1)).subscribe(([params, collectionState, packableState]) => {
       this.originalPackables = packableState.packables;
       this.originalCollections = collectionState.collections;
-      this.usedNames = this.storeSelectorService.getUsedCollectionNames();
-      let collection = this.memoryService.getCollection();
-      if (params['collection'] && params['collection'] != "new") {
-        if (collection) {
-          this.editingId = collection.id
-          this.editMode = true;
-          if (this.profile){
-            this.advanceForm = true;
-          }
-        } else {
-          this.router.navigate(['../new'], { relativeTo: this.activeRoute })
-        }
+      let memoryCollection = this.memory.privateCollection || this.memory.originalCollection;
+      console.log(memoryCollection)
+      if (params['collection'] && params['collection'] != "new" && memoryCollection) {
+        this.editMode = true;
+        this.processEditMode(memoryCollection)
       } else {
         this.editMode = false;
-        if (params['collection']) {
+        if (params['collection'] || !memoryCollection) {
           this.router.navigate(['../new'], { relativeTo: this.activeRoute })
         }
       }
-      if (collection) {
-        this.editingCollection = collection;
-        this.usedPackables = this.editingCollection.packables;
+      if (this.memory.profile) {
+        this.profile = this.memory.profile
+        if (this.editMode && this.memory.privateCollection){
+          this.advancedForm = true;
+        }
       }
+      console.log(`editMode: ${this.editMode} | advancedForm: ${this.advancedForm} | memoryCollection Type: ${memoryCollection && memoryCollection.type}`)
       this.navSetup();
       this.formInit();
     })
   }
-  navSetup(){
+
+  processEditMode(collection: CollectionAny) {
+    this.editingId = collection.id
+    this.collectionForm.setValidators(this.validate_min_packables.bind(this))
+    let original = this.storeSelectorService.getCollectionById(collection.id);
+    this.originalCollection = this.collectionFactory.makeComplete(original);
+  }
+  navSetup() {
+    let header = this.editMode ? this.originalCollection.name : 'New Collection'
     this.navParams = {
-      header:this.editingCollection && this.editingCollection.name !=''  ? this.editingCollection.name : 'New Collection',
-      left: {
-        enabled: true,
-        text: 'Cancel',
-        iconClass:'fas fa-times'
-      },
-      right: {
-        enabled: false,
-        text: this.editMode ? 'Save' : 'Create',
-        iconClass:'fas fa-check'
-      },
+      header: header,
+      left: { enabled: true, text: 'Cancel', iconClass: 'fas fa-times' },
+      right: { enabled: this.collectionForm.valid, text: this.editMode ? 'Save' : 'Next', iconClass: 'fas fa-check' },
       options: []
     }
     this.editMode
       && this.navParams.options.push({
-        name: (this.advanceForm ? 'Remove' : 'Delete') +' Collection', 
+        name: (this.advancedForm ? 'Remove' : 'Delete') + ' Collection',
         actionName: 'delete'
       })
-      && this.advanceForm
+      && this.advancedForm
       && this.navParams.options.push({ name: 'Restore Default Settings', actionName: 'restore' });
-
-    this.collectionForm.statusChanges.subscribe(status => {
-      this.navParams.right.enabled = status == 'VALID'? true : false;
-    })
   }
-  onOption(action:string){
-    switch (action){
+  onOption(action: string) {
+    switch (action) {
       case 'delete':
-      this.onDelete();
-      break;
+        this.onDelete();
+        break;
       case 'restore':
-      //restore;
-      console.log('restore');
-      break;
+        //restore;
+        console.log('restore');
+        break;
       default:
-      break;
+        break;
     }
   }
   formInit() {
-
-    let name = this.editingCollection.name;
-    let activity = this.editingCollection.activity;
+    this.usedNames = this.storeSelectorService.getUsedCollectionNames();
     this.collectionForm.patchValue({
-      name: name,
-      activity: activity
+      name: this.originalCollection.name,
+      activity: this.originalCollection.activity,
+      subscribeToOriginal: this.advancedForm ? this.memory.privateCollection.subscribeToOriginal : true
     })
-
-    //check if it has activity rules. if there is, loop and push to rules formArray
-    //check if it has weather rules. if there is, loop and push to rules formArray
+    if (this.advancedForm){
+      this.customPackables = this.packableFactory.makeCompleteFromArray(this.memory.privateCollection.packables)
+      this.customWeatherRules = this.memory.privateCollection.weatherRules
+    } else if (this.editMode){
+      let originalPackables = this.storeSelectorService.getPackablesByIds(this.memory.originalCollection.packables)
+      this.customPackables = this.packableFactory.makeCompleteFromArray(originalPackables)
+      this.customWeatherRules = this.memory.originalCollection.weatherRules;
+    }
+    this.collectionForm.statusChanges.subscribe(status => {
+      this.navParams.right.enabled = status == 'VALID' ? true : false;
+      console.log('form is '+status)
+    })
+    if(this.memory.unsaved_collection){
+      this.collectionForm.markAsDirty();
+      this.collectionForm.updateValueAndValidity();
+      console.log('memory is unsaved')
+    } else {
+      console.log('unsaved_collection:'+this.memory.unsaved_collection);
+      
+    }
   }
+  
+  toggleSubscribeToOriginal(changeEvent: MatSlideToggleChange) {
+    this.collectionForm.patchValue({
+      'subscribeToOriginal': !changeEvent.checked
+    })
+  }
+
   validate_usedName(control: FormControl): { [s: string]: boolean } {
     let input = control.value.toLowerCase();
-    if (this.usedNames.indexOf(input) !== -1 && (this.editMode === false || input !== this.editingCollection.name.toLowerCase())) {
+    if (this.usedNames.indexOf(input) !== -1 && (this.editMode === false || input !== this.originalCollection.name.toLowerCase())) {
       return { 'nameUsed': true };
     }
     return null;
   }
-
   validate_min_packables(): { [s: string]: boolean } {
-    if (this.usedPackables && this.usedPackables.length === 0) {
+    if (this.customPackables && this.customPackables.length === 0) {
       return { 'noPackables': true };
     }
     return null;
   }
-
-  packables_warning_style(){
-    return this.usedPackables.length==0 && (this.collectionForm.get('name').touched || this.collectionForm.get('name').value !="");
+  packables_warning_style() {
+    return this.customPackables.length == 0 && (this.collectionForm.get('name').touched || this.collectionForm.get('name').value != "");
   }
-
+  showAdvanceOptions(): boolean {
+    return this.editMode && (!this.advancedForm || !this.getSubscribeToOriginal())
+  }
   removePackableFromCollection(id: number) {
-    this.usedPackables.splice(id, 1);
+    this.customPackables.splice(id, 1);
     this.collectionForm.updateValueAndValidity();
+    this.collectionForm.markAsDirty()
   }
-
   editSelection() {
-    let itemSelectorParams = {
+    let itemSelectorParams: listEditorParams = {
       originalList: this.originalPackables,
-      usedList: this.usedPackables,
+      usedList: this.customPackables,
       itemName: 'Packables',
-      listType: 'packables'
+      listType: this.advancedForm ? 'PRIVATE_PACKABLES' : 'ORIGINAL_PACKABLES'
     }
-    this.saveFormToMemory()
+    this.saveCollectionToMemory()
+    if(this.collectionForm.dirty){
+      this.memoryService.set('UNSAVED_COLLECTION', true)
+    }
     this.listEditorService.setParams(itemSelectorParams);
     this.router.navigate(['packables'], { relativeTo: this.activeRoute })
   }
 
-  saveFormToMemory(){
-    this.editingCollection.name = this.collectionForm.get('name').value;
-    this.editingCollection.activity = this.collectionForm.get('activity').value
-    // add conditions
-    this.editingCollection.packables = this.usedPackables;
-    this.memoryService.setCollection(this.editingCollection);
+  setWeatherRules(weatherRule: WeatherRule) {
+    this.customWeatherRules = weatherRule.deepCopy();
+    this.collectionForm.updateValueAndValidity();
+    this.collectionForm.markAsDirty()
   }
+  // add weather conditions to memory
 
-  
   onDelete() {
-    if(this.advanceForm){
+    if (this.advancedForm) {
+      let profile = this.memory.profile
       let config: modalConfig = {
         right: { name: 'Remove', class: 'btn-outline-danger' },
-        header: 'Remove ' + this.editingCollection.name + '?',
+        header: 'Remove ' + this.originalCollection.name + '?',
         content: 'Are you sure you want to remove the collection from this profile? You would also be losing all the settings you changed in your Packables.'
       }
-      this.openConfirmModal(null, config, () => {
-        let index = this.profile.collections.findIndex(c => c.id == this.editingId);
-        this.profile.collections.splice(index,1);
-        this.memoryService.setProfile(this.profile);
+      let remove= () => {
+        let index = profile.collections.findIndex(c => c.id == this.editingId);
+        profile.collections.splice(index, 1);
+        this.memoryService.set('PROFILE',profile);
         this.return();
-      })
+      }
+      if (this.getSubscribeToOriginal()) {
+        remove()
+      } else {
+        this.openConfirmModal(null, config, remove)
+      }
     } else {
       let config: modalConfig = {
         right: { name: 'Delete', class: 'btn-outline-danger' },
-        header: 'Delete ' + this.editingCollection.name + '?',
+        header: 'Delete ' + this.originalCollection.name + '?',
         content: 'Are you sure you wish to delete this collection?'
       }
       this.openConfirmModal(null, config, () => {
@@ -217,83 +257,138 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
         this.return();
       })
     }
+
+  }
+  editPackable(packableId: string) {
+    if (this.memory.profile) {
+      this.saveCollectionToMemory();
+      let originalName = this.storeSelectorService.getPackableById(packableId).name
+      let privatePackable = this.memory.privateCollection.packables.find(p => p.id == packableId)
+      this.memoryService.set('PRIVATE_PACKABLE',privatePackable);
+      this.router.navigate(['packables', slugName(originalName)], { relativeTo: this.activeRoute });
+    }
+  }
+
+  onNext() {
+    let originalCol = this.createOriginalFromForm()
+    let privateCol = this.createPrivateFromForm(originalCol)
+    console.log('created PrivateCol:',privateCol);
     
-  }
-  editPackable(packable:PackablePrivate, id:number){
-    if(this.profile){
-      this.saveFormToMemory();
-      let packableComplete = this.packableFactory.makeComplete(packable);
-      this.memoryService.setPackable(packableComplete);
-      this.router.navigate(['packables', id], { relativeTo: this.activeRoute });  
-    }
-  }
-
-  onSubmit() {
-    let formData = this.collectionForm.value;
-    let PackableRefs = this.usedPackables.map(p => p.id);
-    let id:string = this.editMode ? this.editingCollection.id : Guid.newGuid();
-    let newOriginalCollection: CollectionOriginal = {
-      id: id,
-      name: formData.name,
-      activity: formData.activity,
-      packables: PackableRefs,
-      activityRules: formData.activityRules,
-      weatherRules: formData.weatherRules
-    }
-    let newCompleteCollection: CollectionComplete = {
-      ...newOriginalCollection,
-      packables: this.usedPackables
-    }
-
-    let profile = this.profile;
-    if (!this.editMode) {
-      // --> do we need to make sure newOriginalCollection has only original packables?
-      this.store.dispatch(new collectionActions.addOriginalCollection(newOriginalCollection));
-      if (profile) {
-        profile.collections.push(newCompleteCollection)
-        this.memoryService.setProfile(profile);
+    if (this.editMode) {
+      if (this.memory.profile) {
+        this.saveToParentMemory(privateCol)
+      } 
+      if (!this.advancedForm){
+        this.saveToStore(originalCol)
       }
+      this.return()
     } else {
-      if (profile){
-        let index = this.profile.collections.findIndex(c => c.id == this.editingId);
-        profile.collections.splice(index,1,newCompleteCollection);
-        this.memoryService.setProfile(profile);
-      } else {
-        this.store.dispatch(new collectionActions.editOriginalCollection(newOriginalCollection));
+      this.saveToStore(originalCol);
+      let editingCol: CollectionAny = this.advancedForm ? privateCol : originalCol;
+      this.saveCollectionToMemory(editingCol);
+      this.memoryService.set('UNSAVED_COLLECTION', true)
+      let itemSelectorParams: listEditorParams = {
+        originalList: this.originalPackables,
+        usedList: [],
+        itemName: 'Packables',
+        listType: this.advancedForm ? 'PRIVATE_PACKABLES' : 'ORIGINAL_PACKABLES'
       }
+      this.listEditorService.setParams(itemSelectorParams);
+      this.router.navigate(['../' + slugName(originalCol.name),'packables'], { relativeTo: this.activeRoute })
     }
-    this.return();
   }
 
-  
+  createOriginalFromForm(): CollectionOriginal {
+    let formData = this.collectionForm.value;
+    let id: string = this.editMode ? this.originalCollection.id : Guid.newGuid();
+    return new CollectionOriginal(
+      id,
+      formData.name,
+      formData.activity,
+      this.advancedForm ? this.originalCollection.packables.map(p => p.id) : this.customPackables.map(p => p.id),
+      this.advancedForm ? this.originalCollection.weatherRules : this.customWeatherRules,
+    )
+  }
+  createPrivateFromForm(original?:CollectionOriginal): CollectionPrivate {
+    let originalCollection = original || this.createOriginalFromForm()
+    return new CollectionPrivate(
+      originalCollection.id,
+      this.customPackables.map(p=> this.packableFactory.makePrivate(p.parent)),
+      this.customWeatherRules,
+      this.getSubscribeToOriginal()
+    )
+  }
+  saveToStore(originalCollection: CollectionOriginal) {
+    if (this.editMode) {
+      this.store.dispatch(new collectionActions.editOriginalCollection(originalCollection));
+    } else {
+      this.store.dispatch(new collectionActions.addOriginalCollection(originalCollection));
+    }
+  }
+  saveToParentMemory(privateCollection: CollectionPrivate) {
+    let profile = this.memory.profile;
+    if (this.editMode) {
+      let index = profile.collections.findIndex(c => c.id == privateCollection.id);
+      profile.collections.splice(index, 1, privateCollection);
+    } else {
+      profile.collections.push(privateCollection)
+    }
+    this.memoryService.set('PROFILE',profile);
+  }
+
+  saveCollectionToMemory(collection: CollectionAny = null): CollectionAny {
+    if (!collection) {
+      let newCollection = this.createOriginalFromForm();
+      if (this.advancedForm) {
+        collection = this.createPrivateFromForm(newCollection)
+      } else {
+        collection = newCollection
+      }
+      if(this.collectionForm.dirty){
+        this.memoryService.set('UNSAVED_COLLECTION',true)
+      }
+    }
+    console.log('collection type:' + collection.type);
+    
+    if (isCollectionOriginal(collection)) {
+      this.memoryService.set('ORIGINAL_COLLECTION',collection)
+    } else {
+      this.memoryService.set('PRIVATE_COLLECTION',collection)
+    }
+    return collection;
+  }
 
   return() {
-    this.memoryService.resetCollection();
-    let profile = this.memoryService.getProfile();
+    this.memoryService.reset('PRIVATE_COLLECTION');
+    this.memoryService.reset('ORIGINAL_COLLECTION');
+    let profile = <Profile>this.memoryService.get('PROFILE');
     if (profile) {
+      console.log('attempting to make complete collection from profile:\n',profile)
       let listEditorParams: listEditorParams = {
         itemName: "Collections",
-        listType: "collections",
-        usedList: profile.collections,
+        listType: "PRIVATE_COLLECTIONS",
+        usedList: this.collectionFactory.makeCompleteArray(profile.collections),
         originalList: this.originalCollections
       }
+      console.log('result usedList:\n',listEditorParams.usedList);
+      
       this.listEditorService.setParams(listEditorParams);
-    } if (profile && this.editMode){
+    } if (profile && this.editMode && this.advancedForm) {
       this.router.navigate(['../../'], { relativeTo: this.activeRoute });
     } else {
       this.router.navigate(['../'], { relativeTo: this.activeRoute });
     }
   }
-  openModal(tempRef:TemplateRef<any>) {
+  openModal(tempRef: TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
   }
-  openConfirmModal(tempRef: TemplateRef<any>, config: modalConfig, callback: () => void) {
+  openConfirmModal(tempRef: TemplateRef<any>, config: modalConfig, callback: ()=>void) {
     config.left = { name: 'Cancel', class: 'btn-outline-secondary' }
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
     modal.componentInstance.config = config;
-    let leftSubscribe =  modal.componentInstance.leftAction.subscribe((action) => {
+    let leftSubscribe = modal.componentInstance.leftAction.subscribe((action) => {
       leftSubscribe.unsubscribe();
       rightSubscribe.unsubscribe();
       modal.close();
@@ -308,7 +403,7 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
-    this.routesAndStates_sub.unsubscribe();
+    this.state_subscription.unsubscribe();
   }
 
 }

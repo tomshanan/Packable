@@ -10,9 +10,11 @@ import { ProfileEditComponent } from './profiles/profile-edit/profile-edit.compo
 import { ItemSelectorComponent } from './shared/item-selector/item-selector.component';
 import { EditTripComponent } from './trips/edit-trip/edit-trip.component';
 import { PackingListComponent } from './trips/packing-list/packing-list.component';
+import { UserComponent } from './user/user.component';
 
 const appRoutes:Routes = [
     {path: '', pathMatch: 'full', redirectTo: 'trips'},
+    {path: 'user', pathMatch: 'full', component:UserComponent},
     {path: 'trips', pathMatch: 'full', component:TripsComponent},
     {path: 'trips/new', pathMatch: 'full', component:EditTripComponent},
     {path: 'trips/:trip', pathMatch: 'full', component:EditTripComponent},
@@ -40,6 +42,7 @@ const appRoutes:Routes = [
     {path: 'collections/:collection', pathMatch: 'full', component:CollectionEditComponent},
     {path: 'collections/:collection/packables', pathMatch: 'full', component:ItemSelectorComponent},
     {path: 'collections/:collection/packables/new', pathMatch: 'full', component:PackableEditComponent},
+    {path: 'collections/:collection/packables/:packable', pathMatch: 'full', component:PackableEditComponent},
     {path: '**', redirectTo: 'trips'}
 ];
 @NgModule({

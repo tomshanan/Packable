@@ -11,13 +11,15 @@ import * as moment from 'moment';
 import { Router, ActivatedRoute } from '@angular/router';
 import { StoreSelectorService } from '../../shared/store-selector.service';
 import { DestinationDataService } from '../../shared/location-data.service';
-import { PackableBlueprint, ActivityRule } from '../../shared/models/packable.model';
+import { PackableComplete, ActivityRule } from '../../shared/models/packable.model';
 import { WindowService } from '../../shared/window.service';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { WeatherService, tempOptions, weatherData, absoluteMax, absoluteMin } from '../../shared/weather.service';
 import { WeatherRule, weatherType, weatherOptions } from '../../shared/models/weather.model';
 import { take } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { isDefined } from '../../shared/global-functions';
+import { ProfileFactory } from '../../shared/factories/profile.factory';
 
 
 interface collectionList {
@@ -62,9 +64,10 @@ export class PackingListComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private selectorService: StoreSelectorService,
     private destService: DestinationDataService,
-    private windowService: WindowService,
+    private windowService: WindowService, // used by template
     private weatherService: WeatherService,
-    private fb:FormBuilder
+    private fb:FormBuilder,
+    private profileFactory: ProfileFactory
   ) {
     this.customWeatherForm = fb.group({
       min: [null],
@@ -80,7 +83,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    let memoryTrip = this.memoryService.getTrip()
+    let memoryTrip = this.memoryService.getAll.trip
     if (!!memoryTrip) {
       this.trip_obs = this.store.select('trips')
       this.state_subscription = this.trip_obs.pipe(take(1)).subscribe(tripState => {
@@ -90,7 +93,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
         if (!this.packingList) {
           this.updatePackingListWithWeatherAPI(this.trip);
         } else {
-          this.patchManualTable(this.packingList)
+          this.patchWeatherForm(this.packingList)
           this.updatePackingListBySetting(this.packingList, this.trip)
           this.lastSave = moment().format('MMM Do YYYY, HH:mm:ss')
         }
@@ -132,7 +135,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     data.destination = this.destService.DestinationById(trip.destinationId);
     data.weatherData = weatherData;
     let activityIds = trip.activities;
-    let profiles = this.selectorService.getCompleteProfilesByIds(trip.profiles)
+    let profiles = this.profileFactory.getCompleteProfilesByIds(trip.profiles)
 
     let addPackableToList = (newPackable: PackingListPackable): void => {
       let packableIndex = newPackingList.packables.findIndex(p => {
@@ -151,10 +154,10 @@ export class PackingListComponent implements OnInit, OnDestroy {
         newPackingList.packables.push(newPackable)
       }
     }
-    let processPackable = (packable: PackableBlueprint, collectionId: string, profileId: string): void => {
+    let processPackable = (packable: PackableComplete, collectionId: string, profileId: string): void => {
       let collectionName = collectionId ? this.selectorService.getCollectionById(collectionId).name : 'Loose';
       let profileName = this.selectorService.getProfileById(profileId).name;
-      if (checkWeatherRules(packable) && checkActivityRules(packable)) {
+      if (checkWeatherRules(packable)) {
         let accQuantity = 0;
         let reasons: Reason[] = [];
         let weatherNotChecked = packable.weatherRules.isSet && !data.weatherData.isValid;
@@ -205,18 +208,18 @@ export class PackingListComponent implements OnInit, OnDestroy {
         }
       }
     }
-    let checkWeatherRules = (packable: { weatherRules: WeatherRule }): boolean => {
-      let rule = packable.weatherRules;
+    let checkWeatherRules = (item: { weatherRules: WeatherRule }): boolean => {
+      let rule = item.weatherRules;
       let wData = data.weatherData;
       let conditionsMet:boolean = true;
       if(wData.isValid){
-        if(rule.minTemp!=null){
+        if(isDefined(rule.minTemp)){
           conditionsMet = wData.maxTemp >= rule.minTemp ? conditionsMet : false;
         }
-        if(rule.maxTemp!=null){
+        if(isDefined(rule.maxTemp)){
           conditionsMet = wData.minTemp < rule.maxTemp ? conditionsMet : false;
         }
-        if(rule.weatherTypes!=null && rule.weatherTypes.length>0){
+        if(isDefined(rule.weatherTypes) && rule.weatherTypes.length>0){
           conditionsMet = rule.weatherTypes.some(w=>!!~wData.weatherTypes.indexOf(w)) ? conditionsMet : false;
         }
       }
@@ -225,15 +228,15 @@ export class PackingListComponent implements OnInit, OnDestroy {
     let checkActivityId = (id: string): boolean => {
       return activityIds.indexOf(id) != -1
     }
-    let checkActivityRules = (object: { activityRules: ActivityRule[] }): boolean => {
-      if (object.activityRules.length > 0) {
-        return object.activityRules.every(activityRule => {
-          return checkActivityId(activityRule.id)
-        })
-      } else {
-        return true;
-      }
-    }
+    // let checkActivityRules = (object: { activityRules: ActivityRule[] }): boolean => {
+    //   if (object.activityRules.length > 0) {
+    //     return object.activityRules.every(activityRule => {
+    //       return checkActivityId(activityRule.id)
+    //     })
+    //   } else {
+    //     return true;
+    //   }
+    // }
     let checkChanges = (newPackable: PackingListPackable): PackingListPackable => {
       if (oldPackingList) {
         let oldPackable = oldPackingList.packables.find(p => {
@@ -260,8 +263,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
         processPackable(packable, null, profile.id)
       })
       profile.collections.forEach(collection => {
-        if ((!collection.activity || checkActivityId(collection.id))
-          && checkActivityRules(collection) && checkWeatherRules(collection)) {
+        if ((!collection.activity || checkActivityId(collection.id)) && checkWeatherRules(collection)) {
           collection.packables.forEach(packable => {
             processPackable(packable, collection.id, profile.id)
           })
@@ -295,7 +297,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
       )
       this.weatherService.willItRain(weatherArray) && weatherDataObj.weatherTypes.push('rain');
       let newPackingList = this.generateList(trip, weatherDataObj, this.packingList)
-      this.patchManualTable(newPackingList)
+      this.patchWeatherForm(newPackingList)
       this.packingListUpdated.next(newPackingList);
     })
   }
@@ -311,7 +313,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     this.packingListUpdated.next(newPackingList);
   }
 
-  patchManualTable(NewPackingList:PackingList){
+  patchWeatherForm(NewPackingList:PackingList){
     let weatherDataObj = NewPackingList.data.weatherData;
     this.customWeatherForm.patchValue({min: weatherDataObj.minTemp, max:weatherDataObj.maxTemp, types: weatherDataObj.weatherTypes})
   }

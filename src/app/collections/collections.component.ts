@@ -2,12 +2,14 @@ import { Component, OnInit, OnDestroy, Output, TemplateRef } from '@angular/core
 import * as fromApp from '../shared/app.reducers';
 import { Store } from '@ngrx/store';
 import { Observable ,  Subscription } from 'rxjs';
-import { CollectionPrivate, CollectionOriginal, CollectionComplete, CollectionFactory } from '../shared/models/collection.model';
+import { CollectionPrivate, CollectionOriginal, CollectionComplete } from '../shared/models/collection.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MemoryService } from '../shared/memory.service';
 import { StoreSelectorService } from '../shared/store-selector.service';
 import { ModalComponent } from '../modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { slugName } from '../shared/global-functions';
+import { CollectionFactory } from '../shared/factories/collection.factory';
 
 @Component({
   selector: 'app-collections',
@@ -33,19 +35,18 @@ export class CollectionsComponent implements OnInit,OnDestroy {
   ngOnInit() {
     this.collectionState_obs = this.store.select('collections');
     this.collectionState_sub = this.collectionState_obs.subscribe(state =>{
-      this.collections = [...state.collections];
-      this.collections = this.selectorService.getCompleteCollections(this.collections);
+      this.collections = this.collectionFactory.makeCompleteArray(state.collections)
     })
   }
 
   ngOnDestroy(){
     this.collectionState_sub.unsubscribe();
   }
-  editCollection(id:number, collection:CollectionPrivate){
+  editCollection(id:string){
     this.memoryService.resetAll();
-    let completeCollection = this.collectionFactory.makeComplete(collection);
-    this.memoryService.setCollection(completeCollection);
-    this.router.navigate([id], {relativeTo: this.activatedRoute})
+    let collection = this.selectorService.getCollectionById(id)
+    this.memoryService.set('ORIGINAL_COLLECTION',collection);
+    this.router.navigate([slugName(collection.name)], {relativeTo: this.activatedRoute})
   }
   newCollection(){
     this.memoryService.resetAll();

@@ -1,18 +1,20 @@
 import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from './shared/app.reducers'
-import { PackableOriginal, QuantityType, PackableFactory } from './shared/models/packable.model';
+import { PackableOriginal, QuantityType } from './shared/models/packable.model';
 import * as packableActions from './packables/store/packables.actions';
 import * as profileActions from './profiles/store/profile.actions';
 import * as collectionActions from './collections/store/collections.actions';
 import * as tripActions from './trips/store/trip.actions';
-import { CollectionOriginal, CollectionFactory } from './shared/models/collection.model';
+import { CollectionOriginal } from './shared/models/collection.model';
 import { StoreSelectorService } from './shared/store-selector.service';
 import { Profile } from './shared/models/profile.model';
 import { Guid } from './shared/global-functions';
 import { destinations } from './shared/location-data-object';
 import { Trip } from './shared/models/trip.model';
 import * as moment from 'moment';
+import { CollectionFactory } from './shared/factories/collection.factory';
+import { PackableFactory } from './shared/factories/packable.factory';
 
 @Component({
   selector: 'app-root',
@@ -39,7 +41,7 @@ export class AppComponent implements OnInit {
       let amount = Math.floor(Math.random()*3)+1
       let repAmount = Math.floor(Math.random()*4)+1
       let type = repTypes[Math.floor(Math.random()*repTypes.length)]
-      let packable = new PackableOriginal(name, icon, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }])
+      let packable = new PackableOriginal(Guid.newGuid(),name, icon, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }])
       allPackables.push(packable)
       this.store.dispatch(new packableActions.addOriginalPackable(packable))
     })
@@ -48,7 +50,7 @@ export class AppComponent implements OnInit {
     collectionNames.forEach(name=>{
       let activity = Math.random() > 0.6 ? true : false;
       let packableIds = allPackables.map(p=>p.id).filter(()=>Math.random()>0.5)
-      let collection = new CollectionOriginal(name,activity,packableIds)
+      let collection = new CollectionOriginal(Guid.newGuid(),name,activity,packableIds)
       allCollections.push(collection)
       this.store.dispatch(new collectionActions.addOriginalCollection(collection))
     })

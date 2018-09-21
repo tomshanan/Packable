@@ -27,8 +27,6 @@ import { ProfileEditComponent } from './profiles/profile-edit/profile-edit.compo
 import { ListEditorService } from './shared/list-editor.service';
 import { MemoryService } from './shared/memory.service';
 import { StoreSelectorService } from './shared/store-selector.service';
-import { CollectionFactory } from './shared/models/collection.model';
-import { PackableFactory } from './shared/models/packable.model';
 import { MobileNavComponent } from './mobile-nav/mobile-nav.component';
 import { DesktopNavComponent } from './desktop-nav/desktop-nav.component';
 import { ModalComponent } from './modal/modal.component';
@@ -41,6 +39,13 @@ import { PackingListComponent } from './trips/packing-list/packing-list.componen
 import { WindowService } from './shared/window.service';
 import { WeatherService } from './shared/weather.service';
 import { WeatherConditionsFormComponent } from './shared/weather-conditions-form/weather-conditions-form.component';
+import { Ng5SliderModule } from 'ng5-slider';
+import { CollectionFactory } from './shared/factories/collection.factory';
+import { PackableFactory } from './shared/factories/packable.factory';
+import { ProfileFactory } from './shared/factories/profile.factory';
+import { LoginComponent } from './user/login/login.component';
+import { RegisterComponent } from './user/register/register.component';
+import { UserComponent } from './user/user.component';
 
 
 @NgModule({
@@ -66,10 +71,14 @@ import { WeatherConditionsFormComponent } from './shared/weather-conditions-form
     DateRangeSelectorComponent,
     FullPlaceNamePipe,
     PackingListComponent,
-    WeatherConditionsFormComponent
+    WeatherConditionsFormComponent,
+    LoginComponent,
+    RegisterComponent,
+    UserComponent,
       ],
   imports: [
     BrowserModule,
+    Ng5SliderModule,
     ReactiveFormsModule,
     FormsModule,
     AppRoutingModule,
@@ -80,7 +89,7 @@ import { WeatherConditionsFormComponent } from './shared/weather-conditions-form
     StoreModule.forRoot(reducers)
 
   ],
-  providers: [WindowService, ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory, DestinationDataService, WeatherService],
+  providers: [WindowService, ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory,ProfileFactory,DestinationDataService, WeatherService],
   bootstrap: [AppComponent],
   entryComponents: [ModalComponent]
 })

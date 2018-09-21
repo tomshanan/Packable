@@ -106,7 +106,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
         })
       })
     this.destArray = this.destService.destinations;
-    this.editingTrip = this.memoryService.getTrip() || null;
+    this.editingTrip = <Trip>this.memoryService.get('TRIP') || null;
     this.formInit();
     
   }
@@ -195,7 +195,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     let usedList = this.allProfiles.filter(p => this.isProfileSelected(p.id))
     let listEditorParams: listEditorParams = {
       itemName: "Profiles",
-      listType: "profiles",
+      listType: "PROFILES",
       usedList: usedList,
       originalList: this.allProfiles,
       addNew: false
@@ -242,7 +242,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     let usedList = this.allActivities.filter(p => this.isActivitySelected(p.id))
     let listEditorParams: listEditorParams = {
       itemName: "Activities",
-      listType: "activities",
+      listType: "ACTIVITIES",
       usedList: usedList,
       originalList: this.allActivities,
       addNew: false
@@ -315,7 +315,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
   // NAVIGATION
   saveFormStateToMemory() {
     let trip = this.getTripObject();
-    this.memoryService.setTrip(trip);
+    this.memoryService.set('TRIP',trip);
   }
   getTripObject(): Trip{
     let trip = this.tripForm.value

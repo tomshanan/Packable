@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as moment from 'moment';
 import { weatherType } from './models/weather.model';
+import { isDefined } from './global-functions';
 
 export interface WeatherForecast {
     forecastDate: string,
@@ -35,12 +36,11 @@ export class weatherData {
     weatherTypes: weatherType[] = []
     constructor(){}
     get isValid(){
-        let notNull = (obj)=>{return obj!==null}
-        return notNull(this.minTemp) && notNull(this.maxTemp) && notNull(this.weatherTypes);
+        return isDefined(this.minTemp) && isDefined(this.maxTemp) && isDefined(this.weatherTypes);
     } 
 }
-export var absoluteMin = -60 // SET MIN AND MAX TEMPERATURE OPTIONS
-export var absoluteMax = 50 // SET MIN AND MAX TEMPERATURE OPTIONS
+export var absoluteMin = -15 // SET MIN AND MAX TEMPERATURE OPTIONS
+export var absoluteMax = 45 // SET MIN AND MAX TEMPERATURE OPTIONS
 export var tempOptions: number[] = ((min,max):number[]=>{
     let tempOptions = [];
     for (let t = min; t <= max; t++) { 

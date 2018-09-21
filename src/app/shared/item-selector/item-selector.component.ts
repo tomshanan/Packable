@@ -10,6 +10,7 @@ import { MemoryService } from '../memory.service';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { modalConfig, ModalComponent } from '../../modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Profile } from '../models/profile.model';
 
 
 export interface itemSelectorParams {
@@ -49,13 +50,14 @@ export class ItemSelectorComponent implements OnInit {
     if (!params){
       this.router.navigate(['../'],{relativeTo:this.activatedRoute}) 
     } else {
+      console.log('item-selector recieved params:\n',params);
       this.listOriginal = params.originalList;
       this.listSelected = params.usedList;
       this.title = params.itemName;
       this.addNew = params.addNew;
       this.listFiltered.original = this.listOriginal;
-      this.navSetup();
     }
+    this.navSetup();
   }
   navSetup(){
     this.navParams = {
@@ -122,14 +124,13 @@ export class ItemSelectorComponent implements OnInit {
       this.searchFilterInput = '';
       this.applyFilter();
   }
-
   addItemFromSearch(item:item){
     if(this.searchFilterInput !='' && !this.objectUsed(item)){
       this.addItemToSelection(item);
     }
   }
   removeItemFromSelection(id: number) {
-    let profile = this.memoryService.getProfile();
+    let profile = <Profile>this.memoryService.get('PROFILE');
     if(!profile || this.alertCounter > 0){
       this.listSelected.splice(id, 1);
       this.applyFilter();  

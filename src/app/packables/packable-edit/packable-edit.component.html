@@ -1,89 +1,92 @@
 <div id="form" class="full-flex">
   <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()"></app-mobile-nav>
   <div class="ff-row-main">
-    <div class="text-center text-sm-left small text-muted mb-1" *ngIf="profile || collection">
-      <span *ngIf="profile">{{profile.name || "New Profile"}}
+    <div class="text-center text-sm-left small text-muted mb-1" *ngIf="profileName || collectionName">
+      <span *ngIf="profileName">{{profileName || "New Profile"}}
         <i class="fas fa-angle-right align-text-bottom"></i>
       </span>
-      <span *ngIf="collection">{{collection.name || "New Collection"}}
+      <span *ngIf="collectionName">{{collectionName || "New Collection"}}
         <i class="fas fa-angle-right align-text-bottom"></i>
       </span>
-      <span>{{editMode ? editingPackable.name : "New Packable"}}</span>
+      <span>{{editMode ? originalPackable.name : "New Packable"}}</span>
     </div>
     <form [formGroup]="packableForm" (ngSubmit)="onSubmit()">
-      <div class="form-border" style="background-color: rgba(0,0,0,.03);" *ngIf="editMode && advancedForm">
+      <div class="form-border" *ngIf="editMode && advancedForm">
+        <div class="form-row">
+          <div class="col-12 d-flex flex-sm-row-reverse justify-content-between justify-content-sm-end mt-2">
+            <span>
+              Use custom settings
+            </span>
+            <span class="mr-1">
+              <mat-slide-toggle name="subscribe" (change)="toggleSubscribeToOriginal($event)" [checked]="!getSubscribeToOriginal()"
+                color="primary" aria-label="use custom settings">
+              </mat-slide-toggle>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="py-2" *ngIf="editMode && advancedForm">
         <div class="form-row">
           <div class="col-12">
-            <p class="small text-center m-0">
-              Changes you make will only affect the packable in this profile.
-              <br>
-              <small class="text-muted">You can change the name and default settings for this Packable in the
-                <a routerLink="/packables">Packable List</a> page.</small>
+            <p class="small m-0" *ngIf="!getSubscribeToOriginal()">
+              <small class="text-muted">Changes you make will only affect the Packable in this profile. Turn this off
+                to use the default settings. To make changes to the Packable's default settings please visit the
+                <a routerLink="/packables">Packables</a> page.</small>
+            </p>
+            <p class="small m-0" *ngIf="getSubscribeToOriginal()">
+              <small class="text-muted">You are using the Packables's default settings. Turn this on to customise this
+                Packable. To make changes to the default settings please visit the
+                <a routerLink="/packables">Packables</a> page.</small>
             </p>
           </div>
         </div>
       </div>
-      <div class="form-border">
-        <div class="form-row mb-3" *ngIf="!editMode || !advancedForm">
-          <div class="col-12">
-              <mat-form-field class="w-100">
-                  <input matInput placeholder="Name your Packable" name="name" formControlName="name">
-                  <mat-hint>(a-z, A-Z, 0-9)</mat-hint>
-                  <mat-error *ngIf="packableForm.get('name').hasError('pattern') && !emailFormControl.hasError('usedName')">
-                      Please select a valid name (a-z, A-Z, 0-9)
-                  </mat-error>
-                  <mat-error *ngIf="packableForm.get('name').hasError('usedName')">
-                      This Packable name is already used
-                  </mat-error>
-                </mat-form-field>
 
-            <!-- <div class="form-group mb-0" *ngIf="false">
-              <label for="name">Name your Packable</label>
-              <div class="position-relative">
-                <input type="text" class="form-control pr-2" name="name" placeholder="e.g T-Shirt" formControlName="name">
-                <a class="pointer input-reset" (click)="packableForm.get('name').setValue('')" *ngIf="packableForm.get('name').invalid && packableForm.get('name').touched">
-                  <i class="fa fa-times text-danger"></i>
-                </a>
-              </div>
-            </div>-->
-          </div> 
-          <div class="col-4">
+      <div class="form-border" *ngIf="!editMode">
+        <div class="form-row mb-3">
+          <div class="col-12">
+            <mat-form-field class="w-100">
+              <input matInput placeholder="Name your Packable" name="name" formControlName="name">
+              <mat-hint>(a-z, A-Z, 0-9)</mat-hint>
+              <mat-error *ngIf="packableForm.get('name').hasError('pattern') && !emailFormControl.hasError('usedName')">
+                Please select a valid name (a-z, A-Z, 0-9)
+              </mat-error>
+              <mat-error *ngIf="packableForm.get('name').hasError('usedName')">
+                This Packable name is already used
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-4" *ngIf="false">
             <div class="form-group mb-0">
               <label for="icon">Select Icon</label>
               <input type="text" class="form-control" name="icon" placeholder="" formControlName="icon" disabled>
             </div>
           </div>
-          <!-- <div class="col-12">
-            <span class="small text-muted" *ngIf="editMode && advancedForm">You can only change the name and icon if you edit the original Packable, or create a new one.</span>
-            <div class="" *ngIf="packableForm.get('name').invalid && packableForm.get('name').touched">
-              <span class="invalid-feedback d-block" *ngIf="packableForm.get('name').errors['usedName']">
-                Sorry, this Packable name already exists...
-              </span>
-              <span class="invalid-feedback d-block" *ngIf="packableForm.get('name').invalid && !packableForm.get('name').errors['usedName']">
-                Please select a valid name (a-z, A-Z, 0-9)
-              </span>
-            </div>
-          </div> -->
         </div>
-        <div class="form-row" formArrayName="quantityRules">
+      </div>
+      <div class="form-border" *ngIf="editMode && (!advancedForm || !getSubscribeToOriginal()); else staticInfo">
+        <div class="form-row" formArrayName="quantityRules" >
           <div class="col-12 mb-1">
             <label class="m-0">How many would you need?</label>
             <a (click)="openModal(quantityModal)" class="mr-auto ml-1">
               <i class="far fa-question-circle small text-info"></i>
             </a>
           </div>
-          <div class="col-12 rule-row py-1 my-1" *ngFor="let qRule of packableForm.get('quantityRules').controls; let i = index" [formGroupName]='i'>
+          <div class="col-12 rule-row py-1 my-1" *ngFor="let qRule of packableForm.get('quantityRules').controls; let i = index"
+            [formGroupName]='i'>
             <div class="rule-input-group">
               <span *ngIf="i != 0">
                 <span class="d-block d-sm-none">+</span>
                 <span class="d-none d-sm-block">and </span>
               </span>
-              <input type="number" class="form-control rule-input" name="amount" placeholder="" formControlName="amount" min="1">
+              <input type="number" class="form-control rule-input" name="amount" placeholder="" formControlName="amount"
+                min="1">
               <span> for every </span>
             </div>
             <div class="rule-input-group" style="flex-grow: 1">
               <span *ngIf="qRule.controls.type.value == 'period'">
-                <input type="number" class="form-control rule-input" name="repAmount" placeholder="" formControlName="repAmount" min="1">
+                <input type="number" class="form-control rule-input" name="repAmount" placeholder="" formControlName="repAmount"
+                  min="1">
               </span>
               <select class="form-control rule-input" name="type" formControlName="type">
                 <option selected value="period" class="form-control">Day{{qRule.controls.repAmount.value>1 ? "s" : ""}}</option>
@@ -120,12 +123,13 @@
           </div>
         </div>
       </div>
-      <div class="form-border" *ngIf="true">
+
+      <div class="form-border" *ngIf="editMode && (!advancedForm || !getSubscribeToOriginal())">
         <div class="form-border-header">
-          <h5>Weather Conditions</h5> 
+          <h5>Weather Conditions</h5>
           <a (click)="openModal(weatherModal)" class="mr-auto ml-1">
-              <i class="far fa-question-circle small text-info"></i>
-            </a>
+            <i class="far fa-question-circle small text-info"></i>
+          </a>
         </div>
         <div class="form-row">
           <div class="col-12 mt-1 mb-2 small text-muted">
@@ -133,8 +137,42 @@
             <b>all</b> the conditions below are met:
           </div>
         </div>
-        <app-weather-conditions-form [inputWeatherRule]="weatherRules" (change)="setWeatherRules($event)"></app-weather-conditions-form>
+        <app-weather-conditions-form [inputWeatherRule]="getWeatherRules()" (change)="setWeatherRules($event)"></app-weather-conditions-form>
       </div>
+
+
+      <ng-template #staticInfo>
+        <div class="form-border" *ngIf="editMode">
+          <div class="form-row">
+            <div class="col-12">
+              <h5>Quantity Rules:</h5>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-12">
+              <p *ngFor="let rule of originalPackable.quantityRules; let i = index">
+                {{ i>0 ? '+ ' :''}}{{rule.amount}} for every {{rule.type == "period" ? rule.repAmount : ''}} {{
+                rule.type != "period" ? rule.type : 'day' + (rule.repAmount>1 ? 's' : '') }}
+              </p>
+            </div>
+          </div>
+          <div class="form-row pt-2">
+            <div class="col-12">
+              <h5>Weather Conditions:</h5>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-12">
+              <p>Min Temperature: {{getWeatherRules().minTemp > absoluteMin ? getWeatherRules().minTemp : 'any'}}</p>
+              <p>Max Temperature: {{getWeatherRules().maxTemp < absoluteMax ? getWeatherRules().maxTemp : 'any' }}</p>
+                  <p>On trips with: {{getWeatherRules().weatherTypes.length > 0 ? (getWeatherRules().weatherTypes |
+                  join:', ' | titlecase) : 'Any type of weather.'}}</p>
+            </div>
+
+          </div>
+        </div>
+      </ng-template>
+
       <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" (optionAction)="onOption($event)"></app-desktop-nav>
     </form>
   </div>
@@ -151,7 +189,8 @@
   <p>Select
     <i>Profile</i> to set the number of items you wish to pack for each profile in a trip containing this item. </p>
   <p>This is useful for items that you only need a few of for every trip, like a Towel, a USB charger or a Toothbrush.</p>
-  <p class="alert alert-info">E.g. If 2 different Profiles in a Trip have 1 x Toothbrush each, each of them would need to bring 1 toothbrush to the trip,
+  <p class="alert alert-info">E.g. If 2 different Profiles in a Trip have 1 x Toothbrush each, each of them would need
+    to bring 1 toothbrush to the trip,
     meaining
     <b>2 x Toothbrushes in Total</b>
   </p>
@@ -159,7 +198,8 @@
   <p>Select
     <i>Trip</i> to set the number of items you wish to pack for each Trip, no matter how many profiles have this item.
     <p>Think of this as communal Packables, to share with everyone on the trip, like sunscreen or a hair-dryer.</p>
-    <p>If one profile in the trip has a higher quantity of the item than another profile, the packing list would favour the
+    <p>If one profile in the trip has a higher quantity of the item than another profile, the packing list would favour
+      the
       higher amount.</p>
     <p class="alert alert-info">E.g. If
       <i>Tom</i> has 1 x Toothpaste per Trip and
@@ -185,17 +225,21 @@
 
 <ng-template #weatherModal>
   <H5>Weather Conditions</H5>
-  <p>Set certain conditions for adding this packable to a trip. This packable will be added with the quantity you set, if all the conditions are met.</p>
+  <p>Set certain conditions for adding this packable to a trip. This packable will be added with the quantity you set,
+    if all the conditions are met.</p>
   <h6>Minimum Temperature</h6>
   <p>Only add this packable if the temperature in a trip will ever be <b>equal to</b> or <b>over</b> the set value.</p>
   <h6>Maximum Temperature</h6>
   <p>Only add this packable if the temperature in a trip will ever be <b>less than</b> the set value.</p>
   <h6>Weather Types</h6>
   <p>Only add this packable if <b>at least one</b> of the selected weather conditions are forecasted for the trip.<br>
-  Selecting All will require at least one of the listed weather conditions to be forecasted.<br>
-  Selecting None will not restrict the packable to a weather condition. I.e. it will be added no matter what the forecast will be.</p>
+    Selecting All will require at least one of the listed weather conditions to be forecasted.<br>
+    Selecting None will not restrict the packable to a weather condition. I.e. it will be added no matter what the
+    forecast will be.</p>
   <p class="alert alert-info">
-    <b>E.g.</b> Your "Poncho" packable conditions are Minimum 5&#176;C, and Maximum 17&#176;C, and you selected only 'Rain'.<br>
-    The trip you are going on will have 14&#176;C temperature, some snowfall, and sunny weather, but no rain. Therefore, the Poncho will not be added to the trip.
+    <b>E.g.</b> Your "Poncho" packable conditions are Minimum 5&#176;C, and Maximum 17&#176;C, and you selected only
+    'Rain'.<br>
+    The trip you are going on will have 14&#176;C temperature, some snowfall, and sunny weather, but no rain.
+    Therefore, the Poncho will not be added to the trip.
   </p>
 </ng-template>

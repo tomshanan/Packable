@@ -203,7 +203,6 @@ input.rule-input{
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
-    border: 1px solid #343a40;
     color: #343a40;
     background-color: transparent;
     background-image: none;
@@ -214,17 +213,23 @@ input.rule-input{
     border-radius: .2rem;
     user-select: none;
     margin-bottom:2px;
+    box-shadow: 1px 1px 4px -2px black;
 }
 .tag:not(:last-of-type){
     margin-right:2px;
+    
 }
 .tag.clickable{
     cursor: pointer;
+    border: 1px solid #343a40;
 }
 .tag.clickable:hover, .tag.clickable:active{
     color: #fff!important;
     background-color: #343a40;
     border-color: #343a40;
+}
+.tag > .remove_packable:hover{
+    color: red;
 }
 
 .btn-borderless{

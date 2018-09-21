@@ -3,11 +3,12 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import * as fromApp from '../shared/app.reducers';
-import { PackableOriginal, PackableFactory } from '../shared/models/packable.model';
+import { PackableOriginal } from '../shared/models/packable.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MemoryService } from '../shared/memory.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../modal/modal.component';
+import { slugName } from '../shared/global-functions';
 
 @Component({
   selector: 'app-packables',
@@ -23,7 +24,6 @@ originalPackables: PackableOriginal[] = [];
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private memoryService:MemoryService,
-    private packableFactory: PackableFactory,
     private modalService: NgbModal
    ) { }
 
@@ -34,11 +34,10 @@ originalPackables: PackableOriginal[] = [];
     })
   }
 
-  editPackable(id:number){
+  editPackable(packable:PackableOriginal){
     this.memoryService.resetAll();
-    let editingPackable = this.packableFactory.makeComplete(this.originalPackables[id]);
-    this.memoryService.setPackable(editingPackable)
-    this.router.navigate([id], {relativeTo:this.activatedRoute});
+    this.memoryService.set('ORIGINAL_PACKABLE',packable)
+    this.router.navigate([slugName(packable.name)], {relativeTo:this.activatedRoute});
   }
 
   newPackable(){

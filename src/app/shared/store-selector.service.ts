@@ -2,8 +2,8 @@ import { Store } from "@ngrx/store";
 import * as fromApp from './app.reducers'
 import { Injectable } from '@angular/core';
 import { Observable } from "rxjs";
-import { PackableOriginal, PackablePrivate, PackableAny, PackableBlueprint, ActivityRule } from './models/packable.model';
-import { CollectionOriginal, CollectionAny, CollectionComplete } from './models/collection.model';
+import { PackableOriginal, PackableAny, PackableComplete } from './models/packable.model';
+import { CollectionOriginal, CollectionAny, CollectionComplete, isCollectionOriginal, isCollectionPrivate } from './models/collection.model';
 import { Profile, ProfileComplete } from "./models/profile.model";
 import { Trip, displayTrip } from './models/trip.model';
 import { DestinationDataService } from './location-data.service';
@@ -86,54 +86,10 @@ export class StoreSelectorService{
         let index = this.profiles.findIndex(x => x.id === id)
         return index >= 0 ? this.profiles[index]: null;
     }
-    getCompleteProfiles(profiles: Profile[]): ProfileComplete[]{
-        return profiles.map(profile => {
-            let completePackables = this.getCompletePackables(profile.packables);
-            let completeCollections = this.getCompleteCollections(profile.collections)
-            return {
-                ...profile,
-                packables: completePackables,
-                collections: completeCollections
-            }
-        })
-    }
-    getCompleteProfilesByIds(ids:string[]): ProfileComplete[]{
-        let profiles = ids.map(id=>this.getProfileById(id))
-        return this.getCompleteProfiles(profiles);
-    }
+    
     getCollectionById(id:string):CollectionOriginal {
         let index = this.originalCollections.findIndex(x => x.id === id);
         return index >= 0 ? this.originalCollections[index]: null;
-    }
-    getCompletePackables(packables:PackableAny[]):PackableBlueprint[]{
-        let returnPackables = packables.map(packable =>{
-            let original = this.originalPackables.find(x=>x.id===packable.id);
-            return {
-                ...original,
-                ...packable
-            }
-        })
-        return returnPackables;
-    }
-    getCompleteCollections(collections:CollectionAny[]):CollectionComplete[]{
-        let returnCollections = collections.map(collection =>{
-            let original = this.originalCollections.find(x=>x.id===collection.id);
-            let completePackables = (<any[]>collection.packables).map(packable => {
-                if(packable.hasOwnProperty('id')){
-                    return this.getCompletePackables([packable])[0]
-                } else {
-                    let original = this.getPackableById(<string>packable);
-                    let complete = this.getCompletePackables([original])[0]
-                    return complete
-                }
-            })
-            return {
-                ...original,
-                ...collection,
-                packables: completePackables
-            }
-        })
-        return <CollectionComplete[]>returnCollections;
     }
 
     getUsedCollectionNames():string[]{

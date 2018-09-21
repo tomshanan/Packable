@@ -1,44 +1,12 @@
 <div class="form-row">
-    <!-- <mv-slider [(value)]="value" [min]="absoluteMinTemp" [max]="absoluteMaxTemp" [enabled]="enabled" (change)="change()"></mv-slider> -->
+    <div class="col-12"> 
+        Pack only if the temperature is between:
+      </div>
+    <div class="col-12">
+    <ng5-slider [(value)]="minTempValue" [(highValue)]="maxTempValue" [options]="options" (userChangeEnd)="tempChange()"></ng5-slider>
+    </div>
 </div>
 
-<div class="form-row py-1">
-  <div class="col-12">
-    <mat-slide-toggle #minTempToggle [checked]="weatherRule.minTemp != null">
-    </mat-slide-toggle>&ensp;
-    <span [class.text-disabled]="!minTempToggle.checked">Pack if {{ windowService.max_xs ? "temp'" : 'temperature'}} is over</span>&ensp;
-    <mat-form-field class="mini-mat-form-field tempSelector" floatLabel="never">
-      <mat-select #minInput
-      (selectionChange)="minChange($event)" 
-      [disabled]="!minTempToggle.checked" 
-      [value]="!minTempToggle.checked ? null : (weatherRule.minTemp || weatherRule.maxTemp || 20)" 
-      (click)="minTempToggle.checked=true"
-      (blur)="minChange(minInput.value)">
-        <mat-option *ngFor="let t of tempOptions" [value]="t">{{ t > absoluteMinTemp ? t+'&#176;C' : 'Any'}}</mat-option>
-      </mat-select>
-      <mat-label>Any</mat-label>
-    </mat-form-field>
-  </div>
-</div>
-
-<div class="form-row py-1">
-  <div class="col-12">
-    <mat-slide-toggle #maxTempToggle [checked]="weatherRule.maxTemp != null">
-    </mat-slide-toggle>&ensp;
-    <span [class.text-disabled]="!maxTempToggle.checked">Pack if {{ windowService.max_xs ? "temp'" : 'temperature'}} is below</span>&ensp;
-    <mat-form-field class="mini-mat-form-field tempSelector" floatLabel="never" appearance="legacy">
-      <mat-select #maxInput
-      (selectionChange)="maxChange($event)" 
-      [disabled]="!maxTempToggle.checked" 
-      [value]="!maxTempToggle.checked ? null : (weatherRule.maxTemp || weatherRule.minTemp || 20)" 
-      (click)="maxTempToggle.checked=true"
-      (blur)="maxChange(maxInput.value)">
-        <mat-option *ngFor="let t of tempOptions" [value]="t">{{ t < absoluteMaxTemp ? t+'&#176;C' : 'Any'}}</mat-option>
-      </mat-select>
-      <mat-label>Any</mat-label>
-    </mat-form-field>
-  </div>
-</div>
 <div class="form-row pt-2 pb-1">
   <div class="col-12">
     Only pack for trips with:

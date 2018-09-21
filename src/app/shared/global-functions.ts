@@ -1,11 +1,18 @@
 import { item } from './list-editor.service';
 
-export function objectInArray(array: Object[], object: Object, property: string) {
-    array = array.filter(x => x[property] == object[property])
-    return array.length > 0 ? true : false;
+export function isDefined(property:any, object:any = {}){
+  return object && property!==null && property !==undefined && property!=='' && property != []
+}
+export function objectInArray(arr: {}[], obj: {}, p: string):boolean {
+    let i = arr.findIndex(x => {
+      return x[p] === obj[p];
+    })
+    return i>-1;
+}
+export function slugName(string:string):string{
+  return string.replace(/[^A-Za-z0-9]/g,'-')
 }
 
- 
 export class FilteredArray {
   private _original: item[];
   public filtered: item[];

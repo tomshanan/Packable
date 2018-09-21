@@ -4,18 +4,20 @@ import * as fromApp from '../../shared/app.reducers';
 import * as profileActions from '../store/profile.actions';
 
 import { Observable ,  Subscription ,  combineLatest } from 'rxjs';
-import { PackableOriginal, PackablePrivate, PackableFactory } from '../../shared/models/packable.model';
-import { CollectionPrivate, CollectionOriginal, CollectionFactory } from '../../shared/models/collection.model';
+import { PackableOriginal, PackableComplete } from '../../shared/models/packable.model';
+import { CollectionPrivate, CollectionOriginal, CollectionComplete } from '../../shared/models/collection.model';
 import { Profile, ProfileComplete } from '../../shared/models/profile.model';
 import { ListEditorService, listEditorParams } from '../../shared/list-editor.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MemoryService } from '../../shared/memory.service';
+import { MemoryService, memoryObject } from '../../shared/memory.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { StoreSelectorService } from '../../shared/store-selector.service';
-import { Guid } from '../../shared/global-functions';
+import { Guid, slugName } from '../../shared/global-functions';
 import { navParams } from '../../mobile-nav/mobile-nav.component';
 import { modalConfig, ModalComponent } from '../../modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PackableFactory } from '../../shared/factories/packable.factory';
+import { ProfileFactory } from '../../shared/factories/profile.factory';
 
 @Component({
   selector: 'app-profile-edit',
@@ -31,8 +33,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
     private listEditorService: ListEditorService,
     private memoryService: MemoryService,
     private selector: StoreSelectorService,
-    private packableFactory: PackableFactory,
-    private collectionFactory: CollectionFactory,
+    private profileFactory: ProfileFactory,
     private modalService: NgbModal
   ) { }
   openItemSelector: boolean = false;
@@ -51,6 +52,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   editMode: boolean = false;
   editingProfile: ProfileComplete = new ProfileComplete('','', [], []);
   editingProfileId: string;
+  memory: memoryObject;
 
   usedNames: string[] = [];
   profileForm: FormGroup;
@@ -82,35 +84,33 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
         this.originalPackables = packablesState.packables;
         this.originalCollections = collectionState.collections;
         this.profiles = profileState.profiles;
-        let memoryProfile = this.memoryService.getProfile();
+        this.memory = this.memoryService.getAll
+        let memoryProfile = this.memory.profile;
         console.log(memoryProfile);
-        
-        this.usedNames = [];
-        for (let profile of this.profiles) {
-          this.usedNames.push(profile.name.toLowerCase());
-        }
         if (routeParams['profile']) {
           if(memoryProfile){
-            this.editMode = true;
+            this.prepareEditMode(memoryProfile)
           } else {
             this.router.navigate(['/new'],{relativeTo:this.activatedRoute})
           }
         } else {
           this.editMode = false;
         }
-        if(memoryProfile){
-          this.editingProfile = this.selector.getCompleteProfiles([memoryProfile])[0];
-          this.editingProfileId = this.editingProfile.id;
-        }
-        console.log("editingProfile:",this.editingProfile)
         this.navSetup();
         this.initForm();
       }
       )
   }
+
+  prepareEditMode(memoryProfile:Profile){
+    this.editMode = true;
+    this.editingProfile = this.profileFactory.getCompleteProfiles([memoryProfile])[0];
+    this.editingProfileId = this.editingProfile.id;
+  }
   navSetup(){
+    let header = (this.editMode && this.editingProfile) ? this.editingProfile.name : 'New Profile';
     this.navParams = {
-      header:this.editingProfile && this.editingProfile.name !=''  ? this.editingProfile.name : 'New Profile',
+      header: header,
       left: {
         enabled: true,
         text: 'Cancel',
@@ -139,6 +139,10 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
     }
   }
   initForm() {
+    this.usedNames = [];
+    for (let profile of this.profiles) {
+      this.usedNames.push(profile.name.toLowerCase());
+    }
     this.profileForm.patchValue({ 'name': this.editingProfile.name })
   }
   validate_usedName(control: FormControl): { [s: string]: boolean } {
@@ -152,11 +156,11 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   editPackables() {
     let listEditorParams: listEditorParams = {
       itemName: "Packables",
-      listType: "packables",
+      listType: "PRIVATE_PACKABLES",
       usedList: this.editingProfile.packables,
       originalList: this.originalPackables
     }
-    this.saveFormStateToMemory();
+    this.saveProfileToMemory();
     this.listEditorService.setParams(listEditorParams);
     this.router.navigate(['packables'], { relativeTo: this.activatedRoute });
 
@@ -164,54 +168,59 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   editCollections() {
     let listEditorParams: listEditorParams = {
       itemName: "Collections",
-      listType: "collections",
+      listType: "PRIVATE_COLLECTIONS",
       usedList: this.editingProfile.collections,
       originalList: this.originalCollections
     }
-    this.saveFormStateToMemory();
+    this.saveProfileToMemory();
     this.listEditorService.setParams(listEditorParams);
     this.router.navigate(['collections'], { relativeTo: this.activatedRoute });
   }
-  saveFormStateToMemory() {
-    this.editingProfile.name = this.profileForm.get('name').value;
-    this.memoryService.setProfile(this.editingProfile);
+
+  onEditPackable(packable:PackableComplete){
+    let profile = this.saveProfileToMemory();
+    let privatePackable = profile.packables.find(p=>p.id == packable.id)
+    this.memoryService.set('PRIVATE_PACKABLE',privatePackable);
+    this.memoryService.reset('UNSAVED_PACKABLE')
+    this.router.navigate(['packables', slugName(packable.name)], { relativeTo: this.activatedRoute });
   }
-  onEditPackable(packable:PackablePrivate, id:number){
-    this.saveFormStateToMemory();
-    let packableComplete = this.packableFactory.makeComplete(packable);
-    this.memoryService.setPackable(packableComplete);
-    this.router.navigate(['packables', id], { relativeTo: this.activatedRoute });
-  }
-  onEditCollection(collection:CollectionPrivate, id:number){
-    this.saveFormStateToMemory();
-    let collectionComplete = this.collectionFactory.makeComplete(collection);
-    this.memoryService.setCollection(collectionComplete);
-    this.router.navigate(['collections', id], { relativeTo: this.activatedRoute });
+  onEditCollection(collection:CollectionComplete){
+    let profile = this.saveProfileToMemory();
+    let privateCollection = profile.collections.find(c=>c.id == collection.id)
+    this.memoryService.set('PRIVATE_COLLECTION',privateCollection);
+    this.memoryService.reset('UNSAVED_COLLECTION')
+    this.router.navigate(['collections', slugName(collection.name)], { relativeTo: this.activatedRoute });
   }
 
-  onSubmit() {
-    if (this.profileForm.valid) {
-      let name = this.profileForm.get('name').value;
-      let id = this.editingProfileId ? this.editingProfile.id : Guid.newGuid();
-      let newPackables = this.editingProfile.packables.map(p=>{
-        return this.packableFactory.newPrivatePackable(p);
-      })
-      let newCollections = this.editingProfile.collections.map(c => {
-        c.packables = c.packables.map(p=>{
-          return this.packableFactory.newPrivatePackable(p);
-        })
-        return c;
-      })
-      let newProfile = new Profile(id,name,newPackables,newCollections)
-      
-      if (!this.editMode) {
-        this.store.dispatch(new profileActions.addProfile(newProfile))
-      } else {
-        this.store.dispatch(new profileActions.editProfile(newProfile))
-      }
+
+  createProfileFromForm():Profile{
+    let name = this.profileForm.get('name').value;
+    let id = this.editMode ? this.editingProfile.id : Guid.newGuid();
+    let packables = this.editMode ? this.memory.profile.packables : [];
+    let collections = this.editMode ? this.memory.profile.collections : [];
+    return new Profile(id,name,packables,collections)
+  }
+
+  saveProfileToMemory(profile:Profile =null):Profile{
+    if(!profile){
+      profile = this.createProfileFromForm();
+    }
+    this.memoryService.set('PROFILE',profile);
+    return profile
+  }
+
+  onNext() {
+    let newProfile = this.createProfileFromForm();
+    if(!this.editMode){
+      this.store.dispatch(new profileActions.addProfile(newProfile))
+      this.saveProfileToMemory(newProfile)
+      this.router.navigate(['../'+slugName(newProfile.name)], {relativeTo:this.activatedRoute})
+    } else {
+      this.store.dispatch(new profileActions.editProfile(newProfile))
       this.return();
     }
   }
+  
   onDelete() {
     let config: modalConfig = {
       right: { name: 'Delete', class: 'btn-outline-danger' },

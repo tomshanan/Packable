@@ -5,9 +5,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatInputModule} from '@angular/material/input';
 import {MatCardModule} from '@angular/material/card';
-
-
-
+import {MatButtonModule} from '@angular/material/button';
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
     exports: [
@@ -20,7 +19,9 @@ import {MatCardModule} from '@angular/material/card';
         MatExpansionModule,
         MatInputModule,
         MatSelectModule,
-        MatCardModule
+        MatCardModule,
+        MatButtonModule,
+        MatTabsModule
     ],
 })
 export class AppMaterialModule { }

@@ -1,11 +1,27 @@
 <nav class="nav flex-column">
-  <ng-template ngFor let-listItem [ngForOf]="mainNav">
-      <a *ngIf="listItem.type == 'main'" 
-      class="nav-link navLink text-right" 
-      [routerLink]="[listItem.link]" routerLinkActive="active">{{listItem.text}}</a>
-      <a *ngIf="listItem.type == 'sub'" 
-      class="nav-link navLink text-right small" 
-      [routerLink]="[listItem.link]" routerLinkActive="active">{{listItem.text}}</a>
-      <br *ngIf="listItem.type == 'gap'">
-  </ng-template>
-  </nav>
+    <ng-template ngFor let-listItem [ngForOf]="mainNav">
+        <a 
+            *ngIf="listItem.type == 'text' && listItem.active" 
+            class="nav-link navLink text-right" 
+            [ngClass]="{'small': listItem.size=='sub'}"
+            [routerLink]="[listItem.link]" 
+            routerLinkActive="active">
+            {{listItem.text}}
+        </a>
+
+        <br *ngIf="listItem.type == 'gap' && listItem.active">
+    </ng-template>
+    <br>
+    <ng-template ngFor let-listItem [ngForOf]="userNav">
+        <a 
+            *ngIf="listItem.type == 'text' && listItem.active"
+            class="nav-link navLink text-right" 
+            [ngClass]="{'small': listItem.size=='sub'}"
+            [routerLink]="['user']" 
+            [fragment]="listItem.fragment"
+            routerLinkActive="active">
+            {{listItem.text}}
+        </a>
+        <br *ngIf="listItem.type == 'gap' && listItem.active">
+    </ng-template>
+</nav>

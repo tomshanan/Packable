@@ -15,7 +15,8 @@ import { Trip } from './shared/models/trip.model';
 import * as moment from 'moment';
 import { CollectionFactory } from './shared/factories/collection.factory';
 import { PackableFactory } from './shared/factories/packable.factory';
-
+import * as firebase from 'firebase';
+import { firebaseSettings } from './user/firebase-settings.object';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -33,6 +34,8 @@ export class AppComponent implements OnInit {
   ){
   }
   ngOnInit(){
+    firebase.initializeApp(firebaseSettings)
+
     // let packableNames = ['Ski Pants', 'jumper','shorts','towl','t-shirt','gym pants','sun glasses','toothbrush','toothpaste', 'gloves','jeans','earphones','tissues','shorts','shirt','radio','towel','sun screen']
     // let repTypes = ["period" , "profile" , "trip"]
     // let allPackables: PackableOriginal[] = [];

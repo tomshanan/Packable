@@ -46,6 +46,7 @@ import { ProfileFactory } from './shared/factories/profile.factory';
 import { LoginComponent } from './user/login/login.component';
 import { RegisterComponent } from './user/register/register.component';
 import { UserComponent } from './user/user.component';
+import { AuthService } from './user/auth.service';
 
 
 @NgModule({
@@ -89,7 +90,7 @@ import { UserComponent } from './user/user.component';
     StoreModule.forRoot(reducers)
 
   ],
-  providers: [WindowService, ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory,ProfileFactory,DestinationDataService, WeatherService],
+  providers: [AuthService, WindowService, ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory,ProfileFactory,DestinationDataService, WeatherService],
   bootstrap: [AppComponent],
   entryComponents: [ModalComponent]
 })

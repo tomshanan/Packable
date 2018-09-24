@@ -1,14 +1,16 @@
-<mat-card>
-  <mat-tab-group>
-    <mat-tab label="Login">
-      <div class="pt-3">
-        <app-login></app-login>
-      </div>
-    </mat-tab>
-    <mat-tab label="Register">
-      <div class="pt-3">
-        <app-register></app-register>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-</mat-card>
+<div class="col-12 col-lg-10 offset-lg-1">
+  <mat-card>
+    <mat-tab-group #tabGroup>
+      <mat-tab label="Login" #login>
+        <div class="pt-3">
+          <app-login></app-login>
+        </div>
+      </mat-tab>
+      <mat-tab label="Register" #register>
+        <div class="pt-3">
+          <app-register (onSuccess)="onRegister()"></app-register>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>

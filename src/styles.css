@@ -387,7 +387,14 @@ input.no-spinner-align::-webkit-inner-spin-button {
 .changedAfterChecked .mat-checkbox-frame {
     border-color: rgb(255, 68, 0);
 }
-
+.mat-spinner-wrapper{
+    overflow: hidden;
+    display: inline-block;
+    position: relative;
+    width:36px;
+    height: 36px;
+    vertical-align: bottom;
+}
 
 .text-disabled{
     color: lightgrey;

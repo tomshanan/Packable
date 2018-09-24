@@ -1,4 +1,4 @@
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-nav-list',
@@ -9,36 +9,65 @@ export class NavListComponent implements OnInit {
   mainNav = [
     {
       text:'Trips',
-      type:'main',
-      link:'/trips'
+      type:'text',
+      size: 'main',
+      link:'/trips',
+      active: true
     },
     {
       text:'Profiles',
-      type:'main',
-      link:'/profiles'
+      type:'text',
+      size: 'main',
+      link:'/profiles',
+      active: true
     },
     {
       text:'Collections',
-      type:'main',
-      link:'/collections'
+      type:'text',
+      size: 'main',
+      link:'/collections',
+      active: true
     },
     {
       text:'Packables',
-      type:'main',
-      link:'/packables'
+      type:'text',
+      size: 'main',
+      link:'/packables',
+      active: true
     },
     {
-      type:'gap'
+      type:'gap',
+      active: false
     },
+  ]
+  userNav = [
     {
       text:'User Settings',
-      type:'sub',
-      link:'/user'
+      type:'text',
+      size: 'sub',
+      fragment:'settings',
+      active: true
+    },
+    {
+      text:'Login',
+      type:'text',
+      size: 'sub',
+      fragment:'login',
+      active: true
+    },
+    {
+      text:'Register',
+      type:'text',
+      size: 'sub',
+      fragment:'register',
+      active: true
     },
     {
       text:'Logout',
-      type:'sub',
-      link:'/logout'
+      type:'text',
+      size: 'sub',
+      fragment:'logout',
+      active: true
     }
   ]
   constructor() { }

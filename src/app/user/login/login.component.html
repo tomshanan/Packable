@@ -1,11 +1,18 @@
-<form class="">
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
   <mat-form-field class="w-100">
-    <input type="email" matInput placeholder="Email">
+    <input type="email" matInput placeholder="Email" name="email" formControlName="email">
+    <mat-error *ngIf="loginForm.get('email').invalid">Not a valid email</mat-error>
   </mat-form-field>
 
   <mat-form-field class="w-100">
-    <input type="password" matInput placeholder="Password">
+    <input type="password" matInput placeholder="Password" name="password" formControlName="password">
+    <mat-hint><a class="text-secondary">Forgot password?</a></mat-hint>
   </mat-form-field>
-  <button mat-raised-button color="primary">Login</button>
-  <button mat-button>Forgot Password</button>
+  <div class="d-flex mt-2">
+    <span class="mat-spinner-wrapper ml-1" *ngIf="loading">
+      <mat-spinner [diameter]='36'></mat-spinner>
+    </span>
+    <span class="text-danger pl-1" *ngIf="error">{{error}}</span>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!loginForm.valid || !loginForm.enabled" class="ml-auto">Login</button>
+  </div>
 </form>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../user/auth.service';
 
 @Component({
   selector: 'app-nav-list',
@@ -6,38 +7,47 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./nav-list.component.css']
 })
 export class NavListComponent implements OnInit {
+  constructor(
+    private authService: AuthService
+  ) { }
+  
   mainNav = [
     {
       text:'Trips',
       type:'text',
       size: 'main',
       link:'/trips',
-      active: true
+      showAuth: true,
+      showPublic: false,
     },
     {
       text:'Profiles',
       type:'text',
       size: 'main',
       link:'/profiles',
-      active: true
+      showAuth: true,
+      showPublic: false
     },
     {
       text:'Collections',
       type:'text',
       size: 'main',
       link:'/collections',
-      active: true
+      showAuth: true,
+      showPublic: false
     },
     {
       text:'Packables',
       type:'text',
       size: 'main',
       link:'/packables',
-      active: true
+      showAuth: true,
+      showPublic: false
     },
     {
       type:'gap',
-      active: false
+      showAuth: false,
+      showPublic: false
     },
   ]
   userNav = [
@@ -46,31 +56,42 @@ export class NavListComponent implements OnInit {
       type:'text',
       size: 'sub',
       fragment:'settings',
-      active: true
+      showAuth: true,
+      showPublic: false
     },
     {
       text:'Login',
       type:'text',
       size: 'sub',
       fragment:'login',
-      active: true
+      showAuth: false,
+      showPublic: true
     },
     {
       text:'Register',
       type:'text',
       size: 'sub',
       fragment:'register',
-      active: true
+      showAuth: false,
+      showPublic: true
     },
     {
       text:'Logout',
       type:'text',
       size: 'sub',
       fragment:'logout',
-      active: true
+      showAuth: true,
+      showPublic: false
     }
   ]
-  constructor() { }
+  
+  canView(listItem:{showAuth: boolean, showPublic:boolean}):boolean{
+    if(this.authService.isAuthenticated()){
+      return listItem.showAuth
+    } else {
+      return listItem.showPublic
+    }
+  }
 
   ngOnInit() {
   }

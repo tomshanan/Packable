@@ -1,7 +1,7 @@
 <nav class="nav flex-column">
     <ng-template ngFor let-listItem [ngForOf]="mainNav">
         <a 
-            *ngIf="listItem.type == 'text' && listItem.active" 
+            *ngIf="canView(listItem)" 
             class="nav-link navLink text-right" 
             [ngClass]="{'small': listItem.size=='sub'}"
             [routerLink]="[listItem.link]" 
@@ -14,7 +14,7 @@
     <br>
     <ng-template ngFor let-listItem [ngForOf]="userNav">
         <a 
-            *ngIf="listItem.type == 'text' && listItem.active"
+            *ngIf="canView(listItem)"
             class="nav-link navLink text-right" 
             [ngClass]="{'small': listItem.size=='sub'}"
             [routerLink]="['user']" 

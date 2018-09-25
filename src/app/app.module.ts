@@ -47,6 +47,7 @@ import { LoginComponent } from './user/login/login.component';
 import { RegisterComponent } from './user/register/register.component';
 import { UserComponent } from './user/user.component';
 import { AuthService } from './user/auth.service';
+import { AuthGuard } from './user/auth-guard.service';
 
 
 @NgModule({
@@ -90,7 +91,7 @@ import { AuthService } from './user/auth.service';
     StoreModule.forRoot(reducers)
 
   ],
-  providers: [AuthService, WindowService, ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory,ProfileFactory,DestinationDataService, WeatherService],
+  providers: [AuthService, AuthGuard,WindowService, ListEditorService,MemoryService, StoreSelectorService,CollectionFactory,PackableFactory,ProfileFactory,DestinationDataService, WeatherService],
   bootstrap: [AppComponent],
   entryComponents: [ModalComponent]
 })

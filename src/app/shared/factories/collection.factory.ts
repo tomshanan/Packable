@@ -1,19 +1,38 @@
 import { Injectable } from '@angular/core';
-import { StoreSelectorService } from '../store-selector.service';
+import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableFactory } from './packable.factory';
 import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplete, Activity, isCollectionOriginal } from '../models/collection.model';
 import { PackableComplete } from '../models/packable.model';
+import { weatherFactory } from './weather.factory';
 
 @Injectable()
 export class CollectionFactory {
     constructor(
         private storeSelector: StoreSelectorService,
-        private packableFactory: PackableFactory
+        private packableFactory: PackableFactory,
+        private weatherFactory:weatherFactory,
     ) { }
     public isOriginal = (collection: CollectionAny): collection is CollectionOriginal => {
         return (<CollectionOriginal>collection).name !== undefined;
     }
-
+    public duplicatePrivateCollection = (packable: CollectionPrivate): CollectionPrivate =>{
+        return new CollectionPrivate(
+            packable.id,
+            packable.packables ? packable.packables.map(p=>this.packableFactory.clonePackablePrivate(p)) : [],
+            this.weatherFactory.deepCopy(packable.weatherRules),
+            packable.subscribeToOriginal || true
+        )
+        
+    }
+    public duplicateOriginalCollection = (original: CollectionOriginal): CollectionOriginal =>{
+        return new CollectionOriginal(
+            original.id,
+            original.name,
+            original.activity,
+            original.packables ? original.packables.slice() : [],
+            this.weatherFactory.deepCopy(original.weatherRules)
+        )
+    }
     public newPrivateCollection = (original: CollectionOriginal, patchValue?:{}): CollectionPrivate => {
         let privatePackables = original.packables.map(p => {
             return this.packableFactory.makePrivateFromId(p);
@@ -21,7 +40,7 @@ export class CollectionFactory {
         let newCollection = new CollectionPrivate(
             original.id, 
             privatePackables,
-            original.weatherRules.deepCopy()
+            this.weatherFactory.deepCopy(original.weatherRules)
         );
         if(patchValue){
             for (var property in patchValue) {
@@ -53,12 +72,12 @@ export class CollectionFactory {
                 collection.name,
                 collection.activity,
                 this.packableFactory.makeCompeleteFromIds(collection.packables),
-                collection.weatherRules.deepCopy(),
+                this.weatherFactory.deepCopy(collection.weatherRules),
                 true,
                 collection
             )
         } else {
-            let original = this.storeSelector.getCollectionById(collection.id)
+            let original = this.storeSelector.getCollectionById(collection.id)            
             let completePackables:PackableComplete[];
             if (collection.subscribeToOriginal){
                 completePackables = this.packableFactory.makeCompeleteFromIds(original.packables)
@@ -70,7 +89,7 @@ export class CollectionFactory {
                 original.name,
                 original.activity,
                 completePackables,
-                collection.weatherRules.deepCopy(),
+                this.weatherFactory.deepCopy(collection.weatherRules),
                 collection.subscribeToOriginal,
                 collection
             )
@@ -78,7 +97,11 @@ export class CollectionFactory {
         return returnCollection
     }
     public makeCompleteArray = (collections: CollectionAny[]): CollectionComplete[] =>{
-        return collections.map(c=>this.makeComplete(c))
+        return collections.filter(c=>{
+            return !!this.storeSelector.getCollectionById(c.id) ? true : (
+                console.log(`could not load id ${c.id} from store:`, this.storeSelector.originalCollections),
+                false)
+        }).map(c=>this.makeComplete(c))
     }
     public getActivityCollections = (collections: CollectionAny[]): Activity[] =>{
         return collections

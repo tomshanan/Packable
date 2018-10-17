@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../user/auth.service';
+import { Observable } from 'rxjs';
+import * as fromAuth from '../../user/store/auth.reducers'
+import * as fromApp from '../../shared/app.reducers';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-nav-list',
@@ -7,11 +11,28 @@ import { AuthService } from '../../user/auth.service';
   styleUrls: ['./nav-list.component.css']
 })
 export class NavListComponent implements OnInit {
+  authState: Observable<fromAuth.State>
+  isAuthenticated: boolean;
+
   constructor(
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    private store: Store<fromApp.appState>
+  ) { 
+    this.authState = this.store.select('auth');
+    this.authState.subscribe(state =>{
+      this.isAuthenticated = state.authenticated;
+    })
+  }
   
   mainNav = [
+    {
+      text:'Home',
+      type:'text',
+      size: 'main',
+      link:'/',
+      showAuth: true,
+      showPublic: true,
+    },
     {
       text:'Trips',
       type:'text',
@@ -86,7 +107,7 @@ export class NavListComponent implements OnInit {
   ]
   
   canView(listItem:{showAuth: boolean, showPublic:boolean}):boolean{
-    if(this.authService.isAuthenticated()){
+    if(this.isAuthenticated){
       return listItem.showAuth
     } else {
       return listItem.showPublic

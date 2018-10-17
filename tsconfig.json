@@ -16,6 +16,15 @@
       "dom"
     ],
     "module": "es2015",
-    "baseUrl": "./"
+    "baseUrl": "./src/",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@shared/*": ["app/shared/*"],
+      "@shared-comps/*": ["app/shared-comps/*"],
+      "@services/*": ["app/shared/services/*"],
+      "@factories/*": ["app/shared/factories/*"],
+      "@models/*": ["app/shared/models/*"],
+      "@icons/*": ["assets/icons/*"]
+    }
   }
 }

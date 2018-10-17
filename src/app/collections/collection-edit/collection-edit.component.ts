@@ -3,25 +3,29 @@ import { FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Observable, Subscription, combineLatest } from 'rxjs';
 
-import { PackableOriginal, PackablePrivate, PackableComplete } from '../../shared/models/packable.model';
-import * as fromApp from '../../shared/app.reducers';
-import { Router, ActivatedRoute } from '@angular/router';
-import { CollectionOriginal, CollectionComplete, CollectionPrivate, CollectionAny, isCollectionOriginal } from '../../shared/models/collection.model';
-import { Guid, slugName } from '../../shared/global-functions';
+import { PackableOriginal, PackablePrivate, PackableComplete } from '@models/packable.model';
+import * as fromApp from '@shared/app.reducers';
 import * as collectionActions from '../store/collections.actions';
-import { ListEditorService, listEditorParams, item } from '../../shared/list-editor.service';
-import { MemoryService, memoryObject } from '../../shared/memory.service';
-import { ProfileComplete, Profile } from '../../shared/models/profile.model';
-import { StoreSelectorService } from '../../shared/store-selector.service';
-import { navParams } from '../../mobile-nav/mobile-nav.component';
-import { ModalComponent, modalConfig } from '../../modal/modal.component';
+import * as profileActions from '../../profiles/store/profile.actions'
+import * as tripActions from '../../trips/store/trip.actions'
+
+import { Router, ActivatedRoute } from '@angular/router';
+import { CollectionOriginal, CollectionComplete, CollectionPrivate, CollectionAny, isCollectionOriginal } from '@models/collection.model';
+import { Guid, slugName } from '@shared/global-functions';
+import { ListEditorService, listEditorParams, item } from '@shared/services/list-editor.service';
+import { MemoryService, memoryObject } from '@shared/services/memory.service';
+import { ProfileComplete, Profile } from '@shared/models/profile.model';
+import { StoreSelectorService } from '@services/store-selector.service';
+import { navParams } from '@shared-comps/mobile-nav/mobile-nav.component';
+import { ModalComponent, modalConfig } from '@shared-comps/modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { WeatherRule } from '../../shared/models/weather.model';
+import { WeatherRule } from '@models/weather.model';
 import { MatSlideToggleChange } from '@angular/material';
-import { absoluteMax, absoluteMin } from '../../shared/weather.service';
+import { absoluteMax, absoluteMin } from '@services/weather.service';
 import { take } from 'rxjs/operators';
-import { PackableFactory } from '../../shared/factories/packable.factory';
-import { CollectionFactory } from '../../shared/factories/collection.factory';
+import { PackableFactory } from '@factories/packable.factory';
+import { CollectionFactory } from '@factories/collection.factory';
+import { weatherFactory } from '@factories/weather.factory';
 
 @Component({
   selector: 'app-collection-edit',
@@ -67,6 +71,7 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
     private storeSelectorService: StoreSelectorService,
     private packableFactory: PackableFactory,
     private collectionFactory: CollectionFactory,
+    private weatherFactory:weatherFactory,
     private modalService: NgbModal
   ) { }
 
@@ -221,7 +226,7 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
   }
 
   setWeatherRules(weatherRule: WeatherRule) {
-    this.customWeatherRules = weatherRule.deepCopy();
+    this.customWeatherRules = this.weatherFactory.deepCopy(weatherRule)
     this.collectionForm.updateValueAndValidity();
     this.collectionForm.markAsDirty()
   }
@@ -253,6 +258,8 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
         content: 'Are you sure you wish to delete this collection?'
       }
       this.openConfirmModal(null, config, () => {
+        this.store.dispatch(new tripActions.removeTripActivity(this.editingId));
+        this.store.dispatch(new profileActions.deleteProfileCollection(this.editingId))
         this.store.dispatch(new collectionActions.removeOriginalCollection(this.editingId));
         this.return();
       })

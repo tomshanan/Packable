@@ -12,6 +12,11 @@ const initialState: State = {
 }
 export function packablesReducers(state = initialState, action: PackableActions.theActions) {
     switch (action.type) {
+        case PackableActions.SET_PACKABLE_STATE:
+            return {
+                ...state,
+                packables: action.payload
+            }
         case PackableActions.ADD_ORIGINAL_PACKABLE:
             return {
                 ...state,

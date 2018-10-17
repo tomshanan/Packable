@@ -14,19 +14,21 @@
     flex-shrink: 0;
 }
 .ff-header-action {
-    background: none;
-    border: none;
     -webkit-flex-grow: 0;
     flex-grow: 1;
     -webkit-flex-basis: 0;
     flex-basis: 0;
     white-space: nowrap;
-    color:#007bff;
-    transition: color 300ms;
 }
-.ff-header-action:hover,
-.ff-header-action:active,
-.ff-header-action:focus
+button.ff-header-action{
+    background: none;
+    border: none;
+    transition: color 300ms;
+    color:#007bff;
+}
+button.ff-header-action:hover,
+button.ff-header-action:active,
+button.ff-header-action:focus
 {
     color:#007bff9a;
     cursor: pointer;

@@ -4,12 +4,14 @@ import * as fromApp from '../shared/app.reducers';
 import { Profile, ProfileComplete } from '../shared/models/profile.model';
 import { Observable ,  Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MemoryService } from '../shared/memory.service';
-import { StoreSelectorService } from '../shared/store-selector.service';
+import { MemoryService } from '../shared/services/memory.service';
+import { StoreSelectorService } from '../shared/services/store-selector.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent } from '../shared-comps/modal/modal.component';
 import { slugName } from '../shared/global-functions';
 import { ProfileFactory } from '../shared/factories/profile.factory';
+import { StorageService } from '../shared/storage/storage.service';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profiles',
@@ -30,12 +32,15 @@ export class ProfilesComponent implements OnInit {
     private memoryService: MemoryService,
     private selectorService: StoreSelectorService,
     private modalService: NgbModal,
-    private profileFactory: ProfileFactory
+    private profileFactory: ProfileFactory,
+    private storageService: StorageService
   ) { }
 
   ngOnInit() {
     this.profilesState_obs = this.store.select('profiles');
     this.profilesState_sub = this.profilesState_obs.subscribe(state =>{
+      console.log('profile state emitted',state);
+      
       this.profiles = this.profileFactory.getCompleteProfiles(state.profiles);
       this.originalProfiles = state.profiles;
     })
@@ -53,6 +58,9 @@ export class ProfilesComponent implements OnInit {
   openModal(tempRef:TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
+  }
+  testFirebase(){
+    this.storageService.test()
   }
 
 }

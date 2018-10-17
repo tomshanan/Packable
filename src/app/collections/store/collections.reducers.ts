@@ -14,6 +14,11 @@ const initialState = {
 
 export function collectionsReducers(state: State = initialState, action: CollectionActions.theActions) {
     switch (action.type) {
+        case CollectionActions.SET_COLLECTION_STATE:
+            return {
+                ...state,
+                collections: action.payload
+            }
         case CollectionActions.ADD_ORIGINAL_COLLECTION:
             return {
                 ...state,

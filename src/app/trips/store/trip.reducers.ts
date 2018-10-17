@@ -13,6 +13,12 @@ const initialState: State = {
 }
 export function tripReducers(state = initialState, action: TripActions.tripActions) {
     switch (action.type) {
+        case TripActions.SET_TRIP_STATE:
+        console.log(action.payload)
+            return {
+                ...state,
+                ...action.payload
+            }
         case TripActions.ADD_TRIP:
             return {
                 ...state,
@@ -40,6 +46,28 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
             return {
                 ...state,
                 trips: [...removeTrips]
+            }
+        case TripActions.REMOVE_TRIP_PROFILE:
+            const rp_id = action.payload
+            const rp_trips = state.trips.slice()
+            rp_trips.map(trip=>{
+                trip.profiles = trip.profiles.filter(p=> p!=rp_id)
+                return trip
+            })
+            return {
+                ...state,
+                trips: rp_trips
+            }
+        case TripActions.REMOVE_TRIP_ACTIVITY:
+            const ra_id = action.payload
+            const ra_trips = state.trips.slice()
+            ra_trips.map(trip =>{
+                trip.activities = trip.activities.filter(a=>a!=ra_id)
+                return trip
+            })
+            return {
+                ...state,
+                trips: ra_trips
             }
         case TripActions.UPDATE_PACKING_LIST:
             const newList = action.payload;

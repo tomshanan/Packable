@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, HostListener, Output, EventEmitter, Input } from '@angular/core';
 import { NgbDateStruct, NgbCalendar, NgbInputDatepicker, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
-import { WindowService } from '../../../shared/window.service';
+import { WindowService } from '../../../shared/services/window.service';
 
 const equals = (one: NgbDateStruct, two: NgbDateStruct) =>
   one && two && two.year === one.year && two.month === one.month && two.day === one.day;

@@ -5,21 +5,22 @@ import * as tripActions from '../store/trip.actions';
 import { Observable ,  Subscription ,  Subject } from 'rxjs';
 import { PackingList, PackingListPackable, Reason, packingListData } from '../../shared/models/packing-list.model';
 import { State as tripState } from '../store/trip.reducers';
-import { MemoryService } from '../../shared/memory.service';
+import { MemoryService } from '../../shared/services/memory.service';
 import { Trip } from '../../shared/models/trip.model';
 import * as moment from 'moment';
 import { Router, ActivatedRoute } from '@angular/router';
-import { StoreSelectorService } from '../../shared/store-selector.service';
-import { DestinationDataService } from '../../shared/location-data.service';
+import { StoreSelectorService } from '../../shared/services/store-selector.service';
+import { DestinationDataService } from '../../shared/services/location-data.service';
 import { PackableComplete, ActivityRule } from '../../shared/models/packable.model';
-import { WindowService } from '../../shared/window.service';
-import { navParams } from '../../mobile-nav/mobile-nav.component';
-import { WeatherService, tempOptions, weatherData, absoluteMax, absoluteMin } from '../../shared/weather.service';
+import { WindowService } from '../../shared/services/window.service';
+import { navParams } from '../../shared-comps/mobile-nav/mobile-nav.component';
+import { WeatherService, tempOptions, weatherData, absoluteMax, absoluteMin } from '../../shared/services/weather.service';
 import { WeatherRule, weatherType, weatherOptions } from '../../shared/models/weather.model';
 import { take } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { isDefined } from '../../shared/global-functions';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
+import { weatherFactory } from '../../shared/factories/weather.factory';
 
 
 interface collectionList {
@@ -67,7 +68,9 @@ export class PackingListComponent implements OnInit, OnDestroy {
     private windowService: WindowService, // used by template
     private weatherService: WeatherService,
     private fb:FormBuilder,
-    private profileFactory: ProfileFactory
+    private profileFactory: ProfileFactory,
+    
+    private weatherFactory:weatherFactory,
   ) {
     this.customWeatherForm = fb.group({
       min: [null],
@@ -160,7 +163,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
       if (checkWeatherRules(packable)) {
         let accQuantity = 0;
         let reasons: Reason[] = [];
-        let weatherNotChecked = packable.weatherRules.isSet && !data.weatherData.isValid;
+        let weatherNotChecked = this.weatherFactory.isSet(packable.weatherRules) && !this.weatherFactory.weatherDataIsValid(data.weatherData);
         packable.quantityRules.forEach(rule => {
           let reasonText: string;
           switch (rule.type) {
@@ -259,9 +262,6 @@ export class PackingListComponent implements OnInit, OnDestroy {
     }
 
     profiles.forEach(profile => {
-      profile.packables.forEach(packable => {
-        processPackable(packable, null, profile.id)
-      })
       profile.collections.forEach(collection => {
         if ((!collection.activity || checkActivityId(collection.id)) && checkWeatherRules(collection)) {
           collection.packables.forEach(packable => {

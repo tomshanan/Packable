@@ -41,24 +41,37 @@ export function profileReducers(state = initialState, action: ProfileActions.the
                 ...state,
                 profiles: [...removeProfiles]
             }
-        case ProfileActions.DELETE_PACKABLE:
+        case ProfileActions.DELETE_PROFILE_PACKABLE:
             const deletePackableId = action.payload;
             const deletePackableProfiles = state.profiles.slice();
-            deletePackableProfiles.forEach(profile =>{
-                const index = profile.packables.findIndex(x => x.id === deletePackableId);
-                if(index != -1){
-                    profile.packables.splice(index,1);
-                }
-                profile.collections.forEach(collection=>{
-                    const i = collection.packables.findIndex(x => x.id === deletePackableId)
-                    if(index != -1){
-                        collection.packables.splice(i,1);
-                    }
+            deletePackableProfiles.map(profile =>{
+                profile.collections.map(collection=>{
+                    collection.packables = collection.packables.filter(x => x.id !== deletePackableId)
+                    return collection
                 })
+                return profile
             })
             return {
                 ...state,
-                collections: [...deletePackableProfiles]
+                profiles: [...deletePackableProfiles]
+            }
+        case ProfileActions.DELETE_PROFILE_COLLECTION:
+            const dcp_id = action.payload
+            let dpc_state_profiles = state.profiles.slice()
+            dpc_state_profiles.map((profile)=>{
+                profile.collections = profile.collections.filter(c=>c.id != dcp_id)
+                return profile
+            })
+            return {
+                ...state,
+                profiles: [...dpc_state_profiles]
+            }
+
+
+        case ProfileActions.SET_PROFILE_STATE:
+            return {
+                ...state,
+                profiles: action.payload
             }
         default:
             return state;

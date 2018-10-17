@@ -1,13 +1,13 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent } from '../shared-comps/modal/modal.component';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MemoryService } from '../shared/memory.service';
+import { MemoryService } from '../shared/services/memory.service';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../shared/app.reducers'
 import { Trip, displayTrip } from '../shared/models/trip.model';
 import { Observable ,  Subscription } from 'rxjs';
-import { StoreSelectorService } from '../shared/store-selector.service';
+import { StoreSelectorService } from '../shared/services/store-selector.service';
 
 @Component({
   selector: 'app-trips',

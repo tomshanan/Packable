@@ -1,5 +1,5 @@
-import { Destination } from '../location-data.service';
-import { WeatherObject, weatherData } from '../weather.service';
+import { Destination } from '../services/location-data.service';
+import { WeatherObject, weatherData } from '../services/weather.service';
 import * as moment from 'moment';
 
 export class packingListData {

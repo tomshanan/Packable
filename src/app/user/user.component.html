@@ -1,23 +1,33 @@
-<div class="col-12 col-lg-10 offset-lg-1" >
-  <mat-card *ngIf="!authService.isAuthenticated(); else userSettings">
-    <mat-tab-group #tabGroup>
+<div class="col-12 col-lg-10 offset-lg-1">
+  <mat-card *ngIf="!authService.isAuthenticated; else userAuthenticated">
+    <mat-tab-group #tabGroup [(selectedIndex)]="selectedIndex" (selectedTabChange)="changeFragment($event)">
       <mat-tab label="Login" #login>
         <div class="pt-3">
-          <app-login (onSuccess)="onLogin()"></app-login>
+          <app-login (onSuccess)="onLogin()" *ngIf="selectedIndex == 0" [(email)]="sharedEmail"></app-login>
         </div>
       </mat-tab>
       <mat-tab label="Register" #register>
         <div class="pt-3">
-          <app-register (onSuccess)="onRegister()"></app-register>
+          <app-register (onSuccess)="onRegister()" *ngIf="selectedIndex == 1" [(email)]="sharedEmail"></app-register>
         </div>
       </mat-tab>
     </mat-tab-group>
   </mat-card>
 </div>
-<ng-template #userSettings>
-<mat-card>
-  <h1>User Settings</h1>
-  <p>Welcome to user settings</p>
-</mat-card>
-
+<ng-template #userAuthenticated>
+  <mat-card *ngIf="section == 'logout'">
+    <div class="d-flex align-items-center">
+      <div class="pr-3">
+        <mat-spinner [diameter]='36'></mat-spinner>
+      </div>
+      <div>
+        <h5 class="m-0">Logging you out</h5>
+        <p class="m-0">See you soon!</p>
+      </div>
+    </div>
+  </mat-card>
+  <mat-card *ngIf="section == 'settings'">
+    <h1>User Settings</h1>
+    <p>Welcome to user settings</p>
+  </mat-card>
 </ng-template>

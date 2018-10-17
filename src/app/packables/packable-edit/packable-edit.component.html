@@ -1,5 +1,5 @@
 <div id="form" class="full-flex">
-  <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()"></app-mobile-nav>
+  <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" *ngIf="navParams"></app-mobile-nav>
   <div class="ff-row-main">
     <div class="text-center text-sm-left small text-muted mb-1" *ngIf="profileName || collectionName">
       <span *ngIf="profileName">{{profileName || "New Profile"}}

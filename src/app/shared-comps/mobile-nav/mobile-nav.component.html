@@ -1,0 +1,20 @@
+<div class="ff-header d-sm-none">
+  <button type="button" class="ff-header-action" (click)="onLeft()" [disabled]="!nav.left.enabled" *ngIf="nav.left; else void">
+    <i class="{{nav.left.iconClass}}" *ngIf="nav.left.iconClass !=''"></i> {{nav.left.text || "" }} 
+  </button>
+
+  <div class="ff-header-title h5 m-0">
+    {{nav.header}}
+  </div>
+  <button type="submit" class="ff-header-action" (click)="onRight()" [disabled]="!nav.right.enabled" *ngIf="nav.right; else void">
+    {{nav.right.text || "" }}
+    <i class="{{nav.right.iconClass}}" *ngIf="nav.right.iconClass !=''"></i>
+  </button>
+</div>
+<div class="ff-row d-none d-sm-block">
+  <h3>{{nav.header}}</h3>
+</div>
+
+<ng-template #void>
+  <span class="ff-header-action"></span>
+</ng-template>

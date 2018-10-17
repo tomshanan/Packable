@@ -2,19 +2,20 @@ import { Component, OnInit, OnDestroy, TemplateRef } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../shared/app.reducers';
 import * as profileActions from '../store/profile.actions';
+import * as tripActions from '../../trips/store/trip.actions'
 
 import { Observable ,  Subscription ,  combineLatest } from 'rxjs';
 import { PackableOriginal, PackableComplete } from '../../shared/models/packable.model';
 import { CollectionPrivate, CollectionOriginal, CollectionComplete } from '../../shared/models/collection.model';
 import { Profile, ProfileComplete } from '../../shared/models/profile.model';
-import { ListEditorService, listEditorParams } from '../../shared/list-editor.service';
+import { ListEditorService, listEditorParams } from '../../shared/services/list-editor.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MemoryService, memoryObject } from '../../shared/memory.service';
+import { MemoryService, memoryObject } from '../../shared/services/memory.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { StoreSelectorService } from '../../shared/store-selector.service';
+import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { Guid, slugName } from '../../shared/global-functions';
-import { navParams } from '../../mobile-nav/mobile-nav.component';
-import { modalConfig, ModalComponent } from '../../modal/modal.component';
+import { navParams } from '../../shared-comps/mobile-nav/mobile-nav.component';
+import { modalConfig, ModalComponent } from '../../shared-comps/modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PackableFactory } from '../../shared/factories/packable.factory';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
@@ -50,7 +51,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   profiles: Profile[];
 
   editMode: boolean = false;
-  editingProfile: ProfileComplete = new ProfileComplete('','', [], []);
+  editingProfile: ProfileComplete = new ProfileComplete('','', []);
   editingProfileId: string;
   memory: memoryObject;
 
@@ -153,18 +154,6 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  editPackables() {
-    let listEditorParams: listEditorParams = {
-      itemName: "Packables",
-      listType: "PRIVATE_PACKABLES",
-      usedList: this.editingProfile.packables,
-      originalList: this.originalPackables
-    }
-    this.saveProfileToMemory();
-    this.listEditorService.setParams(listEditorParams);
-    this.router.navigate(['packables'], { relativeTo: this.activatedRoute });
-
-  }
   editCollections() {
     let listEditorParams: listEditorParams = {
       itemName: "Collections",
@@ -177,13 +166,6 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
     this.router.navigate(['collections'], { relativeTo: this.activatedRoute });
   }
 
-  onEditPackable(packable:PackableComplete){
-    let profile = this.saveProfileToMemory();
-    let privatePackable = profile.packables.find(p=>p.id == packable.id)
-    this.memoryService.set('PRIVATE_PACKABLE',privatePackable);
-    this.memoryService.reset('UNSAVED_PACKABLE')
-    this.router.navigate(['packables', slugName(packable.name)], { relativeTo: this.activatedRoute });
-  }
   onEditCollection(collection:CollectionComplete){
     let profile = this.saveProfileToMemory();
     let privateCollection = profile.collections.find(c=>c.id == collection.id)
@@ -196,9 +178,8 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
   createProfileFromForm():Profile{
     let name = this.profileForm.get('name').value;
     let id = this.editMode ? this.editingProfile.id : Guid.newGuid();
-    let packables = this.editMode ? this.memory.profile.packables : [];
     let collections = this.editMode ? this.memory.profile.collections : [];
-    return new Profile(id,name,packables,collections)
+    return new Profile(id,name,collections)
   }
 
   saveProfileToMemory(profile:Profile =null):Profile{
@@ -229,6 +210,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
     }
     this.openConfirmModal(null, config, () => {
       this.store.dispatch(new profileActions.removeProfile(this.editingProfileId))
+      this.store.dispatch(new tripActions.removeTripProfile(this.editingProfileId));
       this.return();
     })
   }

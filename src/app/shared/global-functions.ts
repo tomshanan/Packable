@@ -1,4 +1,4 @@
-import { item } from './list-editor.service';
+import { item } from './services/list-editor.service';
 
 export function isDefined(property:any, object:any = {}){
   return object && property!==null && property !==undefined && property!=='' && property != []
@@ -11,6 +11,10 @@ export function objectInArray(arr: {}[], obj: {}, p: string):boolean {
 }
 export function slugName(string:string):string{
   return string.replace(/[^A-Za-z0-9]/g,'-')
+}
+
+export function randomBetween(min:number,max:number):number {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
 export class FilteredArray {

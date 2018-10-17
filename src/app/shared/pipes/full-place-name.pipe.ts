@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { DestinationDataService } from '../location-data.service';
+import { DestinationDataService } from '../services/location-data.service';
 
 @Pipe({name: 'fullPlaceName', pure: false})
 export class FullPlaceNamePipe implements PipeTransform {

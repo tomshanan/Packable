@@ -1,0 +1,91 @@
+.profile{
+    display: inline-block;
+    position: relative;
+    padding: 0.2em;
+  }
+  .profile *{
+    transition: opacity 300ms;
+  }
+  .profile.showName{
+    padding-bottom: 1em;
+  }
+  .profile_circle{
+    position:relative;
+    width: 100%;
+    padding-bottom: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+    border:2px solid white;
+    background: rgb(226, 226, 226);
+    transition: all 300ms!important;
+  }
+  .profile_name{
+    width: 100%;
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0.1em;
+    text-align: center;
+    line-height: 1.1em;
+    font-size: 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .profile.interactive {
+    cursor: pointer;
+  }
+  .profile.interactive .profile_background{
+    transition: all 300ms ease;
+  }
+  .profile.interactive:not(.selected) .profile_background{
+    opacity: 0.5;
+  }
+  .profile.dim .profile_background,
+  .profile.dim .profile_name,
+  .profile.dim .profile_circle_content {
+    opacity: 0.4;
+  }
+  .profile.dim:hover * {
+    opacity: initial;
+  }
+  .profile.interactive:hover .profile_background{
+    opacity: 1!important;
+  }
+  .profile.button .profile_circle{
+    border:1px solid #007bff;
+    box-shadow: 1px 1px 4px #0000005c;
+  }
+  .profile.button .profile_name {
+    color: #007bff;
+  }
+  .profile.selected .profile_circle{
+    border-color: #e91e63;
+    box-shadow: 1px 1px 4px #0000005c;
+  }
+  
+  .profile_circle > .profile_circle_content {
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .profile_background {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+  }
+  .profile_circle .mat-icon {
+    transform: scale(0.95);
+    position: absolute;
+    bottom: -15%;
+  }
+  .profile.interactive:not(.selected) .mat-icon{
+    transition: all 300ms ease;
+    bottom: -20%;
+  }
+  .profile.interactive:not(.selected):hover .mat-icon{
+    transition: all 300ms ease;
+    bottom: -15%;
+  }

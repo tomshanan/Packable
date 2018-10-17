@@ -5,9 +5,9 @@ import { Store } from '@ngrx/store';
 import * as fromApp from '../shared/app.reducers';
 import { PackableOriginal } from '../shared/models/packable.model';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MemoryService } from '../shared/memory.service';
+import { MemoryService } from '../shared/services/memory.service';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent } from '../shared-comps/modal/modal.component';
 import { slugName } from '../shared/global-functions';
 
 @Component({
@@ -30,6 +30,7 @@ originalPackables: PackableOriginal[] = [];
   ngOnInit() {
     this.obs_originalPackables =  this.store.select('packables');
     this.obs_originalPackables.subscribe(state =>{
+      console.log('packable state updated:',state)
       this.originalPackables = state.packables;
     })
   }

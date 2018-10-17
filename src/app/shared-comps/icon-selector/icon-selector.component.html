@@ -1,0 +1,13 @@
+<p>
+  icon-selector works!
+</p>
+<profile-icon 
+  *ngFor="let icon of icons"
+  [icon]='icon' 
+  [showName]="false"  
+  [isInteractive]="true" 
+  [isSelected]="isSelected(icon)" 
+  [inputWidth]="iconWidth"
+  [dim]="!isSelected(icon) && selected.length>0"
+  (click)="toggle(icon)">
+</profile-icon>

@@ -1,0 +1,17 @@
+  <div class="profile" 
+  [class.showName]="showName" 
+  [class.selected]="isSelected" 
+  [class.interactive]="isInteractive" 
+  [class.button]="isButton" 
+  [class.dim]="dim"
+  [title]="inputName" #profile>
+      <div class="profile_circle">
+        <div class="profile_circle_content">
+            <div class="profile_background" [style.background]="inputColor"></div>
+            <mat-icon [svgIcon]="icon" [inline]="true"></mat-icon>    
+        </div>
+      </div>
+        <span class="profile_name" *ngIf="showName">
+          {{inputName}}
+        </span>
+  </div>

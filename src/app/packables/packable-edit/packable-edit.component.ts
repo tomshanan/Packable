@@ -10,17 +10,19 @@ import * as fromApp from '../../shared/app.reducers';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { ProfileComplete, Profile } from '../../shared/models/profile.model';
 import { CollectionComplete, CollectionAny, isCollectionPrivate, isCollectionOriginal } from '../../shared/models/collection.model';
-import { MemoryService, memoryObject } from '../../shared/memory.service';
-import { ListEditorService } from '../../shared/list-editor.service';
-import { StoreSelectorService } from '../../shared/store-selector.service';
-import { navParams } from '../../mobile-nav/mobile-nav.component';
+import { MemoryService, memoryObject } from '../../shared/services/memory.service';
+import { ListEditorService } from '../../shared/services/list-editor.service';
+import { StoreSelectorService } from '../../shared/services/store-selector.service';
+import { navParams } from '../../shared-comps/mobile-nav/mobile-nav.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent, modalConfig } from '../../modal/modal.component';
-import { WindowService } from '../../shared/window.service';
+import { ModalComponent, modalConfig } from '../../shared-comps/modal/modal.component';
+import { WindowService } from '../../shared/services/window.service';
 import { WeatherRule, weatherOptions } from '../../shared/models/weather.model';
 import { Guid, slugName } from '../../shared/global-functions';
 import { PackableFactory } from '../../shared/factories/packable.factory';
 import { MatSlideToggleChange } from '@angular/material';
+import { weatherFactory } from '../../shared/factories/weather.factory';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-packable-edit',
@@ -53,6 +55,7 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     private listService: ListEditorService,
     private storeService: StoreSelectorService,
     private packableFactory: PackableFactory,
+    private weatherFactory:weatherFactory,
     private modalService: NgbModal,
     private windowService: WindowService // used by template
   ) {
@@ -73,8 +76,8 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     this.packablesState_obs = this.store.select('packables');
     const RouteParams = this.activatedRoute.params;
     const RoutesAndPackables = combineLatest(RouteParams, this.packablesState_obs);
-
-    this.RoutesAndPackablesSub = RoutesAndPackables.subscribe(
+    
+    this.RoutesAndPackablesSub = RoutesAndPackables.pipe(take(1)).subscribe(
       ([params, packablesState]) => {
         this.params = params;
         this.usedNames = [];
@@ -83,12 +86,14 @@ export class PackableEditComponent implements OnInit, OnDestroy {
         }
         let memoryPackable = this.memory.originalPackable || this.memory.privatePackable;
         if (params['packable'] && params['packable'] != 'new') {
-          if (memoryPackable) {
+          if (memoryPackable) {            
             this.proccessEditMode(memoryPackable)
           } else {
             this.router.navigate(['../'], { relativeTo: this.activatedRoute })
           }
         } else {
+          
+          
           this.editMode = false;
         }
         if (this.editMode && this.memory.privatePackable) {
@@ -103,8 +108,11 @@ export class PackableEditComponent implements OnInit, OnDestroy {
   proccessEditMode(memoryPackable: PackableAny) {
     this.editMode = true;
     let originalFromStore = this.storeService.getPackableById(memoryPackable.id)
+    console.log('originalFromStore', originalFromStore);
     this.originalPackable = this.packableFactory.makeComplete(originalFromStore)
     this.editingId = this.originalPackable.id;
+    console.log('this.originalPackable', this.originalPackable);
+    console.log('this.editingId', this.editingId);    
   }
   navSetup() {
     this.navParams = {
@@ -244,13 +252,7 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     let collection = this.memory.originalCollection || this.memory.privateCollection;
     let packableIndex: number;
     if (profile) {
-      if (!collection) {
-        // Editing Profile
-        packableIndex = profile.packables.findIndex(p => p.id == this.editingId);
-        profile.packables.splice(packableIndex, 1, newPackablePrivate)
-        this.memoryService.set('PROFILE', profile);
-        this.memoryService.set('UNSAVED_PROFILE', true)
-      } else if (isCollectionPrivate(collection)) {
+      if (isCollectionPrivate(collection)) {
         // Editing Private Collection
         packableIndex = collection.packables.findIndex(p => p.id == this.editingId);
         collection.packables.splice(packableIndex, 1, newPackablePrivate)
@@ -307,8 +309,7 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     if (this.advancedForm) {
       let profile = this.memory.profile;
       let collection = this.memory.privateCollection;
-      if (profile) {
-        if (collection) {
+      if (profile && collection) {
           let config: modalConfig = {
             right: { name: 'Remove', class: 'btn-outline-danger' },
             header: 'Remove ' + this.originalPackable.name + '?',
@@ -320,19 +321,6 @@ export class PackableEditComponent implements OnInit, OnDestroy {
             this.memoryService.set('PRIVATE_COLLECTION', collection);
             this.return();
           });
-        } else {
-          let config: modalConfig = {
-            right: { name: 'Remove', class: 'btn-outline-danger' },
-            header: 'Remove ' + this.originalPackable.name + '?',
-            content: 'If you remove this Packable you will lose the changes you made to its settings and conditions. You will be able to add it back with its default settings.'
-          }
-          this.openConfirmModal(null, config, () => {
-            let packableIndex = profile.packables.findIndex(p => p.id == this.editingId);
-            profile.packables.splice(packableIndex, 1)
-            this.memoryService.set('PROFILE', profile);
-            this.return();
-          });
-        }
       }
     } else {
       let config: modalConfig = {
@@ -348,7 +336,7 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     }
   }
   setWeatherRules(weatherRule: WeatherRule) {
-    this.customWeatherRules = weatherRule.deepCopy();
+    this.customWeatherRules = this.weatherFactory.deepCopy(weatherRule)
     this.packableForm.updateValueAndValidity();
     this.packableForm.markAsDirty();
   }

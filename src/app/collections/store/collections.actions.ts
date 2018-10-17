@@ -5,9 +5,13 @@ import { PackableOriginal } from '../../shared/models/packable.model';
 export const ADD_ORIGINAL_COLLECTION = 'ADD_COLLECTION';
 export const REMOVE_ORIGINAL_COLLECTION = 'REMOVE_COLLECTION';
 export const EDIT_ORIGINAL_COLLECTION = 'EDIT_COLLECTION';
-export const REPLACE_PACKABLE = 'REPLACE_PACKABLE';
 export const DELETE_PACKABLE = 'DELETE_PACKABLE';
+export const SET_COLLECTION_STATE = 'SET_COLLECTION_STATE';
 
+export class setCollectionState  implements Action{
+    readonly type = SET_COLLECTION_STATE;
+    constructor(public payload: CollectionOriginal[]){};
+}
 export class addOriginalCollection  implements Action{
     readonly type = ADD_ORIGINAL_COLLECTION;
     constructor(public payload: CollectionOriginal){};
@@ -25,4 +29,4 @@ export class deletePackable  implements Action{
     constructor(public payload: string){};
 }
 
-export type theActions = addOriginalCollection | editOriginalCollection | removeOriginalCollection | deletePackable;
+export type theActions = addOriginalCollection | editOriginalCollection | removeOriginalCollection | deletePackable | setCollectionState;

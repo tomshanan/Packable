@@ -17,31 +17,6 @@
 				</div>
 			</div>
 			<div class="form-border" *ngIf="editMode">
-				<div class="form-border-header pointer" (click)="editPackables()">
-					<h5>Packables</h5>
-					<span class="text-primary">Edit
-						<i class="fas fa-chevron-right"></i>
-					</span>
-				</div>
-				<div class="form-row">
-					<div class="col-12">
-						<a class="tag clickable" *ngFor="let packable of editingProfile.packables; let i = index" (click)="onEditPackable(packable, i)">
-							<i class="fa fa-{{packable.icon || 'suitcase'}} p-1"></i> {{packable.name}}
-						</a>
-						<div class="small text-center text-muted" *ngIf="editingProfile.packables.length === 0; else editNote"> This Profile has no Packables yet.
-							<br>
-							<a class="inline-link" (click)="editPackables({itemSelector:true})">
-								Add Packables</a>?
-						</div>
-						<ng-template #editNote>
-								<div class="small text-center text-muted mt-1">
-									Click a Packable to edit its Conditions
-								</div>
-						</ng-template>
-					</div>
-				</div>
-			</div>
-			<div class="form-border" *ngIf="editMode">
 				<div class="form-border-header pointer" (click)="editCollections()">
 					<h5>Collections</h5>
 					<span class="text-primary">Edit

@@ -1,7 +1,7 @@
 import { PackablePrivate, PackableComplete } from './packable.model';
 import { Guid } from '../global-functions';
 import { Injectable } from '@angular/core';
-import { StoreSelectorService } from '../store-selector.service';
+import { StoreSelectorService } from '../services/store-selector.service';
 import { WeatherRule } from './weather.model';
 
 export type collectionType = 'complete' | 'private' | 'original';

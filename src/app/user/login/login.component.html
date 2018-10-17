@@ -8,11 +8,11 @@
     <input type="password" matInput placeholder="Password" name="password" formControlName="password">
     <mat-hint><a class="text-secondary">Forgot password?</a></mat-hint>
   </mat-form-field>
-  <div class="d-flex mt-2">
+  <div class="d-flex mt-2 align-items-start">
     <span class="mat-spinner-wrapper ml-1" *ngIf="loading">
       <mat-spinner [diameter]='36'></mat-spinner>
     </span>
-    <span class="text-danger pl-1" *ngIf="error">{{error}}</span>
+    <span class="text-danger pl-1 small" *ngIf="error">{{error}}</span>
     <button type="submit" mat-raised-button color="primary" [disabled]="!loginForm.valid || !loginForm.enabled" class="ml-auto">Login</button>
   </div>
 </form>

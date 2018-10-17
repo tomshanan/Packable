@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { navParams } from '../../mobile-nav/mobile-nav.component';
+import { navParams } from '../../shared-comps/mobile-nav/mobile-nav.component';
 import { Trip } from '../../shared/models/trip.model';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl, AbstractControl } from '@angular/forms';
-import { DestinationDataService, Destination } from '../../shared/location-data.service';
+import { DestinationDataService, Destination } from '../../shared/services/location-data.service';
 import { Observable, Subscription ,  combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import * as FromApp from '../../shared/app.reducers'
@@ -12,10 +12,12 @@ import { Profile } from '../../shared/models/profile.model';
 import { CollectionOriginal, Activity } from '../../shared/models/collection.model';
 import * as moment from 'moment';
 import { MatAutocompleteTrigger } from '@angular/material';
-import { listEditorParams, ListEditorService } from '../../shared/list-editor.service';
-import { MemoryService } from '../../shared/memory.service';
+import { listEditorParams, ListEditorService } from '../../shared/services/list-editor.service';
+import { MemoryService } from '../../shared/services/memory.service';
 import { Guid } from '../../shared/global-functions';
 import * as tripActions from '../store/trip.actions';
+import { StoreSelectorService } from '../../shared/services/store-selector.service';
+import { CollectionFactory } from '../../shared/factories/collection.factory';
 
 
 
@@ -57,7 +59,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
   allActivities: Activity[];
   sortedActivities: Activity[];
 
-  item_limit = 0;
+  item_limit = 9;
   state_subscription: Subscription;
 
   constructor(
@@ -68,6 +70,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     private store: Store<FromApp.appState>,
     private memoryService: MemoryService,
     private listEditorService: ListEditorService,
+    private CollectionFactory:CollectionFactory
   ) {
     this.tripForm = fb.group({
       destination: ['', [Validators.required,this.validator_destinationInvalid.bind(this)]],
@@ -98,17 +101,11 @@ export class EditTripComponent implements OnInit, AfterViewInit {
           this.editMode = true
         }
         this.allProfiles = profilesState.profiles;
-        this.allActivities = collectionsState.collections.filter(x => x.activity == true).map(col => {
-          return {
-            name: col.name,
-            id: col.id
-          }
-        })
+        this.allActivities = this.CollectionFactory.getActivityCollections(collectionsState.collections)
       })
     this.destArray = this.destService.destinations;
     this.editingTrip = <Trip>this.memoryService.get('TRIP') || null;
     this.formInit();
-    
   }
 
   navSetup() {

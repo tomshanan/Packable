@@ -1,0 +1,21 @@
+<div class="checkbox-container" #checkboxContainer
+[class.selected]="checked" 
+[class.disabled]="disabled" 
+[class.small-screen]="smallScreen && wService.max_xs" 
+(click)="toggle()">
+  <div class="icon-container" 
+     matRipple
+     [matRippleCentered]="true"
+     [matRippleDisabled]="disabled"
+     [matRippleUnbounded]="true"
+     [matRippleRadius]="25"
+     [matRippleColor]="rippleColor"
+     [matRippleTrigger]="checkboxContainer"
+     [matRippleAnimation]="animationConfig">
+      <mat-icon [svgIcon]="icon" [inline]="true" style="height: 100%"></mat-icon>
+  </div>
+  <div class="text-container">
+    <span style="display: none">&nbsp;</span>
+    <ng-content></ng-content>
+  </div>
+</div>

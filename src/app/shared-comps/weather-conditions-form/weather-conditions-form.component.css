@@ -2,7 +2,10 @@
     width: 70px;
     text-align: center;
 }
-
+.spread{
+    display: flex;
+    justify-content: space-between;
+}
 .ng5-slider .ng5-slider-pointer{
     cursor: pointer;
     top: -8px!important;

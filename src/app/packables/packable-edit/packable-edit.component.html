@@ -56,12 +56,6 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div class="col-4" *ngIf="false">
-            <div class="form-group mb-0">
-              <label for="icon">Select Icon</label>
-              <input type="text" class="form-control" name="icon" placeholder="" formControlName="icon" disabled>
-            </div>
-          </div>
         </div>
       </div>
       <div class="form-border" *ngIf="editMode && (!advancedForm || !getSubscribeToOriginal()); else staticInfo">
@@ -137,7 +131,7 @@
             <b>all</b> the conditions below are met:
           </div>
         </div>
-        <app-weather-conditions-form [inputWeatherRule]="getWeatherRules()" (change)="setWeatherRules($event)"></app-weather-conditions-form>
+        <!--app-weather-conditions-form [inputWeatherRule]="getWeatherRules()" (change)="setWeatherRules($event)"></app-weather-conditions-form-->
       </div>
 
 

@@ -1,0 +1,23 @@
+
+<a class="inline-link" (click)="addAll()">All</a> / <a class="inline-link" (click)="removeAll()">None</a>
+<div *ngFor="let profile of ProfileCollectionTree">
+  <div class="profile-header">
+    <profile-icon
+      [avatar]="profile.avatar"
+      inputWidth="30px"
+      [inline]="true"
+    ></profile-icon>
+    <span class="profile-text">
+    {{profile.name}}
+    </span>
+  </div>
+  <div class="pl-3" *ngFor="let collection of profile.collections">
+    <mat-checkbox [checked]="isSelectedView(collection.id,profile.id)" (change)="toggleSelection(collection.id,profile.id,$event)">
+      {{collection.name}}
+    </mat-checkbox>
+  </div>
+</div>
+<p>
+    <ng-content></ng-content>
+</p>
+<dialog-confirm-button icon="check" (confirm)="onConfirm()"></dialog-confirm-button>

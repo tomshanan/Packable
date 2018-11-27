@@ -96,11 +96,26 @@ export class StoreSelectorService{
         return this.profiles.find(x => x.id === id) || (console.log(`could not find id ${id} in profile state:`,this.profiles), null);
     }
     
+    getProfilesWithPackableId(id:string):Profile[] {
+        return this.profiles.filter(pr=>{
+            return pr.collections.some(c=>{
+                return c.packables.some(p=>p.id==id)
+            })
+        })
+    }
+    /**
+     * Find all profiles that contain a certain packable.
+     * @param id the packable id to look up
+     */
+    getCollectionsWithPackableId(id:String):CollectionOriginal[] {
+        return this.originalCollections.filter(c=>{
+            return c.packables.some(p=>p == id)
+        })
+    }
     getCollectionById(id:string):CollectionOriginal {
         let index = this.originalCollections.findIndex(x => x.id === id);
         return index >= 0 ? this.originalCollections[index]: null;
     }
-
     getUsedCollectionNames():string[]{
         let usedNames = [];
         for (let collection of this.originalCollections) {

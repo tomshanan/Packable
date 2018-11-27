@@ -24,15 +24,13 @@ export class PackableFactory {
         return new PackablePrivate(
             p.id,
             this.cloneQuantityRules(p.quantityRules),
-            this.weatherFactory.deepCopy(p.weatherRules),
-            p.subscribeToOriginal || true
+            this.weatherFactory.deepCopy(p.weatherRules)
         )
     }
     public clonePackableOriginal = (p: PackableOriginal): PackableOriginal => {
         return new PackableOriginal(
             p.id,
             p.name,
-            p.icon,
             this.cloneQuantityRules(p.quantityRules),
             this.weatherFactory.deepCopy(p.weatherRules)
         )
@@ -42,8 +40,7 @@ export class PackableFactory {
         let newPackable = new PackablePrivate(
             original.id,
             original.quantityRules.slice(),
-            this.weatherFactory.deepCopy(original.weatherRules),
-            true
+            this.weatherFactory.deepCopy(original.weatherRules)
         )
         return newPackable;
     }
@@ -67,22 +64,18 @@ export class PackableFactory {
             return new PackableComplete(
                 packable.id,
                 packable.name,
-                packable.icon,
                 packable.quantityRules.slice(),
                 this.weatherFactory.deepCopy(packable.weatherRules),
-                true,
-                packable
+                packable.userCreated
             )
         } else {
             let original = this.storeSelector.getPackableById(packable.id)
             return new PackableComplete(
                 packable.id,
                 original.name,
-                original.icon,
-                packable.subscribeToOriginal ? original.quantityRules.slice() : packable.quantityRules.slice(),
-                packable.subscribeToOriginal ? this.weatherFactory.deepCopy(original.weatherRules) : this.weatherFactory.deepCopy(packable.weatherRules),
-                packable.subscribeToOriginal,
-                packable
+                packable.quantityRules.slice(),
+                this.weatherFactory.deepCopy(packable.weatherRules),
+                original.userCreated
             )
         }
     }
@@ -94,12 +87,35 @@ export class PackableFactory {
         let originals = this.storeSelector.getPackablesByIds(ids)
         return this.makeCompleteFromArray(originals)
     }
-    public completeToPrivate = (complete: PackableComplete): PackablePrivate => {
-        if (isPackablePrivate(complete.parent)) {
-            return complete.parent
-        } else {
-            return this.makePrivate(complete.parent)
-        }
+
+    public makePrivateFromComplete = (completePackable: PackableComplete): PackablePrivate =>{
+        return new PackablePrivate(
+            completePackable.id,
+            completePackable.quantityRules.slice(),
+            this.weatherFactory.deepCopy(completePackable.weatherRules)
+        )
     }
 
+    public getQuantityStrings = (quantityRules: QuantityRule[]): string[] =>{
+        let returnStrings = [];
+        quantityRules.forEach(qr => {
+            let {amount,repAmount,type} = qr
+            let phrase: string = "";
+            switch(type){
+                case "period":
+                    phrase = `${amount} per ${repAmount} day` + (repAmount>1 ? 's' : '');
+                    break;
+                case "profile":
+                    phrase = `${amount} per Traveler`
+                    break;
+                case "trip":
+                    phrase = `${amount} to Share`
+                    break;
+            }
+            console.log(phrase);
+            
+            returnStrings.push(phrase)
+        })
+        return returnStrings
+    }
 }

@@ -1,5 +1,9 @@
 <p>
-  home works!
+  <app-icon-checkbox 
+  [(checked)]="testChecked" 
+  [disabled]="testDisabled"
+  [icon]="testIcon"
+  (change)="log($event)">Test</app-icon-checkbox>
 </p>
 <div>
   <profile-selector

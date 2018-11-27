@@ -1,0 +1,50 @@
+
+<div class="pb-1">
+  <mat-card class="quantity-rule">
+    <div class="quantity-rule-input-containter">
+      <span >
+        <mat-form-field class="quantity-rule-type mini-mat-form-field mr-2" floatLabel="never">
+          <mat-select [formControl]="type" (selectionChange)="emitUpdate()">
+              <mat-select-trigger>
+                  <mat-icon *ngIf="type.value == 'period'">date_range</mat-icon>
+                  <mat-icon *ngIf="type.value == 'profile'">person</mat-icon>
+                  <mat-icon *ngIf="type.value == 'trip'" svgIcon="together"></mat-icon>
+              </mat-select-trigger>
+            <mat-option value="period" style="align-items:center">
+              <div class="d-flex align-items-center">
+                <mat-icon>date_range</mat-icon> <span>Per Day/s</span>
+              </div>
+            </mat-option>
+            <mat-option value="profile">
+                <div class="d-flex align-items-center">
+                  <mat-icon>person</mat-icon>
+                  <span>Per Traveler</span>
+                </div>
+            </mat-option>
+            <mat-option value="trip">
+                <div class="d-flex align-items-center">
+                  <mat-icon svgIcon="together"></mat-icon> 
+                  <span>To Share</span>
+                  </div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field> 
+        <span class="d-inline-block">
+          <mat-form-field class="quantity-rule-amount mini-mat-form-field " floatLabel="never">
+            <input matInput type="tel" [formControl]="amount" class="text-center" (change)="emitUpdate()" (click)="$event.target.select()">
+          </mat-form-field>
+          <span *ngIf="type.value == 'profile'"> per Traveler</span>
+          <span *ngIf="type.value == 'trip'"> to share</span>
+          <span *ngIf="type.value == 'period'">
+            <span  class="text-muted"> per </span>
+            <mat-form-field class="quantity-rule-repAmount mini-mat-form-field" floatLabel="never">
+              <input matInput type="tel" [formControl]="repAmount"  class="text-center" (change)="emitUpdate()" (click)="$event.target.select()">
+            </mat-form-field>
+            <span  class="text-muted"> day{{repAmount.value > 1 ? 's' : ''}} </span>
+          </span>
+        </span>
+      </span>
+      <mat-icon class="ml-auto pointer text-orange" *ngIf="canDelete" (click)="delete()">remove</mat-icon>
+    </div>
+  </mat-card>
+</div>

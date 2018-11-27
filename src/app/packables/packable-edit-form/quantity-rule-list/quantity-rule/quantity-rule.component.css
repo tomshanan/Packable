@@ -1,0 +1,21 @@
+.quantity-rule-input-containter{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+
+}
+mat-card.quantity-rule{
+    padding: 0.5em 0.5em;
+}
+.quantity-rule-type {
+    width:50px;
+}
+.quantity-rule-amount {
+    width:25px;
+    margin-left: 0.1em;
+}
+.quantity-rule-repAmount {
+    width:25px;
+    margin-left: 0.1em;
+}

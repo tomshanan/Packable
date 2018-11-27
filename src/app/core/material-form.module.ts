@@ -1,4 +1,4 @@
-import { MatSlideToggleModule, MatChipsModule, MatAutocompleteModule, MatExpansionModule, MatSelectModule } from '@angular/material';
+import { MatSlideToggleModule, MatChipsModule, MatAutocompleteModule, MatExpansionModule, MatSelectModule, MatDialogModule, MatRippleModule } from '@angular/material';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { NgModule } from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
@@ -25,6 +25,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
         MatButtonModule,
         MatTabsModule,
         MatProgressSpinnerModule,
+        MatDialogModule,
+        MatRippleModule
     ],
 })
 export class AppMaterialModule { }

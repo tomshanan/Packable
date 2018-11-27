@@ -1,45 +1,36 @@
 <app-nav [header]="'Packables'" [icon]="'fas fa-suitcase'" (info)="openModal(modalContent)"></app-nav>
-
-<div class="row">
+<!-- <div class="row">
   <div class="col-12">
-    <div class="row">
-        <div class="col-4 col-sm-3 col-lg-2 m-0 p-1">
-            <div class="grid-sizing grid-border" style="border-style: dashed">
-              <a (click)="newPackable()" class="grid-content d-flex flex-column justify-content-center align-content-center opacity-hover">
-                <span class="text-center text-success">
-                  <div class="opacity-swap h6">
-                    &nbsp;
-                    <span class="opacity-out">
-                        <i class="fa fa-plus"></i>
-                    </span>
-                    <span class="opacity-in">
-                      <h6>New</h6>
-                    </span>
-                  </div>
-                </span>
-              </a>
+    <app-packable-edit-form [packable]="editingPackable" [profileGroup]="editingPackableProfileGorup" [isNew]="createNew" #packableForm></app-packable-edit-form>
+    <app-packable-edit-form [(packable)]="editingPackable" [isNew]="true"></app-packable-edit-form>
+  </div>
+</div> -->
+<div class="row">
+  <div class="col-12 column_list_containter">
+    <mat-card class="packable clickable text-primary" (click)="newPackable()">
+      Add Packable
+    </mat-card>
+    <mat-card class="packable clickable details" *ngFor="let packable of packableDetailsArray" (click)="editPackable(packable.id)">
+          <div class="name">
+              <p>{{packable.name | titlecase}}</p>
             </div>
-          </div>
-
-      <div class="col-4 col-sm-3 col-lg-2 m-0 p-1" *ngFor="let packable of originalPackables; let i = index">
-        <div class="grid-sizing grid-border">
-          <a (click)="editPackable(packable)" class="grid-content d-flex flex-column justify-content-center align-content-center">
-            <div class="text-center">
-              <i class="fas fa-{{packable.icon}} fa-2x"></i>
-              <br>
-              <h6>{{packable.name}}</h6>
+            <div class="quantity">
+              <p *ngFor="let rule of packable.rules">
+                {{rule}}
+              </p>
             </div>
-          </a>
-        </div>
-      </div>
-    </div>
+            <div class="rule-icons" style="height: 1.5em; line-height: 1.5em; font-size: 1.5em;">
+                <mat-icon *ngFor="let icon of packable.icons" style="height:1.5em;margin: 0px 2px;"  [title]="icon.description" [svgIcon]="icon.icon"></mat-icon>
+            </div>
+    </mat-card>
   </div>
 </div>
 
 <ng-template #modalContent>
-    <H5>Packables</H5>
-    <p>Packables are items you can pack. For example, a T-Shirt, or a Toothbrush.</p>
-    <p>You can either download prepared Packables, or create them from scratch, then you add them to your profiles</p>
-    <p>You can set the Packables' default packing conditions, like how many Shirts you want to pack per day of your trip.</p>
-    <p>Once Packables are in a Profile, their settings can be customised to the individual's needs! This will not change the default settings of the Packable or the settings in any other Profile.</p>
+  <H5>Packables</H5>
+  <p>Packables are items you can pack. For example, a T-Shirt, or a Toothbrush.</p>
+  <p>You can either download prepared Packables, or create them from scratch, then you add them to your profiles</p>
+  <p>You can set the Packables' default packing conditions, like how many Shirts you want to pack per day of your trip.</p>
+  <p>Once Packables are in a Profile, their settings can be customised to the individual's needs! This will not change
+    the default settings of the Packable or the settings in any other Profile.</p>
 </ng-template>

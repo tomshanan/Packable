@@ -1,17 +1,20 @@
   <div class="profile" 
-  [class.showName]="showName" 
+  [class.showName]="showName && !inline" 
   [class.selected]="isSelected" 
   [class.interactive]="isInteractive" 
   [class.button]="isButton" 
   [class.dim]="dim"
+  [class.inline]="inline"
   [title]="inputName" #profile>
-      <div class="profile_circle">
+    <div class="icon_sizer">
+      <div class="profile_circle" [class.inline]="inline">
         <div class="profile_circle_content">
             <div class="profile_background" [style.background]="inputColor"></div>
-            <mat-icon [svgIcon]="icon" [inline]="true"></mat-icon>    
+            <mat-icon [svgIcon]="icon" [inline]="true" style="height: 100%"></mat-icon>    
         </div>
       </div>
-        <span class="profile_name" *ngIf="showName">
+    </div>
+        <span class="profile_name" *ngIf="showName && !inline">
           {{inputName}}
         </span>
   </div>

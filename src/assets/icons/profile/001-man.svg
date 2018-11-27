@@ -3,12 +3,12 @@
 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:#84DBFF;}
-	.st1{fill:#E5C498;}
-	.st2{fill:#54C0EB;}
-	.st3{fill:#324A5E;}
+	#man001 .st0{fill:#84DBFF;}
+	#man001 .st1{fill:#E5C498;}
+	#man001 .st2{fill:#54C0EB;}
+	#man001 .st3{fill:#324A5E;}
 </style>
-<g>
+<g id="man001">
 	<g id="svg_2">
 		<path id="svg_3" class="st0" d="M255.2,362.8c-0.4,0-0.8,0.4-1.2,0.4s-0.8-0.4-1.2-0.4H255.2z"/>
 		<path id="svg_4" class="st0" d="M491,510c-46.4,57.2-157.4,6-237,6S69.4,557.2,23,500c20-119,117.8-152.4,159.4-163.2

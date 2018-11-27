@@ -9,6 +9,9 @@
 a, .pointer{
     cursor: pointer;
 }
+button {
+    outline: none!important;
+}
 a.inline-link{
     color: #007bff!important;
     text-decoration: none!important;
@@ -156,6 +159,15 @@ input.rule-input{
     border-bottom: 1px solid #80bdff;
     box-shadow: 0 3px 3px -3px rgba(0,123,255,.25);
 }
+
+.form-heading{
+    font-size:1.1em;
+    display: block;
+    margin-top: 1em;
+    margin-bottom: 0.2em;
+    font-weight: 100;
+}
+
 .form-border{
     border-radius: .3em;
     padding: 15px 5px;
@@ -366,6 +378,12 @@ input.no-spinner::-webkit-outer-spin-button,
 input.no-spinner-align::-webkit-inner-spin-button {
   display: none;
 }
+button.mat-icon-button.mini{
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    outline: none;
+}
 .mini-mat-form-field > .mat-form-field-wrapper {
     padding: 0;
 }
@@ -404,3 +422,9 @@ input.no-spinner-align::-webkit-inner-spin-button {
 .o-00{opacity: 0;} .o-01{opacity: 0.1;} .o-02{opacity: 0.2;} .o-03{opacity: 0.3} .o-04{opacity: 0.4;} .o-05{opacity: 0.5} .o-06{opacity: 0.6} .o-07{opacity: 0.7} .o-09{opacity: 0.9} .o-10{opacity: 1}
 .transition{transition: all 300ms}
 .border-orange{border-color: rgb(255, 68, 0);} .text-orange{color:rgb(255, 68, 0)} .bg-orange{background-color: rgb(255, 68, 0)}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}

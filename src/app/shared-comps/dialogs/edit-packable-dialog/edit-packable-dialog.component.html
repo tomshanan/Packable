@@ -1,0 +1,36 @@
+<div class="packable-dialog-header" mat-dialog-title>
+    <span class="title collection-name" *ngIf="collection">{{collection.name}}</span>
+    <span class="title d-flex justify-content-center">
+        <span class="packable-name">{{packable.name || 'New Packable'}}</span>
+    </span>
+    <button class="close-button mini" mat-icon-button (click)="onClose()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content style="margin-bottom:-24px;">
+    <app-packable-edit-form *ngIf="step == 1"
+        [packable]="packable" 
+        [profileGroup]="editingPackableProfileGorup" 
+        [selectedProfiles]="selectedProfiles"
+        [isNew]="isNew" 
+        [editName]="editName" 
+        [collection]="collection" 
+        (confirm)="onConfirmPackable($event)"
+        #packableForm>
+    </app-packable-edit-form>
+    <div *ngIf="step == 2">
+        <p class="text-center text-success">
+            The Packable has been {{ collectionAction == 'ADD' ? 'created' : 'updated'}} successfully!
+        </p>
+        <p class="form-heading mb-1">
+            {{collectionAction == 'ADD' ? "Add Packable" : "Push changes"}} to your Essential Collections:
+        </p>
+        <app-choose-collections-dialog 
+        [CollectionProfileGroup]="CollectionProfileGroup"
+        [(selectedIds)]="selectedCollections"
+        (confirm)="onConfirmCollections($event)">
+        <small class="text-muted font-weight-normal">Only selected Collections will be affected</small>
+        </app-choose-collections-dialog>
+    </div>
+</mat-dialog-content>

@@ -1,0 +1,46 @@
+
+
+.packable-dialog-header {
+    position: relative;
+    text-align: center;
+    padding: 0 24px;
+}
+
+.close-button {
+    position: absolute!important;
+    right: 0!important;
+    top: 0!important;
+}
+
+.title {
+    display: block;
+    width: 100%;
+    line-height: 1em;
+}
+
+.title.collection-name {
+    font-size: 0.6em;
+    line-height: 0.6em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.title>.packable-name {
+    font-size: 1.6em;
+    line-height: 1em;
+    /* height: 1.6em; */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.title button {
+    width: auto;
+    height: auto;
+    min-width: auto;
+    min-height: auto;
+    line-height: 1em;
+    vertical-align: top;
+    outline: none;
+}

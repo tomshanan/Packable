@@ -1,5 +1,6 @@
 .profile{
     display: inline-block;
+    text-align: left!important;
     position: relative;
     padding: 0.2em;
   }
@@ -9,15 +10,27 @@
   .profile.showName{
     padding-bottom: 1em;
   }
-  .profile_circle{
+  .profile.inline {
+    padding: 0;
+  }
+  .icon_sizer{
     position:relative;
     width: 100%;
     padding-bottom: 100%;
+
+  }
+  .profile_circle{
+    position: absolute;;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     overflow: hidden;
     border:2px solid white;
     background: rgb(226, 226, 226);
     transition: all 300ms!important;
+  }
+  .profile_circle.inline {
+    border:none;
   }
   .profile_name{
     width: 100%;
@@ -46,10 +59,10 @@
   .profile.dim .profile_circle_content {
     opacity: 0.4;
   }
-  .profile.dim:hover * {
-    opacity: initial;
+  .profile.dim:not(:focus):hover * {
+    opacity: 1;
   }
-  .profile.interactive:hover .profile_background{
+  .profile.interactive:not(:focus):hover .profile_background{
     opacity: 1!important;
   }
   .profile.button .profile_circle{

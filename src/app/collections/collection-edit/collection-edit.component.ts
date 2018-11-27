@@ -320,7 +320,7 @@ export class CollectionEditComponent implements OnInit, OnDestroy {
     let originalCollection = original || this.createOriginalFromForm()
     return new CollectionPrivate(
       originalCollection.id,
-      this.customPackables.map(p=> this.packableFactory.makePrivate(p.parent)),
+      this.customPackables.map(p=> this.packableFactory.makePrivateFromComplete(p)),
       this.customWeatherRules,
       this.getSubscribeToOriginal()
     )

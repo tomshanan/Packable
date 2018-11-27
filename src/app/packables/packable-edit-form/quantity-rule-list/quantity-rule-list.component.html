@@ -1,0 +1,19 @@
+<div class="d-flex align-items-end">
+        <span class="form-heading mt-0">
+                Quantity Rules
+        </span>
+        <span class="ml-auto">
+            <a (click)="addRule()" class="inline-link text-center">Add Rule</a>
+        </span>  
+
+</div>  
+<div *ngFor="let rule of RulesForView; let i = index" @dropInTrigger>
+    <quantity-rule 
+    [rule]="rule" 
+    (ruleChange)="updateRule(i,$event)" 
+    [canDelete]="rules.length>1" 
+    (onDelete)="deleteRule(i)">
+    </quantity-rule>
+</div>
+
+

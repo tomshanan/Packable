@@ -1,0 +1,26 @@
+
+<mat-form-field class="w-100" *ngIf="editName">
+  <input matInput placeholder="Name your Packable" name="name" [formControl]="packableName" matInput-autofocus #editNameInput>
+  <button mat-button *ngIf="packableName.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="packableName.setValue('')">
+    <mat-icon>close</mat-icon>
+  </button>
+  <mat-error *ngIf="packableName.hasError('pattern') && !packableName.hasError('usedName')">
+    Please select a valid name (a-z, A-Z, 0-9)
+  </mat-error>
+  <mat-error *ngIf="packableName.hasError('usedName')">
+    This Packable name is already used
+  </mat-error>
+</mat-form-field>
+
+<quantity-rule-list [(rules)]="packable.quantityRules"></quantity-rule-list>
+
+<app-weather-conditions-form [(weather)]="packable.weatherRules"></app-weather-conditions-form>
+<div *ngIf="showProfileSelector" class="text-center">
+  <span class="form-heading">
+    Apply changes to:
+  </span>
+  <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
+    [showNames]="true">
+  </profile-selector>
+</div>
+<dialog-confirm-button [valid]="valid()" icon="check" (confirm)="onConfirm()"></dialog-confirm-button>

@@ -14,11 +14,15 @@ export class HomeComponent implements OnInit {
   selectedProfiles = [];
   selectedIcons:string[] = ['010-boy'];
 
+  testChecked = true;
+  testDisabled = true;
+  testIcon = "hail"
+
   constructor(
     private store:StoreSelectorService,
     private iconService:IconService
   ) { 
-    this.icons = iconService.icons.slice()
+    this.icons = iconService.profileIcons.icons.slice()
   }
   log(e){
     console.log(e);

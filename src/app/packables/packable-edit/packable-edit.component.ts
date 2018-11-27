@@ -62,15 +62,14 @@ export class PackableEditComponent implements OnInit, OnDestroy {
 
   }
 
-  getSubscribeToOriginal(): boolean { return this.advancedForm ? this.packableForm.get('subscribeToOriginal').value : true }
+  getSubscribeToOriginal(): boolean { return false }
   getWeatherRules(): WeatherRule { return (this.advancedForm && this.getSubscribeToOriginal()) ? this.originalPackable.weatherRules : this.customWeatherRules }
 
   ngOnInit() {
     this.packableForm = new FormGroup({
       'name': new FormControl({ value: '', disabled: false }, [Validators.required, Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), this.validate_usedName.bind(this)]),
-      'icon': new FormControl({ value: 'baseball-ball', disabled: false }, [Validators.required]), // has default
       'quantityRules': new FormArray([]),
-      'subscribeToOriginal': new FormControl(true)
+      'subscribeToOriginal': new FormControl(false)
     });
     this.memory = this.memoryService.getAll;
     this.packablesState_obs = this.store.select('packables');
@@ -160,8 +159,6 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     if (this.editMode) {
       this.packableForm.patchValue({
         name: this.originalPackable.name,
-        icon: this.originalPackable.icon,
-        subscribeToOriginal: this.advancedForm ? this.memory.privatePackable.subscribeToOriginal : true,
       })
       this.customWeatherRules = this.advancedForm ? this.memory.privatePackable.weatherRules : this.originalPackable.weatherRules;
       this.customQuantityRules = this.advancedForm ? this.memory.privatePackable.quantityRules : this.originalPackable.quantityRules;
@@ -230,7 +227,6 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     return new PackableOriginal(
       this.editMode ? this.originalPackable.id : Guid.newGuid(),
       formData.name,
-      formData.icon,
       this.advancedForm ? this.originalPackable.quantityRules : formData.quantityRules,
       this.advancedForm ? this.originalPackable.weatherRules : this.customWeatherRules
     )
@@ -241,9 +237,8 @@ export class PackableEditComponent implements OnInit, OnDestroy {
     return new PackablePrivate(
       originalFromForm.id,
       formData.quantityRules,
-      this.customWeatherRules,
-      this.getSubscribeToOriginal()
-    )
+      this.customWeatherRules
+        )
   }
   savePackableToParentMemory(original?: PackableOriginal) {
     let newPackableOriginal = original || this.createOriginalPackableFromForm()

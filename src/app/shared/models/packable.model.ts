@@ -1,7 +1,5 @@
-import { Guid } from '../global-functions';
-import { Injectable, Type } from '@angular/core';
-import { StoreSelectorService } from '../services/store-selector.service';
 import { WeatherRule } from './weather.model';
+import { Guid } from '../global-functions';
 
 export type QuantityType = "period" | "profile" | "trip";
 
@@ -18,37 +16,34 @@ export interface ActivityRule {
 }
 
 export type packableType = 'original' | 'private' | 'complete';
+
 export class PackableComplete {
     type: packableType = 'complete';
     constructor(
         public id: string = '',
         public name: string = '',
-        public icon: string = '',
-        public quantityRules: QuantityRule[] = [],
+        public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),
-        public sameAsOriginal: boolean = true,
-        public parent: PackableAny = new PackableOriginal()
+        public userCreated: boolean = false,
     ) { }
 }
 export class PackableOriginal {
     type: packableType = 'original';
     constructor(
-        public id: string = '',
+        public id: string = Guid.newGuid(),
         public name: string = '',
-        public icon: string = '',
-        public quantityRules: QuantityRule[] = [],
-        public weatherRules: WeatherRule = new WeatherRule()
+        public quantityRules: QuantityRule[] = [new QuantityRule()],
+        public weatherRules: WeatherRule = new WeatherRule(),
+        public userCreated: boolean = false
     ) {
     }
 }
-
 export class PackablePrivate {
     type: packableType = 'private';
     constructor(
         public id: string,
         public quantityRules: QuantityRule[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
-        public subscribeToOriginal: boolean = true
     ) { }
 }
 export type PackableAny = PackablePrivate | PackableOriginal;

@@ -17,9 +17,10 @@ import { CollectionFactory } from './shared/factories/collection.factory';
 import { PackableFactory } from './shared/factories/packable.factory';
 import * as firebase from 'firebase';
 import { firebaseSettings } from './user/firebase-settings.object';
-import { WeatherRule } from './shared/models/weather.model';
+import { WeatherRule, weatherOptions, weatherType } from './shared/models/weather.model';
 import { IconService } from '@app/core';
 import { ColorGeneratorService } from './shared/services/color-gen.service';
+import { absoluteMin, absoluteMax } from './shared/services/weather.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -28,7 +29,6 @@ import { ColorGeneratorService } from './shared/services/color-gen.service';
 
 })
 export class AppComponent implements OnInit {
-  icons = ['binoculars','bomb','book','camera','eraser','glasses','key','money-bill-alt','newspaper','rocket','tablet-alt','ticket-alt','wallet',]
   constructor(
     private store: Store<fromApp.appState>,
     private selectorService: StoreSelectorService,
@@ -45,12 +45,26 @@ export class AppComponent implements OnInit {
     let repTypes = ["period" , "profile" , "trip"]
     let allPackables: PackableOriginal[] = [];
     packableNames.forEach(name=>{
-      let icon = this.icons[Math.floor(Math.random()*this.icons.length)]
       let amount = Math.floor(Math.random()*3)+1
       let repAmount = Math.floor(Math.random()*4)+1
       let type = repTypes[Math.floor(Math.random()*repTypes.length)]
-      let weather = new WeatherRule()
-      let packable = new PackableOriginal(Guid.newGuid(),name, icon, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }],weather)
+      let min,max;
+      if(Math.random()>0.5){
+        min = randomBetween(absoluteMin,absoluteMax)
+        max = randomBetween(min, absoluteMax)
+      } else {
+        max = randomBetween(absoluteMin,absoluteMax)
+        min = randomBetween(absoluteMin, max)
+      }
+      let numOfConditions = randomBetween(0,3);
+      let conditionsUnused:weatherType[] = weatherOptions.slice()
+      let conditionsUsed:weatherType[] = [];
+      for(let i=numOfConditions; i==0; i--){
+        let choice = randomBetween(0,conditionsUnused.length-1)
+        conditionsUsed = [...conditionsUsed, ...conditionsUnused.splice(choice,1)]
+      }
+      let weather = new WeatherRule(min,max, conditionsUsed)
+      let packable = new PackableOriginal(Guid.newGuid(),name, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }],weather)
       allPackables.push(packable)
       this.store.dispatch(new packableActions.addOriginalPackable(packable))
     })
@@ -67,8 +81,8 @@ export class AppComponent implements OnInit {
     let allProfiles: Profile[] = [];
     profileNames.forEach(name=>{
       let collections = allCollections.filter(()=>Math.random()>0.5).map(c => this.CollectionFactory.makePrivate(c))
-      let iconLength = this.iconService.icons.length
-      let randomIcon = this.iconService.icons[randomBetween(0,iconLength-1)]
+      let iconLength = this.iconService.profileIcons.icons.length
+      let randomIcon = this.iconService.profileIcons.icons[randomBetween(0,iconLength-1)]
       let color = this.colorGen.getUnused();
       let avatar = new Avatar(randomIcon,color)
       let profile = new Profile(Guid.newGuid(), name, collections,avatar)

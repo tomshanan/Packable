@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { IconService } from '@app/core';
+import { Avatar } from '@app/shared/models/profile.model';
 
 @Component({
   selector: 'profile-icon',
@@ -17,6 +18,8 @@ export class ProfileIconComponent implements OnInit {
   @Input() dim: boolean = false;
   @Input() inputWidth: string = "50px";
   @Input('color') inputColor: string = 'white';
+  @Input() avatar:Avatar;
+  @Input() inline:boolean = false;
 
   @ViewChild('profile') profile: ElementRef;
 
@@ -24,10 +27,16 @@ export class ProfileIconComponent implements OnInit {
   constructor(
     private iconService:IconService, //for template
     private renderer: Renderer2,
-  ) { }
+  ) { 
+    
+  }
 
   ngOnInit() {
     this.renderer.setStyle(this.profile.nativeElement, 'width', this.inputWidth)
+    if(this.avatar){
+      this.icon = this.avatar.icon || this.icon;
+      this.inputColor = this.avatar.color || this.inputColor;
+    }
   }
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, TemplateRef, ViewChild, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, ElementRef, TemplateRef, ViewChild, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Observable, combineLatest, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
@@ -26,6 +26,8 @@ import { take } from 'rxjs/operators';
 import { isDefined } from '../../shared/global-functions';
 import * as packableActions from '@app/packables/store/packables.actions';
 import { ConfirmDialog } from '../../shared-comps/dialogs/confirm-dialog/confirm.dialog';
+import { ChooseProfileDialogComponent, DialogData_ChooseProfiles } from '../../collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
+import { CollectionOriginal } from '../../shared/models/collection.model';
 
 interface ruleIcon {
   icon: string,
@@ -43,6 +45,12 @@ interface packableDetails {
 
 type updateViewAction = 'update' | 'add' | 'delete';
 
+export interface updatePackableListEvent {
+  packables: PackableComplete[],
+  collections?: string[],
+  profiles?: string[]
+}
+
 @Component({
   selector: 'app-packable-list',
   templateUrl: './packable-list.component.html',
@@ -58,6 +66,7 @@ export class PackableListComponent implements OnInit {
   @Input('collectionId') editingCollectionId: string;
   @Input('profileId') editingProfileId: string;
   @Input() useCard: boolean = false;
+  @Output() updateList = new EventEmitter<updatePackableListEvent>()
   @ViewChild('packableForm') packableForm: PackableEditFormComponent;
 
   stateSubscription: Subscription;
@@ -90,37 +99,30 @@ export class PackableListComponent implements OnInit {
   }
 
   initView() {
-    this.stateSubscription = combineLatest([
-      this.storeSelector.packables_obs,
-      this.storeSelector.collections_obs,
-      this.storeSelector.profiles_obs
-    ]).pipe(take(1)).subscribe(([
-      packableState,
-      CollectionState,
-      profileState]) => {
-      console.log('packable state updated:', packableState)
-
-      if (this.editingCollectionId) {
-        this.dialogData.collectionId = this.editingCollectionId
-        if (this.editingProfileId) {
-          this.dialogData.selectedProfiles = [this.editingProfileId]
-        }
-        this.completePackables = this.pacFactory.makeCompleteFromArray(
-          this.storeSelector.getAllPrivatePackables(
-            this.editingCollectionId,
-            this.editingProfileId //can be null
-          )
-        )
-      } else {
-        // no collection is set
-        this.completePackables = this.pacFactory.makeCompleteFromArray(packableState.packables); // get packables from store
+    if (this.editingCollectionId) {
+      this.dialogData.collectionId = this.editingCollectionId
+      if (this.editingProfileId) {
+        this.dialogData.selectedProfiles = [this.editingProfileId]
       }
-      this.packableDetailsArray = this.buildViewObjectArray(this.completePackables)
+    }
+    this.completePackables = this.getCompletePackables();
+    this.packableDetailsArray = this.buildViewObjectArray(this.completePackables)
+  }
 
-    })
+  getCompletePackables(): PackableComplete[] {
+    if (this.editingCollectionId) {
+      return this.pacFactory.makeCompleteFromArray(
+        this.storeSelector.getAllPrivatePackables(
+          this.editingCollectionId,
+          this.editingProfileId //can be null
+        )
+      )
+    } else {
+      return this.pacFactory.makeCompleteFromArray(this.storeSelector.originalPackables); // get packables from store
+    }
   }
   updateViewObject(ids: string[], action: updateViewAction) {
-    this.completePackables = this.pacFactory.makeCompleteFromArray(this.storeSelector.originalPackables);
+    this.completePackables = this.getCompletePackables()
     if (!this.packableDetailsArray) {
       this.packableDetailsArray = this.buildViewObjectArray(this.completePackables)
     } else if (ids) {
@@ -134,7 +136,7 @@ export class PackableListComponent implements OnInit {
           if (action == 'update' && index > -1) {
             this.packableDetailsArray.splice(index, 1)
             this.packableDetailsArray.splice(index, 0, newObject)
-          } else if (action == 'add') {
+          } else if (action == 'add' && index == -1) {
             this.packableDetailsArray.splice(0, 0, newObject)
           } else {
             console.warn(`Could not update View for packable id:\n${id}`)
@@ -209,7 +211,7 @@ export class PackableListComponent implements OnInit {
       this.editPackable(id)
     }
   }
-  editPackable(packableId: string) {
+  editPackable(packableId: string) { // EDIT PACKABLE DIALOG CREATES AND STORES THE EDITTED PACKABLE
     let editingPackable: PackableComplete,
       profileGroup: Profile[],
       data: DialogData_EditPackable
@@ -238,7 +240,7 @@ export class PackableListComponent implements OnInit {
     })
   }
 
-  newPackable() {
+  newPackable() { // EDIT PACKABLE DIALOG CREATES AND STORES THE NEW PACKABLE
     let editingPackable = new PackableComplete()
     editingPackable.userCreated = true;
 
@@ -265,37 +267,59 @@ export class PackableListComponent implements OnInit {
     this.deletePackables(ids)
   }
   deletePackables(ids: string[]) {
+    let names = this.storeSelector.getPackablesByIds(ids).map(p => p.name);
+    let multiple = names.length > 1;
     if (this.editingCollectionId) {
-      if (this.editingProfileId) {
-
+      let collectionComplete = this.colFactory.getCompleteById(this.editingCollectionId);
+      let data: DialogData_ChooseProfiles = {
+        collection: collectionComplete,
+        profileGroup: this.storeSelector.getProfilesWithCollectionId(this.editingCollectionId),
+        selectedProfiles: [],
+        header: 'Choose Profiles',
+        content:
+          `You are removing ${multiple ? names.length + ' Packables' : ' this packable'} from <i>${collectionComplete.name}</i>.
+        <br>Select the Profiles you would like to update:`
       }
-    } else {
-      // if (confirm(`Are you sure you want to delete these ${ids.length} packables?`)) {
-      //   this.store.dispatch(new packableActions.removeOriginalPackables(ids))
-      //   this.storeSelector.packables_obs.pipe(take(1)).subscribe(state => {
-      //     this.completePackables = this.pacFactory.makeCompleteFromArray(state.packables)
-      //     this.updateViewObject(ids, 'delete')
-      //   })
-      // }
-      let names = this.storeSelector.getPackablesByIds(ids).map(p=>p.name);
-      let multiple = names.length > 1;
-      let header = multiple ? `Delete ${names.length} Packables?` : `Delete ${names[0]}?`
-      let content = `If you remove ${multiple ? 'these Packable they' : 'this Packable it'} will also be removed from all Collections and Profiles.<br> Delete anyway?`
-      let dialogRef = this.dialog.open(ConfirmDialog, {
+      if (this.editingProfileId) {
+        data.selectedProfiles = [this.editingProfileId]
+      }
+      let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
         ...this.dialogSettings,
-        disableClose: true,
+        disableClose: false,
+        data: data
+      });
+      chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
+        if (profileIds.length > 0) {
+          let packables = this.getCompletePackables().filter(p=>!ids.includes(p.id))
+          this.updateList.emit({
+            packables: packables,
+            collections: [this.editingCollectionId],
+            profiles: profileIds
+          })
+          this.storeSelector.collections_obs.pipe(take(1)).subscribe(()=>{
+            this.updateViewObject(ids, 'delete')
+          })
+          console.log(profileIds);
+        }
+      })
+
+    } else {
+      let header = multiple ? `Delete ${names.length} Packables?` : `Delete ${names[0]}?`
+      let content = `If you remove ${multiple ? 'these Packables they' : 'this Packable it'} will also be removed from all Collections and Profiles.<br> Delete anyway?`
+      let confirmDeleteDialog = this.dialog.open(ConfirmDialog, {
+        ...this.dialogSettings,
+        disableClose: false,
         data: {
           header: header,
           content: content
         },
       });
-      dialogRef.afterClosed().pipe(take(1)).subscribe(confirm => {
-        if(confirm == true){
+      confirmDeleteDialog.afterClosed().pipe(take(1)).subscribe(confirm => {
+        if (confirm == true) {
           this.store.dispatch(new packableActions.removeOriginalPackables(ids))
-          this.storeSelector.packables_obs.pipe(take(1)).subscribe(state => {
-            this.completePackables = this.pacFactory.makeCompleteFromArray(state.packables)
+          this.storeSelector.packables_obs.pipe(take(1)).subscribe(() => {
             this.updateViewObject(ids, 'delete')
-          })  
+          })
         }
       })
     }

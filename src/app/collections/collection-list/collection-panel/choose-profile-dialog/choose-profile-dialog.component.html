@@ -1,3 +1,26 @@
-<p>
-  choose-profile-dialog works!
-</p>
+<app-dialog-header [super]="super" [header]="header" (close)="onClose()"></app-dialog-header>
+
+
+<mat-dialog-content>
+  <p innerHtml="{{content}}" class="text-center"></p>
+  <div class="text-center my-2">
+    <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
+      [showNames]="true">
+    </profile-selector>
+    <p>
+      <a class="inline-link small p-2" (click)="profileSelect('all')">All</a>
+      <span>/</span>
+      <a class="inline-link small p-2" (click)="profileSelect('none')">None</a>
+    </p>
+  </div>
+
+
+    <dialog-confirm-button>
+      <button mat-fab class="mx-1" color="none" (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="selectedProfiles.length==0">
+        <mat-icon>check</mat-icon>
+      </button>
+    </dialog-confirm-button>
+</mat-dialog-content>

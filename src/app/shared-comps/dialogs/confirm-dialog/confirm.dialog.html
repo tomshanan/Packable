@@ -1,11 +1,4 @@
-<div class="confirm-dialog-header" mat-dialog-title>
-  <span class="header d-flex justify-content-center">
-    <span class="header-text">{{header}}</span>
-  </span>
-  <button class="close-button mini" mat-icon-button (click)="onClose()">
-    <mat-icon>close</mat-icon>
-  </button>
-</div>
+<app-dialog-header [header]="header" (close)="onClose()"></app-dialog-header>
 
 <mat-dialog-content>
   <span innerHtml="{{content}}"></span>
@@ -17,4 +10,4 @@
       <mat-icon>check</mat-icon>
     </button>
   </dialog-confirm-button>
-</mat-dialog-content>
+</mat-dialog-content> 

@@ -1,0 +1,25 @@
+.dialog-header {
+    position: relative;
+    text-align: center;
+    padding: 0 24px;
+}
+
+.close-button {
+    position: absolute!important;
+    right: 0!important;
+    top: 0!important;
+}
+
+.header {
+    display: block;
+    width: 100%;
+    line-height: 1em;
+}
+
+.title>.header-text {
+    font-size: 1.6em;
+    line-height: 1.1em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

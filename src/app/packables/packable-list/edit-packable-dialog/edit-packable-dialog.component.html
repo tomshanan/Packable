@@ -1,12 +1,4 @@
-<div class="packable-dialog-header" mat-dialog-title>
-    <span class="title collection-name" *ngIf="collectionId">{{collectionName}}</span>
-    <span class="title d-flex justify-content-center">
-        <span class="packable-name">{{packable.name || 'New Packable'}}</span>
-    </span>
-    <button class="close-button mini" mat-icon-button (click)="onClose()">
-        <mat-icon>close</mat-icon>
-    </button>
-</div>
+<app-dialog-header [super]="collectionName" [header]="packable.name || 'New Packable'" (close)="onClose()"></app-dialog-header>
 
 
 <mat-dialog-content style="margin-bottom:-24px;">

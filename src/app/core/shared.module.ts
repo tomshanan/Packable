@@ -50,6 +50,7 @@ import { CollectionListComponent } from '../collections/collection-list/collecti
 import { CollectionPanelComponent } from '../collections/collection-list/collection-panel/collection-panel.component';
 import { ConfirmDialog } from '@shared-comps/dialogs/confirm-dialog/confirm.dialog';
 import { ChooseProfileDialogComponent } from '../collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
+import { DialogHeaderComponent } from '../shared-comps/dialogs/dialog-header/dialog-header.component';
 
 let imports = [
     ProfilesComponent,
@@ -103,7 +104,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, ChooseProfileDialogComponent],
+    declarations: [...imports, ChooseProfileDialogComponent, DialogHeaderComponent],
     exports: [...imports]
 })
 export class SharedModule {

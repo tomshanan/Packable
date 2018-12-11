@@ -1,7 +1,7 @@
 <div class="checkbox-container" #checkboxContainer
 [class.selected]="checked" 
 [class.disabled]="disabled" 
-[class.small-screen]="smallScreen && wService.max_xs" 
+[class.small-screen]="smallScreen && wService.max('xs')" 
 (click)="toggle()">
   <div class="icon-container" 
      matRipple

@@ -5,9 +5,7 @@ import { NavComponent } from '../nav/nav.component';
 import { ProfilesComponent } from '../profiles/profiles.component';
 import { TripsComponent } from '../trips/trips.component';
 import { PackablesComponent } from '../packables/packables.component';
-import { PackableEditComponent } from '../packables/packable-edit/packable-edit.component';
 import { CollectionsComponent } from '../collections/collections.component';
-import { CollectionEditComponent } from '../collections/collection-edit/collection-edit.component';
 import { ProfileEditComponent } from '../profiles/profile-edit/profile-edit.component';
 import { MobileNavComponent } from '../shared-comps/mobile-nav/mobile-nav.component';
 import { DesktopNavComponent } from '../shared-comps/desktop-nav/desktop-nav.component';
@@ -39,14 +37,19 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ProfileIconComponent } from '@shared-comps/profile-icon/profile-icon.component';
 import { ProfileSelectorComponent } from '@shared-comps/profile-selector/profile-selector.component';
 import { IconSelectorComponent } from "@shared-comps/icon-selector/icon-selector.component";
-import { PackableEditFormComponent } from '../packables/packable-edit-form/packable-edit-form.component';
 import { OptionsMenuComponent } from '../shared-comps/options-menu/options-menu.component';
-import { QuantityRuleListComponent } from '../packables/packable-edit-form/quantity-rule-list/quantity-rule-list.component';
-import { QuantityRuleComponent } from "@app/packables/packable-edit-form/quantity-rule-list/quantity-rule/quantity-rule.component";
-import { EditPackableDialogComponent } from '../shared-comps/dialogs/edit-packable-dialog/edit-packable-dialog.component';
-import { ChooseCollectionsDialogComponent } from '../shared-comps/dialogs/choose-collections-dialog/choose-collections-dialog.component';
 import { DialogConfirmButtonComponent } from '../shared-comps/dialogs/dialog-confirm-button/dialog-confirm-button.component';
 import { IconCheckboxComponent } from '../shared-comps/icon-checkbox/icon-checkbox.component';
+import { PackableListComponent } from '../packables/packable-list/packable-list.component';
+import { PackableEditFormComponent } from "@app/packables/packable-list/edit-packable-dialog/packable-edit-form/packable-edit-form.component";
+import { QuantityRuleComponent } from "@app/packables/packable-list/edit-packable-dialog/packable-edit-form/quantity-rule-list/quantity-rule/quantity-rule.component";
+import { QuantityRuleListComponent } from "@app/packables/packable-list/edit-packable-dialog/packable-edit-form/quantity-rule-list/quantity-rule-list.component";
+import { EditPackableDialogComponent } from "@app/packables/packable-list/edit-packable-dialog/edit-packable-dialog.component";
+import { ChooseCollectionsDialogComponent } from '../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { CollectionListComponent } from '../collections/collection-list/collection-list.component';
+import { CollectionPanelComponent } from '../collections/collection-list/collection-panel/collection-panel.component';
+import { ConfirmDialog } from '@shared-comps/dialogs/confirm-dialog/confirm.dialog';
+import { ChooseProfileDialogComponent } from '../collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
 
 let imports = [
     ProfilesComponent,
@@ -56,9 +59,7 @@ let imports = [
     DropDownDirective,
     InnerLinkDirective,
     AutofocusDirective,
-    PackableEditComponent,
     CollectionsComponent,
-    CollectionEditComponent,
     ItemSelectorComponent,
     ProfileEditComponent,
     joinPipe,
@@ -84,7 +85,12 @@ let imports = [
     QuantityRuleListComponent,
     EditPackableDialogComponent,
     ChooseCollectionsDialogComponent,
-    DialogConfirmButtonComponent
+    DialogConfirmButtonComponent,
+    IconCheckboxComponent, 
+    PackableListComponent,
+    CollectionListComponent,
+    CollectionPanelComponent, 
+    ConfirmDialog
 ]
 @NgModule({
     imports: [
@@ -97,7 +103,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, IconCheckboxComponent],
+    declarations: [...imports, ChooseProfileDialogComponent],
     exports: [...imports]
 })
 export class SharedModule {

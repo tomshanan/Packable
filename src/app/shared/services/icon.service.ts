@@ -40,7 +40,14 @@ export class IconService {
     }
     appIcons:iconGroup = {
         path: 'app',
-        icons: ['together']
+        icons: [
+            'together',
+            't-shirt',
+            't-shirt2-add',
+            't-shirt2-import',
+            't-shirt2-copy',
+            't-shirt-copy',
+        ]
     }
     weatherIcons:iconGroup = {
         path: 'weather',

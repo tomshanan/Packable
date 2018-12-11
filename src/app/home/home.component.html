@@ -1,23 +1,22 @@
-<p>
-  <app-icon-checkbox 
-  [(checked)]="testChecked" 
-  [disabled]="testDisabled"
-  [icon]="testIcon"
-  (change)="log($event)">Test</app-icon-checkbox>
-</p>
-<div>
-  <profile-selector
-    iconWidth="150px"
-    [profiles]="profiles"
-    [(selected)]="selectedProfiles"
-    [multiselect]="true"
-    [showNames]="true"
-  ></profile-selector>
+<div class="row">
+  <div class="col-7">
+    <div class="selectable-dropdown popout" [class.selected]="testSelected">
+      <div class="slectedable-dropdown-header" (click)="testSelected = !testSelected">
+        <span>Summer Clothes</span>
+      </div>
+      <div class="selectable-dropdown-content">
+        <div *ngIf="!testSelected" @quickTransitionTrigger (click)="testSelected = !testSelected">
+          <span class="text-muted font-italic small" *ngFor="let profile of profiles; let i = index">
+            {{profile.name}}{{profiles.length - 1 > i ? ', ': ''}}
+          </span>
+        </div>
+        <div *ngIf="testSelected" @quickTransitionTrigger>
+          <profile-selector iconWidth="50px" [profiles]="profiles" [(selected)]="selectedProfiles" [multiselect]="true"
+          [showNames]="true">
+        </profile-selector>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<div>
-  <icon-selector
-    iconWidth="50px"
-    [icons]="icons"
-    [(selected)]="selectedIcons"
-  ></icon-selector>
-</div>
+<button (click)="generateData()">Generate Dummy Data</button>

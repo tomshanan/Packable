@@ -1,0 +1,32 @@
+<div class="packable-dialog-header" mat-dialog-title>
+    <span class="title collection-name" *ngIf="collectionId">{{collectionName}}</span>
+    <span class="title d-flex justify-content-center">
+        <span class="packable-name">{{packable.name || 'New Packable'}}</span>
+    </span>
+    <button class="close-button mini" mat-icon-button (click)="onClose()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+
+<mat-dialog-content style="margin-bottom:-24px;">
+    <div @transitionTrigger *ngIf="step == 1">
+        <app-packable-edit-form 
+            [packable]="packable" 
+            [profileGroup]="profileGroup"
+            [selectedProfiles]="selectedProfiles" 
+            [isNew]="isNew" 
+            [editName]="editName" 
+            [collection]="collectionId"
+            (confirm)="onConfirmPackable($event)" #packableForm>
+        </app-packable-edit-form>
+    </div>
+    <div  @transitionTrigger *ngIf="step == 2">
+        <p class="text-center text-success">
+            The Packable has been {{ isNew ? 'created' : 'updated'}} successfully!
+        </p>
+        <app-choose-collections-dialog [PackableId]="packable.id" [(selectedIds)]="selectedCollections"
+            (confirm)="onConfirmCollections($event)">
+        </app-choose-collections-dialog>
+    </div>
+</mat-dialog-content>

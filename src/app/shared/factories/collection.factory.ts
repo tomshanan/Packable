@@ -2,8 +2,11 @@ import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableFactory } from './packable.factory';
 import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplete, Activity, isCollectionOriginal } from '../models/collection.model';
-import { PackableComplete } from '../models/packable.model';
+import { PackableComplete, PackablePrivate } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
+import { indexOfId } from '../global-functions';
+
+type T = {packables:PackablePrivate[]}
 
 @Injectable()
 export class CollectionFactory {
@@ -19,8 +22,8 @@ export class CollectionFactory {
         return new CollectionPrivate(
             packable.id,
             packable.packables ? packable.packables.map(p=>this.packableFactory.clonePackablePrivate(p)) : [],
+            packable.essential,
             this.weatherFactory.deepCopy(packable.weatherRules),
-            packable.subscribeToOriginal || true
         )
         
     }
@@ -28,18 +31,17 @@ export class CollectionFactory {
         return new CollectionOriginal(
             original.id,
             original.name,
-            original.activity,
             original.packables ? original.packables.slice() : [],
-            this.weatherFactory.deepCopy(original.weatherRules)
+            this.weatherFactory.deepCopy(original.weatherRules),
+            original.userCreated
         )
     }
     public newPrivateCollection = (original: CollectionOriginal, patchValue?:{}): CollectionPrivate => {
-        let privatePackables = original.packables.map(p => {
-            return this.packableFactory.makePrivateFromId(p);
-        })
+        let privatePackables = original.packables.map(p => this.packableFactory.makePrivate(p))
         let newCollection = new CollectionPrivate(
             original.id, 
             privatePackables,
+            false,   
             this.weatherFactory.deepCopy(original.weatherRules)
         );
         if(patchValue){
@@ -67,34 +69,26 @@ export class CollectionFactory {
     public makeComplete =  (collection: CollectionAny ): CollectionComplete  => {
         let returnCollection: CollectionComplete;
         if(isCollectionOriginal(collection)){
-            returnCollection = new CollectionComplete(
+            return new CollectionComplete(
                 collection.id,
                 collection.name,
-                collection.activity,
-                this.packableFactory.makeCompeleteFromIds(collection.packables),
+                false,
+                this.packableFactory.makeCompleteFromArray(collection.packables),
                 this.weatherFactory.deepCopy(collection.weatherRules),
-                true,
-                collection
+                collection.userCreated
             )
         } else {
             let original = this.storeSelector.getCollectionById(collection.id)            
-            let completePackables:PackableComplete[];
-            if (collection.subscribeToOriginal){
-                completePackables = this.packableFactory.makeCompeleteFromIds(original.packables)
-            } else{
-                completePackables = this.packableFactory.makeCompleteFromArray(collection.packables)
-            }
-            returnCollection = new CollectionComplete(
+            let completePackables = this.packableFactory.makeCompleteFromArray(collection.packables)
+            return new CollectionComplete(
                 collection.id,
                 original.name,
-                original.activity,
+                collection.essential,
                 completePackables,
                 this.weatherFactory.deepCopy(collection.weatherRules),
-                collection.subscribeToOriginal,
-                collection
+                original.userCreated
             )
         }
-        return returnCollection
     }
     public makeCompleteArray = (collections: CollectionAny[]): CollectionComplete[] =>{
         return collections.filter(c=>{
@@ -103,12 +97,22 @@ export class CollectionFactory {
                 false)
         }).map(c=>this.makeComplete(c))
     }
-    public getActivityCollections = (collections: CollectionAny[]): Activity[] =>{
-        return collections
-            .map(c => this.storeSelector.getCollectionById(c.id))
-            .filter(c => c.activity == true)
-            .map(c => {
-                return {name: c.name, id:c.id}
-            })
+
+    public getCompleteById(id:string):CollectionComplete{
+        return this.makeComplete(this.storeSelector.getCollectionById(id))
     }
+    public getCompleteByIdArray(ids:string[]):CollectionComplete[]{
+        return ids.map(id=>this.getCompleteById(id))
+    }
+    
+    public addEditPackable<T extends {packables:PackablePrivate[]}>(collection:T, packable:PackablePrivate):T{
+        let pcIndex = indexOfId(collection.packables, packable.id)
+        if(pcIndex < 0){
+            collection.packables.splice(0,0,packable)
+        } else {
+            collection.packables.splice(pcIndex,1,packable)
+        }
+        return collection
+    }
+
 }

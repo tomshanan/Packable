@@ -11,6 +11,7 @@ const initialState: State = {
     ]
 }
 export function packablesReducers(state = initialState, action: PackableActions.theActions) {
+    let statePackables = state.packables.slice();
     switch (action.type) {
         case PackableActions.SET_PACKABLE_STATE:
             return {
@@ -20,30 +21,29 @@ export function packablesReducers(state = initialState, action: PackableActions.
         case PackableActions.ADD_ORIGINAL_PACKABLE:
             return {
                 ...state,
-                packables: [...state.packables, action.payload]
+                packables: [action.payload, ...state.packables]
             }
         case PackableActions.EDIT_ORIGINAL_PACKABLE:
-            
-            let editPackable = action.payload;
-            let editIndex = state.packables.findIndex(p => p.id == editPackable.id);
-            const packable = state.packables[editIndex];
+            let editPackable: PackableOriginal = action.payload;
+            let editIndex: number = state.packables.findIndex(p => p.id == editPackable.id);
+            const packable:PackableOriginal = state.packables[editIndex];
             const updatedPackable = {
                 ...packable,
                 ...action.payload
             }
-            const updatedOriginalPackables = state.packables.slice();
-            updatedOriginalPackables[editIndex] = updatedPackable;
+            statePackables[editIndex] = updatedPackable;
             return {
                 ...state,
-                packables: [...updatedOriginalPackables]
+                packables: [...statePackables]
             }
-        case PackableActions.REMOVE_ORIGINAL_PACKABLE:
-            const removeOriginalPackables = state.packables.slice();
-            let removeIndex = removeOriginalPackables.findIndex(x=>x.id=== action.payload);
-            removeOriginalPackables.splice(removeIndex, 1);
+        case PackableActions.REMOVE_ORIGINAL_PACKABLES:
+            action.payload.forEach(id=>{
+                let removeIndex = statePackables.findIndex(x=>x.id=== id);
+                statePackables.splice(removeIndex, 1);
+            })
             return {
                 ...state,
-                packables: [...removeOriginalPackables]
+                packables: [...statePackables]
             }
         default:
             return state;

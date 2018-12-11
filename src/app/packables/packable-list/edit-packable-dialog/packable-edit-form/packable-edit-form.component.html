@@ -1,6 +1,6 @@
-
 <mat-form-field class="w-100" *ngIf="editName">
-  <input matInput placeholder="Name your Packable" name="name" [formControl]="packableName" matInput-autofocus #editNameInput>
+  <input matInput placeholder="Name your Packable" name="name" [formControl]="packableName" matInput-autofocus
+    #editNameInput>
   <button mat-button *ngIf="packableName.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="packableName.setValue('')">
     <mat-icon>close</mat-icon>
   </button>
@@ -17,10 +17,20 @@
 <app-weather-conditions-form [(weather)]="packable.weatherRules"></app-weather-conditions-form>
 <div *ngIf="showProfileSelector" class="text-center">
   <span class="form-heading">
-    Apply changes to:
+    {{ isNew ? 'Add to:' : 'Apply changes to:'}}
   </span>
   <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
     [showNames]="true">
   </profile-selector>
+  <p>
+    <a class="inline-link small p-2" (click)="profileSelect('all')">All</a>
+    <span>/</span>
+    <a class="inline-link small p-2" (click)="profileSelect('none')">None</a>
+  </p>
+
 </div>
-<dialog-confirm-button [valid]="valid()" icon="check" (confirm)="onConfirm()"></dialog-confirm-button>
+<dialog-confirm-button>
+    <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!valid()">
+        <mat-icon>check</mat-icon>
+    </button>
+</dialog-confirm-button>

@@ -46,16 +46,11 @@ export class ColorGeneratorService {
         let filteredColors = colors.filter(c=>{
             return usedColors.indexOf(c) == -1
         });
-        console.log("used colors",usedColors)
-        console.log("filteredColors",filteredColors)
-
         if (filteredColors.length > 0) {
             let rand = randomBetween(0, filteredColors.length - 1)
-            console.log('selected', filteredColors[rand]);
             return filteredColors[rand]
         } else {
             let rand = randomBetween(0, colors.length - 1)
-            console.log('selected', colors[rand]);
             return colors[rand]
         }
     }

@@ -13,6 +13,8 @@ const initialState = {
 }
 
 export function collectionsReducers(state: State = initialState, action: CollectionActions.theActions) {
+    let stateCollections = state.collections.slice();
+
     switch (action.type) {
         case CollectionActions.SET_COLLECTION_STATE:
             return {
@@ -32,11 +34,10 @@ export function collectionsReducers(state: State = initialState, action: Collect
                 ...collection,
                 ...action.payload
             }
-            const updatedCollections = state.collections.slice();
-            updatedCollections[editIndex] = updatedCollection;
+            stateCollections[editIndex] = updatedCollection;
             return {
                 ...state,
-                collections: [...updatedCollections]
+                collections: [...stateCollections]
             }
         case CollectionActions.REMOVE_ORIGINAL_COLLECTION:
             let removeIndex = state.collections.findIndex(c=>c.id==action.payload);
@@ -46,18 +47,18 @@ export function collectionsReducers(state: State = initialState, action: Collect
                 ...state,
                 collections: [...removeCollections]
             }
-        case CollectionActions.DELETE_PACKABLE:
-            const deletePackableId = action.payload;
-            const deletePackableCollections = state.collections.slice();
-            deletePackableCollections.forEach(collection =>{
-                const index = collection.packables.findIndex(x =>x === deletePackableId);
-                if(index != -1){
-                    collection.packables.splice(index,1);
-                }
+        case CollectionActions.DELETE_COLLECTION_PACKABLES:
+            action.payload.forEach(id=>{
+                stateCollections.forEach(collection =>{
+                    const index = collection.packables.findIndex(p =>p.id === id);
+                    if(index != -1){
+                        collection.packables.splice(index,1);
+                    }
+                })
             })
             return {
                 ...state,
-                collections: [...deletePackableCollections]
+                collections: [...stateCollections]
             }
         default:
             return state;

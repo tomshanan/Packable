@@ -83,7 +83,7 @@ export class PackableFactory {
         let completePackables = packables.map(p => this.makeComplete(p))
         return completePackables;
     }
-    public makeCompeleteFromIds = (ids: string[]): PackableComplete[] => {
+    public makeCompleteFromIds = (ids: string[]): PackableComplete[] => {
         let originals = this.storeSelector.getPackablesByIds(ids)
         return this.makeCompleteFromArray(originals)
     }
@@ -111,9 +111,7 @@ export class PackableFactory {
                 case "trip":
                     phrase = `${amount} to Share`
                     break;
-            }
-            console.log(phrase);
-            
+            }            
             returnStrings.push(phrase)
         })
         return returnStrings

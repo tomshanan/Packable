@@ -101,7 +101,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
           this.editMode = true
         }
         this.allProfiles = profilesState.profiles;
-        this.allActivities = this.CollectionFactory.getActivityCollections(collectionsState.collections)
+        this.allActivities = []
       })
     this.destArray = this.destService.destinations;
     this.editingTrip = <Trip>this.memoryService.get('TRIP') || null;

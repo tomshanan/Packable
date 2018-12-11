@@ -2,10 +2,10 @@ import { absoluteMin, absoluteMax } from '../services/weather.service';
 export type weatherType = 'rain'|'snow'|'sunny'|'hail'|'windy';
 export const weatherOptions:weatherType[] = ['rain','snow','sunny','hail','windy'];
 
-export const hotWeather = 26;
-export const warmWeather = 21;
-export const coolWeather = 20;
-export const coldWeather = 15;
+export const hotWeather = 28;
+export const warmWeather = 22;
+export const coolWeather = 21;
+export const coldWeather = 14;
 
 export class WeatherRule {
     minTemp: number = absoluteMin

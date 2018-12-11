@@ -10,11 +10,14 @@ import { ModalComponent } from '../shared-comps/modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { slugName } from '../shared/global-functions';
 import { CollectionFactory } from '../shared/factories/collection.factory';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-collections',
   templateUrl: './collections.component.html',
-  styleUrls: ['./collections.component.css']
+  styleUrls: ['../shared/css/mat-card-list.css',
+  './collections.component.css']
+  
 })
 export class CollectionsComponent implements OnInit,OnDestroy {
   @Output('test') test:string = 'test worked';
@@ -34,7 +37,7 @@ export class CollectionsComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.collectionState_obs = this.store.select('collections');
-    this.collectionState_sub = this.collectionState_obs.subscribe(state =>{
+    this.collectionState_sub = this.collectionState_obs.pipe(take(1)).subscribe(state =>{
       this.collections = this.collectionFactory.makeCompleteArray(state.collections)
     })
   }
@@ -43,14 +46,14 @@ export class CollectionsComponent implements OnInit,OnDestroy {
     this.collectionState_sub.unsubscribe();
   }
   editCollection(id:string){
-    this.memoryService.resetAll();
-    let collection = this.selectorService.getCollectionById(id)
-    this.memoryService.set('ORIGINAL_COLLECTION',collection);
-    this.router.navigate([slugName(collection.name)], {relativeTo: this.activatedRoute})
+    // this.memoryService.resetAll();
+    // let collection = this.selectorService.getCollectionById(id)
+    // this.memoryService.set('ORIGINAL_COLLECTION',collection);
+    // this.router.navigate([slugName(collection.name)], {relativeTo: this.activatedRoute})
   }
   newCollection(){
-    this.memoryService.resetAll();
-    this.router.navigate(["new"], {relativeTo: this.activatedRoute})
+    // this.memoryService.resetAll();
+    // this.router.navigate(["new"], {relativeTo: this.activatedRoute})
   }
   openModal(tempRef:TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);

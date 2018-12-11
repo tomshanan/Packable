@@ -15,11 +15,10 @@ export class CollectionComplete {
     constructor(
         public id: string = '',
         public name: string = '',
-        public activity: boolean = false,
+        public essential: boolean = false,
         public packables: PackableComplete[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
-        public sameAsOriginal: boolean = true,
-        public parent: CollectionAny = new CollectionOriginal()
+        public userCreated: boolean = false,
     ) {
     }
 }
@@ -29,9 +28,9 @@ export class CollectionOriginal {
     constructor(
         public id: string = Guid.newGuid(),
         public name: string = '',
-        public activity: boolean = false,
-        public packables: string[] = [],
-        public weatherRules: WeatherRule = new WeatherRule()
+        public packables: PackablePrivate[] = [],
+        public weatherRules: WeatherRule = new WeatherRule(),
+        public userCreated: boolean = false,
     ) {
     }
 }
@@ -41,8 +40,8 @@ export class CollectionPrivate {
     constructor(
         public id: string = '',
         public packables: PackablePrivate[] = [],
+        public essential: boolean = false,
         public weatherRules: WeatherRule = new WeatherRule(),
-        public subscribeToOriginal: boolean = true
     ){
     }
 }

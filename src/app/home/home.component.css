@@ -1,0 +1,25 @@
+.selectable-dropdown{
+    border: 1px solid transparent;
+    border-radius: .4em;
+    text-align: center;
+    transition: all 300ms;
+}
+.slectedable-dropdown-header{
+    border-radius: 0.5em 0.5em 0 0;
+    padding: 0.25em 1em;
+    transition: all 300ms;
+}
+.slectedable-dropdown-header > span {
+    font-size: 1.3em
+}
+.slectedable-dropdown-header:hover{
+    cursor: pointer;
+}
+
+.selectable-dropdown-content{
+    padding: 0.25em 1em;
+}
+.selectable-dropdown.selected{
+    border-color: rgba(233, 30, 99, 1);
+}
+

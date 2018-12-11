@@ -1,0 +1,6 @@
+<div [ngSwitch]="selectedView">
+    <div *ngSwitchCase="'settings'" @transitionTrigger>Settings</div>
+    <div *ngSwitchCase="'list'" @transitionTrigger> 
+      <app-packable-list   [collectionId]="collection.id"></app-packable-list>
+    </div>
+  </div>

@@ -2,7 +2,7 @@ import { Store } from "@ngrx/store";
 import * as fromApp from '../app.reducers'
 import { Injectable } from '@angular/core';
 import { Observable } from "rxjs";
-import { PackableOriginal, PackableAny, PackableComplete } from '../models/packable.model';
+import { PackableOriginal, PackableAny, PackableComplete, PackablePrivate } from '../models/packable.model';
 import { CollectionOriginal, CollectionAny, CollectionComplete, isCollectionOriginal, isCollectionPrivate } from '../models/collection.model';
 import { Profile, ProfileComplete } from "../models/profile.model";
 import { Trip, displayTrip } from '../models/trip.model';
@@ -17,11 +17,18 @@ export class StoreSelectorService{
     public profiles_obs:Observable<{profiles: Profile[]}>;
     public trips_obs:Observable<{trips: Trip[],packingLists:PackingList[]}>;
 
-    public originalPackables: PackableOriginal[];
-    public originalCollections: CollectionOriginal[];
-    public profiles: Profile[];
-    public trips: Trip[];
-    public packingLists: PackingList[]
+    private _originalPackables: PackableOriginal[];
+    public get originalPackables(): PackableOriginal[] {return this._originalPackables.slice()}
+    private _originalCollections: CollectionOriginal[];
+    public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
+    private _profiles: Profile[];
+    public get profiles(): Profile[] {return this._profiles.slice()}
+    private _trips: Trip[];
+    public get trips(): Trip[]  {return this._trips.slice()}
+    private _packingLists: PackingList[]
+    public get packingLists(): PackingList[] { return this._packingLists.slice()}
+
+
 
     constructor(private store:Store<fromApp.appState>, private destServices: DestinationDataService){
         this.packables_obs = this.store.select('packables');
@@ -30,17 +37,17 @@ export class StoreSelectorService{
         this.trips_obs = this.store.select('trips');
 
         this.packables_obs.subscribe(packablesState =>{
-            this.originalPackables = packablesState.packables;
+            this._originalPackables = packablesState.packables;
         })
         this.collections_obs.subscribe(collectionState =>{
-            this.originalCollections = collectionState.collections;
+            this._originalCollections = collectionState.collections;
         })
         this.profiles_obs.subscribe(profileState =>{
-            this.profiles = profileState.profiles;
+            this._profiles = profileState.profiles;
         })
         this.trips_obs.subscribe(tripState =>{
-            this.trips = tripState.trips;
-            this.packingLists = tripState.packingLists
+            this._trips = tripState.trips;
+            this._packingLists = tripState.packingLists
         })
     }
 
@@ -92,6 +99,17 @@ export class StoreSelectorService{
             return this.getPackableById(id);
         })
     }
+    getAllPrivatePackables(collectionId:string, profileId?:string):PackablePrivate[]{
+        if(profileId){
+            return this.getProfileById(profileId).collections.find(c=>c.id == collectionId).packables.slice()
+        } else {
+            return this.getCollectionById(collectionId).packables.slice()
+        }
+    }
+    findPrivatePackable(packableId:string, collectionId: string, profileId?: string):PackablePrivate{
+        return this.getAllPrivatePackables(collectionId,profileId).find(p=>p.id==packableId)
+    }
+
     getProfileById(id:string):Profile{
         return this.profiles.find(x => x.id === id) || (console.log(`could not find id ${id} in profile state:`,this.profiles), null);
     }
@@ -107,9 +125,23 @@ export class StoreSelectorService{
      * Find all profiles that contain a certain packable.
      * @param id the packable id to look up
      */
+    getProfilesWithCollectionId(cId:string):Profile[] {
+        return this.profiles.filter(pr=>{
+            return pr.collections.some(c=>{
+                return c.id == cId
+            })
+        })
+    }
+    getProfilesWithCollectionAndPackable(cId:string, pId:string):Profile[] {
+        return this.profiles.filter(pr=>{
+            return pr.collections.some(c=>{
+                return c.id == cId && c.packables.some(p=>p.id == pId)
+            })
+        })
+    }
     getCollectionsWithPackableId(id:String):CollectionOriginal[] {
         return this.originalCollections.filter(c=>{
-            return c.packables.some(p=>p == id)
+            return c.packables.some(p=>p.id == id)
         })
     }
     getCollectionById(id:string):CollectionOriginal {

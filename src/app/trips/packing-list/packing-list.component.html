@@ -1,5 +1,5 @@
 <div class="full-flex">
-  <div class="ff-row" *ngIf="windowService.min_sm && windowService.max_sm">
+  <div class="ff-row" *ngIf="windowService.min('sm') && windowService.max('sm')">
     <a class="inline-link" (click)="return()"><i class="fas fa-chevron-left"></i> Trips</a>
   </div>
   <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="null" *ngIf="navParams"></app-mobile-nav>
@@ -63,7 +63,7 @@
           </mat-expansion-panel>
         </mat-accordion>
       </div>
-      <div class="row pb-2" *ngIf="windowService.min_sm">
+      <div class="row pb-2" *ngIf="windowService.min('sm')">
         <div class="col-12">
           <div class="row">
             <div *ngFor="let profile of sortedList; let i = index" class="col-sm-6 col-lg-4">
@@ -80,7 +80,7 @@
           </div>
         </div>
       </div>
-      <div class="row py-2" *ngIf="windowService.max_xs">
+      <div class="row py-2" *ngIf="windowService.max('xs')">
         <div class="col-12">
           <mat-accordion multi="true">
             <mat-expansion-panel *ngFor="let profile of sortedList; let i = index">
@@ -120,7 +120,7 @@
           </span>
         </span>
       </mat-checkbox>
-      <span [ngbPopover]="weatherNotChecked" placement="{{windowService.max_xs ? 'bottom' : 'right'}}" triggers="click:mouseleave"
+      <span [ngbPopover]="weatherNotChecked" placement="{{windowService.max('xs') ? 'bottom' : 'right'}}" triggers="click:mouseleave"
         container="body" class="pointer" *ngIf="packable.weatherNotChecked">
         <i class="fas fa-umbrella text-orange"></i>
       </span>
@@ -129,7 +129,7 @@
           The weather conditions could not be checked. Please enter the weather information manually and update the packing list.
         </p>
       </ng-template>
-      <span [ngbPopover]="changedAfterChecked" placement="{{windowService.max_xs ? 'bottom' : 'right'}}" triggers="click:mouseleave"
+      <span [ngbPopover]="changedAfterChecked" placement="{{windowService.max('xs') ? 'bottom' : 'right'}}" triggers="click:mouseleave"
         container="body" class="pointer" *ngIf="packable.changedAfterChecked">
         <i class="fas fa-sync-alt text-orange"></i>
       </span>
@@ -138,7 +138,7 @@
           The quantity of this Packable changed after it has been ticked. Please check if you packed the updated quantity.
         </p>
       </ng-template>
-      <span [ngbPopover]="quantityReasons" placement="{{windowService.max_xs ? 'bottom' : 'right'}}" triggers="click:mouseleave"
+      <span [ngbPopover]="quantityReasons" placement="{{windowService.max('xs') ? 'bottom' : 'right'}}" triggers="click:mouseleave"
         container="body" class="pointer">
         <i class="far fa-question-circle calculation-popover-trigger"></i>
       </span>

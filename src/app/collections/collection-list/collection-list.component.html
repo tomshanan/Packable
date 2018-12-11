@@ -1,0 +1,26 @@
+<mat-accordion>
+  <mat-expansion-panel class="collection-panel" 
+  *ngFor="let collection of collectionList" 
+  [expanded]="collection.expanded"
+  (opened)="collection.expanded = true"
+  (closed)="collection.expanded = false"
+  hideToggle>
+    <mat-expansion-panel-header>
+      <mat-panel-title class="collection-title">
+        {{collection.name}}
+      </mat-panel-title>
+      <mat-panel-description class="collection-nav">
+        &nbsp;
+        <button mat-icon-button (click)="togglePanel(collection.id, 'list')" [color]="isPanelOpen(collection.id, 'list') ? 'accent' : 'primary'" InnerLink>
+          <mat-icon>list</mat-icon>
+        </button>
+        <button mat-icon-button (click)="togglePanel(collection.id, 'settings')" [color]="isPanelOpen(collection.id, 'settings') ? 'accent' : 'primary'" InnerLink>
+          <mat-icon>settings</mat-icon>
+        </button>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div *ngIf="collection.expanded" @transitionTrigger>
+        <app-collection-panel [collection]="collection.complete" [selectedView]="collection.panel"></app-collection-panel>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -20,7 +20,7 @@
 
 .title.collection-name {
     font-size: 0.6em;
-    line-height: 0.6em;
+    line-height: 1.1em;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -28,8 +28,7 @@
 
 .title>.packable-name {
     font-size: 1.6em;
-    line-height: 1em;
-    /* height: 1.6em; */
+    line-height: 1.1em;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

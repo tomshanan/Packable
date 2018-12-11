@@ -263,7 +263,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
     profiles.forEach(profile => {
       profile.collections.forEach(collection => {
-        if ((!collection.activity || checkActivityId(collection.id)) && checkWeatherRules(collection)) {
+        if ((checkActivityId(collection.id)) && checkWeatherRules(collection)) { // CHECK THIS - used to check if collection is activity
           collection.packables.forEach(packable => {
             processPackable(packable, collection.id, profile.id)
           })

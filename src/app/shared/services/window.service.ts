@@ -1,5 +1,23 @@
 import { Subject } from 'rxjs';
 
+interface screenSizes {
+    xs: number,
+    sm: number,
+    md: number,
+    lg: number,
+    xl: number  
+}
+type size = keyof screenSizes;
+
+export var screenSizes:screenSizes = {
+    xs: 480,
+    sm: 576,
+    md: 768,
+    lg: 992,
+    xl: 1200
+}
+
+
 export class WindowService {
     private _width: number;
     public change: Subject<number> = new Subject();
@@ -13,38 +31,18 @@ export class WindowService {
             this.change.next(this._width)
         })
     }
-    minSizes = {
-        sm: 576,
-        md: 768,
-        lg: 992,
-        xl: 1200
-    }
     get width(){
         return this._width;
     }
-    get min_sm(){
-        return this.width >= this.minSizes.sm
+    
+    public min(size: size): boolean{
+         return this.width >= screenSizes[size]
     }
-    get min_md(){
-        return this.width >= this.minSizes.md
-    }
-    get min_lg(){
-        return this.width >= this.minSizes.lg
-    }
-    get min_xl(){
-        return this.width >= this.minSizes.xl
-    }
+    public max(size: size): boolean{
+        return this.width <= screenSizes[size]
+   }
 
-    get max_xs(){
-        return this.width < this.minSizes.sm
-    }
-    get max_sm(){
-        return this.width < this.minSizes.md
-    }
-    get max_md(){
-        return this.width < this.minSizes.lg
-    }
-    get max_lg(){
-        return this.width < this.minSizes.xl
-    }
+   public between(min:size, max:size):boolean{
+    return this.min(min) && this.max(max);
+   }
 }

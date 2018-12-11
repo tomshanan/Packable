@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { QuantityRule } from '@shared/models/packable.model';
-import { isDefined } from '../../../shared/global-functions';
+import { isDefined } from '@shared/global-functions';
 import { RuleChange } from './quantity-rule/quantity-rule.component';
 import { dropInTrigger } from '@app/shared/animations';
 

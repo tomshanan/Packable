@@ -1,0 +1,20 @@
+<div class="confirm-dialog-header" mat-dialog-title>
+  <span class="header d-flex justify-content-center">
+    <span class="header-text">{{header}}</span>
+  </span>
+  <button class="close-button mini" mat-icon-button (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content>
+  <span innerHtml="{{content}}"></span>
+  <dialog-confirm-button>
+    <button mat-fab class="mx-1" color="none" (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button mat-fab class="mx-1" color="primary" (click)="onConfirm()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-content>

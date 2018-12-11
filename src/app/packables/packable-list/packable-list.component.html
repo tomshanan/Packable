@@ -1,0 +1,70 @@
+<div class="mat-card-list_containter">
+  <mat-card class="options cardless" *ngIf="!editList">
+    <a class="inline-link withIcon pl-0 option" title="Edit List" (click)="toggleEditList()">
+      <mat-icon>ballot</mat-icon>
+      <span class="pl-1">Add/Remove </span>
+    </a>
+  </mat-card>
+  <mat-card class="options editing" *ngIf="editList" [class.in-expansion-panel]="editingCollectionId">
+    <div class="checkbox-container" @expandAndFadeTrigger>
+      <mat-checkbox [indeterminate]="masterCheckboxIsIntermediate()" [checked]="masterCheckboxIsChecked()" (change)="masterCheckboxToggle()">
+      </mat-checkbox>
+    </div>
+    <ng-container *ngIf="masterCheckboxIsChecked(); else regOptions">
+      <a class="inline-link withIcon option" title="Copy Packables" *ngIf="editingCollectionId">
+        <div class="icon-container icon-sizer">
+          <mat-icon svgIcon="t-shirt2-copy"></mat-icon>
+        </div>
+        <span class="pl-1" *ngIf="windowService.min('xs')">Copy</span>
+      </a>
+      <a class="inline-link withIcon text-danger option" title="Remove Packables" (click)="deleteSelectedPackables()">
+        <mat-icon>delete_forever</mat-icon>
+        <span>{{editingCollectionId ? 'Remove' : 'Delete'}} ({{getSelected().length}})</span>
+      </a>
+    </ng-container>
+    <ng-template #regOptions>
+      <a class="inline-link withIcon option" title="Import Packables">
+        <div class="icon-container icon-sizer">
+          <mat-icon svgIcon="t-shirt2-import"></mat-icon>
+        </div>
+        <span *ngIf="windowService.min('xs')" class="pl-1">Import</span>
+      </a>
+      <a class="inline-link withIcon option" title="Create New Packable" (click)="newPackable()">
+        <div class="icon-container icon-sizer">
+          <mat-icon svgIcon="t-shirt2-add"></mat-icon>
+        </div>
+        <span *ngIf="windowService.min('xs')" class="pl-1">Create</span>
+      </a>
+    </ng-template>
+    <a class="inline-link withIcon ml-auto option option-close" title="Import Packables" (click)="toggleEditList()">
+      <span *ngIf="windowService.min('xs')" class="pr-1">Done</span>
+      <mat-icon class="m-0">close</mat-icon>
+    </a>
+  </mat-card>
+  <div @addRemoveElementTrigger *ngFor="let packable of packableDetailsArray; let i = index" >
+    <mat-card class="mat-card-list-item with-selection"  [class.cardless]="!useCard"
+    [class.bottom-seperator]="!useCard && packableDetailsArray.length-1 > i"
+      [class.popout]="!editList" [class.selectable]="editList" [class.selected]="packable.selected">
+      <div class="checkbox-container" *ngIf="editList" @expandAndFadeTrigger>
+        <mat-checkbox [checked]="packable.selected" (change)="checkboxChange($event,packable.id)"></mat-checkbox>
+      </div>
+      <div class="packable" (click)="clickPackable(packable.id)">
+        <div class="first-row">
+          <div class="name" [class.text-success]="packable.recentlyChanged">
+            <p>{{packable.name | titlecase}}</p>
+          </div>
+          <div class="rule-icons">
+            <div class="icon-container" *ngFor="let icon of packable.icons">
+              <mat-icon style="width: 100%; height: 100%;" [title]="icon.description" [svgIcon]="icon.icon"></mat-icon>
+            </div>
+          </div>
+        </div>
+        <div class="quantity">
+          <span *ngFor="let rule of packable.rules; let i=index" [class.text-success]="packable.recentlyChanged">
+            {{rule}}{{ i == packable.rules.length-1 ? "" : ", " }}
+          </span>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

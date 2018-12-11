@@ -20,7 +20,7 @@ export type packableType = 'original' | 'private' | 'complete';
 export class PackableComplete {
     type: packableType = 'complete';
     constructor(
-        public id: string = '',
+        public id: string =  Guid.newGuid(),
         public name: string = '',
         public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),

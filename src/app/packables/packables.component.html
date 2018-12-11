@@ -1,28 +1,8 @@
 <app-nav [header]="'Packables'" [icon]="'fas fa-suitcase'" (info)="openModal(modalContent)"></app-nav>
-<!-- <div class="row">
-  <div class="col-12">
-    <app-packable-edit-form [packable]="editingPackable" [profileGroup]="editingPackableProfileGorup" [isNew]="createNew" #packableForm></app-packable-edit-form>
-    <app-packable-edit-form [(packable)]="editingPackable" [isNew]="true"></app-packable-edit-form>
-  </div>
-</div> -->
+
 <div class="row">
-  <div class="col-12 column_list_containter">
-    <mat-card class="packable clickable text-primary" (click)="newPackable()">
-      Add Packable
-    </mat-card>
-    <mat-card class="packable clickable details" *ngFor="let packable of packableDetailsArray" (click)="editPackable(packable.id)">
-          <div class="name">
-              <p>{{packable.name | titlecase}}</p>
-            </div>
-            <div class="quantity">
-              <p *ngFor="let rule of packable.rules">
-                {{rule}}
-              </p>
-            </div>
-            <div class="rule-icons" style="height: 1.5em; line-height: 1.5em; font-size: 1.5em;">
-                <mat-icon *ngFor="let icon of packable.icons" style="height:1.5em;margin: 0px 2px;"  [title]="icon.description" [svgIcon]="icon.icon"></mat-icon>
-            </div>
-    </mat-card>
+  <div class="col-12">
+    <app-packable-list [useCard]="true"></app-packable-list>
   </div>
 </div>
 

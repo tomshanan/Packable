@@ -1,57 +1,52 @@
-.column_list_containter {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-content: flex-start;
-    align-items: stretch;
-}
-.column_list_containter > *{
-    flex-grow: 0;
-}
-mat-card.packable {
-    cursor: pointer;
 
-    padding: 0.4em;
-    margin-bottom: 0.2em;
-}
-mat-card.packable.clickable{
-    transition: all 200ms;
-    z-index: 1;
-}
-mat-card.packable.clickable:hover {
-    transform: translateY(-0.2em);
-    box-shadow: 0 5px 10px -3px rgba(0,0,0,0.5), 0px 0px 8px -2px rgba(0,0,0,0.2);
-    z-index: 2;
-} 
 
-mat-card.packable.details {
+.packable.details {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-mat-card.packable.details > .name {
-    flex:1 0 30%;
+.packable.details > .name {
+    flex: 0 0 40%;
 }
-mat-card.packable.details > .name > p {
+.packable.details > .name > p {
     margin: 0;
     padding: 0;
     line-height: 1em;
 }
 
-mat-card.packable.details > .quantity {
-    flex:1 1 auto;
+.packable.details > .quantity {
+    flex: 1 1 auto;
     text-align: left;
 }
-mat-card.packable.details > .quantity > p{
+.packable.details > .quantity > p{
     font-size: 0.7em;
     margin:0;
     color:grey;
 }
-mat-card.packable.details > .rule-icons {
-    flex:1 1 20%;
+.packable.details > .rule-icons {
+    display: flex;
+    flex-direction: row-reverse;   
+    flex-wrap: wrap; 
+    align-items: center;
+    flex: 1 1 auto;
     text-align: right;
+    line-height: 1em;
+    font-size: 1.5em;
+    min-height: 2em;
 }
-mat-card.packable.details > .rule-icons > mat-icon{
+.packable.details > .rule-icons.small-screen{
+    line-height: 1.1em;
+    font-size: 1.1em;
+}
+.packable.details > .rule-icons > .icon-container{
     flex:0 1 auto;
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+    padding: 0.1em;
+}
+.packable.details > .rule-icons.small-screen > .icon-container{
+    flex:0 1 auto;
+    height: 1em;
+    width: 1em;
 }

@@ -5,7 +5,7 @@ import { PackableOriginal } from '../../shared/models/packable.model';
 export const ADD_PROFILE = 'ADD_PROFILE';
 export const REMOVE_PROFILE = 'REMOVE_PROFILE';
 export const EDIT_PROFILE = 'EDIT_PROFILE';
-export const DELETE_PROFILE_PACKABLE = 'DELETE_PROFILE_PACKABLE';
+export const DELETE_PROFILE_PACKABLES = 'DELETE_PROFILE_PACKABLES';
 export const DELETE_PROFILE_COLLECTION = 'DELETE_PROFILE_COLLECTION';
 
 export const SET_PROFILE_STATE = 'SET_PROFILE_STATE';
@@ -27,12 +27,12 @@ export class removeProfile  implements Action{
     readonly type = REMOVE_PROFILE;
     constructor(public payload: string){};
 }
-export class deletePackable  implements Action{
-    readonly type = DELETE_PROFILE_PACKABLE;
-    constructor(public payload: string){};
+export class deleteProfilePackables  implements Action{
+    readonly type = DELETE_PROFILE_PACKABLES;
+    constructor(public payload: string[]){};
 }
 export class deleteProfileCollection  implements Action{
     readonly type = DELETE_PROFILE_COLLECTION;
     constructor(public payload: string){};
 }
-export type theActions = addProfile | editProfile | removeProfile |  deletePackable | setProfileState | deleteProfileCollection;
+export type theActions = addProfile | editProfile | removeProfile |  deleteProfilePackables | setProfileState | deleteProfileCollection;

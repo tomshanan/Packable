@@ -3,6 +3,10 @@ import { item } from './services/list-editor.service';
 export function isDefined(property:any, object:any = {}){
   return object && property!==null && property !==undefined && property!=='' && property != []
 }
+export function indexOfId(obj:Array<{id:string}>, id:string):number{
+  return obj.findIndex(x=>x.id == id)
+}
+
 export function objectInArray(arr: {}[], obj: {}, p: string):boolean {
     let i = arr.findIndex(x => {
       return x[p] === obj[p];

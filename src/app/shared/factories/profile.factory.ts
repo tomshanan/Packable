@@ -3,6 +3,8 @@ import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableFactory } from './packable.factory';
 import { CollectionFactory } from './collection.factory';
 import { Profile, ProfileComplete, Avatar } from '../models/profile.model';
+import { CollectionPrivate } from '../models/collection.model';
+import { indexOfId } from '../global-functions';
 
 @Injectable()
 export class ProfileFactory{
@@ -39,5 +41,13 @@ export class ProfileFactory{
         })
         return this.getCompleteProfiles(profiles);
     }
-
+    public addEditCollection(profile:Profile,collection:CollectionPrivate){
+        let colIndex = indexOfId(profile.collections, collection.id)
+        if(colIndex > -1) { 
+            profile.collections.splice(colIndex,1,collection) 
+        } else {
+            profile.collections.splice(0,0,collection)
+        } 
+        return profile
+    }
 }

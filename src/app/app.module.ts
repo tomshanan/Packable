@@ -17,7 +17,8 @@ import { CollectionEffects } from './collections/store/collection.effects';
 import { ProfileEffects } from './profiles/store/profile.effects';
 import { PackableEffects } from './packables/store/packable.effects';
 import { TripEffects } from './trips/store/trip.effects';
-import { EditPackableDialogComponent } from './shared-comps/dialogs/edit-packable-dialog/edit-packable-dialog.component';
+import { EditPackableDialogComponent } from '@app/packables/packable-list/edit-packable-dialog/edit-packable-dialog.component';
+import { ConfirmDialog } from './shared-comps/dialogs/confirm-dialog/confirm.dialog';
 
 
 
@@ -28,7 +29,6 @@ import { EditPackableDialogComponent } from './shared-comps/dialogs/edit-packabl
   imports: [
     BrowserModule,
     AppRoutingModule,
-    
     BrowserAnimationsModule,
     CoreModule,
     SharedModule,
@@ -36,6 +36,6 @@ import { EditPackableDialogComponent } from './shared-comps/dialogs/edit-packabl
     EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects,PackableEffects,TripEffects])
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ModalComponent,EditPackableDialogComponent]
+  entryComponents: [ModalComponent,EditPackableDialogComponent, ConfirmDialog]
 })
 export class AppModule { }

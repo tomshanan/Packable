@@ -6,21 +6,33 @@
     
     min-height: 100vh;
 }
+
 a, .pointer{
     cursor: pointer;
+}
+p,label{
+    margin: 0;
 }
 button {
     outline: none!important;
 }
-a.inline-link{
-    color: #007bff!important;
+
+
+a.inline-link, a.inline-link:not([href]){
+    color: #007bff;
     text-decoration: none!important;
     background-color: transparent!important;
     -webkit-text-decoration-skip: objects;
 }
-a.inline-link:hover {
-    color: #0056b3!important;
+a.inline-link:hover , a.inline-link:not([href]):hover{ 
+    color: #0056b3;
+}
+a.inline-link:hover:not(.withIcon), a.inline-link.withIcon:hover > span {
     text-decoration: underline!important;
+}
+a.inline-link.withIcon{
+    display: inline-flex;
+    align-items: center;
 }
 
 .sideNav{

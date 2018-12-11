@@ -4,10 +4,10 @@ import { PackableOriginal, QuantityRule } from '@shared/models/packable.model';
 import { WeatherRule } from '@models/weather.model';
 import { PackableComplete } from '@shared/models/packable.model';
 import { ProfileComplete } from '@shared/models/profile.model';
-import { isDefined } from '../../shared/global-functions';
-import { Profile } from '../../shared/models/profile.model';
-import { ProfileFactory } from '../../shared/factories/profile.factory';
-import { CollectionComplete } from '../../shared/models/collection.model';
+import { isDefined } from '@shared/global-functions';
+import { Profile } from '@shared/models/profile.model';
+import { ProfileFactory } from '@shared/factories/profile.factory';
+import { CollectionComplete } from '@shared/models/collection.model';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { QuantityRuleListComponent } from './quantity-rule-list/quantity-rule-list.component';
 import { MAT_DIALOG_DATA } from '@angular/material';
@@ -27,15 +27,15 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
 
   @Input() packable: PackableComplete = new PackableComplete()
   @Input() profileGroup: Profile[] = [];
-  @Input() selectedProfiles: Profile[] = [];
-  @Input() collection: CollectionComplete;
+  @Input() selectedProfiles: string[] = [];
+  @Input('collection') collectionId: string;
   @Input() isNew: boolean = false;
   @Input() editName: boolean = false;
 
   @Output() close = new EventEmitter<void>();
   @Output() confirm = new EventEmitter<{
     packable: PackableComplete,
-    selectedProfiles: Profile[]
+    selectedProfiles: string[]
   }>()
 
   @ViewChild('editNameInput') editNameInput:ElementRef;
@@ -62,17 +62,25 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
     this.storePackables = this.storeSelector.originalPackables
     if (this.isNew) {
       this.packable = new PackableComplete();
-      this.showProfileSelector = false;
       this.packableName.setValue('');
     } else {
       this.packableName.setValue(this.packable.name)
-      this.showProfileSelector = (this.profileGroup && this.profileGroup.length > 0) ? true : false
     }
+    this.showProfileSelector = (this.collectionId && this.profileGroup && this.profileGroup.length > 0) ? true : false
     if (this.editName){
       this.usedPackableNames = this.storeSelector.getUsedPackableNames()
     }
 
   }
+
+  profileSelect(select:'all'|'none'){
+    if (select == 'all'){
+      this.selectedProfiles = this.profileGroup.map(p=>p.id)
+    } else {
+      this.selectedProfiles = [];
+    }
+  }
+
   ngOnChanges(changes:SimpleChanges):void {
     if(changes['isNew']){
       this.resetForm();

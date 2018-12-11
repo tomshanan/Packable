@@ -115,9 +115,9 @@ export class ListEditorService {
         case 'ORIGINAL_PACKABLES':
           if (memory.originalCollection){
             let collection = memory.originalCollection
-            let packableObjects = collection.packables.map(p=>{ return {'id':p}})
-            let updatedSelection = this.matchSelection(packableObjects,usedList,originalList).map(p=>p.id)
-            collection.packables = updatedSelection;
+            let packableObjects = collection.packables.map(p=>{ return {'id':p.id}})
+            let updatedSelection = this.matchSelection(packableObjects,usedList,originalList)
+            collection.packables = updatedSelection.map(p=>this.packableFactory.makePrivate(<PackableAny>p));
             this.memoryService.set('ORIGINAL_COLLECTION',collection)
             if(this.changedList){this.memoryService.set('UNSAVED_COLLECTION',true)}
           } else {

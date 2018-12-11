@@ -4,18 +4,18 @@
     position: sticky;
     z-index: 19;
     bottom: 0;
-    display: flex;
-    justify-content: center;
 }
 .dialog-floating-actions-centralizer{
-    width:56px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
 }
 .fade-to-white{
     box-shadow: 0px 0px 70px 60px white;
 }
-.dialog-floating-actions-button {
-    position: absolute;
-    bottom: 0;
+.dialog-floating-actions-button-container {
     padding-bottom: 24px;
     z-index: 20;
 }

@@ -51,6 +51,10 @@ import { CollectionPanelComponent } from '../collections/collection-list/collect
 import { ConfirmDialog } from '@shared-comps/dialogs/confirm-dialog/confirm.dialog';
 import { ChooseProfileDialogComponent } from '../collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
 import { DialogHeaderComponent } from '../shared-comps/dialogs/dialog-header/dialog-header.component';
+import { PushPackablesDialogComponent } from '../packables/packable-list/push-packables-dialog/push-packables-dialog.component';
+import { CollectionSettingsComponent } from '../collections/collection-list/collection-panel/collection-settings/collection-settings.component';
+import { SlideToggleWithTextComponent } from '../shared-comps/slide-toggle-with-text/slide-toggle-with-text.component';
+import { PackableCardComponent } from '../packables/packable-list/packable-card/packable-card.component';
 
 let imports = [
     ProfilesComponent,
@@ -104,7 +108,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, ChooseProfileDialogComponent, DialogHeaderComponent],
+    declarations: [...imports, ChooseProfileDialogComponent, DialogHeaderComponent, PushPackablesDialogComponent, CollectionSettingsComponent, SlideToggleWithTextComponent, PackableCardComponent],
     exports: [...imports]
 })
 export class SharedModule {

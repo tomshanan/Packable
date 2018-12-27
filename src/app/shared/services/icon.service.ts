@@ -47,6 +47,7 @@ export class IconService {
             't-shirt2-import',
             't-shirt2-copy',
             't-shirt-copy',
+            't-shirt2-distribute',
         ]
     }
     weatherIcons:iconGroup = {

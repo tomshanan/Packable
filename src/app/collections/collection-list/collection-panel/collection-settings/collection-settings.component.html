@@ -1,0 +1,17 @@
+<!-- <app-icon-checkbox icon="star_border" iconOn="star" [svg]="false" [(checked)]="collection.essential">Essential Collection</app-icon-checkbox> -->
+<ng-container *ngIf="profileId">
+    <slide-toggle-with-text 
+    [checked]="collection.essential"
+    (change)="toggleEssential($event)" 
+    text="Essential Collection"  
+    (textClick)="toggleEssential()">
+  </slide-toggle-with-text>
+</ng-container> 
+<app-weather-conditions-form [(weather)]="collection.weatherRules" (weatherChange)="emitUpdate()" *ngIf="profileId"></app-weather-conditions-form>
+<span class="form-heading">
+  <button mat-raised-button color="none" (click)="applyCollection()">Apply Collection to Travelers</button>
+</span>
+<span class="form-heading">
+  <button mat-raised-button color="none" (click)="removeCollection()" class="text-danger text-danger-hover">Remove Collection</button>
+</span>
+

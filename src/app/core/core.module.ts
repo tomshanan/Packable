@@ -8,6 +8,7 @@ import { PackableFactory } from '@factories/packable.factory';
 import { ProfileFactory } from '@factories/profile.factory';
 import { weatherFactory } from '@factories/weather.factory';
 import { TripFactory } from '@factories/trip.factory';
+import { ContextService } from '../shared/services/context.service';
 import {
     AuthService, 
     AuthGuard, 

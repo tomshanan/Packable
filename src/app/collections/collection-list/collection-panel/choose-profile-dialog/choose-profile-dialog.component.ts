@@ -13,8 +13,9 @@ export interface DialogData_ChooseProfiles {
   collection: CollectionComplete,
   profileGroup: Profile[],
   selectedProfiles: string[],
-  header: string,
-  content: string,
+  header?: string,
+  content?: string,
+  super?: string,
 }
 
 @Component({
@@ -38,12 +39,12 @@ export class ChooseProfileDialogComponent implements OnInit {
     private store: Store<fromApp.appState>,
     private windowService: WindowService
   ) { 
-    this.collection = data.collection
-    this.profileGroup = data.profileGroup
-    this.selectedProfiles = data.selectedProfiles || []
-    this.header = data.header || ''
-    this.content = data.content || ''
-    this.super = `Updating ${titleCase(this.collection.name)}`
+    this.collection = data.collection;
+    this.profileGroup = data.profileGroup;
+    this.selectedProfiles = data.selectedProfiles || [];
+    this.header = data.header || 'Select Profiles';
+    this.content = data.content || 'Please select the Profile you wish to affect';
+    this.super = data.super || `Updating ${titleCase(this.collection.name)}`;
   }
   
   ngOnInit() {

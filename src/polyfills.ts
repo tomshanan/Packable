@@ -77,3 +77,35 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+declare global {
+    interface Array<T> {
+        id(id: string): T;
+        idIndex(id:string): number;
+    }
+  }
+  
+if (!Array.prototype.id) {
+    Array.prototype.id = function<T extends {id:string}>(this: T[], id:string): T {
+        if(this.id){
+            return this.find(e => e.id === id);
+        } else {
+            return undefined;
+        }
+    }
+    /**
+     * find an element in array by its id property
+     */
+}
+if (!Array.prototype.idIndex) {
+    Array.prototype.idIndex = function<T extends {id:string}>(this: T[], id:string): number {
+        if(this.id){
+            return this.findIndex(e => e.id === id);
+        } else {
+            return -1;
+        }
+    }
+/** 
+ * find the index of an element in array by it's id property
+ */
+}

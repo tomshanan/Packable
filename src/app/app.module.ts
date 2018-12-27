@@ -20,6 +20,7 @@ import { TripEffects } from './trips/store/trip.effects';
 import { EditPackableDialogComponent } from '@app/packables/packable-list/edit-packable-dialog/edit-packable-dialog.component';
 import { ConfirmDialog } from './shared-comps/dialogs/confirm-dialog/confirm.dialog';
 import { ChooseProfileDialogComponent } from './collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
+import { PushPackablesDialogComponent } from './packables/packable-list/push-packables-dialog/push-packables-dialog.component';
 
 
 
@@ -37,6 +38,6 @@ import { ChooseProfileDialogComponent } from './collections/collection-list/coll
     EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects,PackableEffects,TripEffects])
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ModalComponent,EditPackableDialogComponent, ConfirmDialog,ChooseProfileDialogComponent]
+  entryComponents: [ModalComponent,EditPackableDialogComponent, ConfirmDialog,ChooseProfileDialogComponent,PushPackablesDialogComponent]
 })
 export class AppModule { }

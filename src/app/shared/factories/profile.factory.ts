@@ -5,6 +5,8 @@ import { CollectionFactory } from './collection.factory';
 import { Profile, ProfileComplete, Avatar } from '../models/profile.model';
 import { CollectionPrivate } from '../models/collection.model';
 import { indexOfId } from '../global-functions';
+import { PackablePrivate } from '../models/packable.model';
+import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
 
 @Injectable()
 export class ProfileFactory{
@@ -49,5 +51,18 @@ export class ProfileFactory{
             profile.collections.splice(0,0,collection)
         } 
         return profile
+    }
+    public addEditPackablesByCP(profiles: Profile[], packables:PackablePrivate[], cps: CollectionProfile[]):Profile[]{
+        cps.forEach(cp=>{
+            let profile = profiles.find(p=>p.id == cp.pId)
+            if(profile){
+                let collection = profile.collections.find(collection=>collection.id == cp.cId)
+                if (collection){
+                    collection = this.collectionFactory.addEditPackables(collection,packables)
+                }
+            }
+            
+        })
+        return profiles
     }
 }

@@ -88,7 +88,7 @@ export class PackableFactory {
         return this.makeCompleteFromArray(originals)
     }
 
-    public makePrivateFromComplete = (completePackable: PackableComplete): PackablePrivate =>{
+    public completeToPrivate = (completePackable: PackableComplete): PackablePrivate =>{
         return new PackablePrivate(
             completePackable.id,
             completePackable.quantityRules.slice(),

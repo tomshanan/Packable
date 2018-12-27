@@ -1,32 +1,14 @@
-<div class="form-row">
-    <div class="col-12 d-flex align-items-end" >  
-      <span class="form-heading" (click)="!limitTemp && toggleTemp(true)">
-            Limit Temperature
-        </span>
-        <div class="ml-auto">
-            <mat-slide-toggle #limitTempInput (change)="onToggleTemp($event)" [checked]="limitTemp"></mat-slide-toggle>
-        </div>
-    </div>
+<slide-toggle-with-text [checked]="limitTemp" text="Limit Temperature" (textClick)="!limitTemp && toggleTemp(true)" (change)="onToggleTemp($event)"></slide-toggle-with-text>
+<div class="form-row"*ngIf="limitTemp" @quickTransitionTrigger>
     <div class="col-12">
-      <div *ngIf="limitTemp" @expandAndFadeTrigger>
-        <ng5-slider [(value)]="inputWeather.minTemp" [(highValue)]="inputWeather.maxTemp" [options]="options"></ng5-slider>
-      </div>
+        <ng5-slider [(value)]="inputWeather.minTemp" [(highValue)]="inputWeather.maxTemp" [options]="options" (userChangeEnd)="emitUpdate()"></ng5-slider>
     </div>
 </div>
 
-<div class="form-row">
-  <div class="col-12 d-flex align-items-end">
-      <span class="form-heading" (click)="!limitWeather && toggleWeather(true)">
-          Limit Weather
-      </span>
-      <div class="ml-auto">
-          <mat-slide-toggle (change)="onToggleWeather($event)" [checked]="limitWeather"></mat-slide-toggle>
-      </div>
-  </div>
-</div>
-<div class="form-row">
-    <div class="col-12" >
-      <div  *ngIf="limitWeather" @expandAndFadeTrigger class="spread">
+<slide-toggle-with-text [checked]="limitWeather" text="Limit Weather"  (textClick)="!limitWeather && toggleWeather(true)" (change)="onToggleWeather($event)"></slide-toggle-with-text>
+<div class="form-row" *ngIf="limitWeather" @quickTransitionTrigger>
+    <div class="col-12 py-2">
+      <div   class="spread">
         <ng-template  ngFor let-weather [ngForOf]="weatherOptions">
             <app-icon-checkbox 
               [checked]="isChecked(weather)" 

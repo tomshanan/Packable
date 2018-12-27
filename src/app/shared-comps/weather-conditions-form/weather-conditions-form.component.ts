@@ -1,22 +1,22 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
 import { WindowService } from '@shared/services/window.service';
 import { weatherOptions, WeatherRule, weatherType } from '@shared/models/weather.model';
 import { MatSelectChange, MatCheckboxChange, MatSlideToggleChange } from '@angular/material';
 import { tempOptions, absoluteMax, absoluteMin } from '@shared/services/weather.service';
 import { Options, LabelType} from 'ng5-slider';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
-import { expandAndFadeTrigger } from '@app/shared/animations';
+import { quickTransitionTrigger } from '@app/shared/animations';
 
 @Component({
   selector: 'app-weather-conditions-form',
   templateUrl: './weather-conditions-form.component.html',
   styleUrls: ['./weather-conditions-form.component.css'],
   encapsulation: ViewEncapsulation.None,
-  animations: [expandAndFadeTrigger]
+  animations: [quickTransitionTrigger]
 })
-export class WeatherConditionsFormComponent implements OnInit {
+export class WeatherConditionsFormComponent implements OnInit, OnChanges {
   @Input('weather') inputWeather:WeatherRule = new WeatherRule();
-  @Output('weahterChange') inputWeatherChange = new EventEmitter<WeatherRule>();
+  @Output('weatherChange') inputWeatherChange = new EventEmitter<WeatherRule>();
   
   tempOptions = tempOptions 
   weatherOptions = weatherOptions;
@@ -36,10 +36,15 @@ export class WeatherConditionsFormComponent implements OnInit {
     
   }
   ngOnInit() {
-    this.limitWeather = this.inputWeather.weatherTypes.length>0
-    if(this.inputWeather.minTemp != this.absoluteMinTemp || this.inputWeather.maxTemp != this.absoluteMaxTemp){
-      this.limitTemp = true
+  }
+  ngOnChanges(changes:SimpleChanges){
+    if(changes['inputWeather']){
+      this.init()
     }
+  }
+  init(){
+    this.limitWeather = this.inputWeather.weatherTypes.length>0
+    this.limitTemp = (this.inputWeather.minTemp != this.absoluteMinTemp || this.inputWeather.maxTemp != this.absoluteMaxTemp)
   }
 
   onToggleWeather(change:MatSlideToggleChange){
@@ -54,6 +59,7 @@ export class WeatherConditionsFormComponent implements OnInit {
       this.savedWeatherTypes = this.inputWeather.weatherTypes
       this.inputWeather.weatherTypes = [];
     }
+    this.emitUpdate()
   }
   onToggleTemp(change:MatSlideToggleChange){
     this.toggleTemp(change.checked)
@@ -70,6 +76,7 @@ export class WeatherConditionsFormComponent implements OnInit {
       this.inputWeather.minTemp = this.absoluteMinTemp
       this.inputWeather.maxTemp = this.absoluteMaxTemp
     }
+    this.emitUpdate()
   }
 
   options: Options = {

@@ -17,7 +17,9 @@ button {
     outline: none!important;
 }
 
-
+profile-icon, profile-selector {
+    display: contents;
+}
 a.inline-link, a.inline-link:not([href]){
     color: #007bff;
     text-decoration: none!important;

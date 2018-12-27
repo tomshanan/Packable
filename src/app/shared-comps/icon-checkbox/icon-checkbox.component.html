@@ -3,17 +3,27 @@
 [class.disabled]="disabled" 
 [class.small-screen]="smallScreen && wService.max('xs')" 
 (click)="toggle()">
-  <div class="icon-container" 
-     matRipple
-     [matRippleCentered]="true"
-     [matRippleDisabled]="disabled"
-     [matRippleUnbounded]="true"
-     [matRippleRadius]="25"
-     [matRippleColor]="rippleColor"
-     [matRippleTrigger]="checkboxContainer"
-     [matRippleAnimation]="animationConfig">
-      <mat-icon [svgIcon]="icon" [inline]="true" style="height: 100%"></mat-icon>
+
+<div class="icon-container"[class.matIcon]="!svg">
+  <div matRipple class="d-flex"
+        [matRippleCentered]="true"
+        [matRippleDisabled]="disabled"
+        [matRippleUnbounded]="true"
+        [matRippleRadius]="25"
+        [matRippleColor]="rippleColor"
+        [matRippleTrigger]="checkboxContainer"
+        [matRippleAnimation]="animationConfig">
+    <ng-container *ngIf="svg; else matIcon">
+      <mat-icon [svgIcon]="icon" [inline]="true" style="height: 100%" *ngIf="!checked || !iconOn"></mat-icon>
+      <mat-icon [svgIcon]="iconOn" [inline]="true" style="height: 100%" *ngIf="!!iconOn && checked"></mat-icon>
+    </ng-container>
+    <ng-template #matIcon>
+      <mat-icon  class="mat-icon-sizer" *ngIf="!checked || !iconOn">{{icon}}</mat-icon>
+      <mat-icon  class="mat-icon-sizer" *ngIf="!!iconOn && checked">{{iconOn}}</mat-icon>
+    </ng-template>
   </div>
+  
+</div>
   <div class="text-container">
     <span style="display: none">&nbsp;</span>
     <ng-content></ng-content>

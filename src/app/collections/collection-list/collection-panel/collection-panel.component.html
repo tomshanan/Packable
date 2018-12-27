@@ -1,6 +1,8 @@
 <div [ngSwitch]="selectedView">
-    <div *ngSwitchCase="'settings'" @transitionTrigger>Settings</div>
-    <div *ngSwitchCase="'list'" @transitionTrigger> 
-      <app-packable-list   [collectionId]="collection.id" (updateList)="updateList($event)"></app-packable-list>
-    </div>
+  <div *ngSwitchCase="'settings'" @transitionTrigger>
+    <app-collection-settings [collection]="collection" (collectionChange)="updateSettings($event)" [profileId]="profileId" (remove)="remove()"></app-collection-settings>
   </div>
+  <div *ngSwitchCase="'list'" @transitionTrigger>
+    <app-packable-list [useCard]="false" (packablesChange)="updatePackables($event)" [packables]="packables"></app-packable-list>
+  </div>
+</div>

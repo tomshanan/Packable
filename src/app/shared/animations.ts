@@ -85,3 +85,20 @@ export const quickTransitionTrigger = trigger('quickTransitionTrigger', [
     ])
 ])
 
+export const evaporateTransitionTrigger = trigger('evaporateTransitionTrigger', [
+    transition(':enter', [
+        style({ opacity: 0, height: '0px'}),
+        animate('300ms 150ms', keyframes([
+            style({ opacity: 0, height: '0px', offset: 0}),
+            style({ height: '*', offset: 0.5}),
+            style({ opacity: 1, offset: 1}),
+        ])),
+    ]),
+    transition(':leave' , [
+        style({ opacity: 1, height: '*', overflow: 'visible'}),
+        animate('300ms', keyframes([
+            style({ opacity: 1, height: '*',offset: 0}),
+            style({ opacity: 0, height: '0px',transform: 'translateY(-60px)',offset: 1}),
+        ])),
+    ])
+])

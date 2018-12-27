@@ -11,6 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { slugName } from '../shared/global-functions';
 import { CollectionFactory } from '../shared/factories/collection.factory';
 import { take } from 'rxjs/operators';
+import { ContextService } from '../shared/services/context.service';
 
 @Component({
   selector: 'app-collections',
@@ -31,13 +32,15 @@ export class CollectionsComponent implements OnInit,OnDestroy {
     private memoryService: MemoryService,
     private collectionFactory: CollectionFactory,
     private selectorService: StoreSelectorService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private context: ContextService,
 
   ) { }
 
   ngOnInit() {
+    this.context.reset();
     this.collectionState_obs = this.store.select('collections');
-    this.collectionState_sub = this.collectionState_obs.pipe(take(1)).subscribe(state =>{
+    this.collectionState_sub = this.collectionState_obs.subscribe(state =>{
       this.collections = this.collectionFactory.makeCompleteArray(state.collections)
     })
   }

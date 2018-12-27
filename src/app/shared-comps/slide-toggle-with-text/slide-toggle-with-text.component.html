@@ -1,0 +1,15 @@
+<div class="form-row">
+  <div class="col-12 d-flex align-items-baseline flex-sm-row-reverse justify-content-sm-end">
+    <span class="form-heading" (click)="textClick()">
+      {{text}}
+    </span>
+    <div class="ml-auto ml-sm-0 mr-sm-2">
+      <mat-slide-toggle (change)="toggleChange($event)" [checked]="isChecked"></mat-slide-toggle>
+    </div>
+  </div>
+  <div class="col-12" *ngIf="helpText" @quickTransitionTrigger>
+    <span class="text-muted small" >
+      {{helpText}}
+    </span>
+  </div>
+</div>

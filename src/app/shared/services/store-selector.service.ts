@@ -18,14 +18,15 @@ export class StoreSelectorService{
     public trips_obs:Observable<{trips: Trip[],packingLists:PackingList[]}>;
 
     private _originalPackables: PackableOriginal[];
-    public get originalPackables(): PackableOriginal[] {return this._originalPackables.slice()}
     private _originalCollections: CollectionOriginal[];
-    public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
     private _profiles: Profile[];
-    public get profiles(): Profile[] {return this._profiles.slice()}
     private _trips: Trip[];
-    public get trips(): Trip[]  {return this._trips.slice()}
     private _packingLists: PackingList[]
+    
+    public get originalPackables(): PackableOriginal[] {return this._originalPackables.slice()}
+    public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
+    public get profiles(): Profile[] {return this._profiles.slice()}
+    public get trips(): Trip[]  {return this._trips.slice()}
     public get packingLists(): PackingList[] { return this._packingLists.slice()}
 
 

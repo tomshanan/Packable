@@ -10,9 +10,6 @@
 .mat-card-list-item.selectable.selected{
     background: hsl(340, 100%, 96%)!important;
 }
-.bottom-seperator{
-    border-bottom: 1px solid #f2f2f2;
-}
 
 .checkbox-container{
     flex: 0 0 0;
@@ -25,6 +22,10 @@
     flex-direction: column;
     align-items: stretch;
 }
+.checkbox-container + .packable {
+    padding-left: 0.4em;
+}
+
 .packable .first-row {
     display: flex;
     flex-direction: row;
@@ -86,41 +87,6 @@ mat-card.cardless:hover:not(.selectable) {
     box-shadow: none;
     transform: none;
     color: #0069d9;
-}
-
-.options{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.options .option {
-    padding: 0.4em;
-}
-.options .option-close {
-    margin-right:-0.4em;
-}
-.checkbox-container + .packable {
-    padding-left: 0.4em;
-}
-
-.options > a > .icon-container, .options > a > mat-icon {
-    display: inline-block;
-    font-size: 1.7em;
-}
-
-.options.editing{
-    position: sticky;
-    top:0;
-    z-index: 10;
-    padding: 0px 15px;
-    margin: 0.2em -15px;
-}
-.options.editing:not(.in-expansion-panel) > .checkbox-container {
-    margin-left: 0em;
-}
-.options.editing.in-expansion-panel{
-    padding: 0px 24px;
-    margin: 0.2em -24px;
 }
 
 .icon-container, mat-icon{

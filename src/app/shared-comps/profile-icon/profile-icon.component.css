@@ -72,6 +72,7 @@
   .profile.button .profile_name {
     color: #007bff;
   }
+
   .profile.selected .profile_circle{
     border-color: #e91e63;
     box-shadow: 1px 1px 4px #0000005c;

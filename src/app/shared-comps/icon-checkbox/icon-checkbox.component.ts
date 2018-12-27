@@ -13,6 +13,8 @@ export class IconCheckboxComponent implements OnInit {
   @Input() checked: boolean = false;
   @Input() disabled: boolean = false;
   @Input() icon: string;
+  @Input() iconOn:string;
+  @Input() svg:boolean = true;
   @Input() smallScreen: boolean = false;
   @Input() spacer: string = "0px";
   @Output() checkedChange = new EventEmitter<boolean>()

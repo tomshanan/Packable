@@ -12,6 +12,8 @@ import { CollectionProfile } from '../../packables/packable-list/edit-packable-d
 import * as profileActions from '@app/profiles/store/profile.actions';
 import { PackablePrivate } from '../models/packable.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
+import { CollectionComplete } from '../models/collection.model';
+import { isDefined } from '../global-functions';
 
 @Injectable({
   providedIn: 'root'
@@ -33,22 +35,40 @@ export class BulkActionsService {
     if(collectionIds.length >0 && profileIds.length > 0){
       let profiles = this.storeSelector.profiles;
       profileIds.forEach(pId=>{
-        let profile = profiles.id(pId)
+        let profile = profiles.findId(pId)
         profile.collections = profile.collections.filter(c=> !collectionIds.includes(c.id))
       })
       this.store.dispatch(new profileActions.setProfileState(profiles))
     }
   }
  
+  public pushCollectionsToProfiles(collections:CollectionComplete[], profileIds: string[]){
+    if(collections.length >0 && profileIds.length > 0){
+      let privateCollections = collections.map(c=>this.colFac.completeToPrivate(c))
+      let profiles = this.storeSelector.profiles;
+      privateCollections.forEach(privateCol=>{
+        profileIds.forEach(pId=>{
+          let profile = profiles.findId(pId)
+          let index = profile.collections.idIndex(privateCol.id)
+          if(index !== -1){
+            profile.collections.splice(index,1,privateCol)
+          } else {
+            profile.collections.unshift(privateCol)
+          }
+        })
+      })
+      this.store.dispatch(new profileActions.setProfileState(profiles))
+    }
+  }
   //  --- [ PACKABLES ] - BULK ACTIONS
 
   public removePackablesByCP(packables:string[], CPs?:CollectionProfile[]){
     if(CPs && CPs.length>0){
       let profiles = this.storeSelector.profiles;
       CPs.forEach(CP => {
-        let profile = profiles.id(CP.pId)
+        let profile = profiles.findId(CP.pId)
         if (profile){
-          let col = profile.collections.id(CP.cId)
+          let col = profile.collections.findId(CP.cId)
           if (col){
             col.packables = col.packables.filter(p=> !packables.includes(p.id))
           }

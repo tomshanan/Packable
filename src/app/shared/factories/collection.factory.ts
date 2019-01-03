@@ -107,15 +107,24 @@ export class CollectionFactory {
         }).map(c => this.makeComplete(c))
     }
 
-    public getCompleteById(id: string): CollectionComplete {
-        return this.makeComplete(this.storeSelector.getCollectionById(id))
+    /** Get a complete collection from the Store by collection ID
+     * @param ids the Collection Id
+     * @param profileIds optional: Profile ID, will return the collection from the profile, or return null if not found in profile. Omit to find the original collection.
+     */
+    public getCompleteById(id: string, profileId?:string): CollectionComplete {
+        if(profileId){
+            return this.getCompleteFromProfile(id, profileId)
+        } else {
+            return this.makeComplete(this.storeSelector.getCollectionById(id))
+        }
     }
+
     public getCompleteByIdArray(ids: string[]): CollectionComplete[] {
         return ids.map(id => this.getCompleteById(id))
     }
     public getCompleteFromProfile(colId:string, proId:string):CollectionComplete{
         let profile = this.storeSelector.getProfileById(proId)
-        return this.makeComplete(profile.collections.id(colId))
+        return this.makeComplete(profile.collections.findId(colId))
     }
 
     public addEditPackablesByCP(collections: CollectionOriginal[], packables: PackablePrivate[], cps: CollectionProfile[]): CollectionOriginal[] {

@@ -48,7 +48,7 @@ export class ProfileFactory{
         if(colIndex > -1) { 
             profile.collections.splice(colIndex,1,collection) 
         } else {
-            profile.collections.splice(0,0,collection)
+            profile.collections.unshift(collection)
         } 
         return profile
     }

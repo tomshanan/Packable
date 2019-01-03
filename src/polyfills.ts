@@ -57,14 +57,14 @@ import 'core-js/es7/reflect';
  * user can disable parts of macroTask/DomEvents patch by setting following flags
  */
 
- // (window as any).__Zone_disable_requestAnimationFrame = true; // disable patch requestAnimationFrame
- // (window as any).__Zone_disable_on_property = true; // disable patch onProperty such as onclick
- // (window as any).__zone_symbol__BLACK_LISTED_EVENTS = ['scroll', 'mousemove']; // disable patch specified eventNames
+// (window as any).__Zone_disable_requestAnimationFrame = true; // disable patch requestAnimationFrame
+// (window as any).__Zone_disable_on_property = true; // disable patch onProperty such as onclick
+// (window as any).__zone_symbol__BLACK_LISTED_EVENTS = ['scroll', 'mousemove']; // disable patch specified eventNames
 
- /*
- * in IE/Edge developer tools, the addEventListener will also be wrapped by zone.js
- * with the following flag, it will bypass `zone.js` patch for IE/Edge
- */
+/*
+* in IE/Edge developer tools, the addEventListener will also be wrapped by zone.js
+* with the following flag, it will bypass `zone.js` patch for IE/Edge
+*/
 // (window as any).__Zone_enable_cross_context_check = true;
 
 /***************************************************************************************************
@@ -80,32 +80,73 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 
 declare global {
     interface Array<T> {
-        id(id: string): T;
-        idIndex(id:string): number;
+        /**
+        * find an element in array by its id property
+        */
+        findId(id: string): T;
+        /** 
+         * find the index of an element in array by it's id property
+        */
+        idIndex(id: string): number;
+        /**
+         * This will mutate an Array (this), removing elements missing from the comparison Array, and adding ones that are missing from the original (this).
+         * @param compare The array to compare with. 
+         */
+        compareAddRemove(compare: T[]): T[];
+        /**
+         * Returns a new array without undefined and null objects, and without empty arrays and string
+         */
+        clearUndefined(): any[];
     }
-  }
-  
-if (!Array.prototype.id) {
-    Array.prototype.id = function<T extends {id:string}>(this: T[], id:string): T {
-        if(this.id){
-            return this.find(e => e.id === id);
-        } else {
-            return undefined;
-        }
-    }
-    /**
-     * find an element in array by its id property
-     */
 }
-if (!Array.prototype.idIndex) {
-    Array.prototype.idIndex = function<T extends {id:string}>(this: T[], id:string): number {
-        if(this.id){
-            return this.findIndex(e => e.id === id);
-        } else {
-            return -1;
-        }
+type itemWithId = { id: string }
+
+if (!Array.prototype.findId) {
+    Array.prototype.findId = function <T extends itemWithId>(this: T[], id: string): T {
+        return this.find(e => {
+            if (e && 'id' in e) {
+                return e.id === id
+            } else {
+                return false
+            }
+        })
     }
-/** 
- * find the index of an element in array by it's id property
- */
+}
+
+if (!Array.prototype.idIndex) {
+    Array.prototype.idIndex = function <T extends itemWithId>(this: T[], id: string): number {
+            return this.findIndex(e => {
+                if (e && 'id' in e) {
+                    return e.id === id
+                } else {
+                    return false
+                }
+            })
+        
+    }
+}
+
+if (!Array.prototype.compareAddRemove) {
+    Array.prototype.compareAddRemove = function <T extends itemWithId>(this: T[], compare: T[]): T[] {
+        compare.forEach(item => {
+            if (!this.findId(item.id)) {
+                this.splice(0, 0, item)
+            }
+        })
+        this.slice().forEach((item) => {
+            if (!compare.findId(item.id)) {
+                const i = this.idIndex(item.id)
+                this.splice(i, 1)
+            }
+        })
+        return this
+    }
+}
+if (!Array.prototype.clearUndefined) {
+    Array.prototype.clearUndefined = function(this: any[]): any[] {
+        let newarray = this.filter(el=>{
+            return el != null && el != undefined && el != "" && el != []
+        })
+        return newarray
+    }
 }

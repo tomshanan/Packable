@@ -9,7 +9,10 @@
 </ng-container> 
 <app-weather-conditions-form [(weather)]="collection.weatherRules" (weatherChange)="emitUpdate()" *ngIf="profileId"></app-weather-conditions-form>
 <span class="form-heading">
-  <button mat-raised-button color="none" (click)="applyCollection()">Apply Collection to Travelers</button>
+  <button mat-raised-button color="none" (click)="applyCollection()">Apply Changes to Travelers</button>
+</span>
+<span class="form-heading">
+  <button mat-raised-button color="none" (click)="addCollection()">Add Collection to Travelers</button>
 </span>
 <span class="form-heading">
   <button mat-raised-button color="none" (click)="removeCollection()" class="text-danger text-danger-hover">Remove Collection</button>

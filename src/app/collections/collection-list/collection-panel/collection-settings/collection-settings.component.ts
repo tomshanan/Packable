@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, SimpleChanges, OnChanges } from '@angular/core';
 import { CollectionComplete } from '../../../../shared/models/collection.model';
 import { WeatherRule } from '../../../../shared/models/weather.model';
 import { MatSlideToggleChange, MatDialog } from '@angular/material';
@@ -8,13 +8,14 @@ import { ChooseProfileDialogComponent, DialogData_ChooseProfiles } from '../choo
 import { ProfileFactory } from '../../../../shared/factories/profile.factory';
 import { StoreSelectorService } from '../../../../shared/services/store-selector.service';
 import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-collection-settings',
   templateUrl: './collection-settings.component.html',
   styleUrls: ['./collection-settings.component.css']
 })
-export class CollectionSettingsComponent implements OnInit {
+export class CollectionSettingsComponent implements OnInit, OnChanges {
 /**
  * RECEIVES COLLECTION and PROFILE-ID
  * MUTATES COLLECTION:
@@ -28,8 +29,10 @@ export class CollectionSettingsComponent implements OnInit {
  *        > emit remove event
  * 
  */
-  @Input() collection: CollectionComplete = new CollectionComplete();
-  @Input() profileId: string;
+  @Input('collection') inputCollection: CollectionComplete;
+  collection: CollectionComplete;
+  @Input('profileId') inputProfileId: string;
+  profileId: string;
   @Output() collectionChange = new EventEmitter<CollectionComplete>()
   @Output() remove = new EventEmitter<void>()
 
@@ -40,6 +43,7 @@ export class CollectionSettingsComponent implements OnInit {
     autoFocus: false
   }
   dialogData;
+  subscription: Subscription;
 
   constructor(
     private context:ContextService,
@@ -48,16 +52,40 @@ export class CollectionSettingsComponent implements OnInit {
     private proFac: ProfileFactory,
     private storeSelector: StoreSelectorService,
   ) { }
-
-  ngOnInit() {
-    if(this.profileId === null && this.context.profileId){
-      this.profileId = this.context.profileId
+  ngOnInit(){
+    this.collection = this.inputCollection
+    this.profileId = this.inputProfileId
+    if(this.inputProfileId === null && this.context.profileId){
+      this.inputProfileId = this.context.profileId
     }
+    this.updateDialogData()
+    this.subscription = this.context.changes.subscribe(newcontext=>{
+      this.inputCollection = this.context.getCollection()
+      this.inputProfileId = this.context.profileId
+      this.updateCollection();
+    })
+  }
+  updateCollection(){
+    if(this.collection.id != this.inputCollection.id || this.profileId != this.inputProfileId){
+      this.collection = this.inputCollection
+      this.profileId = this.inputProfileId;
+      console.log(`collection settings for "${this.collection.name}" has loaded/changed:`, this.collection);
+      this.updateDialogData()
+    }
+  }
+  updateDialogData(){
     this.dialogData = {
-      collection: this.collection,
+      collection: this.inputCollection,
       profileGroup: this.storeSelector.getProfilesWithCollectionId(this.collection.id),
-      selectedProfiles: [this.context.profileId]
+      selectedProfiles: [this.profileId]
     }
+  }
+  ngOnChanges(changes:SimpleChanges) {
+    if(changes['collection']){
+      this.updateCollection();
+      
+    }
+    
   }
 
   emitUpdate(){
@@ -67,17 +95,60 @@ export class CollectionSettingsComponent implements OnInit {
 
   toggleEssential(e?:MatSlideToggleChange){
     if(e){
-      this.collection.essential = e.checked
+      this.inputCollection.essential = e.checked
     } else {
-      this.collection.essential = !this.collection.essential;
+      this.inputCollection.essential = !this.inputCollection.essential;
     }
     this.emitUpdate();
   }
 
   applyCollection(){
+    let usedProfiles = this.storeSelector.getProfilesWithCollectionId(this.collection.id)
+    let data:DialogData_ChooseProfiles = {
+      ...this.dialogData,
+      header: `Select Profiles`,
+      content: `<small>This will override existing Collections (including all Packables and settings)</small>`,
+      super: `Apply Changes To Travelers`,
+      profileGroup: usedProfiles,
 
+    }
+    let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
+      ...this.dialogSettings,
+      disableClose: false,
+      data: data
+    });
+    chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
+      if (profileIds.length > 0) {
+        this.bulkActions.pushCollectionsToProfiles([this.inputCollection],profileIds)
+        this.emitUpdate();
+      }
+    })
   }
+  addCollection(){
+    let usedProfiles = this.storeSelector.getProfilesWithCollectionId(this.collection.id)
+    let data:DialogData_ChooseProfiles = {
+      ...this.dialogData,
+      header: `Select Profiles`,
+      content: `<small>Select the profiles you would like to add this Collection to.</small>`,
+      super: `Applying Collection To Travelers`,
+      // profileGroup - get only the profiles that do not use this collection
+      profileGroup: this.storeSelector.profiles.filter(p=>{
+        return usedProfiles.idIndex(p.id) < 0
+      }), 
 
+    }
+    let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
+      ...this.dialogSettings,
+      disableClose: false,
+      data: data
+    });
+    chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
+      if (profileIds.length > 0) {
+        this.bulkActions.pushCollectionsToProfiles([this.inputCollection],profileIds)
+        this.emitUpdate();
+      }
+    })
+  }
   removeCollection(){
     let data:DialogData_ChooseProfiles = {
       ...this.dialogData,
@@ -92,9 +163,10 @@ export class CollectionSettingsComponent implements OnInit {
     });
     chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
       if (profileIds.length > 0) {
-        this.bulkActions.removeCollectionsFromProfiles([this.collection.id],profileIds)
+        this.bulkActions.removeCollectionsFromProfiles([this.inputCollection.id],profileIds)
         this.remove.emit()
       }
     })
   }
+
 }

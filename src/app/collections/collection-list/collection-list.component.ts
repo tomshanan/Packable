@@ -65,7 +65,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
         }
       })
     }
-    this.collectionList.forEach(c => {
+    this.collectionList.slice().forEach(c => {
       if (collections.idIndex(c.id) === -1) {
         let i = this.collectionList.idIndex(c.id)
         this.collectionList.splice(i, 1)
@@ -76,7 +76,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
   buildCollectionList(collections: CollectionComplete[]): CollectionViewObject[] {
     return collections.map(c => this.buildViewObject(c))
   }
-  buildViewObject(c: CollectionComplete, optionals?: { [T in keyof CollectionViewObject]?: any }): CollectionViewObject {
+  buildViewObject(c: CollectionComplete): CollectionViewObject {
     return {
       id: c.id,
       name: c.name,
@@ -86,12 +86,11 @@ export class CollectionListComponent implements OnInit, OnChanges {
       profileSelector: !this.profileId,
       selectedProfile: this.profileId,
       profileGroup: this.storeSelector.getProfilesWithCollectionId(c.id),
-      complete: c,
-      ...optionals
+      complete: c
     }
   }
   togglePanel(id: string, panel: CollectionPanelView, matPanel: MatExpansionPanel) {
-    let col = this.collectionList.id(id)
+    let col = this.collectionList.findId(id)
     if (col.expanded && col.panel === panel) {
       this.collapseCollection(id)
       matPanel.close();
@@ -101,19 +100,19 @@ export class CollectionListComponent implements OnInit, OnChanges {
     }
   }
   expandCollection(id: string, panel?: CollectionPanelView) {
-    let col = this.collectionList.id(id)
+    let col = this.collectionList.findId(id)
     col.expanded = true;
     console.log(col.selectedProfile);
     if (isDefined(col.selectedProfile)) {
       console.log(`updating context for ${col.name}`);
-      this.updateContext({ c: col.id, p: col.selectedProfile })
+      this.context.setBoth(col.id,col.selectedProfile)
     }
     if (panel) {
       col.panel = panel
     }
   }
   collapseCollection(id: string) {
-    let col = this.collectionList.id(id)
+    let col = this.collectionList.findId(id)
     col.expanded = false;
   }
 
@@ -122,16 +121,16 @@ export class CollectionListComponent implements OnInit, OnChanges {
     return col.expanded && col.panel == panel
   }
   getSelectedProfile(id: string): string {
-    return this.collectionList.id(id).selectedProfile
+    return this.collectionList.findId(id).selectedProfile
   }
   toggleProfileSelector(id: string) {
     if (!this.profileId) {
-      let col = this.collectionList.id(id)
+      let col = this.collectionList.findId(id)
       col.profileSelector = !col.profileSelector;
     }
   }
   profileSelectorOpen(id: string): boolean {
-    let col = this.collectionList.id(id)
+    let col = this.collectionList.findId(id)
     if (!this.profileId) {
       if (col.profileSelector || !col.selectedProfile) {
         return true
@@ -141,35 +140,49 @@ export class CollectionListComponent implements OnInit, OnChanges {
   }
 
   changeProfileId(colId: string, selection: string[]) {
-    this.updateCollectionObject(colId, selection[0])
+    this.setCollectionForPanel(colId, selection[0])
     setTimeout(() => {
       this.toggleProfileSelector(colId)
     }, 0)
   }
-  updateCollectionObject(colId: string, profileId: string) {
-    let col = this.collectionList.id(colId)
-    this.updateContext({ c: colId, p: profileId })
+  setCollectionForPanel(colId: string, profileId: string) {
+    let col = this.collectionList.findId(colId)
+    this.context.setBoth(colId,profileId)
     col.selectedProfile = profileId
     col.complete = this.context.getCollection()
   }
-  updateContext({ c, p }: { c: string, p: string }) {
-    this.context.setProfile(p)
-    this.context.setCollection(c)
-  }
+
   removeCollection(id: string) {
-    
     let profileGroup = this.storeSelector.getProfilesWithCollectionId(id);
-    console.log(`Retrieved profileGroup:\n`,profileGroup)
+    console.log(`REMOVING COLLECTIONs`)
     if (profileGroup.length === 0 || this.contextProvided) {
       let index = this.collections.idIndex(id)
       this.collections.splice(index, 1)
       this.updateCollectionList(this.collections)
     } else {
-      let col = this.collectionList.id(id)
-      this.context.reset();
-      col.profileGroup = profileGroup;
-      col.selectedProfile = null;
+      let col = this.collectionList.findId(id)
       col.profileSelector = true;
+      col.selectedProfile = !!profileGroup.findId(col.selectedProfile)  ? col.selectedProfile : null;
+      col.expanded = true;
+      setTimeout(()=>{
+        col.profileGroup = profileGroup;
+        this.context.reset();
+      }, 500)
     }
+  }
+  updateViewObject(colId:string){
+    let c = this.collectionList.findId(colId)
+    console.log(`UPDATING COLLECTIONs`)
+    let profileGroup = this.storeSelector.getProfilesWithCollectionId(c.id);
+    if(profileGroup.length !== c.profileGroup.length){
+      c.profileSelector = true
+    }
+    c.complete = this.context.getCollection()
+    c.essential = c.complete.essential
+    c.name = c.complete.name
+    c.selectedProfile = isDefined(profileGroup.findId(c.selectedProfile)) ? c.selectedProfile : null;
+    setTimeout(()=>{
+      c.profileGroup = this.storeSelector.getProfilesWithCollectionId(c.id)
+    }, 500)
   }
 }

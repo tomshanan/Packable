@@ -206,7 +206,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     let editingPackable: PackableComplete,
       data: DialogData_EditPackable
 
-    editingPackable = this.completePackables.id(packableId)
+    editingPackable = this.completePackables.findId(packableId)
     data = {
       pakable: editingPackable,
       isNew: false

@@ -41,14 +41,15 @@
               [showNames]="true">
             </profile-selector>
         </div>
-        <ng-container *ngIf="collection.selectedProfile" @transitionTrigger>
+        <div *ngIf="collection.selectedProfile != null" @transitionTrigger>
           <app-collection-panel 
           [collection]="collection.complete" 
           [selectedView]="collection.panel" 
           [profileId]="collection.selectedProfile"
           (removeCollection)="removeCollection(collection.id)"
+          (change)="updateViewObject(collection.id)"
           ></app-collection-panel>
-        </ng-container>
+        </div>
     </div>
   </mat-expansion-panel>
 </mat-accordion>

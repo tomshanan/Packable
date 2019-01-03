@@ -25,7 +25,7 @@ export type CollectionPanelView = 'list' | 'settings';
 export class CollectionPanelComponent implements OnInit, OnDestroy, OnChanges {
   @Input() selectedView: CollectionPanelView = 'list';
   @Input() collection: CollectionComplete;
-  @Output() collectionChange = new EventEmitter<CollectionComplete>();
+  @Output() change = new EventEmitter<void>();
   @Output() removeCollection = new EventEmitter<void>();
   @Input() profileId: string;
 
@@ -83,6 +83,6 @@ export class CollectionPanelComponent implements OnInit, OnDestroy, OnChanges {
     this.collection.packables = packables
   }
   emitUpdate(){
-    this.collectionChange.emit(this.collection)
+    this.change.emit()
   }
 }

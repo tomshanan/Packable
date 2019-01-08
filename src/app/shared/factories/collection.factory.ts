@@ -145,7 +145,7 @@ export class CollectionFactory {
         packables.forEach(packable => {
             let pacIndex = collection.packables.idIndex(packable.id)
             if (pacIndex < 0) {
-                collection.packables.splice(0, 0, packable)
+                collection.packables.unshift(packable)
             } else {
                 collection.packables.splice(pacIndex, 1, packable)
             }

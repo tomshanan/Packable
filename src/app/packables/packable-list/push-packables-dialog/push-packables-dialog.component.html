@@ -3,7 +3,8 @@
 
 <mat-dialog-content style="margin-bottom:-24px;">
         <p class="text-center" [innerHtml]="content"></p>
-        <app-choose-collections-dialog [(selectedIds)]="selectedCollections"
+        <app-choose-collections-dialog 
+            [(selectedIds)]="selectedCollections"
             (confirm)="onConfirmCollections($event)">
         </app-choose-collections-dialog>
 </mat-dialog-content>

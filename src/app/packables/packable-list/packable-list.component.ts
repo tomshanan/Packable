@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild, Input, OnDestroy, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, Input, OnDestroy, Output, EventEmitter, OnChanges, SimpleChanges, enableProdMode } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromApp from '@shared/app.reducers';
@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '@shared-comps/modal/modal.component';
 import { PackableFactory } from '@shared/factories/packable.factory';
 import { StoreSelectorService } from '@shared/services/store-selector.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { EditPackableDialogComponent } from './edit-packable-dialog/edit-packable-dialog.component';
 import { DialogData_EditPackable } from './edit-packable-dialog/edit-packable-dialog.component';
 import { WindowService } from '@shared/services/window.service';
@@ -24,6 +24,7 @@ import * as profileActions from '@app/profiles/store/profile.actions';
 import * as collectionActions from '@app/collections/store/collections.actions';
 import { ContextService } from '../../shared/services/context.service';
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
+import { ImportPackablesDialogComponent, importPackables_result } from './import-packables-dialog/import-packables-dialog.component';
 
 
 type updateViewAction = 'update' | 'add' | 'delete';
@@ -113,7 +114,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
             this.packableList.splice(index, 1, newPackable)
             this.addRecentlyChanged(p.id)
           } else if (action == 'add' && index == -1) {
-            this.packableList.splice(0, 0, p)
+            this.packableList.unshift(p)
           } else {
             console.warn(`Could not update View for packable "${p.name}" id:\n${p.id}`)
           }
@@ -260,7 +261,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     pushPackablesDialod.afterClosed().pipe(take(1)).subscribe(()=>{
       this.selected = []
     })
-
   }
   deleteSelectedPackables() {
     let ids = this.selected.slice()
@@ -323,6 +323,29 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       })
     }
   }
+  importPackables(){
+    // get used packables (complete)
+    // set header
+    let data = {
+      header: 'Packables',
+      usedPackables: this.packableList
+    }
+    let importPackablesDialog = this.dialog.open(ImportPackablesDialogComponent, {
+      ...this.dialogSettings,
+      minWidth: "300px",
+      maxWidth: "99vw",
+      minHeight: "none",
+      maxHeight: "99vh",
+      disableClose: false,
+      data: data
+    });
+    importPackablesDialog.afterClosed().pipe(take(1)).subscribe((result:importPackables_result)=>{
+      if(!this.context.profileId || result.CPs.some(cp=>cp.pId == this.context.profileId)){
+        this.updateViewObject(result.packables, 'add')
+      }
+    })
+  }
+
   openModal(tempRef: TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;

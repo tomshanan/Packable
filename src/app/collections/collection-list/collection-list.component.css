@@ -35,3 +35,6 @@
      height: 100%;
      position: absolute;
  }
+ .mat-expansion-panel-header[aria-disabled=true] {
+    color: rgba(0,0,0,1);
+}

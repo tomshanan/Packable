@@ -1,5 +1,17 @@
 import { trigger, transition, style, animate, keyframes, state } from '@angular/animations';
 
+export const animateSize = trigger('grow', [
+    transition('void <=> *', []),
+    transition('* <=> *', [
+        style({ height: '{{startHeight}}px'}), 
+        animate('.3s ease',
+            style({ height: '{{endHeight}}px'})
+        ),
+    ], {
+      params: { startHeight: 0, endHeight: 0}
+    })
+  ]);
+
 export const dropInTrigger =
     trigger('dropInTrigger', [
         transition(':enter', [
@@ -101,6 +113,22 @@ export const quickTransitionTrigger = trigger('quickTransitionTrigger', [
     ])
 ])
 
+export const listItemTrigger = trigger('listItemTrigger', [
+    transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0)',  width:"0px", height: "0px"}),
+        animate('200ms 100ms', keyframes([
+            style({ opacity: 0, transform: 'scale(0)', width:"0px", height: "0px"}),
+            style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*"}),
+        ])),
+    ]),
+    transition(':leave', [
+        style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*" }),
+        animate('200ms', keyframes([
+            style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*"}),
+            style({ opacity: 0, transform: 'scale(0)',  width:"0px", height: "0px"}),
+        ])),
+    ])
+])
 export const evaporateTransitionTrigger = trigger('evaporateTransitionTrigger', [
     transition(':enter', [
         style({ opacity: 0, height: '0px' }),

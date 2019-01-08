@@ -21,13 +21,14 @@ import { EditPackableDialogComponent } from '@app/packables/packable-list/edit-p
 import { ConfirmDialog } from './shared-comps/dialogs/confirm-dialog/confirm.dialog';
 import { ChooseProfileDialogComponent } from './collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
 import { PushPackablesDialogComponent } from './packables/packable-list/push-packables-dialog/push-packables-dialog.component';
+import { ImportPackablesDialogComponent } from './packables/packable-list/import-packables-dialog/import-packables-dialog.component';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-      ],
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -35,9 +36,17 @@ import { PushPackablesDialogComponent } from './packables/packable-list/push-pac
     CoreModule,
     SharedModule,
     StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects,PackableEffects,TripEffects])
+    EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects, PackableEffects, TripEffects])
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ModalComponent,EditPackableDialogComponent, ConfirmDialog,ChooseProfileDialogComponent,PushPackablesDialogComponent]
+  entryComponents: [
+    ModalComponent,
+    EditPackableDialogComponent,
+    ConfirmDialog,
+    ChooseProfileDialogComponent,
+    PushPackablesDialogComponent,
+    ChooseProfileDialogComponent,
+    ImportPackablesDialogComponent]
+
 })
 export class AppModule { }

@@ -10,7 +10,7 @@ import { weatherFactory } from '../factories/weather.factory';
 import * as packableActions from '@app/packables/store/packables.actions';
 import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
 import * as profileActions from '@app/profiles/store/profile.actions';
-import { PackablePrivate } from '../models/packable.model';
+import { PackablePrivate, PackableOriginal } from '../models/packable.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
 import { CollectionComplete } from '../models/collection.model';
 import { isDefined } from '../global-functions';
@@ -80,11 +80,22 @@ export class BulkActionsService {
       console.error('Did not recieve valid CollectionProfile array', CPs);
     }
   } 
-  public pushPackablesByCP(packables:string[], CPs?:CollectionProfile[]){
+  public pushContextPackablesByCP(packables:string[], CPs?:CollectionProfile[]){
     if(CPs && CPs.length>0 && this.context.collectionId && this.context.profileId){
       let privatePackables = this.storeSelector
         .getAllPrivatePackables(this.context.collectionId,this.context.profileId)
         .filter(p=>packables.includes(p.id))
+        this.pushPrivatePackablesByCP(privatePackables, CPs)
+    }
+  }
+  public pushOriginalPackablesByCP(packables:PackableOriginal[], CPs:CollectionProfile[]){
+    if(CPs && CPs.length>0 && this.context.collectionId && this.context.profileId){
+      let privatePackables = packables.map(p=>this.pacFac.makePrivate(p))
+      this.pushPrivatePackablesByCP(privatePackables, CPs)
+    }
+  }
+  private pushPrivatePackablesByCP(privatePackables:PackablePrivate[], CPs:CollectionProfile[]){
+    if(CPs && CPs.length>0 && privatePackables && privatePackables.length>0){
       let profiles = this.storeSelector.profiles;
       profiles = this.proFac.addEditPackablesByCP(profiles,privatePackables,CPs)
       this.store.dispatch(new profileActions.setProfileState(profiles))

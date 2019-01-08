@@ -1,0 +1,87 @@
+#container {
+    width:350px;
+    height: stretch;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    margin-left: -24px;
+    margin-right: -24px;
+}
+.static-row{
+    padding: 5px 24px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+#basket{
+    position: relative;
+    padding: 5px 24px;
+    flex-grow: 0;
+    min-height: 35px;
+    max-height: 30vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+#basket-text{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+#list-container{
+    padding: 0px 24px;
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.list{
+    flex-grow: 1;
+}
+.list>a {
+    background: transparent;
+    margin:0px -24px;
+    padding: 0px 24px;
+}
+.list>a:not(.list-item-used):hover{
+    background: #f5f5f5;
+}
+.list-item-used{
+    color: #bababa!important;
+    cursor: default;
+}
+.list-item-used:hover{
+    cursor: default; 
+}
+
+a.list-item{
+    color: inherit;
+    text-decoration: none;
+    font-size: 1.3em;
+}
+.list-item > .item-name {
+    padding: 0.4em;
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    /* border-top:1px solid #f5f5f5;
+    border-bottom: 1px solid transparent; */
+}
+.item-name>span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.list-item.border .item-name{
+    border-color: transparent;
+}
+.list-item:not(.list-item-used) .item-name:hover~.list-item-action-icon, 
+.list-item:not(.list-item-used) .list-item-action-icon:hover{
+    color: #007bff!important;
+    text-decoration: none;
+}
+
+.list-item > i{
+    width: 24px;
+    text-align: center;
+}

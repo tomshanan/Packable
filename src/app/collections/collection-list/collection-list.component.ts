@@ -36,6 +36,8 @@ export class CollectionListComponent implements OnInit, OnChanges {
   contextProvided: boolean;
   collectionList: CollectionViewObject[];
   selectedPanel: CollectionPanelView;
+  listEditing:boolean = true;
+  listSelected: string[];
 
   constructor(
     private context: ContextService,
@@ -61,7 +63,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
     if (this.collectionList) {
       collections.forEach(c => {
         if (this.collectionList.idIndex(c.id) === -1) {
-          this.collectionList.splice(0, 0, this.buildViewObject(c))
+          this.collectionList.unshift(this.buildViewObject(c))
         }
       })
     }
@@ -73,8 +75,9 @@ export class CollectionListComponent implements OnInit, OnChanges {
     })
   }
 
-  buildCollectionList(collections: CollectionComplete[]): CollectionViewObject[] {
-    return collections.map(c => this.buildViewObject(c))
+  buildCollectionList(collections: CollectionComplete[], withProfiles:boolean=true): CollectionViewObject[] {
+    let colList = collections.map(c => this.buildViewObject(c))
+    return  withProfiles ? colList.filter(x=>x.profileGroup.length>0) : colList;
   }
   buildViewObject(c: CollectionComplete): CollectionViewObject {
     return {

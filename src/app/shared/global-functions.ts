@@ -1,4 +1,5 @@
 import { item } from './services/list-editor.service';
+import { filterItem } from '@app/shared-comps/item-selector/item-selector.component';
 
 export function isDefined(property:any, object:any = {}){
   return object && property!==null && property !==undefined && property!=='' && property != []
@@ -24,14 +25,15 @@ export function randomBetween(min:number,max:number):number {
 
 
 export class FilteredArray {
-  private _original: item[];
-  public filtered: item[];
+  private _original: filterItem[];
+  public filtered: filterItem[];
 
   constructor(...args){
     this._original = [...args];
     this.filtered = [...args].sort(this.sortPackables);
   }
-  push = function(...args){
+
+  public push = function(...args){
     this._original.push(...args);
     this.reset();
   }
@@ -48,18 +50,18 @@ export class FilteredArray {
     return 0;
   }
   
-  reset = function(){
+  public reset = function(){
     this.filtered = [...this._original].sort(this.sortPackables);
     return this;
   }
 
-  filterUsed = function(property: string, ...usedArrays): any {
-    let filteredList:item[] = this.filtered;
+  public filterUsed = function(property: string, ...usedArrays): any {
+    let filteredList = this.filtered;
     if (filteredList.length === 0) {
       return this;
     }
     usedArrays.forEach(usedArray => {
-      usedArray.forEach((item, i, usedArray)=>{
+      usedArray.forEach(item=>{
         if(objectInArray(filteredList,item,property)){
           const index = filteredList.findIndex(x => x[property]==item[property]);
           filteredList.splice(index,1)
@@ -69,7 +71,7 @@ export class FilteredArray {
     return this;
   }
 
-  filterFromSearch = function(property: string, searchInput: string): any {
+  public filterFromSearch = function(property: string, searchInput: string): any {
     let filteredList:item[] = this.filtered;
     if (filteredList.length === 0 || !searchInput || searchInput == "") {
       return this;

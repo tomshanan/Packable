@@ -55,6 +55,9 @@ import { PushPackablesDialogComponent } from '../packables/packable-list/push-pa
 import { CollectionSettingsComponent } from '../collections/collection-list/collection-panel/collection-settings/collection-settings.component';
 import { SlideToggleWithTextComponent } from '../shared-comps/slide-toggle-with-text/slide-toggle-with-text.component';
 import { PackableCardComponent } from '../packables/packable-list/packable-card/packable-card.component';
+import { ReactiveContainerComponent } from '../shared-comps/reactive-container/reactive-container.component';
+import { AnimateSizeDirective } from '../shared/directives/animate-size.directive';
+import { ImportPackablesDialogComponent } from '../packables/packable-list/import-packables-dialog/import-packables-dialog.component';
 
 let imports = [
     ProfilesComponent,
@@ -95,7 +98,14 @@ let imports = [
     PackableListComponent,
     CollectionListComponent,
     CollectionPanelComponent, 
-    ConfirmDialog
+    ConfirmDialog,
+    ChooseProfileDialogComponent,
+    DialogHeaderComponent, 
+    PushPackablesDialogComponent, 
+    CollectionSettingsComponent,
+    SlideToggleWithTextComponent, 
+    PackableCardComponent, 
+    ImportPackablesDialogComponent
 ]
 @NgModule({
     imports: [
@@ -108,7 +118,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, ChooseProfileDialogComponent, DialogHeaderComponent, PushPackablesDialogComponent, CollectionSettingsComponent, SlideToggleWithTextComponent, PackableCardComponent],
+    declarations: [...imports, ReactiveContainerComponent, AnimateSizeDirective],
     exports: [...imports]
 })
 export class SharedModule {

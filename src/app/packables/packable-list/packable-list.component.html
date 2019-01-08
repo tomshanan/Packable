@@ -1,5 +1,5 @@
 <div class="mat-card-list_containter">
-  <mat-card class="options cardless" [class.cardless]="!editList" [class.editing]="editList" [class.in-expansion-panel]="editingCollectionId">
+  <mat-card class="options" [class.cardless]="!editList" [class.editing]="editList" [class.in-expansion-panel]="editingCollectionId">
     <div class="checkbox-container" @expandAndFadeTrigger *ngIf="editList">
       <mat-checkbox [indeterminate]="masterCheckboxIsIntermediate()" [checked]="masterCheckboxIsChecked()" (change)="masterCheckboxToggle()">
       </mat-checkbox>
@@ -27,7 +27,7 @@
       </a>
     </ng-container>
     <ng-template #regOptions>
-      <a class="inline-link withIcon option" title="Import Packables">
+      <a class="inline-link withIcon option" title="Import Packables" (click)="importPackables()">
         <div class="icon-container icon-sizer">
           <mat-icon svgIcon="t-shirt2-import"></mat-icon>
         </div>
@@ -48,30 +48,6 @@
 
   <div @addRemoveElementTrigger *ngFor="let packable of packableList; let i = index"
   [class.bottom-seperator]="!useCard && packableList.length-1 > i">
-
-    <!-- <mat-card class="mat-card-list-item with-selection" [class.cardless]="!useCard" 
-      [class.popout]="!editList" [class.selectable]="editList" [class.selected]="packable.selected">
-      <div class="checkbox-container" *ngIf="editList" @expandAndFadeTrigger>
-        <mat-checkbox [checked]="packable.selected" (change)="checkboxChange($event,packable.id)"></mat-checkbox>
-      </div>
-      <div class="packable" (click)="clickPackable(packable.id)">
-        <div class="first-row">
-          <div class="name" [class.text-success]="packable.recentlyChanged">
-            <p>{{packable.name | titlecase}}</p>
-          </div>
-          <div class="rule-icons">
-            <div class="icon-container" *ngFor="let icon of packable.icons">
-              <mat-icon style="width: 100%; height: 100%;" [title]="icon.description" [svgIcon]="icon.icon"></mat-icon>
-            </div>
-          </div>
-        </div>
-        <div class="quantity">
-          <span *ngFor="let rule of packable.rules; let i=index" [class.text-success]="packable.recentlyChanged">
-            {{rule}}{{ i == packable.rules.length-1 ? "" : ", " }}
-          </span>
-        </div>
-      </div>
-    </mat-card> -->
     <packable-card
     [packable]="packable"
     [useCard]="useCard"

@@ -132,9 +132,7 @@ export class CollectionSettingsComponent implements OnInit, OnChanges {
       content: `<small>Select the profiles you would like to add this Collection to.</small>`,
       super: `Applying Collection To Travelers`,
       // profileGroup - get only the profiles that do not use this collection
-      profileGroup: this.storeSelector.profiles.filter(p=>{
-        return usedProfiles.idIndex(p.id) < 0
-      }), 
+      profileGroup: this.storeSelector.profiles.removeIds(usedProfiles)
 
     }
     let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {

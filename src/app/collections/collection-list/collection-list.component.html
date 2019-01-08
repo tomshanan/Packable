@@ -3,6 +3,7 @@
   *ngFor="let collection of collectionList" 
   (opened)="expandCollection(collection.id)"
   (closed)="collapseCollection(collection.id)"
+  [disabled]="listEditing"
   hideToggle
   #collectionMatPanel
   @evaporateTransitionTrigger>

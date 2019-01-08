@@ -40,7 +40,7 @@ export class PushPackablesDialogComponent implements OnInit {
     this.dialogRef.close()
   }
   onConfirmCollections(e:CollectionSelectorConfirmEvent){
-    this.bulkAction.pushPackablesByCP(this.ids, e.selectedIds)
+    this.bulkAction.pushContextPackablesByCP(this.ids, e.selectedIds)
     this.onClose()
   }
 

@@ -1,58 +1,59 @@
-<div class="full-flex" id="selectItems">
-  <div class="ff-row">
+<div id="container">
+  <div class="static-row">
       <div class="input-group searchbar-container position-relative">
         <div class="input-group-prepend">
           <span class="input-group-text searchbar"><i class="fas fa-search"></i></span>
         </div>
-        <input type="search" class="form-control searchbar py-o px-1 pr-3" [(ngModel)]="searchFilterInput" (keyup)="applyFilter()" (keyup.enter)="addItemFromSearch(listFiltered.filtered[0])" placeholder="Filter List">
-        <a class="pointer input-reset searchbar py-o" style="right:0px;" (click)="resetFilter()" *ngIf="searchFilterInput!=''">
+        <input type="search" class="form-control searchbar py-o px-1 pr-3" [(ngModel)]="searchFilterInput" (keyup)="typeSearch()" (keyup.enter)="addItemFromSearch(listFiltered.filtered[0])" placeholder="Filter List">
+        <a class="pointer input-reset searchbar py-o" style="right:0px;" (click)="resetSearch()" *ngIf="searchFilterInput!=''">
             <i class="far fa-times-circle text-muted"></i>
         </a>
       </div>
   </div>
-  <div class="ff-row-basket">
-    <div class="ps-selected-container">
-      <span *ngFor="let item of listSelected; let i = index" class="tag">
+  <div id="basket" 
+  [animateSize]="animateItemsState" 
+  [startHeight]="startHeight" 
+  #basket>
+    <div class="ps-selected-container" *ngIf="selected.length > 0" @quickTransitionTrigger>
+      <span 
+      *ngFor="let item of selected; let i = index" 
+      class="tag" 
+      [@listItemTrigger]
+      (@listItemTrigger.start)="animateItemStart($event)"
+      (@listItemTrigger.done)="animateItemEnd($event)">
         {{item.name}}
-        <i class="far fa-times-circle pointer" (click)="removeItemFromSelection(i)"></i>
+        <i class="fa fa-times pointer" (click)="removeItemFromSelection(item.id)"></i>
       </span>
-      <div class="p-2 text-center small text-muted" *ngIf="listSelected.length === 0 && availableItems()>0">Choose the {{title}} you wish to add</div>
     </div>
+      <div id="basket-text" class="text-center small text-muted" 
+        *ngIf="selected.length === 0 && availableItems()>0" 
+        @quickTransitionTrigger>
+        Select items to add
+      </div>
   </div>
-  <div class="ff-row-main">
-    <div class="row list" *ngIf="listFiltered && listOriginal">
-        <p class=" col-12 text-secondary text-center" *ngIf="listOriginal.length == 0; else notEmpty">You have not created any {{title}}</p>
-        <ng-template #notEmpty>
-          <p class=" col-12 text-secondary text-center" *ngIf="listFiltered.filtered.length==0 && searchFilterInput!=''; else noSearch" #results>No results found!</p>
-          <ng-template #noSearch>
-              <p class=" col-12 text-secondary text-center" *ngIf="listOriginal.length > 0 && listOriginal.length <= listSelected.length">Looks like you added all the {{title}}</p>
-          </ng-template>
-        </ng-template>
+  <div id="list-container">
+    <div class="list" *ngIf="listFiltered && listOriginal">
+      <!-- ADD MESSAGES HERE -->
 
-      <a class="list-item d-flex justify-content-start text-primary align-items-center col-12 col-sm-6 col-lg-4" 
-      (click)="createNew()" *ngIf="addNew">
-        <i class="fas fa-plus text-primary"></i>
-        <div class="item-name align-self-stretch d-flex flex-column justify-content-center">
-          <span>Create new</span>
-        </div>
-        <i class="fas fa-chevron-right"></i>
-      </a>
-
-      <a class="list-item d-flex justify-content-start align-items-center col-12 col-sm-6 col-lg-4" 
+      <a class="list-item d-flex justify-content-start align-items-center" 
       *ngFor="let item of listFiltered.filtered; let i = index"
-      [ngClass]="{'list-item-used': objectUsed(item), 'border border-primary rounded': searchFilterInput!='' && i==0 && !objectUsed(item)}"
-      (click)="toggleItemInSelection(item,i)">
-        <i class="fa fa-{{item.icon || 'box'}} p-1"></i>
+      [ngClass]="{
+        'list-item-used': objectUsed(item), 
+        'list-item-selected': objectSelected(item), 
+        'border border-primary rounded': searchFilterInput!='' && i==0 && !objectUsed(item)}"
+      (click)="!objectUsed(item) && toggleItemInSelection(item,i)">
         <div class="item-name align-self-stretch d-flex flex-column justify-content-center">
           <span>{{item.name}}</span>
         </div>
-        <i class="far fa-circle ml-auto text-secondary list-item-action-icon" *ngIf="!objectUsed(item)"></i>
-        <i class="fas fa-check-circle ml-auto text-primary list-item-action-icon" *ngIf="objectUsed(item)"></i>
+        <i class="far fa-circle ml-auto text-secondary list-item-action-icon" *ngIf="!objectSelected(item) && !objectUsed(item)"></i>
+        <i class="far fa-check-circle ml-auto text-primary list-item-action-icon" *ngIf="objectSelected(item)"></i>
+        <i class="fas fa-check ml-auto list-item-action-icon" *ngIf="objectUsed(item)"></i>
       </a>
     </div>
-    
-      <hr class="d-none d-sm-block">
-      <app-desktop-nav [nav]="desktopNavParams" (rightAction)="sendSelectedItems()"></app-desktop-nav>
-    
+    <dialog-confirm-button style="display:contents;">
+        <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!valid()">
+            <mat-icon>check</mat-icon>
+        </button>
+    </dialog-confirm-button>
   </div>
 </div> 

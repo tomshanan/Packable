@@ -429,7 +429,9 @@ button.mat-icon-button.mini{
     height: 36px;
     vertical-align: bottom;
 }
-
+.mat-dialog-container{
+    overflow: hidden !important;
+}
 .text-disabled{
     color: lightgrey;
 }

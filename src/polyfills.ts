@@ -97,6 +97,11 @@ declare global {
          * Returns a new array without undefined and null objects, and without empty arrays and string
          */
         clearUndefined(): any[];
+        /**
+         * Given a removeArray, the method removes any elemets with matching IDs and returns a new array
+         * @param removeArray The array of items you wish to clear from the original array. (all must have ID property)
+         */
+        removeIds(removeArray:T[]):T[];
     }
 }
 type itemWithId = { id: string }
@@ -130,7 +135,7 @@ if (!Array.prototype.compareAddRemove) {
     Array.prototype.compareAddRemove = function <T extends itemWithId>(this: T[], compare: T[]): T[] {
         compare.forEach(item => {
             if (!this.findId(item.id)) {
-                this.splice(0, 0, item)
+                this.unshift(item)
             }
         })
         this.slice().forEach((item) => {
@@ -148,5 +153,17 @@ if (!Array.prototype.clearUndefined) {
             return el != null && el != undefined && el != "" && el != []
         })
         return newarray
+    }
+}
+
+if(!Array.prototype.removeIds){
+    Array.prototype.removeIds = function <T extends itemWithId>(this:T[], removeArray:T[]):T[]{
+        return this.clearUndefined().filter(item => {
+            if(item !== undefined && item !== null && 'id' in item){
+                return removeArray.idIndex(item.id) < 0
+            } else {
+                return false
+            }
+        })
     }
 }

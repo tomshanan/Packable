@@ -1,0 +1,29 @@
+<app-dialog-header [super]="collectionName" header="Add Packables" (close)="onClose()"></app-dialog-header>
+
+<mat-dialog-content style="padding-bottom:0px; overflow: hidden;max-height: -webkit-fill-available;">
+    <div @transitionTrigger *ngIf="step == 1">
+        <app-item-selector 
+            [completeList]="completeList" 
+            [usedList]="usedList" 
+            (onSelect)="updateSelected($event)"
+            (confirm)="onConfirm()">
+        </app-item-selector>
+    </div>
+    <div @transitionTrigger *ngIf="step == 2" class="text-center">
+            <p class="text-small">
+                Please choose the Profiles you would like to add the selected Packables to:
+            </p>
+            <profile-selector 
+            iconWidth="50px" 
+            [profiles]="profileGroup" 
+            [(selected)]="selectedProfiles" 
+            [multiselect]="true"
+            [showNames]="true">
+          </profile-selector>
+          <dialog-confirm-button style="display:contents;">
+                <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!profilesValid()">
+                    <mat-icon>check</mat-icon>
+                </button>
+            </dialog-confirm-button>
+    </div>
+</mat-dialog-content>

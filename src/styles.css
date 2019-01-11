@@ -432,6 +432,9 @@ button.mat-icon-button.mini{
 .mat-dialog-container{
     overflow: hidden !important;
 }
+.listEditing  .mat-content, .listEditing .mat-expansion-panel-header-title{
+    overflow: visible!important;
+}
 .text-disabled{
     color: lightgrey;
 }

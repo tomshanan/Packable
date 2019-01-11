@@ -1,0 +1,15 @@
+<a class="inline-link withIcon" [title]="text" (click)="onClick()" #rippleTrigger>
+    <div class="icon-container" [class.full-padding]="!showText()"
+    matRipple
+    matRippleCentered="true"
+    [matRippleDisabled]="disabled"
+    [matRippleUnbounded]="true"
+    matRippleRadius="24"
+    matRippleColor="#007bff33"
+    [matRippleTrigger]="rippleTrigger"
+    [matRippleAnimation]="configRipple">
+      <mat-icon [svgIcon]="svgIcon" *ngIf="svgIcon && !matIcon"></mat-icon>
+      <mat-icon *ngIf="!svgIcon && matIcon">{{matIcon}}</mat-icon>
+    </div>
+    <span *ngIf="showText()" class="text">{{text}}</span>
+</a>

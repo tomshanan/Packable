@@ -1,17 +1,42 @@
-<mat-accordion>
+
+<div class="toolbar" [class.listEditing]="listEditing">
+    <ng-container *ngIf="listEditing === false">
+      <icon-text-button text="Select" svgIcon="list" (click)="toggleListEditing(true)"></icon-text-button>
+    </ng-container>
+
+    <ng-container *ngIf="listEditing">
+      <mat-checkbox 
+        [checked]="!selected.isEmpty" 
+        [indeterminate]="!selected.isEmpty && collectionList.length > selected.length"
+        (change)="masterCheckboxChange($event)">
+      </mat-checkbox>
+    </ng-container>
+      <icon-text-button text="Import" svgIcon="collection" (click)="null" showTextFromSize="xs"></icon-text-button>
+    <ng-container *ngIf="listEditing">
+        <button mat-icon-button (click)="toggleListEditing(false)" class="closeButton">
+          <mat-icon color="primary">close</mat-icon>
+        </button>
+    </ng-container>
+</div>
+<mat-accordion #collectionAccordion>
   <mat-expansion-panel class="collection-panel" 
   *ngFor="let collection of collectionList" 
-  (opened)="expandCollection(collection.id)"
+  (opened)="expandCollection(collection.id, collectionMatPanel)"
   (closed)="collapseCollection(collection.id)"
   [disabled]="listEditing"
+  [class.listEditing]="listEditing"
   hideToggle
   #collectionMatPanel
   @evaporateTransitionTrigger>
     <mat-expansion-panel-header>
+      
       <mat-panel-title class="collection-title" [class.small]="windowService.max('xs')">
+          <div class="collection-checkbox" *ngIf="listEditing">
+              <mat-checkbox [checked]="isSelected(collection.id)" (change)="checkboxChange($event, collection.id)"></mat-checkbox>
+          </div>
         {{collection.name}}
       </mat-panel-title>
-      <mat-panel-description class="collection-nav">
+      <mat-panel-description class="collection-nav" *ngIf="!listEditing">
         &nbsp;
         <ng-container *ngIf="!profileId && !!collection.selectedProfile && collection.expanded">
             <profile-icon 
@@ -54,3 +79,8 @@
     </div>
   </mat-expansion-panel>
 </mat-accordion>
+
+<ng-container *ngIf="!profileId">
+<h5>Removed Collections:</h5>
+
+</ng-container>

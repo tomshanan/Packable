@@ -1,13 +1,13 @@
 import { Subject } from 'rxjs';
 
-interface screenSizes {
+export interface screenSizes {
     xs: number,
     sm: number,
     md: number,
     lg: number,
     xl: number  
 }
-type size = keyof screenSizes;
+export type screenSize = keyof screenSizes;
 
 export var screenSizes:screenSizes = {
     xs: 480,
@@ -35,14 +35,14 @@ export class WindowService {
         return this._width;
     }
     
-    public min(size: size): boolean{
+    public min(size: screenSize): boolean{
          return this.width >= screenSizes[size]
     }
-    public max(size: size): boolean{
+    public max(size: screenSize): boolean{
         return this.width <= screenSizes[size]
    }
 
-   public between(min:size, max:size):boolean{
+   public between(min:screenSize, max:screenSize):boolean{
     return this.min(min) && this.max(max);
    }
 }

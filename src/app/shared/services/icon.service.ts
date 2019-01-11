@@ -48,6 +48,8 @@ export class IconService {
             't-shirt2-copy',
             't-shirt-copy',
             't-shirt2-distribute',
+            'collection',
+            'list',
         ]
     }
     weatherIcons:iconGroup = {

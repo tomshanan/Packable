@@ -58,6 +58,7 @@ import { PackableCardComponent } from '../packables/packable-list/packable-card/
 import { ReactiveContainerComponent } from '../shared-comps/reactive-container/reactive-container.component';
 import { AnimateSizeDirective } from '../shared/directives/animate-size.directive';
 import { ImportPackablesDialogComponent } from '../packables/packable-list/import-packables-dialog/import-packables-dialog.component';
+import { IconTextButtonComponent } from '../shared-comps/icon-text-button/icon-text-button.component';
 
 let imports = [
     ProfilesComponent,
@@ -118,7 +119,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, ReactiveContainerComponent, AnimateSizeDirective],
+    declarations: [...imports, ReactiveContainerComponent, AnimateSizeDirective, IconTextButtonComponent],
     exports: [...imports]
 })
 export class SharedModule {

@@ -1,10 +1,39 @@
+.toolbar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 1em;
+    height: 2em;
+    transition: all 300ms;
+}
+.toolbar.listEditing{
+    position: sticky;
+    top:0;
+    padding:0px 15px 0px 39px;
+    margin:0 -15px;
+    box-shadow: 
+        0 3px 1px -2px rgba(0,0,0,.2), 
+        0 2px 2px 0 rgba(0,0,0,.14), 
+        0 1px 5px 0 rgba(0,0,0,.12);
+    background: white;
+    z-index: 10;
+}
+
+.toolbar .closeButton{
+    margin-left: auto;
+
+}
+
 .collection-panel > mat-expansion-panel-header{
     font-size: 1.5em;
  }
  .collection-panel:not(.mat-expanded){
      margin:0.25em 0;
  }
- 
+ .collection-checkbox{
+     margin-right: 12px;
+ }
  .collection-title{
      flex-basis: 0;
      flex-grow: 1;

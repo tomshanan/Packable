@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { CollectionPanelView } from './collection-panel/collection-panel.component';
 import { indexOfId } from '@app/shared/global-functions';
@@ -8,7 +8,8 @@ import { Profile } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '@app/core';
 import { WindowService } from '../../shared/services/window.service';
 import { isDefined } from '../../shared/global-functions';
-import { MatExpansionPanel } from '@angular/material';
+import { MatExpansionPanel, MatCheckboxChange, MatAccordion } from '@angular/material';
+import { SelectedList } from '@app/shared/services/selected-list';
 
 interface CollectionViewObject {
   id: string,
@@ -32,12 +33,12 @@ export class CollectionListComponent implements OnInit, OnChanges {
 
   @Input() profileId: string;
   @Input() collections: CollectionComplete[];
-
+  currentlyOpenPanel: MatExpansionPanel;
   contextProvided: boolean;
   collectionList: CollectionViewObject[];
   selectedPanel: CollectionPanelView;
   listEditing:boolean = true;
-  listSelected: string[];
+  selected = new SelectedList();
 
   constructor(
     private context: ContextService,
@@ -58,6 +59,38 @@ export class CollectionListComponent implements OnInit, OnChanges {
       this.updateCollectionList(this.collections)
     }
   }
+
+  checkboxChange(e:MatCheckboxChange, id:string){
+    if(e.checked){
+      this.selected.add(id)
+    } else {
+      this.selected.remove(id)
+    }
+  }
+  masterCheckboxChange(e:MatCheckboxChange){
+    if(e.checked){
+      this.selectAll()
+    } else {
+      this.selected.clear()
+    }
+  }
+  isSelected(id:string){
+    return this.selected.isSelected(id)
+  }
+  selectAll(){
+    this.selected.add(...this.collectionList.map(c=>c.id))
+  }
+  toggleListEditing(state?:boolean){
+    if(isDefined(state)){
+      this.listEditing= state;
+    } else{
+      this.listEditing = !this.listEditing
+    }
+    if(this.listEditing && this.currentlyOpenPanel){
+      this.collapseCollection(this.context.collectionId)
+    }
+  }
+
 
   updateCollectionList(collections: CollectionComplete[]) {
     if (this.collectionList) {
@@ -96,13 +129,11 @@ export class CollectionListComponent implements OnInit, OnChanges {
     let col = this.collectionList.findId(id)
     if (col.expanded && col.panel === panel) {
       this.collapseCollection(id)
-      matPanel.close();
     } else {
-      this.expandCollection(id, panel)
-      matPanel.open()
+      this.expandCollection(id, matPanel, panel)
     }
   }
-  expandCollection(id: string, panel?: CollectionPanelView) {
+  expandCollection(id: string, matPanel: MatExpansionPanel, panel?: CollectionPanelView) {
     let col = this.collectionList.findId(id)
     col.expanded = true;
     console.log(col.selectedProfile);
@@ -113,10 +144,15 @@ export class CollectionListComponent implements OnInit, OnChanges {
     if (panel) {
       col.panel = panel
     }
+    this.currentlyOpenPanel = matPanel;
+    this.currentlyOpenPanel.open()
   }
   collapseCollection(id: string) {
     let col = this.collectionList.findId(id)
     col.expanded = false;
+    this.currentlyOpenPanel.close();
+    this.currentlyOpenPanel = null;
+    this.context.setCollection(null)
   }
 
   isPanelOpen(id: string, panel: CollectionPanelView) {

@@ -1,0 +1,31 @@
+:host {
+    display: contents;
+    font-size: 24px
+}
+
+a{
+    position: relative;
+    padding: 0.1em;
+    overflow: visible;
+}
+.text{
+    font-size: 0.8em;
+    padding: .5em 0em;
+}
+.icon-container {
+    position: relative;
+    font-size: 1em;
+    height: 2em;
+    width: 1em;
+    line-height: 1em;
+    padding: .5em 0em;
+}
+.icon-container.full-padding{
+    padding: .5em;
+    height: 2em;
+    width: 2em;
+}
+.icon-container>mat-icon {
+    width: 1em;
+    height: 1em;
+}

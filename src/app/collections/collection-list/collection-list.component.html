@@ -1,5 +1,5 @@
 
-<div class="toolbar" [class.listEditing]="listEditing">
+<div class="toolbar" [class.listEditing]="listEditing" [class.small-dispay-toolbar]="windowService.max('xs')">
     <ng-container *ngIf="listEditing === false">
       <icon-text-button text="Select" svgIcon="list" (click)="toggleListEditing(true)"></icon-text-button>
     </ng-container>
@@ -8,10 +8,14 @@
       <mat-checkbox 
         [checked]="!selected.isEmpty" 
         [indeterminate]="!selected.isEmpty && collectionList.length > selected.length"
-        (change)="masterCheckboxChange($event)">
+        (change)="masterCheckboxChange($event)"
+        [class.small-device-checkbox]="windowService.max('xs')">
       </mat-checkbox>
     </ng-container>
-      <icon-text-button text="Import" svgIcon="collection" (click)="null" showTextFromSize="xs"></icon-text-button>
+    <ng-container *ngIf="listEditing && !selected.isEmpty">
+        <icon-text-button text="Remove" matIcon="delete_forever" (click)="null" showTextFromSize="xs" class="text-danger text-danger-hover" color="danger"></icon-text-button>
+    </ng-container>
+      <icon-text-button text=" Import" matIcon="cloud_download" (click)="null" showTextFromSize="xs"></icon-text-button>
     <ng-container *ngIf="listEditing">
         <button mat-icon-button (click)="toggleListEditing(false)" class="closeButton">
           <mat-icon color="primary">close</mat-icon>

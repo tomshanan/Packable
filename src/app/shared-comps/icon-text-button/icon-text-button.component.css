@@ -15,15 +15,15 @@ a{
 .icon-container {
     position: relative;
     font-size: 1em;
-    height: 2em;
-    width: 1em;
     line-height: 1em;
-    padding: .5em 0em;
+    padding: .5em 0.2em;
+    height: 2em;
+    width: 1.4em;
 }
 .icon-container.full-padding{
-    padding: .5em;
-    height: 2em;
-    width: 2em;
+    padding: .35em;
+    height: 1.7em; /*  = 1 + (y-padding x 2) */
+    width: 1.7em;  /*  = 1 + (x-padding x 2) */
 }
 .icon-container.full-padding.big-button{
     font-size: 1.8em;

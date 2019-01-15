@@ -1,11 +1,20 @@
-<a class="inline-link withIcon" [title]="text" (click)="onClick()" #rippleTrigger>
+<a 
+  class="inline-link withIcon" 
+  [title]="text" 
+  (click)="onClick()" 
+  (mouseover)="hoverState = true"
+  (mouseout)="hoverState = false"
+  [ngStyle]="hoverState ? 
+    {'color': color.hover} :
+    {'color': color.inactive}"
+  #rippleTrigger>
     <div class="icon-container" [class.full-padding]="!showText()" [class.big-button]="bigButton"
     matRipple
     matRippleCentered="true"
     [matRippleDisabled]="disabled"
     [matRippleUnbounded]="true"
     [matRippleRadius]="bigButton ? '32' : '24'"
-    matRippleColor="#007bff33"
+    [matRippleColor]="color.ripple"
     [matRippleTrigger]="rippleTrigger"
     [matRippleAnimation]="configRipple">
       <mat-icon [svgIcon]="svgIcon" *ngIf="svgIcon && !matIcon"></mat-icon>

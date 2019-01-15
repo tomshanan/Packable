@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, Directive, ElementRef, 
 import { RippleAnimationConfig } from '@angular/material';
 import { WindowService, screenSize } from '../../shared/services/window.service';
 import { isDefined } from '@app/shared/global-functions';
+import { appColors, color } from '../../shared/app-colors';
 
 
 @Component({
@@ -15,8 +16,12 @@ export class IconTextButtonComponent implements OnInit {
   @Input('matIcon') matIcon: string;
   @Input() disabled: boolean = false;
   @Input() showTextFromSize: screenSize;
+  @Input('color') inputColor: keyof appColors = 'action'
+  color: color;
   @Input() bigButton: boolean = false;
   @Output('onClick') emitClick = new EventEmitter<void>()
+  
+  hoverState = false;
 /**
 <icon-text-button
 text="text"
@@ -29,14 +34,17 @@ showTextFromSize="sm"
  */
   constructor(
     private windowService: WindowService,
+    private appColors: appColors
   ) { }
 
   ngOnInit() {
+    this.color = this.appColors[this.inputColor]
   }
   onClick(){
     if(!this.disabled){
       this.emitClick.emit()
     }
+    
   }
   showText():boolean{
     if(this.text != ''){

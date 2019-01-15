@@ -7,6 +7,9 @@
     height: 2em;
     transition: all 300ms;
 }
+.toolbar.small-dispay-toolbar{
+    height: 3em;
+}
 .toolbar.listEditing{
     position: sticky;
     top:0;
@@ -24,7 +27,10 @@
     margin-left: auto;
 
 }
-
+.small-device-checkbox{
+    padding: 10px;
+    margin-left: -10px;
+}
 .collection-panel > mat-expansion-panel-header{
     font-size: 1.5em;
  }

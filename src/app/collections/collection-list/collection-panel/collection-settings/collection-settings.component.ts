@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, SimpleChanges, OnChanges, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../../../shared/models/collection.model';
 import { WeatherRule } from '../../../../shared/models/weather.model';
 import { MatSlideToggleChange, MatDialog } from '@angular/material';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './collection-settings.component.html',
   styleUrls: ['./collection-settings.component.css']
 })
-export class CollectionSettingsComponent implements OnInit, OnChanges {
+export class CollectionSettingsComponent implements OnInit, OnChanges, OnDestroy {
 /**
  * RECEIVES COLLECTION and PROFILE-ID
  * MUTATES COLLECTION:
@@ -64,6 +64,9 @@ export class CollectionSettingsComponent implements OnInit, OnChanges {
       this.inputProfileId = this.context.profileId
       this.updateCollection();
     })
+  }
+  ngOnDestroy(){
+    this.subscription.unsubscribe()
   }
   updateCollection(){
     if(this.collection.id != this.inputCollection.id || this.profileId != this.inputProfileId){

@@ -1,10 +1,10 @@
 <a class="inline-link withIcon" [title]="text" (click)="onClick()" #rippleTrigger>
-    <div class="icon-container" [class.full-padding]="!showText()"
+    <div class="icon-container" [class.full-padding]="!showText()" [class.big-button]="bigButton"
     matRipple
     matRippleCentered="true"
     [matRippleDisabled]="disabled"
     [matRippleUnbounded]="true"
-    matRippleRadius="24"
+    [matRippleRadius]="bigButton ? '32' : '24'"
     matRippleColor="#007bff33"
     [matRippleTrigger]="rippleTrigger"
     [matRippleAnimation]="configRipple">

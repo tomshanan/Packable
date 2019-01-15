@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Directive, ElementRef, Renderer2 } from '@angular/core';
 import { RippleAnimationConfig } from '@angular/material';
 import { WindowService, screenSize } from '../../shared/services/window.service';
 import { isDefined } from '@app/shared/global-functions';
+
 
 @Component({
   selector: 'icon-text-button',
@@ -14,7 +15,8 @@ export class IconTextButtonComponent implements OnInit {
   @Input('matIcon') matIcon: string;
   @Input() disabled: boolean = false;
   @Input() showTextFromSize: screenSize;
-  @Output('click') emitClick = new EventEmitter<void>()
+  @Input() bigButton: boolean = false;
+  @Output('onClick') emitClick = new EventEmitter<void>()
 /**
 <icon-text-button
 text="text"
@@ -22,7 +24,7 @@ matIcon="ballot"
 svgIcon="t-shirt"
 [disabled]="false"
 showTextFromSize="sm"
-(click)="">
+(onClick)="">
 </icon-text-button>
  */
   constructor(

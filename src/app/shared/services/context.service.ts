@@ -42,7 +42,11 @@ export class ContextService {
     return this.storeSelector.getProfileById(this.profileId)
   }
   public getCollection():CollectionComplete {
-    return this.colFac.getCompleteById(this._collectionId, this._profileId) // if profile is null, original collection will be returned
+    if(this._collectionId){
+      return this.colFac.getCompleteById(this._collectionId, this._profileId) // if profile is null, original collection will be returned
+    } else {
+      return undefined;
+    }
   }
 
   public reset(){

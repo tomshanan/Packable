@@ -50,6 +50,9 @@ export class IconService {
             't-shirt2-distribute',
             'collection',
             'list',
+            'add',
+            'added',
+            'unselected',
         ]
     }
     weatherIcons:iconGroup = {

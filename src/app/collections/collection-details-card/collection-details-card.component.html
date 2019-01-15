@@ -1,0 +1,19 @@
+<mat-card class="collection-card">
+<div class="flex-container">
+<div class="flex-item actionBox">
+  <ng-container *ngIf="actionType=='button'">
+      <icon-text-button
+      svgIcon="add"
+      [disabled]="disabled"
+      (onClick)="action()"
+      [bigButton]="true"
+      *ngIf="buttonState === 'add'">
+      </icon-text-button>
+  </ng-container>
+</div>
+<div class="flex-item detailBox">
+  <p class="detailBox-header">{{collection.name}}</p>
+  <div class="packable-list-container">{{packableNameListString}}</div>  
+</div>
+</div>
+</mat-card>

@@ -26,6 +26,7 @@ import { destinations } from '../location-data-object';
 import * as moment from 'moment';
 import { Trip } from '../models/trip.model';
 import * as profileActions from '@app/profiles/store/profile.actions';
+import { setPackableState } from '../../packables/store/packables.actions';
 
 export type nodeOptions = 'packables' | 'collections' | 'profiles' | 'tripState' | 'settings';
 
@@ -159,7 +160,6 @@ export class StorageService {
         let repTypes = ["period", "profile", "trip"]
         let allPackables: PackableOriginal[] = [];
         packableNames.forEach(name => {
-
             let amount = Math.floor(Math.random() * 3) + 1
             let repAmount = Math.floor(Math.random() * 4) + 1
             let type = repTypes[Math.floor(Math.random() * repTypes.length)]
@@ -185,28 +185,30 @@ export class StorageService {
             let weather = new WeatherRule(min, max, conditionsUsed)
             let packable = new PackableOriginal(Guid.newGuid(), name, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }], weather)
             allPackables.push(packable)
-            this.store.dispatch(new packableActions.addOriginalPackable(packable))
         })
+        this.store.dispatch(new packableActions.setPackableState(allPackables))
+
         let collectionNames = ['Winter Clothes', 'Hiking', 'Mountain Climbing', 'Swimming', 'Toiletries', 'Road Trip', 'Skiing', 'Baby Stuff']
         let allCollections: CollectionOriginal[] = [];
         collectionNames.forEach(name => {
             let packableIds = allPackables.map(p => this.packableFactory.makePrivate(p)).filter(() => Math.random() > 0.6)
             let collection = new CollectionOriginal(Guid.newGuid(), name, packableIds)
             allCollections.push(collection)
-            this.store.dispatch(new collectionActions.addOriginalCollection(collection))
         })
+        this.store.dispatch(new collectionActions.setCollectionState(allCollections))
+
         let profileNames = ['Tom', 'Steven', 'Daniel', 'Ilaria', 'Tasha', 'James']
         let allProfiles: Profile[] = [];
         profileNames.forEach(name => {
-            let collections = allCollections.filter(() => Math.random() > 0.5).map(c => this.collectionFactory.makePrivate(c))
+            let collections = allCollections.filter((v,i,arr) => Math.random() > 0.5 && i!=0).map(c => this.collectionFactory.makePrivate(c))
             let iconLength = this.iconService.profileIcons.icons.length
             let randomIcon = this.iconService.profileIcons.icons[randomBetween(0, iconLength - 1)]
             let color = this.colorGen.getUnused();
             let avatar = new Avatar(randomIcon, color)
             let profile = new Profile(Guid.newGuid(), name, collections, avatar)
             allProfiles.push(profile);
-            this.store.dispatch(new profileActions.addProfile(profile))
         })
+        this.store.dispatch(new profileActions.setProfileState(allProfiles))
         let destinationId = destinations[Math.floor(Math.random() * destinations.length)].id
         let startdate = moment();
         let endDate = moment().add(5, 'days')

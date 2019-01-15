@@ -25,7 +25,14 @@ a{
     height: 2em;
     width: 2em;
 }
+.icon-container.full-padding.big-button{
+    font-size: 1.8em;
+    padding: 0.1em;
+    width: 1.2em;
+    height: 1.2em;
+}
 .icon-container>mat-icon {
     width: 1em;
     height: 1em;
+    font-size: inherit;
 }

@@ -1,0 +1,19 @@
+:host{
+    display: block;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+}
+.textContainer{
+    display: inline-block;
+    white-space: nowrap;
+}
+.textContainer > span:not(:last-of-type)::after{
+    content:', ';
+}
+.testArea{
+    display: inline-block;
+    overflow: hidden;
+    width: 0px;
+    height: 0px;
+}

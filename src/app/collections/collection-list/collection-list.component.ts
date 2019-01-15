@@ -8,8 +8,17 @@ import { Profile } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '@app/core';
 import { WindowService } from '../../shared/services/window.service';
 import { isDefined } from '../../shared/global-functions';
-import { MatExpansionPanel, MatCheckboxChange, MatAccordion } from '@angular/material';
+import { MatExpansionPanel, MatCheckboxChange, MatAccordion, MatDialog } from '@angular/material';
 import { SelectedList } from '@app/shared/services/selected-list';
+import { DialogData_ChooseProfiles, ChooseProfileDialogComponent } from './collection-panel/choose-profile-dialog/choose-profile-dialog.component';
+import { take } from 'rxjs/operators';
+import * as fromApp from '@shared/app.reducers';
+import * as packableActions from '@app/packables/store/packables.actions';
+import * as profileActions from '@app/profiles/store/profile.actions';
+import * as collectionActions from '@app/collections/store/collections.actions';
+import { Store } from '@ngrx/store';
+import { ProfileFactory } from '../../shared/factories/profile.factory';
+import { CollectionFactory } from '../../shared/factories/collection.factory';
 
 interface CollectionViewObject {
   id: string,
@@ -32,10 +41,11 @@ export class CollectionListComponent implements OnInit, OnChanges {
 
 
   @Input() profileId: string;
-  @Input() collections: CollectionComplete[];
+  @Input('collections') inputCollections: CollectionComplete[];
   currentlyOpenPanel: MatExpansionPanel;
   contextProvided: boolean;
   collectionList: CollectionViewObject[];
+  unusedCollectionList: CollectionComplete[];
   selectedPanel: CollectionPanelView;
   listEditing:boolean = true;
   selected = new SelectedList();
@@ -43,7 +53,11 @@ export class CollectionListComponent implements OnInit, OnChanges {
   constructor(
     private context: ContextService,
     private storeSelector: StoreSelectorService,
-    private windowService: WindowService
+    private windowService: WindowService,
+    public dialog: MatDialog,
+    private store: Store<fromApp.appState>,
+    private proFac:ProfileFactory,
+    private colFac: CollectionFactory,
   ) { }
 
   ngOnInit() {
@@ -51,15 +65,25 @@ export class CollectionListComponent implements OnInit, OnChanges {
     if (!this.profileId && this.context.profileId) {
       this.profileId = this.context.profileId;
     }
-    this.collectionList = this.buildCollectionList(this.collections)
+    this.collectionList = this.buildCollectionList(this.inputCollections)
+    if(!this.contextProvided){
+      this.unusedCollectionList = 
+        this.buildCollectionList(this.inputCollections,true)
+        .filter(x=>x.profileGroup.length===0)
+        .map(x=>x.complete)
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.collectionList && changes['collections']) {
-      this.updateCollectionList(this.collections)
+      this.updateCollectionList(this.inputCollections)
+      console.log(`received changes and updated collection list`);
+      
+        this.updateUnusedCollectionList(this.inputCollections)
+      
     }
   }
-
+  
   checkboxChange(e:MatCheckboxChange, id:string){
     if(e.checked){
       this.selected.add(id)
@@ -92,26 +116,48 @@ export class CollectionListComponent implements OnInit, OnChanges {
   }
 
 
-  updateCollectionList(collections: CollectionComplete[]) {
+  updateCollectionList(collections: CollectionComplete[], includeUnused:boolean = false) {
     if (this.collectionList) {
       collections.forEach(c => {
         if (this.collectionList.idIndex(c.id) === -1) {
-          this.collectionList.unshift(this.buildViewObject(c))
+          let viewObj = this.buildViewObject(c)
+          if (includeUnused || viewObj.profileGroup.length > 0){
+            this.collectionList.unshift(viewObj)
+          }
         }
       })
     }
     this.collectionList.slice().forEach(c => {
-      if (collections.idIndex(c.id) === -1) {
+      let remove = false;
+      if (collections.idIndex(c.id) === -1 ) {
+        remove = true;
+      } else {
+        let viewObj = this.buildViewObject(collections.findId(c.id))
+        if(!includeUnused && viewObj.profileGroup.length === 0){
+          remove = true;
+        }
+      }
+      if(remove){
         let i = this.collectionList.idIndex(c.id)
         this.collectionList.splice(i, 1)
       }
     })
   }
-
-  buildCollectionList(collections: CollectionComplete[], withProfiles:boolean=true): CollectionViewObject[] {
-    let colList = collections.map(c => this.buildViewObject(c))
-    return  withProfiles ? colList.filter(x=>x.profileGroup.length>0) : colList;
+  updateUnusedCollectionList(collections:CollectionComplete[]){
+    if(!this.contextProvided){
+      this.unusedCollectionList = 
+      this.buildCollectionList(collections,true)
+      .filter(x=>x.profileGroup.length===0)
+      .map(x=>x.complete)
+      console.log('unused collection list updated:\n',this.unusedCollectionList)
+    }
   }
+
+  buildCollectionList(collections: CollectionComplete[], includeUnused:boolean=false): CollectionViewObject[] {
+    let colList = collections.map(c => this.buildViewObject(c))
+    return  !includeUnused ? colList.filter(x=>x.profileGroup.length>0) : colList;
+  }
+
   buildViewObject(c: CollectionComplete): CollectionViewObject {
     return {
       id: c.id,
@@ -152,7 +198,6 @@ export class CollectionListComponent implements OnInit, OnChanges {
     col.expanded = false;
     this.currentlyOpenPanel.close();
     this.currentlyOpenPanel = null;
-    this.context.setCollection(null)
   }
 
   isPanelOpen(id: string, panel: CollectionPanelView) {
@@ -195,9 +240,10 @@ export class CollectionListComponent implements OnInit, OnChanges {
     let profileGroup = this.storeSelector.getProfilesWithCollectionId(id);
     console.log(`REMOVING COLLECTIONs`)
     if (profileGroup.length === 0 || this.contextProvided) {
-      let index = this.collections.idIndex(id)
-      this.collections.splice(index, 1)
-      this.updateCollectionList(this.collections)
+      let index = this.inputCollections.idIndex(id)
+      //this.inputCollections.splice(index, 1)
+      this.updateCollectionList(this.inputCollections)
+      this.updateUnusedCollectionList(this.inputCollections)
     } else {
       let col = this.collectionList.findId(id)
       col.profileSelector = true;
@@ -223,5 +269,42 @@ export class CollectionListComponent implements OnInit, OnChanges {
     setTimeout(()=>{
       c.profileGroup = this.storeSelector.getProfilesWithCollectionId(c.id)
     }, 500)
+  }
+
+  dialogSettings = {
+    maxWidth: "99vw",
+    maxHeight: "99vh",
+    disableClose: true,
+    autoFocus: false
+  }
+
+  pushCollection(collection:CollectionComplete){
+    console.log('Push Collection Called')
+    let profiles = this.storeSelector.profiles
+      let data: DialogData_ChooseProfiles = {
+        collection: collection,
+        profileGroup: profiles,
+        selectedProfiles: [],
+        header: 'Choose Profiles',
+        super: 'Adding Collection',
+        content:`Please select the Travelers you would like to add this Collection to:`
+      }
+      let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
+        ...this.dialogSettings,
+        disableClose: false,
+        data: data
+      });
+      chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
+        if (profileIds.length > 0) {
+          let privateCol = this.colFac.completeToPrivate(collection);
+          profileIds.forEach(pId => {
+            let profile = profiles.findId(pId)
+            profile = this.proFac.addEditCollection(profile,privateCol)
+          });
+          this.store.dispatch(new profileActions.setProfileState(profiles))
+          this.updateCollectionList(this.inputCollections)
+          this.updateUnusedCollectionList(this.inputCollections)    
+        }
+      })
   }
 }

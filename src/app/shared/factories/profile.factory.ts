@@ -43,8 +43,8 @@ export class ProfileFactory{
         })
         return this.getCompleteProfiles(profiles);
     }
-    public addEditCollection(profile:Profile,collection:CollectionPrivate){
-        let colIndex = indexOfId(profile.collections, collection.id)
+    public addEditCollection(profile:Profile,collection:CollectionPrivate):Profile{
+        let colIndex = profile.collections.idIndex(collection.id)
         if(colIndex > -1) { 
             profile.collections.splice(colIndex,1,collection) 
         } else {

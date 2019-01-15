@@ -80,7 +80,9 @@
   </mat-expansion-panel>
 </mat-accordion>
 
-<ng-container *ngIf="!profileId">
-<h5>Removed Collections:</h5>
-
+<ng-container *ngIf="!profileId && unusedCollectionList && unusedCollectionList.length>0">
+<h5>Unused Collections:</h5>
+<ng-container *ngFor="let collection of unusedCollectionList">
+  <collection-details-card [collection]="collection" actionType="button" buttonState="add" (actionClick)="pushCollection(collection)"></collection-details-card>
+</ng-container>
 </ng-container>

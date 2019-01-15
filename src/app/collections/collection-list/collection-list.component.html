@@ -1,7 +1,7 @@
 
 <div class="toolbar" [class.listEditing]="listEditing" [class.small-dispay-toolbar]="windowService.max('xs')">
     <ng-container *ngIf="listEditing === false">
-      <icon-text-button text="Select" svgIcon="list" (click)="toggleListEditing(true)"></icon-text-button>
+      <icon-text-button text="Select" svgIcon="list" (onClick)="toggleListEditing(true)"></icon-text-button>
     </ng-container>
 
     <ng-container *ngIf="listEditing">
@@ -13,7 +13,7 @@
       </mat-checkbox>
     </ng-container>
     <ng-container *ngIf="listEditing && !selected.isEmpty">
-        <icon-text-button text="Remove" matIcon="delete_forever" (click)="null" showTextFromSize="xs" class="text-danger text-danger-hover" color="danger"></icon-text-button>
+        <icon-text-button [text]="'Remove('+selected.length+')'" matIcon="delete_forever" (click)="null" class="text-danger text-danger-hover" color="danger" (onClick)="removeSelectedCollections()"></icon-text-button>
     </ng-container>
       <icon-text-button text=" Import" matIcon="cloud_download" (click)="null" showTextFromSize="xs"></icon-text-button>
     <ng-container *ngIf="listEditing">

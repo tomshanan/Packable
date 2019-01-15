@@ -19,6 +19,8 @@ import * as collectionActions from '@app/collections/store/collections.actions';
 import { Store } from '@ngrx/store';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
+import { ConfirmDialog, ConfirmDialogData } from '../../shared-comps/dialogs/confirm-dialog/confirm.dialog';
+import { BulkActionsService } from '../../shared/services/bulk-actions.service';
 
 interface CollectionViewObject {
   id: string,
@@ -58,6 +60,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
     private store: Store<fromApp.appState>,
     private proFac:ProfileFactory,
     private colFac: CollectionFactory,
+    private bulkActions: BulkActionsService,
   ) { }
 
   ngOnInit() {
@@ -78,9 +81,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
     if (this.collectionList && changes['collections']) {
       this.updateCollectionList(this.inputCollections)
       console.log(`received changes and updated collection list`);
-      
-        this.updateUnusedCollectionList(this.inputCollections)
-      
+      this.updateUnusedCollectionList(this.inputCollections)
     }
   }
   
@@ -105,6 +106,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
     this.selected.add(...this.collectionList.map(c=>c.id))
   }
   toggleListEditing(state?:boolean){
+    this.selected.clear()
     if(isDefined(state)){
       this.listEditing= state;
     } else{
@@ -276,6 +278,29 @@ export class CollectionListComponent implements OnInit, OnChanges {
     maxHeight: "99vh",
     disableClose: true,
     autoFocus: false
+  }
+
+  removeSelectedCollections(){
+    let selectedIds = this.selected.array
+    let profiles = this.storeSelector.profiles
+    let data: ConfirmDialogData = {
+      header: 'Removing Collections',
+      content: 'This will remove the selected collections from all Travelers, and any custom settings will be gone.<br><span class="text-danger"><b>Are you sure you wish to continue?</b></span>',
+    }
+    let confirmDialogRef = this.dialog.open(ConfirmDialog, {
+      ...this.dialogSettings,
+        disableClose: false,
+        data: data
+    })
+    confirmDialogRef.afterClosed().pipe(take(1)).subscribe((confirm)=>{
+      if(confirm){
+        this.bulkActions.removeCollectionsFromProfiles(selectedIds,profiles.map(x=>x.id))
+        this.storeSelector.profiles_obs.pipe(take(1)).subscribe(()=>{
+          this.updateCollectionList(this.inputCollections)
+          this.updateUnusedCollectionList(this.inputCollections)
+        })
+      }
+    })
   }
 
   pushCollection(collection:CollectionComplete){

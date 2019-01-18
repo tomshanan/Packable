@@ -80,6 +80,16 @@ export class BulkActionsService {
       console.error('Did not recieve valid CollectionProfile array', CPs);
     }
   } 
+
+  public pushPackablesByCP(packables:string[],CPs?:CollectionProfile[]){
+    if(CPs && CPs.length>0){
+      if(this.context.collectionId){
+        this.pushContextPackablesByCP(packables, CPs)
+      } else {
+        this.pushOriginalPackablesByCP(packables,CPs)
+      }
+    }
+  }
   public pushContextPackablesByCP(packables:string[], CPs?:CollectionProfile[]){
     if(CPs && CPs.length>0 && this.context.collectionId && this.context.profileId){
       let privatePackables = this.storeSelector
@@ -88,9 +98,9 @@ export class BulkActionsService {
         this.pushPrivatePackablesByCP(privatePackables, CPs)
     }
   }
-  public pushOriginalPackablesByCP(packables:PackableOriginal[], CPs:CollectionProfile[]){
-    if(CPs && CPs.length>0 && this.context.collectionId && this.context.profileId){
-      let privatePackables = packables.map(p=>this.pacFac.makePrivate(p))
+  public pushOriginalPackablesByCP(packables:string[], CPs:CollectionProfile[]){
+    if(CPs && CPs.length>0){
+      let privatePackables =packables.map(id=>this.pacFac.makePrivateFromId(id))
       this.pushPrivatePackablesByCP(privatePackables, CPs)
     }
   }

@@ -22,6 +22,7 @@ import { ConfirmDialog } from './shared-comps/dialogs/confirm-dialog/confirm.dia
 import { ChooseProfileDialogComponent } from './collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
 import { PushPackablesDialogComponent } from './packables/packable-list/push-packables-dialog/push-packables-dialog.component';
 import { ImportPackablesDialogComponent } from './packables/packable-list/import-packables-dialog/import-packables-dialog.component';
+import { NewCollectionDialogComponent } from './collections/collection-list/new-collection-dialog/new-collection-dialog.component';
 
 
 
@@ -46,7 +47,9 @@ import { ImportPackablesDialogComponent } from './packables/packable-list/import
     ChooseProfileDialogComponent,
     PushPackablesDialogComponent,
     ChooseProfileDialogComponent,
-    ImportPackablesDialogComponent]
+    ImportPackablesDialogComponent,
+    NewCollectionDialogComponent
+  ]
 
 })
 export class AppModule { }

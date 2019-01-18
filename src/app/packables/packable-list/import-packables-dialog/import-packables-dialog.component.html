@@ -2,12 +2,10 @@
 
 <mat-dialog-content style="padding-bottom:0px; overflow: hidden;max-height: -webkit-fill-available;">
     <div @transitionTrigger *ngIf="step == 1">
-        <app-item-selector 
-            [completeList]="completeList" 
-            [usedList]="usedList" 
-            (onSelect)="updateSelected($event)"
-            (confirm)="onConfirm()">
-        </app-item-selector>
+        <import-packables-selector 
+            [collection]="collection" 
+            (confirm)="confirmPackables($event)">
+        </import-packables-selector>
     </div>
     <div @transitionTrigger *ngIf="step == 2" class="text-center">
             <p class="text-small">
@@ -21,7 +19,7 @@
             [showNames]="true">
           </profile-selector>
           <dialog-confirm-button style="display:contents;">
-                <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!profilesValid()">
+                <button mat-fab color="primary" (click)="confirmProfiles()" [disabled]="!profilesValid()">
                     <mat-icon>check</mat-icon>
                 </button>
             </dialog-confirm-button>

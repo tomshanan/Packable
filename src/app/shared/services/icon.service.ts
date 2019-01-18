@@ -49,6 +49,8 @@ export class IconService {
             't-shirt-copy',
             't-shirt2-distribute',
             'collection',
+            'collection2',
+            'collection3',
             'list',
             'add',
             'added',

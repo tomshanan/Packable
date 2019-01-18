@@ -74,7 +74,15 @@ export class CollectionFactory {
             complete.essential,
             this.weatherFactory.deepCopy(complete.weatherRules))
     }
-
+    public completeToOriginal = (complete:CollectionComplete):CollectionOriginal => {
+        return new CollectionOriginal(
+            complete.id,
+            complete.name,
+            complete.packables.map(p=>this.packableFactory.completeToPrivate(p)),
+            this.weatherFactory.deepCopy(complete.weatherRules),
+            complete.userCreated
+        )
+    }
     public makeComplete = (collection: CollectionAny): CollectionComplete => {
         let returnCollection: CollectionComplete;
         if (isCollectionOriginal(collection)) {

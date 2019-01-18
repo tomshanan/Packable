@@ -24,7 +24,7 @@ export function collectionsReducers(state: State = initialState, action: Collect
         case CollectionActions.ADD_ORIGINAL_COLLECTION:
             return {
                 ...state,
-                collections: [...state.collections, action.payload]
+                collections: [action.payload, ...state.collections]
             }
         case CollectionActions.EDIT_ORIGINAL_COLLECTION:
             const editId = action.payload.id;

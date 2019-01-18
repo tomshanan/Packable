@@ -16,6 +16,7 @@ import * as fromApp from '@shared/app.reducers';
 import { setPackableState } from '../../store/packables.actions';
 import { transitionTrigger } from '../../../shared/animations';
 import { CollectionProfile } from '../edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { importPackables_selection } from './import-packables-selector/import-packables-selector.component';
 
 export interface importPackables_data {
   header:string,
@@ -33,14 +34,11 @@ export interface importPackables_result {
   animations: [transitionTrigger],
 })
 export class ImportPackablesDialogComponent implements OnInit {
-  completeList: filterItem[] = [];
-  usedList: filterItem[] = [];
-  selected: filterItem[] = [];
-  selectedRemotePackables: PackableOriginal[] = [];
-  header: string;
-  collectionName: string;
   collection: CollectionComplete;
   step:number = 1;
+  header: string;
+  collectionName: string;
+  selectedRemotePackables: PackableOriginal[] = [];
   selectedOriginalPackables: PackableOriginal[];
   profileGroup: Profile[];
   selectedProfiles:string[] = []
@@ -69,55 +67,37 @@ export class ImportPackablesDialogComponent implements OnInit {
         this.selectedProfiles= [this.context.profileId]
       }
     }
-    // ONCE WE HAVE REMOTE PACKABLES, ADD:
-    // let remotePackables = this.storeSelector.remotePackables
-    // let remoteList = this.createFilterObject(remotePackables,'remote')
-    let originalPackables= this.storeSelector.originalPackables
-    let storeList = this.createFilterObject(originalPackables,'local')
-    this.completeList = [...storeList] // <--- add remoteList to completeList
-    this.usedList = this.createFilterObject(this.data.usedPackables, 'local')
-  }
-  updateSelected(filterItems:filterItem[]){
-    this.selected = filterItems;
-    console.log(`selected:\n`+filterItems.map(x=>x.name).join(', '));
+    
   }
 
-  createFilterObject(inputObjects:{id:string,name:string}[],locality:filterItemLocality):filterItem[]{
-    return inputObjects.map((obj) => {
-      return {
-        id: obj.id,
-        name: obj.name,
-        type: !!obj['userCreated'] ? 'user' : locality
-      }
-    })
-  }
-
-  onConfirm(){
-    if(this.step == 1){
+  confirmPackables(e:importPackables_selection){
+    if(this.step == 1){ 
+      this.selectedRemotePackables = e.remoteItems
       this.storeRemotePackables()
       if(this.collection){
-        let localPackableIDs = this.selected.filter(x=> x.type == 'local').map(x=>x.id)
-        this.selectedOriginalPackables = this.storeSelector.getPackablesByIds(localPackableIDs)
-        this.selectedOriginalPackables.unshift(...this.selectedRemotePackables)
+        this.selectedOriginalPackables = [...e.localItems,...e.remoteItems]
         this.step++
       } else {
-        this.onClose(this.selectedRemotePackables) // send new remotePackables to onClose
+        let completeRemote = this.pacFac.makeCompleteFromArray(this.selectedRemotePackables)
+        this.onClose(completeRemote) // send new remotePackables to onClose
       }
-    } else if (this.step == 2 && this.profilesValid()){
+    }
+  }
+
+  confirmProfiles(){
+     if (this.step == 2 && this.profilesValid()){
       let CPs = this.selectedProfiles.map(pId => {
         return {pId: pId, cId: this.collection.id}
       })
-      this.bulkActions.pushOriginalPackablesByCP(this.selectedOriginalPackables,CPs)
+      this.bulkActions.pushOriginalPackablesByCP(this.selectedOriginalPackables.map(p=>p.id),CPs)
       let completePackables = this.pacFac.makeCompleteFromArray(this.selectedOriginalPackables)
       this.onClose(completePackables, CPs)
     }
   }
   storeRemotePackables(){
     // ONCE WE HAVE REMOTE PACKABLES, ADD:
-      // let remotePackableIDs = this.selected.filter(x=> x.type == 'remote').map(x=>x.id)
-      // this.selectedRemotePackables = this.storeSelector.getRemotePackablesByIds(remotePackableIDs)
       // let packables = this.storeSelector.originalPackables
-      // packables.unshift(...selectedRemotePackables)
+      // packables.unshift(...this.selectedRemotePackables)
       // this.store.dispatch(new packableActions.setPackableState(packables))
   }
 

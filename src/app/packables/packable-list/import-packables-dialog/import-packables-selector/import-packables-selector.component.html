@@ -1,0 +1,6 @@
+<app-item-selector 
+  [completeList]="completeList" 
+  [usedList]="usedList" 
+  (onSelect)="updateSelected($event)"
+  (confirm)="onConfirm()">
+</app-item-selector>

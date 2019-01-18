@@ -60,6 +60,8 @@ import { ImportPackablesDialogComponent } from '../packables/packable-list/impor
 import { IconTextButtonComponent } from '../shared-comps/icon-text-button/icon-text-button.component';
 import { CollectionDetailsCardComponent } from '../collections/collection-details-card/collection-details-card.component';
 import { ListConcatinatorComponent } from '../shared-comps/list-concatinator/list-concatinator.component';
+import { NewCollectionDialogComponent } from '../collections/collection-list/new-collection-dialog/new-collection-dialog.component';
+import { ImportPackablesSelectorComponent } from '../packables/packable-list/import-packables-dialog/import-packables-selector/import-packables-selector.component';
 
 let imports = [
     ProfilesComponent,
@@ -120,7 +122,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent],
+    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent],
     exports: [...imports]
 })
 export class SharedModule {

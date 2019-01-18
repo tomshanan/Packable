@@ -1,0 +1,47 @@
+<app-dialog-header [super]="collectionName ? collectionName : ''" [header]="stepTitle()" (close)="onClose()"></app-dialog-header>
+
+<mat-dialog-content style="margin-bottom:-24px;">
+  <div *ngIf="step===1" #inputName @transitionTrigger>
+    <mat-form-field class="w-100">
+      <input matInput placeholder="Name your Collection" name="name" [formControl]="collectionNameInput"
+        matInput-autofocus #editNameInput>
+      <button mat-button *ngIf="collectionNameInput.value!=''" matSuffix mat-icon-button aria-label="Clear" (click)="collectionNameInput.setValue('')">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="collectionNameInput.hasError('pattern') && !collectionNameInput.hasError('usedName')">
+        Please select a valid name (a-z, A-Z, 0-9)
+      </mat-error>
+      <mat-error *ngIf="collectionNameInput.hasError('usedName')">
+        This Collection name is already used
+      </mat-error>
+    </mat-form-field>
+
+    <dialog-confirm-button style="display:contents;">
+      <button mat-fab color="primary" (click)="confirmName()" [disabled]="!collectionNameInput.valid">
+        Next
+      </button>
+    </dialog-confirm-button>
+  </div>
+  <div *ngIf="step===2" #selectPackables @transitionTrigger>
+            <import-packables-selector 
+            (confirm)="confirmPackables($event)">
+        </import-packables-selector>
+  </div>
+  <div *ngIf="step===3" #selectProfiles @transitionTrigger>
+      <div class="text-center my-2">
+          <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
+            [showNames]="true">
+          </profile-selector>
+          <p>
+            <a class="inline-link small p-2" (click)="profileSelect('all')">All</a>
+            <span>/</span>
+            <a class="inline-link small p-2" (click)="profileSelect('none')">None</a>
+          </p>
+        </div>
+        <dialog-confirm-button style="display:contents;">
+            <button mat-fab color="primary" (click)="confirmProfiles()" [disabled]="!collectionNameInput.valid">
+              <mat-icon>check</mat-icon>
+            </button>
+          </dialog-confirm-button>
+  </div>
+</mat-dialog-content>

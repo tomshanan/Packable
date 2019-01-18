@@ -95,6 +95,15 @@ export class PackableFactory {
             this.weatherFactory.deepCopy(completePackable.weatherRules)
         )
     }
+    public completeToOriginal = (completePackable: PackableComplete): PackableOriginal =>{
+        return new PackableOriginal(
+            completePackable.id,
+            completePackable.name,
+            completePackable.quantityRules.slice(),
+            this.weatherFactory.deepCopy(completePackable.weatherRules),
+            completePackable.userCreated
+        )
+    }
 
     public getQuantityStrings = (quantityRules: QuantityRule[]): string[] =>{
         let returnStrings = [];

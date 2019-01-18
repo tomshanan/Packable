@@ -3,12 +3,19 @@
 .dialog-header {
     position: relative;
     text-align: center;
-    padding: 0 24px;
+    padding: 24px;
+    margin: -24px;
+    margin-bottom: 0px;
 }
 
 .close-button {
     position: absolute!important;
     right: 0!important;
+    top: 0!important;
+}
+.return-button {
+    position: absolute!important;
+    left: 0!important;
     top: 0!important;
 }
 

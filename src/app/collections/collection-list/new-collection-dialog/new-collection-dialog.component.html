@@ -1,4 +1,4 @@
-<app-dialog-header [super]="collectionName ? collectionName : ''" [header]="stepTitle()" (close)="onClose()"></app-dialog-header>
+<app-dialog-header [super]="collectionName ? collectionName : ''" [header]="stepTitle()" (close)="onClose()" [showReturn]="step>1" (return)="step=step-1" [maxWidth]="step===2 ? '350px' : 'none'"></app-dialog-header>
 
 <mat-dialog-content style="margin-bottom:-24px;">
   <div *ngIf="step===1" #inputName @transitionTrigger>

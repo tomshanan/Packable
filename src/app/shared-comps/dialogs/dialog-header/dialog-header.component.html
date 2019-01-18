@@ -1,4 +1,7 @@
-<div class="dialog-header" mat-dialog-title>
+<div class="dialog-header" mat-dialog-title #headerElement>
+    <button class="return-button mini" mat-icon-button (click)="onReturn()" *ngIf="showReturn">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
     <span class="title super" *ngIf="super">{{super}}</span>
     <span class="title d-flex justify-content-center">
         <span class="header">{{header}}</span>

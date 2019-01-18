@@ -89,8 +89,10 @@
 </mat-accordion>
 
 <ng-container *ngIf="!profileId && unusedCollectionList && unusedCollectionList.length>0">
-<h5 class="mt-3 mb-2">Unused Collections:</h5>
-<ng-container *ngFor="let collection of unusedCollectionList">
-  <collection-details-card [collection]="collection" actionType="button" buttonState="add" (actionClick)="pushCollection(collection)"></collection-details-card>
-</ng-container>
+  <h5 class="mt-3 mb-2">Unused Collections:</h5>
+  <p class="small text-muted">These Collections have been removed from all Travelers and are currently not being used
+    with any customization.</p>
+  <ng-container *ngFor="let collection of unusedCollectionList">
+    <collection-details-card [collection]="collection" actionType="button" buttonState="add" (actionClick)="pushCollection(collection)"></collection-details-card>
+  </ng-container>
 </ng-container>

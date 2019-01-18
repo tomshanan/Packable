@@ -340,7 +340,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
   newCollection() {
     let newCollection = this.dialog.open(NewCollectionDialogComponent, {
       ...this.dialogSettings,
-      disableClose: false,
+      disableClose: true,
     });
     newCollection.afterClosed().pipe(take(1)).subscribe((collection: CollectionComplete) => {
       if (collection) {

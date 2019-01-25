@@ -69,11 +69,13 @@ export class CollectionSettingsComponent implements OnInit, OnChanges, OnDestroy
     this.subscription.unsubscribe()
   }
   updateCollection(){
-    if(this.collection.id != this.inputCollection.id || this.profileId != this.inputProfileId){
-      this.collection = this.inputCollection
-      this.profileId = this.inputProfileId;
-      console.log(`collection settings for "${this.collection.name}" has loaded/changed:`, this.collection);
-      this.updateDialogData()
+    if (this.inputCollection && this.inputProfileId){
+      if(this.collection.id != this.inputCollection.id || this.profileId != this.inputProfileId){
+        this.collection = this.inputCollection
+        this.profileId = this.inputProfileId;
+        console.log(`collection settings for "${this.collection.name}" has loaded/changed:`, this.collection);
+        this.updateDialogData()
+      }
     }
   }
   updateDialogData(){
@@ -92,15 +94,16 @@ export class CollectionSettingsComponent implements OnInit, OnChanges, OnDestroy
   }
 
   emitUpdate(){
-    console.log(this.collection);
+    console.log('sending collection to be updated:\n',this.collection);
     this.collectionChange.emit(this.collection)
   }
 
   toggleEssential(e?:MatSlideToggleChange){
-    if(e){
-      this.inputCollection.essential = e.checked
+    console.log('toggle event:',e);
+    if(e!=null){
+      this.collection.essential = e.checked
     } else {
-      this.inputCollection.essential = !this.inputCollection.essential;
+      this.collection.essential = !this.collection.essential;
     }
     this.emitUpdate();
   }

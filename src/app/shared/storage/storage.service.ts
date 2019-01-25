@@ -197,7 +197,7 @@ export class StorageService {
         })
         this.store.dispatch(new collectionActions.setCollectionState(allCollections))
 
-        let profileNames = ['Tom', 'Steven', 'Daniel', 'Ilaria', 'Tasha', 'James']
+        let profileNames = ['Tom', 'Steven', 'Daniel', 'Ilaria', 'Tasha', 'James', 'Mike', 'Donald', 'Ricky', 'Sam', 'Steve', 'Jordan']
         let allProfiles: Profile[] = [];
         profileNames.forEach(name => {
             let collections = allCollections.filter((v,i,arr) => Math.random() > 0.5 && i!=0).map(c => this.collectionFactory.makePrivate(c))

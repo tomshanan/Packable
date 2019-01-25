@@ -18,7 +18,7 @@ export class SelectedList {
                 this._selected.push(el)
             }
         })
-        return this.array
+        return this
     }
     remove(...elements:string[]){
         elements.forEach(el=>{
@@ -27,7 +27,7 @@ export class SelectedList {
                 this._selected.splice(index,1)
             }
         })
-        return this.array
+        return this
     }
     toggle(...elements:string[]){
         elements.forEach(el=>{
@@ -38,12 +38,12 @@ export class SelectedList {
                 this._selected.push(el)
             }
         })
-        return this.array
+        return this
     }
 
     clear(){
         this.array = [];
-        return this.array
+        return this
     }
     isSelected(id:string):boolean{
         return this.array.includes(id)

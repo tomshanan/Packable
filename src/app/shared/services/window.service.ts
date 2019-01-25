@@ -21,14 +21,22 @@ export var screenSizes:screenSizes = {
 export class WindowService {
     private _width: number;
     public change: Subject<number> = new Subject();
-    
+    private timeout = setTimeout(()=>{},0)
+
     constructor(){
         this._width = window.innerWidth
         this.change.next(this._width)
         
         window.addEventListener('resize', (event)=>{
-            this._width = window.innerWidth
-            this.change.next(this._width)
+            console.log(`resize event emitted\n`,event)
+            if(this._width != window.innerWidth){
+                clearTimeout(this.timeout)
+                this._width = window.innerWidth
+                this.timeout= setTimeout(()=>{
+                    this.change.next(this._width)
+                    console.log('Window Service - change Size emitted: '+this._width);
+                }, 300)
+            }
         })
     }
     get width(){

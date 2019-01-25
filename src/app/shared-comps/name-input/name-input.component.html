@@ -1,0 +1,22 @@
+<mat-form-field class="w-100">
+  <input matInput 
+  [placeholder]="'Name your '+title" 
+  name="name" 
+  [formControl]="nameInput" 
+  (change)="emitChange()"
+  matInput-autofocus
+  #editNameInput>
+
+  <button mat-button 
+  *ngIf="nameInput.value!=''" 
+  matSuffix mat-icon-button aria-label="Clear" 
+  (click)="nameInput.setValue('')">
+    <mat-icon>close</mat-icon>
+  </button>
+  <mat-error *ngIf="nameInput.hasError('pattern') && !nameInput.hasError('usedName')">
+    Please select a valid name (a-z, A-Z, 0-9)
+  </mat-error>
+  <mat-error *ngIf="nameInput.hasError('usedName')">
+    This {{title}} name is already used
+  </mat-error>
+</mat-form-field>

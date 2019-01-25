@@ -1,27 +1,23 @@
 <app-nav [header]="'Profiles'" [icon]="'fas fa-users'" (info)="openModal(profileModal)"></app-nav>
 
-<div class="row">
-  <div class="col-12">
-    <div class="list-group w-100 mb-1">
-      <li class="list-group-item list-group-item-action pointer w-100 text-success text-center " style="border-style: dashed; padding: 0.6em;"
-      routerLink="new">
-        New Profile
-      </li>
-    </div>
-    <div class="list-group w-100">
-      <a class="list-group-item list-group-item-action w-100" *ngFor="let profile of profiles; let i = index" (click)="editProfile(profile)">
-        <div class="d-flex flex-row justify-content-between align-items-stretch mb-1">
-          <h4 class="m-0">
-            <i class="fas fa-user-circle"></i> {{profile.name}}</h4>
-        </div>
-        <p class="m-0">
-          <span class="badge badge-secondary mr-1" *ngFor="let collection of profile.collections">{{collection.name}}</span>
-        </p>
-      </a>
+<profile-selector-panel 
+  [profiles]="profiles" 
+  [(selected)]="selectedProfileId" 
+  (selectedChange)="onSelectedProfiles()"
+  (clickSettings)="editProfile()">
+</profile-selector-panel>
+
+<ng-container *ngIf="selectedProfileId">
+  <div class="row">
+    <div class="col-12">
+      <app-collection-list [profileId]="selectedProfileId"></app-collection-list>
     </div>
   </div>
-</div>
-<button type="button" (click)="testFirebase()">Test firebase</button>
+</ng-container>
+
+
+
+
 <ng-template #profileModal>
     <H5>Profiles</H5>
     <p>Profiles can be created for each person you may want to pack for. </p>

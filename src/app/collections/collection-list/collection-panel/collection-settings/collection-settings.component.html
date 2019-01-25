@@ -4,8 +4,9 @@
     [checked]="collection.essential"
     (change)="toggleEssential($event)" 
     text="Essential Collection"  
-    (textClick)="toggleEssential()">
+    (textClick)="toggleEssential($event)">
   </slide-toggle-with-text>
+  <p class="small text-muted" *ngIf="collection.essential">This Collection will be automatically added to this Traveler on every trip.</p>
 </ng-container> 
 <app-weather-conditions-form [(weather)]="collection.weatherRules" (weatherChange)="emitUpdate()" *ngIf="profileId"></app-weather-conditions-form>
 <span class="form-heading">

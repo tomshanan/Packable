@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../shared/app.reducers';
 import { Profile, ProfileComplete } from '../shared/models/profile.model';
@@ -8,59 +8,89 @@ import { MemoryService } from '../shared/services/memory.service';
 import { StoreSelectorService } from '../shared/services/store-selector.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../shared-comps/modal/modal.component';
-import { slugName } from '../shared/global-functions';
+import { slugName, isDefined } from '../shared/global-functions';
 import { ProfileFactory } from '../shared/factories/profile.factory';
 import { StorageService } from '../shared/storage/storage.service';
 import { take } from 'rxjs/operators';
+import { WindowService } from '../shared/services/window.service';
+import { ContextService } from '../shared/services/context.service';
+import { CollectionComplete } from '../shared/models/collection.model';
+import { EditProfileDialogComponent } from './edit-profile-dialog/edit-profile-dialog.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-profiles',
   templateUrl: './profiles.component.html',
   styleUrls: ['./profiles.component.css']
 })
-export class ProfilesComponent implements OnInit {
+export class ProfilesComponent implements OnInit,OnDestroy {
 
   profilesState_obs: Observable<{profiles: Profile[]}>;
-  profilesState_sub: Subscription;
-  profiles: ProfileComplete[];
-  originalProfiles:Profile[];
+  stateSubscriptions: Subscription;
+  completeProfiles: ProfileComplete[];
+  profiles:Profile[];
+  selectedProfileId: string;
+  selectedProfile: Profile;
+  profileCollections: CollectionComplete[];
 
+  onSelectedProfiles(){
+    this.cotnext.setBoth(null,this.selectedProfileId)
+  }
   constructor(
     private store: Store<fromApp.appState>,
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private memoryService: MemoryService,
-    private selectorService: StoreSelectorService,
+    private storeSelector: StoreSelectorService,
     private modalService: NgbModal,
     private profileFactory: ProfileFactory,
-    private storageService: StorageService
+    private windowService: WindowService,
+    private cotnext:ContextService,
+    public dialog: MatDialog,
+
   ) { }
-
+  dialogSettings = {
+    maxWidth: "99vw",
+    maxHeight: "99vh",
+    disableClose: true,
+    autoFocus: false
+  }
   ngOnInit() {
-    this.profilesState_obs = this.store.select('profiles');
-    this.profilesState_sub = this.profilesState_obs.subscribe(state =>{
+    this.stateSubscriptions = this.storeSelector.profiles_obs.subscribe(state =>{
       console.log('profile state emitted',state);
-      
-      this.profiles = this.profileFactory.getCompleteProfiles(state.profiles);
-      this.originalProfiles = state.profiles;
+      this.profiles = state.profiles;
+      this.completeProfiles = this.profileFactory.getCompleteProfiles(state.profiles);
+      this.selectedProfile=this.cotnext.getProfile()
     })
-  }
-  editProfile(profile:ProfileComplete){
-    this.memoryService.resetAll();
-    this.memoryService.set('PROFILE',this.originalProfiles.find(p=>p.id == profile.id));
-    this.router.navigate([slugName(profile.name)],{relativeTo:this.activatedRoute})
-  }
+    this.stateSubscriptions.add(
+      this.cotnext.changes.subscribe(changes => {
+        this.selectedProfile=this.cotnext.getProfile()
+      })
+    )
 
-  createNewProfile(){
-    this.memoryService.resetAll();
-    this.router.navigate(['new'],{relativeTo:this.activatedRoute})
+    this.cotnext.reset();
+    if(isDefined(this.selectedProfileId)){
+      this.cotnext.setBoth(null,this.selectedProfileId)
+    }
+  }
+ 
+  ngOnDestroy(){
+    this.stateSubscriptions.unsubscribe()
   }
   openModal(tempRef:TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
   }
-  testFirebase(){
-    this.storageService.test()
-  }
 
+  editProfile(){
+    let data = {
+      profile: this.selectedProfile
+    }
+    let editProfileDialog = this.dialog.open(EditProfileDialogComponent, {
+      ...this.dialogSettings,
+      data:data
+    })
+    // editProfileDialog.afterClosed().pipe(take(1)).subscribe((profile:Profile)=>{
+    //   if(isDefined(profile)){
+
+    //   }
+    // })
+  }
 }

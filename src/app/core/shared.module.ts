@@ -62,6 +62,12 @@ import { CollectionDetailsCardComponent } from '../collections/collection-detail
 import { ListConcatinatorComponent } from '../shared-comps/list-concatinator/list-concatinator.component';
 import { NewCollectionDialogComponent } from '../collections/collection-list/new-collection-dialog/new-collection-dialog.component';
 import { ImportPackablesSelectorComponent } from '../packables/packable-list/import-packables-dialog/import-packables-selector/import-packables-selector.component';
+import { ProfileSelectorPanelComponent } from '../profiles/profile-selector-panel/profile-selector-panel.component';
+import { EditProfileDialogComponent } from '../profiles/edit-profile-dialog/edit-profile-dialog.component';
+import { ProfileEditFormComponent } from '../profiles/profile-edit-form/profile-edit-form.component';
+import { NameInputComponent } from '../shared-comps/name-input/name-input.component';
+import { HorizontalIconSelectorComponent } from '../shared-comps/horizontal-icon-selector/horizontal-icon-selector.component';
+import { AppColorDirective } from '../shared/directives/app-color.directive';
 
 let imports = [
     ProfilesComponent,
@@ -122,7 +128,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent],
+    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent, ProfileSelectorPanelComponent, EditProfileDialogComponent, ProfileEditFormComponent, NameInputComponent, HorizontalIconSelectorComponent, AppColorDirective],
     exports: [...imports]
 })
 export class SharedModule {

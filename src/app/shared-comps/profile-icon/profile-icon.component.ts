@@ -23,9 +23,9 @@ export class ProfileIconComponent implements OnInit, OnChanges {
   @Input() dim: boolean = false;
   @Input() inputWidth: string = "50px";
   @Input('color') inputColor: string = 'white';
-  @Input() profileId:string; // will override profile
-  @Input() profile:Profile;  // will override avatar
   @Input() avatar:Avatar;  // will override icon and color
+  @Input() profile:Profile;  // will override avatar
+  @Input() profileId:string; // will override profile
   @Input() inline:boolean = false;
 
   @ViewChild('profile') profileIcon: ElementRef;

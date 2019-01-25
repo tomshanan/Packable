@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { IconService } from '@app/core';
 import { StoreSelectorService } from '@shared/services/store-selector.service';
 import { Profile } from '@shared/models/profile.model';
 import { StorageService } from '../shared/storage/storage.service';
 import { quickTransitionTrigger } from '../shared/animations';
+import { WindowService } from '../shared/services/window.service';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,9 @@ export class HomeComponent implements OnInit {
   constructor(
     private store:StoreSelectorService,
     private iconService:IconService,
-    private storage: StorageService
+    private storage: StorageService,
+    private windowService: WindowService,
+    private rendere: Renderer2,
   ) { 
     this.icons = iconService.profileIcons.icons.slice()
   }

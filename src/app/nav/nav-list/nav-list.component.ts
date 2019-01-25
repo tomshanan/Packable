@@ -42,10 +42,10 @@ export class NavListComponent implements OnInit {
       showPublic: false,
     },
     {
-      text:'Profiles',
+      text:'Travelers',
       type:'text',
       size: 'main',
-      link:'/profiles',
+      link:'/travelers',
       showAuth: true,
       showPublic: false
     },
@@ -107,6 +107,7 @@ export class NavListComponent implements OnInit {
   ]
   
   canView(listItem:{showAuth: boolean, showPublic:boolean}):boolean{
+    return true // FOR DEVELOPMENT
     if(this.isAuthenticated){
       return listItem.showAuth
     } else {

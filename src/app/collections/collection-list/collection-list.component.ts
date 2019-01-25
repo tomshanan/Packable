@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { CollectionPanelView } from './collection-panel/collection-panel.component';
 import { indexOfId } from '@app/shared/global-functions';
@@ -22,6 +22,7 @@ import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { ConfirmDialog, ConfirmDialogData } from '../../shared-comps/dialogs/confirm-dialog/confirm.dialog';
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
 import { NewCollectionDialogComponent } from './new-collection-dialog/new-collection-dialog.component';
+import { Subscription } from 'rxjs';
 
 interface CollectionViewObject {
   id: string,
@@ -40,7 +41,7 @@ interface CollectionViewObject {
   styleUrls: ['./collection-list.component.css'],
   animations: [transitionTrigger, evaporateTransitionTrigger]
 })
-export class CollectionListComponent implements OnInit, OnChanges {
+export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
 
 
   @Input() profileId: string;
@@ -52,6 +53,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
   selectedPanel: CollectionPanelView;
   listEditing: boolean = false;
   selected = new SelectedList();
+  contextSubscription: Subscription;
 
   constructor(
     private context: ContextService,
@@ -69,13 +71,18 @@ export class CollectionListComponent implements OnInit, OnChanges {
     if (!this.profileId && this.context.profileId) {
       this.profileId = this.context.profileId;
     }
-    this.collectionList = this.buildCollectionList(this.inputCollections)
     if (!this.contextProvided) {
+      this.collectionList = this.buildCollectionList(this.inputCollections)
       this.unusedCollectionList =
         this.buildCollectionList(this.inputCollections, true)
           .filter(x => x.profileGroup.length === 0)
           .map(x => x.complete)
+    } else {
+      this.collectionList = this.buildCollectionList(this.getProfileCompleteCollections())
     }
+    // this.contextSubscription = this.context.changes.subscribe(()=>{
+    //   this.profileId = this.context.profileId;
+    // })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -84,8 +91,19 @@ export class CollectionListComponent implements OnInit, OnChanges {
       console.log(`received changes and updated collection list`);
       this.updateUnusedCollectionList(this.inputCollections)
     }
+    if (this.collectionList && changes['profileId']) {
+      this.collectionList = this.buildCollectionList(this.getProfileCompleteCollections())
+    }
   }
-
+  ngOnDestroy(){
+    // this.contextSubscription.unsubscribe();
+  }
+  getProfileCompleteCollections(): CollectionComplete[]{
+    return this.proFac
+    .getCompleteProfiles(this.storeSelector.profiles)
+    .findId(this.profileId)
+    .collections
+  }
   checkboxChange(e: MatCheckboxChange, id: string) {
     if (e.checked) {
       this.selected.add(id)
@@ -303,6 +321,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
         this.storeSelector.profiles_obs.pipe(take(1)).subscribe(() => {
           this.updateCollectionList(this.inputCollections)
           this.updateUnusedCollectionList(this.inputCollections)
+          this.selected.clear()
         })
       }
     })
@@ -334,6 +353,7 @@ export class CollectionListComponent implements OnInit, OnChanges {
         this.store.dispatch(new profileActions.setProfileState(profiles))
         this.updateCollectionList(this.inputCollections)
         this.updateUnusedCollectionList(this.inputCollections)
+        this.selected.clear()
       }
     })
   }
@@ -345,7 +365,6 @@ export class CollectionListComponent implements OnInit, OnChanges {
     newCollection.afterClosed().pipe(take(1)).subscribe((collection: CollectionComplete) => {
       if (collection) {
         console.log(`Created collection:\n`,collection);
-        
         this.storeSelector.profiles_obs.pipe(take(1)).subscribe(() => {
           this.updateCollectionList(this.inputCollections)
           this.updateUnusedCollectionList(this.inputCollections)

@@ -1,5 +1,6 @@
 #container {
     width:350px;
+    max-width: -webkit-fill-available;
     height: stretch;
     max-height: 90vh;
     display: flex;

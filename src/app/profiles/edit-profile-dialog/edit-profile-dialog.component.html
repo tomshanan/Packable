@@ -1,0 +1,6 @@
+<app-dialog-header [super]="profileName ? profileName : ''" header="Traveler Settings" (close)="onClose()" maxWidth="350px"></app-dialog-header>
+
+<mat-dialog-content>
+  <profile-edit-form [profile]="profile">
+  </profile-edit-form>
+</mat-dialog-content>

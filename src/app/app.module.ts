@@ -23,6 +23,7 @@ import { ChooseProfileDialogComponent } from './collections/collection-list/coll
 import { PushPackablesDialogComponent } from './packables/packable-list/push-packables-dialog/push-packables-dialog.component';
 import { ImportPackablesDialogComponent } from './packables/packable-list/import-packables-dialog/import-packables-dialog.component';
 import { NewCollectionDialogComponent } from './collections/collection-list/new-collection-dialog/new-collection-dialog.component';
+import { EditProfileDialogComponent } from './profiles/edit-profile-dialog/edit-profile-dialog.component';
 
 
 
@@ -48,6 +49,7 @@ import { NewCollectionDialogComponent } from './collections/collection-list/new-
     PushPackablesDialogComponent,
     ChooseProfileDialogComponent,
     ImportPackablesDialogComponent,
+    EditProfileDialogComponent,
     NewCollectionDialogComponent
   ]
 

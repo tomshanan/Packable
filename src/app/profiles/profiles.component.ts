@@ -17,11 +17,13 @@ import { ContextService } from '../shared/services/context.service';
 import { CollectionComplete } from '../shared/models/collection.model';
 import { EditProfileDialogComponent } from './edit-profile-dialog/edit-profile-dialog.component';
 import { MatDialog } from '@angular/material';
+import { blockInitialAnimations } from '../shared/animations';
 
 @Component({
   selector: 'app-profiles',
   templateUrl: './profiles.component.html',
-  styleUrls: ['./profiles.component.css']
+  styleUrls: ['./profiles.component.css'],
+  animations: [blockInitialAnimations]
 })
 export class ProfilesComponent implements OnInit,OnDestroy {
 

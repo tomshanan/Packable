@@ -1,7 +1,7 @@
 <app-nav [header]="'Collections'" [icon]="'fas fa-cubes'" (info)="openModal(collectionModal)"></app-nav>
 <div class="row">
   <div class="col-12">
-      <app-collection-list  [collections]="collections"></app-collection-list>
+      <app-collection-list  [collections]="collections" @blockInitialAnimations></app-collection-list>
   </div>
 </div>
 

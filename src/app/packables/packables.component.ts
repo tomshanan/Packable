@@ -7,13 +7,15 @@ import { StoreSelectorService } from '../shared/services/store-selector.service'
 import { PackableFactory } from '../shared/factories/packable.factory';
 import { PackableComplete } from '../shared/models/packable.model';
 import { ContextService } from '../shared/services/context.service';
+import { blockInitialAnimations } from '../shared/animations';
 
 @Component({
   selector: 'app-packables',
   templateUrl: './packables.component.html',
   styleUrls: [
     './packables.component.css'
-  ]
+  ],
+  animations: [blockInitialAnimations]
 })
 export class PackablesComponent implements OnInit {
 

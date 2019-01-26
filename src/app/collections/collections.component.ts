@@ -12,12 +12,14 @@ import { slugName } from '../shared/global-functions';
 import { CollectionFactory } from '../shared/factories/collection.factory';
 import { take } from 'rxjs/operators';
 import { ContextService } from '../shared/services/context.service';
+import { blockInitialAnimations } from '../shared/animations';
 
 @Component({
   selector: 'app-collections',
   templateUrl: './collections.component.html',
   styleUrls: ['../shared/css/mat-card-list.css',
-  './collections.component.css']
+  './collections.component.css'],
+  animations: [blockInitialAnimations]
   
 })
 export class CollectionsComponent implements OnInit,OnDestroy {

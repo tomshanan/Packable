@@ -51,6 +51,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   subscription: Subscription;
   packableList: PackableComplete[] = [];
   dialogSettings = {
+    width:'auto',
     maxWidth: "99vw",
     maxHeight: "99vh",
     disableClose: true,

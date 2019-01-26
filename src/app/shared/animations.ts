@@ -1,5 +1,9 @@
 import { trigger, transition, style, animate, keyframes, state } from '@angular/animations';
 
+export const blockInitialAnimations = trigger('blockInitialAnimations',[
+    transition(':enter',[])
+])
+
 export const animateSize = trigger('grow', [
     transition('void <=> *', []),
     transition('* <=> *', [

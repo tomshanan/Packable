@@ -1,6 +1,6 @@
 <app-nav [header]="'Profiles'" [icon]="'fas fa-users'" (info)="openModal(profileModal)"></app-nav>
 
-<profile-selector-panel 
+<profile-selector-panel @blockInitialAnimations 
   [profiles]="profiles" 
   [(selected)]="selectedProfileId" 
   (selectedChange)="onSelectedProfiles()"

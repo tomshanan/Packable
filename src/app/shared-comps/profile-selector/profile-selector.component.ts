@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
 import { Profile } from '../../shared/models/profile.model';
-import { slideInTrigger } from '../../shared/animations';
+import { slideInTrigger, blockInitialAnimations } from '../../shared/animations';
 import { isDefined } from '../../shared/global-functions';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'profile-selector',
   templateUrl: './profile-selector.component.html',
   styleUrls: ['./profile-selector.component.css'],
-  animations: [slideInTrigger]
+  animations: [slideInTrigger,blockInitialAnimations]
 })
 export class ProfileSelectorComponent implements OnInit, OnChanges {
 
@@ -20,7 +20,7 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
   @Input() showNames: boolean = true;
   @Input() selectedFirst: boolean = false;
   @Output() selectedChange = new EventEmitter<string[]>();
-
+  @HostBinding('@blockInitialAnimations') blockInitialAnimations = blockInitialAnimations;
   selectedView: string[] = []
   profilesView: Profile[] = []
   ready: boolean;

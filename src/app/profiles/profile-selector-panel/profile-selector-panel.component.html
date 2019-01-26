@@ -1,14 +1,19 @@
 <div class="pofileSelectorContainer" 
   #container>
   <div class="selectedProfile d-flex flex-row align-items-center" [class.hide]="selectorOpen" *ngIf="selected">
-    <profile-icon 
-      [profileId]='selected' 
-      [showName]="false"  
-      [isInteractive]="true" 
-      [isButton]="true" 
-      inputWidth="55px"
-      (click)="toggleProfileSelector()">
-    </profile-icon>
+    <div class="selectedProfile-iconContainer" appColor="action">
+        <profile-icon 
+        [profileId]='selected' 
+        [showName]="false"  
+        [isInteractive]="true" 
+        [isButton]="true" 
+        inputWidth="55px"
+        (click)="toggleProfileSelector()">
+      </profile-icon>
+      <div class="switchIcon" >
+        <mat-icon [inline]="true">swap_vert</mat-icon>
+      </div>
+    </div>
     <p class="h3 m-0 ml-1" *ngIf="!selectorOpen" @showTrigger>
       {{getSelectedProfileName()}}
     </p>

@@ -12,6 +12,19 @@
     flex-direction: row;
     align-items: center;
 }
+.selectedProfile-iconContainer{
+    display: inline-block;
+    position: relative;
+}
+.switchIcon{
+    position: absolute;
+    top:5px;
+    left:5px;
+    font-size: .5em;
+}
+.switchIcon>mat-icon{
+    transform: rotate(-45deg)
+}
 .horizontalSelector{
 
 }

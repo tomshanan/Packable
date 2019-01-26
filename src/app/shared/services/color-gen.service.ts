@@ -17,7 +17,6 @@ export var colors = [
     '#dce775',
     '#fff176',
     '#ffd54f',
-    '#ffb74d',
     '#ff8a65',
     '#90a4ae',
     "#ff5252",
@@ -40,15 +39,24 @@ export var colors = [
 @Injectable()
 export class ColorGeneratorService {
     constructor(private storeSelector: StoreSelectorService) { }
+    used: string[] = [];
+    registerUsed(c:string){
+        this.used.push(c)
+    }
+    getUnusedAndRegister():string{
+        let newColor = this.getUnused()
+        this.registerUsed(newColor)
+        return newColor
+    }
     getUnused = (): string => {
         let profiles = this.storeSelector.profiles
-        let usedColors = profiles.map(profile=>profile.avatar.color)
-        let filteredColors = colors.filter(c=>{
+        let usedColors = profiles.map(profile=>profile.avatar.color).concat(this.used)
+        let unusedColors = colors.filter(c=>{
             return usedColors.indexOf(c) == -1
         });
-        if (filteredColors.length > 0) {
-            let rand = randomBetween(0, filteredColors.length - 1)
-            return filteredColors[rand]
+        if (unusedColors.length > 0) {
+            let rand = randomBetween(0, unusedColors.length - 1)
+            return unusedColors[rand]
         } else {
             let rand = randomBetween(0, colors.length - 1)
             return colors[rand]

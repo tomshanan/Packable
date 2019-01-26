@@ -203,7 +203,7 @@ export class StorageService {
             let collections = allCollections.filter((v,i,arr) => Math.random() > 0.5 && i!=0).map(c => this.collectionFactory.makePrivate(c))
             let iconLength = this.iconService.profileIcons.icons.length
             let randomIcon = this.iconService.profileIcons.icons[randomBetween(0, iconLength - 1)]
-            let color = this.colorGen.getUnused();
+            let color = this.colorGen.getUnusedAndRegister();
             let avatar = new Avatar(randomIcon, color)
             let profile = new Profile(Guid.newGuid(), name, collections, avatar)
             allProfiles.push(profile);

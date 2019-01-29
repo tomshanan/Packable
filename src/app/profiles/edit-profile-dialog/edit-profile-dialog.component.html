@@ -1,6 +1,11 @@
-<app-dialog-header [super]="profileName ? profileName : ''" header="Traveler Settings" (close)="onClose()" maxWidth="350px"></app-dialog-header>
+<app-dialog-header [super]="profileName ? profileName : ''" header="Settings" (close)="onClose()"></app-dialog-header>
 
 <mat-dialog-content>
-  <profile-edit-form [profile]="profile">
+  <profile-edit-form [(profile)]="profile" (profileChange)="logProfile()" #profileForm>
   </profile-edit-form>
+  <dialog-confirm-button>
+      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
+        <mat-icon>check</mat-icon>
+      </button>
+    </dialog-confirm-button>
 </mat-dialog-content>

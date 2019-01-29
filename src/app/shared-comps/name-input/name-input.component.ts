@@ -15,16 +15,15 @@ export class NameInputComponent implements OnInit {
   @Input() title: string = 'Item';
   @Input() value: string = '';
   @Input() usedNames: string[] = [];
-  @Input() allowedNames: string[] = [];
   @Output() valueChange = new EventEmitter<string>()
-  @Output() change = new EventEmitter<NameInputChangeEvent>()
+  @Output() changeEvent = new EventEmitter<NameInputChangeEvent>()
+  allowedName: string;
  
 /**
  <name-input
   title="Packable"
   [value]='myNameValue'
   [usedNames]='getUsedNames()'
-  [allowedNames]='[myNameValue]'
   (valueChange)='changeOfValue($event:string)'
   (change)='changeEvent($event:NameInputChangeEvent)'>
   </name-input>
@@ -35,12 +34,13 @@ export class NameInputComponent implements OnInit {
   }
   validate_usedName(control: FormControl): { [s: string]: boolean } {
     let input = control.value.toLowerCase();
-    if (this.usedNames.includes(input) && !this.allowedNames.includes(input)) {
+    if (this.usedNames.includes(input) && input !== this.allowedName.toLowerCase() ) {
       return { 'usedName': true };
     }
     return null;
   }
   ngOnInit() {
+    this.allowedName = this.value;
     this.nameInput= new FormControl(this.value, [
       Validators.required, 
       Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), 
@@ -49,11 +49,12 @@ export class NameInputComponent implements OnInit {
   }
   emitChange(){
     this.valueChange.emit(this.nameInput.value)
-    this.change.emit({
+    this.changeEvent.emit({
       oldValue: this.value,
       value: this.nameInput.value,
       valid: this.nameInput.valid
     })
     this.value = this.nameInput.value
+    console.log('name input change:\n',this.nameInput)
   }
 }

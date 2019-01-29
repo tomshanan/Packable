@@ -5,6 +5,7 @@ import { color, appColors } from '../app-colors';
   selector: '[appColor]',
   host: {
     '[style.transition]': '"all 200ms"',
+    '[style.cursor]': '"pointer"',
   }
 })
 export class AppColorDirective implements OnInit {
@@ -18,9 +19,25 @@ export class AppColorDirective implements OnInit {
   @HostListener('mouseleave') onMouseLeave() {
     this.setColor(this.color.inactive);
   }
+  @HostListener('mouseup') onMouseUp() {
+    this.setColor(this.color.hover);
+  }
   @HostListener('click') onClick() {
     this.setColor(this.color.click);
   }
+  @HostListener('touchend') onTouchEnd() {
+    this.setColor(this.color.inactive);
+  }
+  @HostListener('touchcancel') onTouchCancel() {
+    this.setColor(this.color.inactive);
+  }
+  @HostListener('blur') onBlur() {
+    this.setColor(this.color.inactive);
+  }
+  @HostListener('touchstart') onTouchStart() {
+    this.setColor(this.color.click);
+  }
+  
   constructor(
     private elRef: ElementRef,
     private appColors:appColors,

@@ -26,10 +26,10 @@ a{
     width: 1.7em;  /*  = 1 + (x-padding x 2) */
 }
 .icon-container.full-padding.big-button{
-    font-size: 1.8em;
-    padding: 0.1em;
-    width: 1.2em;
-    height: 1.2em;
+    font-size: 0.8em;
+    padding: 0em;
+    width: 1em;
+    height: 1em;
 }
 .icon-container>mat-icon {
     width: 1em;

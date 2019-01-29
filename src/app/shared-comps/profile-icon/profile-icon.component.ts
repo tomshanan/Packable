@@ -1,15 +1,16 @@
-import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { IconService } from '@app/core';
 import { Avatar } from '@app/shared/models/profile.model';
 import { Profile } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'profile-icon',
   templateUrl: './profile-icon.component.html',
   styleUrls: ['./profile-icon.component.css']
 })
-export class ProfileIconComponent implements OnInit, OnChanges {
+export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
     this.init();
   }
@@ -29,7 +30,7 @@ export class ProfileIconComponent implements OnInit, OnChanges {
   @Input() inline:boolean = false;
 
   @ViewChild('profile') profileIcon: ElementRef;
-
+  sub: Subscription;
 
   constructor(
     private iconService:IconService, //for template
@@ -41,6 +42,12 @@ export class ProfileIconComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.init();
+    this.sub = this.storeSelector.profiles_obs.subscribe(()=>{
+      this.init();
+    })
+  }
+  ngOnDestroy(){
+    this.sub.unsubscribe();
   }
   init(){
     this.renderer.setStyle(this.profileIcon.nativeElement, 'width', this.inputWidth)
@@ -49,6 +56,7 @@ export class ProfileIconComponent implements OnInit, OnChanges {
     }
     if(this.profile){
       this.avatar = this.profile.avatar
+      this.inputName = this.profile.name
     } 
     if (this.avatar){
       this.icon = this.avatar.icon || this.icon;

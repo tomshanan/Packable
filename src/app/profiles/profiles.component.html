@@ -10,7 +10,7 @@
 <ng-container *ngIf="selectedProfileId">
   <div class="row">
     <div class="col-12">
-      <app-collection-list [profileId]="selectedProfileId"></app-collection-list>
+      <app-collection-list [profileId]="selectedProfileId" [collections]="profileCollections"></app-collection-list>
     </div>
   </div>
 </ng-container>

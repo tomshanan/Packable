@@ -3,7 +3,8 @@ import { Profile } from '../../shared/models/profile.model';
 import { slideInTrigger, blockInitialAnimations } from '../../shared/animations';
 import { isDefined } from '../../shared/global-functions';
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, take } from 'rxjs/operators';
+import { StoreSelectorService } from '../../shared/services/store-selector.service';
 
 @Component({
   selector: 'profile-selector',
@@ -35,24 +36,21 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
     [showNames]="true">
   </profile-selector>
   */
-  constructor() {
+  constructor(
+    private storeSelector: StoreSelectorService,
+  ) {
 
   }
 
   ngOnInit() {
-    console.log(this.selected);
-    
     this.ready = false;
     this.readySubject.next(this.ready)
     this.selectedView = this.selected.slice().clearUndefined();
     this.profilesView = this.profiles.slice().clearUndefined();
     if (this.selectedView.length > 0) {
       this.profilesView = this.bringSelectedToTop();
-      console.log('initial sort:\n', this.profilesView);
     } else {
       this.profilesView = this.profiles.slice();
-      console.log('no initial sort:\n', this.profilesView);
-
     }
     this.ready = true;
     this.readySubject.next(this.ready)
@@ -76,7 +74,6 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
     }
     if (isDefined(this.selectedView) && this.selectedFirst) {
       this.profilesView = this.bringSelectedToTop();
-      console.log('updated sort:\n', this.profilesView);
     }
     if (this.profilesView.length > 0 && changes['profiles']) {
       if (this.ready) {
@@ -104,7 +101,6 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
           this.profilesView.splice(i, 1)
         }
       })
-      console.log('--comparing profiles complete--')
     }
   }
 

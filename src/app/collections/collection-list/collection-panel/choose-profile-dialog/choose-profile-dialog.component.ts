@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../../../shared/models/collection.model';
 import { Profile } from '../../../../shared/models/profile.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
@@ -8,6 +8,7 @@ import * as fromApp from '@shared/app.reducers';
 import { Store } from '@ngrx/store';
 import { WindowService } from '../../../../shared/services/window.service';
 import { titleCase } from '../../../../shared/global-functions';
+import { Subscription } from 'rxjs';
 
 export interface DialogData_ChooseProfiles {
   collection: CollectionComplete,
@@ -23,7 +24,7 @@ export interface DialogData_ChooseProfiles {
   templateUrl: './choose-profile-dialog.component.html',
   styleUrls: ['./choose-profile-dialog.component.css']
 })
-export class ChooseProfileDialogComponent implements OnInit {
+export class ChooseProfileDialogComponent implements OnInit, OnDestroy {
 
   collection: CollectionComplete;
   allProfiles: Profile[];
@@ -32,6 +33,7 @@ export class ChooseProfileDialogComponent implements OnInit {
   header: string;
   content: string;
   super:string; // for header
+  sub:Subscription;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData_ChooseProfiles,
@@ -49,11 +51,13 @@ export class ChooseProfileDialogComponent implements OnInit {
   
   ngOnInit() {
     this.updateWindowWidth()
-    this.windowService.change.subscribe(width => {
+    this.sub = this.windowService.change.subscribe(width => {
       this.updateWindowWidth()
     })
   }
-
+  ngOnDestroy(){
+    this.sub.unsubscribe()
+  }
   updateWindowWidth() {
     this.dialogRef.updateSize(this.windowService.max('xs') ? '99vw' : '500px')
   }

@@ -3,6 +3,8 @@ import { Profile } from '../../shared/models/profile.model';
 import { FormControl } from '@angular/forms';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { NameInputChangeEvent } from '../../shared-comps/name-input/name-input.component';
+import { IconService } from '../../shared/services/icon.service';
+import { ProfileFactory } from '../../shared/factories/profile.factory';
 
 @Component({
   selector: 'profile-edit-form',
@@ -12,30 +14,39 @@ import { NameInputChangeEvent } from '../../shared-comps/name-input/name-input.c
 export class ProfileEditFormComponent implements OnInit {
   @Input() profile: Profile;
   @Output() profileChange = new EventEmitter<Profile>()
-
-  valid: boolean;
-  profileName: string;
+  edittedProfile: Profile;
+  valid: boolean = true;
   usedProfileNames:string[] = []
-  profileIcon: string;
+  icons: string[] = []
+  
+  profileName: string;
+  selectedIcon: string[] = [];
 
   constructor(
     private storeSelector: StoreSelectorService,
-  ) { }
+    private iconService: IconService,
+    private proFac: ProfileFactory,
+  ) { 
+    this.icons = this.iconService.profileIcons.icons.slice().filter(icon=>icon!="default");
+  }
 
   ngOnInit() {
-    this.profileName = this.profile.name
+    this.edittedProfile = this.proFac.duplicateProfile(this.profile)
+    this.profileName = this.edittedProfile.name
     this.usedProfileNames = this.storeSelector.profiles.map(p=>p.name.toLowerCase())
+    this.selectedIcon = [this.edittedProfile.avatar.icon]
   }
 
   onChangeName(e:NameInputChangeEvent){
-    if(e.valid){
-      this.valid = true
-      this.emitChange()
-    } else{
-      this.valid = false;
-    }
+    this.edittedProfile.name = this.profileName
+    this.valid = e.valid
+    this.emitChange()
+  }
+  onChangeIcon(){
+    this.edittedProfile.avatar.icon = this.selectedIcon[0]
+    this.emitChange()
   }
   emitChange(){
-    this.profileChange.emit(this.profile)
+    this.profileChange.emit(this.edittedProfile)
   }
 }

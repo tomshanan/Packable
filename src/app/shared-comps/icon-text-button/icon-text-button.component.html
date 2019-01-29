@@ -8,12 +8,14 @@
     {'color': color.hover} :
     {'color': color.inactive}"
   #rippleTrigger>
-    <div class="icon-container" [class.full-padding]="!showText()" [class.big-button]="bigButton"
+    <div class="icon-container" 
+    [class.full-padding]="!showText()" 
+    [class.big-button]="setSize()"
     matRipple
     matRippleCentered="true"
     [matRippleDisabled]="disabled"
     [matRippleUnbounded]="true"
-    [matRippleRadius]="bigButton ? '32' : '24'"
+    [matRippleRadius]="rippleRadius"
     [matRippleColor]="color.ripple"
     [matRippleTrigger]="rippleTrigger"
     [matRippleAnimation]="configRipple">

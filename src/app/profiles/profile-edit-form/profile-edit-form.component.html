@@ -3,6 +3,14 @@
 title="Profile"
 [(value)]='profileName'
 [usedNames]='usedProfileNames'
-[allowedNames]='[profileName]'
-(change)='onChangeName($event)'
-></name-input>
+(changeEvent)='onChangeName($event)'>
+</name-input>
+<horizontal-icon-selector stepWidth="50">
+    <icon-selector
+        [icons]="icons"
+        iconWidth="50px"
+        [(selected)]="selectedIcon"
+        (selectedChange)="onChangeIcon()"
+        [multiselect]="false">
+    </icon-selector>
+</horizontal-icon-selector>

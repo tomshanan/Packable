@@ -1,10 +1,8 @@
 <div class="d-inline-block" *ngFor="let profile of profilesView" @slideInTrigger>
     <profile-icon 
-    [icon]='profile.avatar.icon' 
-    [color]='profile.avatar.color' 
+    [profileId]='profile.id' 
     [showName]="showNames"  
     [isInteractive]="true" 
-    [name]="profile.name" 
     [isSelected]="isSelected(profile.id)" 
     [inputWidth]="iconWidth"
     [dim]="!isSelected(profile.id) && selected.length>0"

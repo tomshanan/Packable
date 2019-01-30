@@ -23,7 +23,7 @@ export class NavComponent implements OnInit, OnDestroy {
   ngOnInit() {
   }
 
-  toggleNav(state:boolean){
+  toggleNav(state?:boolean){
     if(state!=null){
       this.navOpen = state;
     } else{

@@ -81,7 +81,7 @@
         </div>
       </div>
     </form>
-    <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()" (optionAction)="onOption($event)"></app-desktop-nav>
+    <app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onSubmit()"></app-desktop-nav>
     <div class="row" *ngIf="false">
       Destination: {{tripForm.get('destination').value.city || 'null'}} - {{tripForm.get('destination').status}} <br>
       startDate: {{tripForm.get('startDate').value}} - {{tripForm.get('startDate').status}} <br>

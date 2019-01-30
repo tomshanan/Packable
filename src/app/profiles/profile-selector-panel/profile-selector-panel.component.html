@@ -33,14 +33,15 @@
           [selectedFirst]="true"
           (selectedChange)="onSelectedProfiles($event)">
         </profile-selector>
-        <div class="d-inline-block">
+        <!-- Commented out for now because newProfile() doesn't exist -->
+        <!-- <div class="d-inline-block">
             <icon-text-button
             svgIcon="add"
             (onClick)="newProfile()"
             buttonWidth="55px"
             innerPadding="0.1em">
             </icon-text-button>
-        </div>
+        </div> -->
     </horizontal-icon-selector> 
   </div>
 </div>

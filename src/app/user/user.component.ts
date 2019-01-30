@@ -19,7 +19,7 @@ export class UserComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private authService:AuthService
+    public authService:AuthService
   ) { 
   }
   changeFragment(change:MatTabChangeEvent){

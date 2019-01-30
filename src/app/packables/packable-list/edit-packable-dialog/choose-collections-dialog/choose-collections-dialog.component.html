@@ -65,7 +65,7 @@ class="selectable-dropdown popout"
 
 
 <dialog-confirm-button>
-    <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!this.selectedIds.length>0">
+    <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!(this.selectedIds.length>0)">
         <mat-icon>check</mat-icon>
     </button>
 </dialog-confirm-button>

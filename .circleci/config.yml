@@ -45,7 +45,7 @@ jobs:
 
 
       - run: npm install debugbear
-      - run: ./node_modules/.bin/debugbear --pageId=720 --ngrokWebPort=4040 --waitForResult --baseBranch=master
+      - run: ./node_modules/.bin/debugbear --pageId=721 --ngrokWebPort=4040 --waitForResult --baseBranch=master
 
       - save_cache:
           paths:

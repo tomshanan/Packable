@@ -25,8 +25,25 @@ jobs:
       - run: node mockFirebaseSettingsInCI.js
 
       - run: npm install
+      - run: npm install http-server
+
 
       - run: ./node_modules/.bin/ng build --prod
+      - run:
+          background: true
+          command: ./node_modules/.bin/http-server ./dist
+
+      # ngrok for making server publicly accessible
+      - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+      - run: unzip ngrok-stable-linux-amd64.zip
+      - run: chmod +x ngrok
+      - run: ./ngrok authtoken ${NGROK_TOKEN}
+      - run:
+          background: true
+          # stdout bc this: https://github.com/inconshreveable/ngrok/issues/57
+          command: ./ngrok http 8080 -log=stdout
+
+
 
       - save_cache:
           paths:

@@ -22,7 +22,11 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
     
+      - run: node mockFirebaseSettingsInCI.js
+
       - run: npm install
+
+      - run: ./node_modules/.bin/ng build --prod
 
       - save_cache:
           paths:

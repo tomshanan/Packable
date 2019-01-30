@@ -44,6 +44,8 @@ jobs:
           command: ./ngrok http 8080 -log=stdout
 
 
+      - run: npm install debugbear
+      - run: ./node_modules/.bin/debugbear --pageId=720 --ngrokWebPort=4040 --waitForResult --baseBranch=master
 
       - save_cache:
           paths:

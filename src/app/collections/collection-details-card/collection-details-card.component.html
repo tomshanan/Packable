@@ -2,12 +2,19 @@
 <div class="flex-container">
 <div class="flex-item actionBox">
   <ng-container *ngIf="actionType=='button'">
+        <icon-text-button
+        [svgIcon]="buttonState"
+        [disabled]="disabled"
+        (onClick)="action()"
+        [buttonWidth]="buttonWidth+'px'">
+        </icon-text-button>
+  </ng-container>
+  <ng-container *ngIf="actionType=='selection'">
       <icon-text-button
-      svgIcon="add"
+      [svgIcon]="selectionState ? 'added' : 'unselected'"
       [disabled]="disabled"
       (onClick)="action()"
-      buttonWidth="55px"
-      *ngIf="buttonState === 'add'">
+      [buttonWidth]="buttonWidth+'px'">
       </icon-text-button>
   </ng-container>
 </div>

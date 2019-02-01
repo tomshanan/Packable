@@ -4,8 +4,8 @@ import { emit } from 'cluster';
 
 
 export type actionType = 'button' | 'selection'
-export type selectionState = 'selected' | 'unselected'
-export type buttonState = 'added' | 'delete' | 'add'
+export type selectionState  = boolean
+export type buttonState = 'added' | 'delete' | 'add' | 'remove'
 export type buttonAction = 'select' | 'deselect' | 'delete' | 'add' | 'remove';
 
 @Component({
@@ -16,12 +16,13 @@ export type buttonAction = 'select' | 'deselect' | 'delete' | 'add' | 'remove';
 export class CollectionDetailsCardComponent implements OnInit {
 @Input('collection') collection: CollectionComplete;
 @Input('actionType') actionType: actionType = 'button';
-@Input('selectionState') selectionState: selectionState = 'unselected'
+@Input('selectionState') selectionState: selectionState = false
 @Input('buttonState') buttonState: buttonState = 'add'
 @Input('disabled') disabled: boolean = false;
 @Output('actionClick') actionClick = new EventEmitter<buttonAction>()
 
-
+buttonStates = ['added' , 'delete' , 'add' , 'remove']
+buttonWidth: number = 55;
 packableNameList: string[] = []
 packableNameListString: string;
   constructor() { }
@@ -45,16 +46,19 @@ packableNameListString: string;
           case 'delete':
           action = 'delete'
           break;
+          case 'remove':
+          action = 'remove'
+          break;
         }
       } else{
         switch(this.selectionState){
-          case 'selected':
+          case true:
           action = 'deselect'
-          this.selectionState = 'unselected'
+          this.selectionState = false
           break;
-          case 'unselected':
+          case false:
           action = 'select'
-          this.selectionState = 'selected'
+          this.selectionState = false
           break;
         }
       }

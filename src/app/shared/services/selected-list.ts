@@ -10,7 +10,7 @@ export class SelectedList {
         return this._selected.slice()
     }
     set array(arr:string[]){
-        this._selected = arr;
+        this._selected = arr.slice();
     }
     add(...elements:string[]){
         elements.forEach(el=>{

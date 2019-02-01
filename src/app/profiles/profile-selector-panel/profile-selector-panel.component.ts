@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { HorizontalIconSelectorComponent } from '../../shared-comps/horizontal-icon-selector/horizontal-icon-selector.component';
 import { takeUntil, filter, take } from 'rxjs/operators';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
+import { MatDialog } from '@angular/material';
+import { NewProfileDialogComponent } from '../new-profile-dialog/new-profile-dialog.component';
 
 @Component({
   selector: 'profile-selector-panel',
@@ -32,6 +34,7 @@ export class ProfileSelectorPanelComponent implements OnInit  {
 
   constructor(
     private windowService: WindowService,
+    private dialog: MatDialog,
   ) { }
 
   toggleProfileSelector(){
@@ -57,5 +60,12 @@ export class ProfileSelectorPanelComponent implements OnInit  {
   }
   onClickSettings(){
     this.clickSettings.emit()
+  }
+  newProfile(){
+    let newProfileDialog = this.dialog.open(NewProfileDialogComponent, {
+      width:'99vw',
+      maxWidth: '500px',
+      maxHeight: '99vh',
+    })
   }
 }

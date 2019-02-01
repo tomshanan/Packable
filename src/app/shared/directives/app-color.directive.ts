@@ -1,5 +1,6 @@
-import { Directive, ElementRef, HostBinding, Renderer2, HostListener, Input, OnInit } from '@angular/core';
+import { Directive, ElementRef, HostBinding, Renderer2, HostListener, Input, OnInit, OnDestroy } from '@angular/core';
 import { color, appColors } from '../app-colors';
+import { isDefined } from '../global-functions';
 
 @Directive({
   selector: '[appColor]',
@@ -11,6 +12,7 @@ import { color, appColors } from '../app-colors';
 export class AppColorDirective implements OnInit {
   element: any;
   @Input('appColor') inputColor:keyof appColors = 'action';
+  @Input('appColorTarget') targetElement;
   color: color;
 
   @HostListener('mouseenter') onMouseEnter() {
@@ -43,9 +45,13 @@ export class AppColorDirective implements OnInit {
     private appColors:appColors,
     private renderer: Renderer2
   ) { 
-    this.element = this.elRef.nativeElement
+    this.element = this.elRef.nativeElement;
   }
   ngOnInit(){
+    console.log()
+    if(this.targetElement){
+      this.element = this.targetElement
+    }
     this.color = this.appColors[this.inputColor]
     this.renderer.setStyle(this.element,'color',this.color.inactive)
   }

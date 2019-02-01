@@ -68,6 +68,9 @@ import { ProfileEditFormComponent } from '../profiles/profile-edit-form/profile-
 import { NameInputComponent } from '../shared-comps/name-input/name-input.component';
 import { HorizontalIconSelectorComponent } from '../shared-comps/horizontal-icon-selector/horizontal-icon-selector.component';
 import { AppColorDirective } from '../shared/directives/app-color.directive';
+import { NewProfileDialogComponent } from '../profiles/new-profile-dialog/new-profile-dialog.component';
+import { CollectionSelectorComponent } from '../collections/collection-selector/collection-selector.component';
+import { CardButtonComponent } from '../shared-comps/card-button/card-button.component';
 
 let imports = [
     ProfilesComponent,
@@ -128,7 +131,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent, ProfileSelectorPanelComponent, EditProfileDialogComponent, ProfileEditFormComponent, NameInputComponent, HorizontalIconSelectorComponent, AppColorDirective],
+    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent, ProfileSelectorPanelComponent, EditProfileDialogComponent, ProfileEditFormComponent, NameInputComponent, HorizontalIconSelectorComponent, AppColorDirective, NewProfileDialogComponent, CollectionSelectorComponent, CardButtonComponent],
     exports: [...imports]
 })
 export class SharedModule {

@@ -1,0 +1,14 @@
+<mat-form-field floatLabel="never" class="w-100">
+  <input type="search" [(ngModel)]="filterInput" (keyup)="inputChange()" matInput placeholder="Search Collections">
+  <button mat-icon-button matSuffix class="clear"  (click)="clearInput()" class="pointer" *ngIf="filterInput!==''" appColor="muted">
+      <mat-icon>clear</mat-icon>
+    </button>
+</mat-form-field>
+<div *ngFor="let collection of viewCollections">
+  <collection-details-card
+  [collection]="collection"
+  actionType="selection"
+  [selectionState]="list.isSelected(collection.id)"
+  (actionClick)="toggleSelection(collection.id, $event)">
+  </collection-details-card>
+</div>

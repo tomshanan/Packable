@@ -1,10 +1,14 @@
 <div class="row">
   <div class="col-6">
-    <horizontal-icon-selector>
-      <profile-selector iconWidth="50px" [profiles]="profiles" [(selected)]="selectedProfiles" [multiselect]="true"
-        [showNames]="true">
-      </profile-selector>
-    </horizontal-icon-selector>
+    <collection-selector 
+    [collections]="collections" 
+    [selected]="selectedCollections" 
+    (selectedChange)="log($event)">
+    </collection-selector>
+
+    <card-button>
+        <div><h5 class="p-0 m-0">This is a button</h5></div>
+     </card-button>
   </div>
 </div>
 

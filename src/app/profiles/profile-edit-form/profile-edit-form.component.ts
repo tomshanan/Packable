@@ -27,7 +27,7 @@ export class ProfileEditFormComponent implements OnInit {
     private iconService: IconService,
     private proFac: ProfileFactory,
   ) { 
-    this.icons = this.iconService.profileIcons.icons.slice().filter(icon=>icon!="default");
+    this.icons = this.iconService.profileIcons.icons.slice()
   }
 
   ngOnInit() {

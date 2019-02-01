@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 21.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
-	<!ENTITY st0 "fill:#6CBE45;fill-opacity:0.94;">
-]>
-<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 192 192" style="enable-background:new 0 0 192 192;" xml:space="preserve">
-<path style="&st0;" d="M83.8,127.8l-3.5,3.5l3.5,3.5l3.5-3.6L83.8,127.8z M174.2,96c0,43.2-35,78.2-78.2,78.2v9.8
-	c48.6,0,87.9-39.4,87.9-87.9H174.2z M96.1,174.2c-43.2,0-78.2-35-78.2-78.2H8.1c0,48.6,39.4,87.9,87.9,87.9V174.2z M17.9,96
-	c0-43.2,35-78.2,78.2-78.2V8.1C47.5,8.1,8.1,47.5,8.1,96H17.9z M96.1,17.9c43.2,0,78.2,35,78.2,78.2h9.8c0-48.6-39.4-87.9-87.9-87.9
-	V17.9z M53.5,104.4l26.9,26.9l6.9-6.9L60.4,97.5L53.5,104.4z M87.4,131.2L141.1,75l-7.1-6.8l-53.7,56.2L87.4,131.2z"/>
+<style type="text/css">
+	.st0{fill:currentColor;}
+</style>
+<g id="Layer_2">
+	<path class="st0" d="M96,16c44.1,0,80,35.9,80,80s-35.9,80-80,80s-80-35.9-80-80S51.9,16,96,16 M96,8C47.4,8,8,47.4,8,96
+		s39.4,88,88,88s88-39.4,88-88S144.6,8,96,8L96,8z"/>
+	<g>
+		<rect x="66.5" y="90.1" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -57.2266 82.127)" class="st0" width="8" height="40"/>
+		<rect x="67.3" y="92" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -36.4445 104.0152)" class="st0" width="80" height="8"/>
+	</g>
+</g>
+<g id="Layer_3">
+</g>
 </svg>

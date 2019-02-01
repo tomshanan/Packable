@@ -9,6 +9,7 @@ export class appColors {
     public action = new color('#007bff','#0056b3')
     public accent = new color('#ff4081','#bb1950')
     public active = new color('#31d441','#26a532')
+    public muted = new color('#939ea8', '#79848d')
 }
 export class color {
     inactive: string;

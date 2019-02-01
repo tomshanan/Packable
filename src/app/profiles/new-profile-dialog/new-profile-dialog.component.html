@@ -1,0 +1,39 @@
+<app-dialog-header [super]="step>1 ? 'New Traveler' : ''" [header]="stepHeading()" (close)="onClose()"></app-dialog-header>
+
+<mat-dialog-content>
+  <div *ngIf="step === 1" @transitionTrigger>
+    <profile-edit-form [(profile)]="profile" #profileForm>
+    </profile-edit-form>
+    <card-button>
+      Test
+    </card-button>
+
+  </div>
+  <div *ngIf="step === 2" [ngSwitch]="method" @transitionTrigger>
+    <ng-container *ngSwitchCase="new">
+
+    </ng-container>
+    <ng-container *ngSwitchCase="copy">
+
+    </ng-container>
+    <ng-container *ngSwitchCase="template">
+
+    </ng-container>
+  </div>
+  <div *ngIf="step === 3" @transitionTrigger>
+    <dialog-confirm-button>
+
+      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
+        <mat-icon>check</mat-icon>
+      </button>
+    </dialog-confirm-button>
+  </div>
+
+
+
+
+
+
+
+
+</mat-dialog-content>

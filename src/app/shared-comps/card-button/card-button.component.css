@@ -1,0 +1,22 @@
+.cardButton{
+    padding: 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 75px;
+}
+.flex-item{
+    padding: 5px;
+}
+.flex-item.content{
+    padding-left: 12px;
+    flex-grow: 1;
+}
+.flex-item.actionIcon{
+    padding-right: 12px;
+    flex-grow: 0;
+    transition:all 300ms;
+}
+.cardButton:hover .actionIcon{
+    padding-right: 5px;
+}

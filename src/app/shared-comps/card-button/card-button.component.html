@@ -1,0 +1,14 @@
+<mat-card 
+class="cardButton pointer" 
+matRipple
+[matRippleColor]="appColors.action.ripple"
+[matRippleDisabled]="disabled"
+matRippleRadius="300"
+[matRippleUnbounded]="false"
+appColor="action"
+[appColorTarget]="targetColor">
+  <div class="flex-item content"><ng-content></ng-content></div>
+  <div class="flex-item actionIcon" #targetColor>
+    <mat-icon>arrow_forward_ios</mat-icon>
+  </div>
+</mat-card>

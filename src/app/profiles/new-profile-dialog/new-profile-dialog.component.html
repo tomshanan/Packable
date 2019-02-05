@@ -1,23 +1,49 @@
-<app-dialog-header [super]="step>1 ? 'New Traveler' : ''" [header]="stepHeading()" (close)="onClose()"></app-dialog-header>
+<app-dialog-header [header]="stepHeading()" (close)="onClose()" [showReturn]="step>1" (return)="backStep()"></app-dialog-header>
 
 <mat-dialog-content>
+  
   <div *ngIf="step === 1" @transitionTrigger>
-    <profile-edit-form [(profile)]="profile" #profileForm>
+    <profile-edit-form [(profile)]="profile" (validChange)="profileEditFormValidation($event)" #profileForm>
     </profile-edit-form>
-    <card-button>
-      Test
-    </card-button>
+    <div class="mt-3">
+      <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('new')">
+        Create From Scratch
+        <p class="small text-muted">
+          Select and import the collections
+        </p>
+      </card-button>
+      <card-button disabled="true">
+        Create from Template
+        <p class="small text-muted">
+           Templates come with pre-selected collections.
+          </p>
+      </card-button>
+      <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('copy')">
+        Copy Existing Traveler
+        <p class="small text-muted">
+            Use all the collections and settings of another Traverler you have already created.
+           </p>
+      </card-button>
+    </div>
 
   </div>
   <div *ngIf="step === 2" [ngSwitch]="method" @transitionTrigger>
-    <ng-container *ngSwitchCase="new">
-
+    <div class="text-center">
+      <profile-icon [profile]="profile" [showName]="true" width="65px">
+      </profile-icon>
+    </div>
+    <ng-container *ngSwitchCase="'new'">
+      <p class="form-heading">Select the collections you would like this Traveler to make use of. You can always add more later.</p>
+      <collection-selector 
+        [collections]="collections" 
+        [(selected)]="selectedCollections">
+      </collection-selector>
     </ng-container>
-    <ng-container *ngSwitchCase="copy">
-
+    <ng-container *ngSwitchCase="'copy'">
+      Copy
     </ng-container>
-    <ng-container *ngSwitchCase="template">
-
+    <ng-container *ngSwitchCase="'template'">
+      Template
     </ng-container>
   </div>
   <div *ngIf="step === 3" @transitionTrigger>

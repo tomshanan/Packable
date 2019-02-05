@@ -7,6 +7,9 @@
     margin: -24px;
     margin-bottom: 0px;
 }
+.minimal{
+    padding-bottom: 0px;
+}
 
 .close-button {
     position: absolute!important;

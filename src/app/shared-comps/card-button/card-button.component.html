@@ -5,8 +5,9 @@ matRipple
 [matRippleDisabled]="disabled"
 matRippleRadius="300"
 [matRippleUnbounded]="false"
-appColor="action"
-[appColorTarget]="targetColor">
+[appColor]="disabled ? 'muted' : 'action'"
+[appColorTarget]="targetColor"
+[class.disabled]="disabled">
   <div class="flex-item content"><ng-content></ng-content></div>
   <div class="flex-item actionIcon" #targetColor>
     <mat-icon>arrow_forward_ios</mat-icon>

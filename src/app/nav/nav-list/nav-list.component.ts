@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from '../../user/auth.service';
 import { Observable } from 'rxjs';
 import * as fromAuth from '../../user/store/auth.reducers'
 import * as fromApp from '../../shared/app.reducers';
 import { Store } from '@ngrx/store';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-nav-list',
@@ -11,12 +12,15 @@ import { Store } from '@ngrx/store';
   styleUrls: ['./nav-list.component.css']
 })
 export class NavListComponent implements OnInit {
+  @Output() navigate= new EventEmitter<void>()
   authState: Observable<fromAuth.State>
   isAuthenticated: boolean;
 
   constructor(
     private authService: AuthService,
-    private store: Store<fromApp.appState>
+    private store: Store<fromApp.appState>,
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) { 
     this.authState = this.store.select('auth');
     this.authState.subscribe(state =>{
@@ -115,6 +119,11 @@ export class NavListComponent implements OnInit {
     }
   }
 
+  routeTo(link:string, fragment:string=""){
+    let settings = fragment!="" ? {fragment:fragment} : {};
+    this.router.navigate([link], settings)
+    this.navigate.emit()
+  }
   ngOnInit() {
   }
 

@@ -19,9 +19,11 @@ export class IconSelectorComponent implements OnInit {
   ngOnInit() {
     if(this.selected.length>0){
       this.selected.forEach(icon=>{
-        let i = this.icons.indexOf(icon)
-        this.icons.splice(i,1)
-        this.icons = [icon, ...this.icons]
+        if(icon){
+          let i = this.icons.indexOf(icon)
+          this.icons.splice(i,1)
+          this.icons = [icon, ...this.icons]
+        }
       })
     }
   }

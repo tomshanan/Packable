@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { MatInput } from '@angular/material';
 
 export interface NameInputChangeEvent {
   oldValue:string,
@@ -11,12 +12,13 @@ export interface NameInputChangeEvent {
   templateUrl: './name-input.component.html',
   styleUrls: ['./name-input.component.css']
 })
-export class NameInputComponent implements OnInit {
+export class NameInputComponent implements OnInit,AfterViewInit {
   @Input() title: string = 'Item';
   @Input() value: string = '';
   @Input() usedNames: string[] = [];
   @Output() valueChange = new EventEmitter<string>()
   @Output() changeEvent = new EventEmitter<NameInputChangeEvent>()
+  @ViewChild('editNameInput') editNameInput: ElementRef;
   allowedName: string;
  
 /**
@@ -46,6 +48,11 @@ export class NameInputComponent implements OnInit {
       Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), 
       this.validate_usedName.bind(this)
     ])
+  }
+  ngAfterViewInit(){
+    setTimeout(()=>{
+      this.editNameInput.nativeElement.focus()
+    },100)
   }
   emitChange(){
     this.valueChange.emit(this.nameInput.value)

@@ -4,19 +4,24 @@
     flex-direction: row;
     align-items: center;
     height: 75px;
+    margin: 5px 0px;
 }
 .flex-item{
     padding: 5px;
 }
 .flex-item.content{
+    color: black;
     padding-left: 12px;
     flex-grow: 1;
+}
+.disabled .content{
+    opacity: 0.6;
 }
 .flex-item.actionIcon{
     padding-right: 12px;
     flex-grow: 0;
     transition:all 300ms;
 }
-.cardButton:hover .actionIcon{
+.cardButton:not(.disabled):hover .actionIcon{
     padding-right: 5px;
 }

@@ -15,18 +15,18 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
     this.init();
   }
 
-  @Input() icon: string = '001-man';
+  @Input() icon: string = 'default';
   @Input('name') inputName: string = 'Traveler'
   @Input() showName: boolean = false;
   @Input() isInteractive: boolean = false;
   @Input() isSelected: boolean = false;
   @Input() isButton: boolean = false;
   @Input() dim: boolean = false;
-  @Input() inputWidth: string = "50px";
+  @Input('width') inputWidth: string = "50px";
   @Input('color') inputColor: string = 'white';
   @Input() avatar:Avatar;  // will override icon and color
   @Input() profile:Profile;  // will override avatar
-  @Input() profileId:string; // will override profile
+  @Input() profileId:string; // will override profile with store selector
   @Input() inline:boolean = false;
 
   @ViewChild('profile') profileIcon: ElementRef;

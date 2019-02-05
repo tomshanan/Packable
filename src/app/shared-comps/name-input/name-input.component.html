@@ -4,7 +4,9 @@
   name="name" 
   [formControl]="nameInput" 
   (change)="emitChange()"
-  matInput-autofocus
+  (keyup)="emitChange()"
+  autofocus
+  autocomplete="off"
   #editNameInput>
 
   <button mat-button 

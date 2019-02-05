@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ElementRef, Renderer2, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { isDefined } from '@app/shared/global-functions';
 
 @Component({
   selector: 'app-dialog-header',
@@ -13,6 +14,7 @@ export class DialogHeaderComponent implements OnInit,OnChanges {
 @ViewChild('headerElement') headerElement: ElementRef;
 @Output() close = new EventEmitter<void>();
 @Output() return = new EventEmitter<void>();
+noHeader: boolean;
 
   constructor(
     private el: ElementRef,
@@ -21,10 +23,14 @@ export class DialogHeaderComponent implements OnInit,OnChanges {
 
   ngOnInit() {
     this.resize()
+    this.noHeader = !isDefined(this.header) && !isDefined(this.super);
   }
   ngOnChanges(changes:SimpleChanges){
     if(changes['maxWidth']){
       this.resize()
+    }
+    if(changes['header'] || changes['super']){
+      this.noHeader = !isDefined(this.header) && !isDefined(this.super);
     }
   }
   resize(){

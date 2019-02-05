@@ -119,6 +119,10 @@ export class CollectionFactory {
      * @param ids the Collection Id
      * @param profileIds optional: Profile ID, will return the collection from the profile, or return null if not found in profile. Omit to find the original collection.
      */
+    public getOriginalsFromStoreAndMakeComplete():CollectionComplete[]{
+        let collections = this.storeSelector.originalCollections
+        return this.makeCompleteArray(collections)
+    }
     public getCompleteById(id: string, profileId?:string): CollectionComplete {
         if(profileId){
             return this.getCompleteFromProfile(id, profileId)

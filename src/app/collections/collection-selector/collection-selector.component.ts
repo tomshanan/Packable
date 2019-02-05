@@ -1,16 +1,18 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { SelectedList } from '../../shared/services/selected-list';
 import { buttonAction } from '../collection-details-card/collection-details-card.component';
 import { iif } from 'rxjs';
 import { L } from '@angular/core/src/render3';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { NewProfileDialogComponent } from '@app/profiles/new-profile-dialog/new-profile-dialog.component';
 
 @Component({
   selector: 'collection-selector',
   templateUrl: './collection-selector.component.html',
   styleUrls: ['./collection-selector.component.css'],
 })
-export class CollectionSelectorComponent implements OnInit, OnChanges {
+export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy {
   @Input() useFilter: boolean = false;
   @Input() collections: CollectionComplete[];
   @Input() selected: string[] = [];
@@ -20,11 +22,17 @@ export class CollectionSelectorComponent implements OnInit, OnChanges {
   list: SelectedList;
   viewCollections: CollectionComplete[];
 
-  constructor() { }
+  constructor(
+    public dialogRef:MatDialogRef<any>
+  ) { }
 
   ngOnInit() {
     this.list = new SelectedList(...this.selected)
     this.initViewCollections();
+    this.dialogRef.updateSize('99vw','100%')
+  }
+  ngOnDestroy(){
+    this.dialogRef.updateSize('99vw','auto')
   }
   initViewCollections() {
     this.viewCollections = this.collections.slice();

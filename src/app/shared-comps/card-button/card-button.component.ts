@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { appColors } from '@app/shared/app-colors';
 
 @Component({
@@ -13,7 +13,6 @@ export class CardButtonComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.appColors.active.ripple
   }
 
 }

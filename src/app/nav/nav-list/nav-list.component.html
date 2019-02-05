@@ -4,7 +4,7 @@
             *ngIf="canView(listItem)" 
             class="nav-link navLink text-right" 
             [ngClass]="{'small': listItem.size=='sub'}"
-            [routerLink]="[listItem.link]" 
+            (click)="routeTo(listItem.link)"
             routerLinkActive="active">
             {{listItem.text}}
         </a>
@@ -17,8 +17,7 @@
             *ngIf="canView(listItem)"
             class="nav-link navLink text-right" 
             [ngClass]="{'small': listItem.size=='sub'}"
-            [routerLink]="['/user']" 
-            [fragment]="listItem.fragment"
+            (click)="routeTo('/user', listItem.fragment)"
             routerLinkActive="active">
             {{listItem.text}}
         </a>

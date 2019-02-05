@@ -1,10 +1,11 @@
 
 <name-input
-title="Profile"
+title="Traveler"
 [(value)]='profileName'
 [usedNames]='usedProfileNames'
-(changeEvent)='onChangeName($event)'>
+(changeEvent)='onChangeName($event)' #nameInput>
 </name-input>
+<p class="form-heading">Select Icon</p>
 <horizontal-icon-selector stepWidth="50">
     <icon-selector
         [icons]="icons"

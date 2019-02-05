@@ -66,6 +66,8 @@ export class ProfileSelectorPanelComponent implements OnInit  {
       width:'99vw',
       maxWidth: '500px',
       maxHeight: '99vh',
+      autoFocus: false,
+      disableClose: true,
     })
   }
 }

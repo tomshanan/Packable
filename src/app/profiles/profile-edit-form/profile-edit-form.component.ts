@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Profile } from '../../shared/models/profile.model';
 import { FormControl } from '@angular/forms';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
-import { NameInputChangeEvent } from '../../shared-comps/name-input/name-input.component';
+import { NameInputChangeEvent, NameInputComponent } from '../../shared-comps/name-input/name-input.component';
 import { IconService } from '../../shared/services/icon.service';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
+import { isDefined } from '../../shared/global-functions';
 
 @Component({
   selector: 'profile-edit-form',
@@ -14,11 +15,14 @@ import { ProfileFactory } from '../../shared/factories/profile.factory';
 export class ProfileEditFormComponent implements OnInit {
   @Input() profile: Profile;
   @Output() profileChange = new EventEmitter<Profile>()
+  @Output() validChange = new EventEmitter<boolean>()
   edittedProfile: Profile;
   valid: boolean = true;
   usedProfileNames:string[] = []
   icons: string[] = []
   
+  @ViewChild('nameInput') nameInput: NameInputComponent;
+
   profileName: string;
   selectedIcon: string[] = [];
 
@@ -27,26 +31,45 @@ export class ProfileEditFormComponent implements OnInit {
     private iconService: IconService,
     private proFac: ProfileFactory,
   ) { 
-    this.icons = this.iconService.profileIcons.icons.slice()
+    this.icons = this.iconService.profileIcons.icons.slice().filter(icon=>icon!='default')
   }
 
   ngOnInit() {
     this.edittedProfile = this.proFac.duplicateProfile(this.profile)
     this.profileName = this.edittedProfile.name
     this.usedProfileNames = this.storeSelector.profiles.map(p=>p.name.toLowerCase())
-    this.selectedIcon = [this.edittedProfile.avatar.icon]
+    let icon = this.edittedProfile.avatar.icon
+    this.selectedIcon = icon !='default' ? [icon] : [];
+    this.initialValidation();
+  }
+
+  initialValidation(){
+    if(isDefined(this.profileName) && isDefined(this.selectedIcon)){
+      this.valid = true
+    } else {
+      this.valid = false
+    }
+    this.validChange.emit(this.valid)
   }
 
   onChangeName(e:NameInputChangeEvent){
     this.edittedProfile.name = this.profileName
-    this.valid = e.valid
     this.emitChange()
   }
   onChangeIcon(){
     this.edittedProfile.avatar.icon = this.selectedIcon[0]
     this.emitChange()
   }
+  checkValidation(){
+    if(this.selectedIcon.clearUndefined().length>0 && this.nameInput.nameInput.valid){
+      this.valid = true
+    } else {
+      this.valid = false
+    }
+    this.validChange.emit(this.valid)
+  }
   emitChange(){
     this.profileChange.emit(this.edittedProfile)
+    this.checkValidation()
   }
 }

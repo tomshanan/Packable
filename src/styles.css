@@ -1,7 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
+.test-overlay-class {
+    border: 1px solid green;
+}
 .full-height{
     
     min-height: 100vh;
@@ -175,11 +177,12 @@ input.rule-input{
 }
 
 .form-heading{
-    font-size:1.1em;
+    font-size:0.75em;
     display: block;
     margin-top: 1em;
     margin-bottom: 0.2em;
-    font-weight: 100;
+    font-weight: 400;
+    color:rgba(0, 0, 0, 0.54);
 }
 
 .form-border{
@@ -431,6 +434,9 @@ button.mat-icon-button.mini{
 }
 .mat-dialog-container{
     overflow: hidden !important;
+}
+.mat-dialog-content{
+    max-height: unset;
 }
 .listEditing  .mat-content, .listEditing .mat-expansion-panel-header-title{
     overflow: visible!important;

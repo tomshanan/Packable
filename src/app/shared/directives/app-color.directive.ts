@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostBinding, Renderer2, HostListener, Input, OnInit, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, HostBinding, Renderer2, HostListener, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { color, appColors } from '../app-colors';
 import { isDefined } from '../global-functions';
 
@@ -9,7 +9,7 @@ import { isDefined } from '../global-functions';
     '[style.cursor]': '"pointer"',
   }
 })
-export class AppColorDirective implements OnInit {
+export class AppColorDirective implements OnInit, OnChanges {
   element: any;
   @Input('appColor') inputColor:keyof appColors = 'action';
   @Input('appColorTarget') targetElement;
@@ -52,6 +52,14 @@ export class AppColorDirective implements OnInit {
     if(this.targetElement){
       this.element = this.targetElement
     }
+    this.setInitialColor()
+  }
+  ngOnChanges(changes:SimpleChanges){
+    if(changes['inputColor']){
+      this.setInitialColor()
+    }
+  }
+  setInitialColor(){
     this.color = this.appColors[this.inputColor]
     this.renderer.setStyle(this.element,'color',this.color.inactive)
   }

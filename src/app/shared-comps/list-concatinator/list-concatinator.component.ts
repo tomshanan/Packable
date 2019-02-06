@@ -1,20 +1,32 @@
-import { Component, OnInit, Input, HostBinding, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { Component, OnInit, Input, HostBinding, ElementRef, ViewChild, Renderer2, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { WindowService } from '../../shared/services/window.service';
-import { element } from 'protractor';
+import { isDefined } from '../../shared/global-functions';
+
+interface viewObject {
+  text: string,
+  size: number,
+  show: boolean
+}
 
 @Component({
   selector: 'list-concatinator',
   templateUrl: './list-concatinator.component.html',
   styleUrls: ['./list-concatinator.component.css'],
 })
-export class ListConcatinatorComponent implements OnInit {
+export class ListConcatinatorComponent implements OnInit, OnChanges,AfterViewInit {
   @Input('list') stringArray: string[] = [];
   @ViewChild('textContainer') textContainer: ElementRef;
   @ViewChild('testArea') testArea: ElementRef;
+  @ViewChild('moreEl') moreEl: ElementRef;
+
   output: string = '';
   allStrings: string[] = [];
+  viewStrings: viewObject[] = [];
   numberUsed: number = 0;
-  get numberUnused() { return this.allStrings.length - this.numberUsed }
+  numberUnused: number = 0;
+  showAll: boolean = false;
+
+
 
   constructor(
     private windowService: WindowService,
@@ -23,55 +35,82 @@ export class ListConcatinatorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    let timeout = setTimeout(() => { }, 0)
     this.assemble()
-    this.windowService.change.subscribe(() => {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => { this.assemble() }, 400)
-    })
+    this.windowService.change.subscribe(()=>this.updateViewObject())
   }
-  assemble() {
+  ngAfterViewInit(){
+  }
+  ngOnChanges(changes: SimpleChanges){
+    if(changes['stringArray']){
+      this.assemble()
+    }
+  }
+  assemble(){
     this.removeAll();
+  }
+
+  removeAll(){
+    this.viewStrings = [];
+    const childElements = this.testArea.nativeElement.children;
+    for (let child of childElements) {
+      this.renderer.removeChild(this.testArea.nativeElement, child);
+    }
+    this.appendAll()
+  }
+
+  appendAll() {
     this.allStrings = this.stringArray.slice();
     this.numberUsed = 0
     for (let i = 0; this.allStrings.length > i; i++) {
+      let string = this.allStrings[i]
       let newEl = this.renderer.createElement('span')
-      let newText = this.renderer.createText(this.allStrings[i])
+      let newText = this.renderer.createText(string+", ")
       this.renderer.appendChild(newEl, newText)
-      let elSize = this.getSize(newEl)
-      console.log(`${elSize} + ${this.textWidth()} = ${elSize + this.textWidth()} (${this.containerWidth()})`)
-      if (elSize + this.textWidth() <= this.containerWidth()) {
-        this.append(newEl)
-        console.log('added:',newEl)
-        this.numberUsed++
-      } else {
-        break;
-      }
+      let elSize = this.appendTestAndGetSize(newEl)
+      this.viewStrings.push({
+        text: string,
+        size: elSize,
+        show: false
+      })
     }
-    console.log(`unused: ${this.numberUnused}`);
+    this.updateViewObject()
   }
-  removeAll(){
-    const childElements = this.textContainer.nativeElement.children;
-    for (let child of childElements) {
-      this.renderer.removeChild(this.textContainer.nativeElement, child);
-      console.log(`removed:`,child)
-    }
+  updateViewObject(){
+    let allowedWidth = this.containerWidth() // minus appendix
+    this.numberUsed = 0
+    this.numberUnused = 0
+    let items = this.viewStrings.length
+    this.viewStrings.reduce((total,obj,i)=>{
+      total += obj.size
+      obj.show = total + this.appendixWidth() < allowedWidth || (i===items-1 && this.numberUnused == 0 && total<allowedWidth)
+      obj.show ? this.numberUsed++ : (this.numberUnused++, total-=obj.size)
+      return total
+    }, 0)
   }
+  
   containerWidth(): number {
     return this.element.nativeElement.clientWidth
   }
-  textWidth(): number {
-    return this.textContainer.nativeElement.scrollWidth
-  }
+  appendixWidth(): number {
+    return this.moreEl.nativeElement.scrollWidth
 
-  getSize(element: any): number {
+  }
+  appendTestAndGetSize(element: any): number {
+    let widthBefore = this.testArea.nativeElement.scrollWidth
     this.renderer.appendChild(this.testArea.nativeElement, element)
-    let width = this.testArea.nativeElement.scrollWidth
-    this.renderer.removeChild(this.testArea.nativeElement, element)
+    let width = this.testArea.nativeElement.scrollWidth - widthBefore
     return width
   }
-  append(element: any) {
-    this.renderer.appendChild(this.textContainer.nativeElement, element)
+
+  appendToTest(element: any) {
+    this.renderer.appendChild(this.testArea.nativeElement, element)
   }
 
+  toggleShowAll(state?:boolean){
+    if(isDefined(state)){
+      this.showAll = state
+    } else {
+      this.showAll = !this.showAll
+    }
+  }
 }

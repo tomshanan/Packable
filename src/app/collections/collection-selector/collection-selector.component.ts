@@ -1,38 +1,55 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, OnDestroy, ElementRef, AfterViewInit, Renderer2, ViewChild } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { SelectedList } from '../../shared/services/selected-list';
 import { buttonAction } from '../collection-details-card/collection-details-card.component';
-import { iif } from 'rxjs';
-import { L } from '@angular/core/src/render3';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { NewProfileDialogComponent } from '@app/profiles/new-profile-dialog/new-profile-dialog.component';
+import { WindowService } from '../../shared/services/window.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'collection-selector',
   templateUrl: './collection-selector.component.html',
   styleUrls: ['./collection-selector.component.css'],
 })
-export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy {
+export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy, AfterViewInit {
   @Input() useFilter: boolean = false;
+  @Input() filterInput: string = '';
+
   @Input() collections: CollectionComplete[];
   @Input() selected: string[] = [];
   @Output() selectedChange = new EventEmitter<string[]>()
-
-  filterInput: string = ''
+  @ViewChild('collectionList') collectionList: ElementRef;
   list: SelectedList;
   viewCollections: CollectionComplete[];
+  subscription: Subscription;
 
   constructor(
-    public dialogRef:MatDialogRef<any>
+    public dialogRef:MatDialogRef<any>,
+    private hostElement: ElementRef,
+    private renderer: Renderer2,
+    private windowService: WindowService
   ) { }
 
   ngOnInit() {
     this.list = new SelectedList(...this.selected)
     this.initViewCollections();
-    this.dialogRef.updateSize('99vw','100%')
+    this.dialogRef.addPanelClass('dialog-full-height')
+  }
+  ngAfterViewInit(){
+    console.log('collection selector ngAfterViewInit')
+    this.resizeHostElement()
+    this.subscription = this.windowService.change.subscribe(()=>{
+      this.resizeHostElement()
+    })
+  }
+  resizeHostElement(){
+    let height = this.hostElement.nativeElement.parentElement.clientHeight
+    this.renderer.setStyle(this.hostElement.nativeElement, 'min-height', (height-80)+"px")
   }
   ngOnDestroy(){
-    this.dialogRef.updateSize('99vw','auto')
+    this.dialogRef.removePanelClass('dialog-full-height')
+    this.subscription.unsubscribe();
   }
   initViewCollections() {
     this.viewCollections = this.collections.slice();
@@ -43,6 +60,9 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy 
     }
     if (changes['collections'] && this.viewCollections) {
       this.initViewCollections()
+    }
+    if(changes['filterInput']){
+      this.inputChange()
     }
   }
   toggleSelection(id: string, action: buttonAction) {
@@ -62,10 +82,6 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy 
     } else {
       this.initViewCollections();
     }
-  }
-  clearInput(){
-    this.filterInput = '';
-    this.inputChange();
   }
 
   filterViewCollections(input: string) {
@@ -100,7 +116,7 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy 
         } else {
           track.cons = 0
           track.nonConsec++
-          let penalty = 10*track.nonConsec**2 + 2*inputIndex
+          let penalty = 30*track.nonConsec + 10*inputIndex
           score -= penalty;
           reasons.push(`-${penalty} = '${letter}' missing and non consecutive x ${track.nonConsec}`)
         }

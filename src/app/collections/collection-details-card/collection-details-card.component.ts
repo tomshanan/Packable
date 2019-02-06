@@ -1,6 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { emit } from 'cluster';
+import { WindowService } from '../../shared/services/window.service';
+import { Subscription } from 'rxjs';
 
 
 export type actionType = 'button' | 'selection'
@@ -13,23 +15,34 @@ export type buttonAction = 'select' | 'deselect' | 'delete' | 'add' | 'remove';
   templateUrl: './collection-details-card.component.html',
   styleUrls: ['./collection-details-card.component.css']
 })
-export class CollectionDetailsCardComponent implements OnInit {
+export class CollectionDetailsCardComponent implements OnInit,OnDestroy {
+
 @Input('collection') collection: CollectionComplete;
 @Input('actionType') actionType: actionType = 'button';
 @Input('selectionState') selectionState: selectionState = false
 @Input('buttonState') buttonState: buttonState = 'add'
 @Input('disabled') disabled: boolean = false;
 @Output('actionClick') actionClick = new EventEmitter<buttonAction>()
+buttonWidth(): string {
+  return this.windowService.max('xs') ? '45' : '55';
+};
+sub: Subscription;
 
 buttonStates = ['added' , 'delete' , 'add' , 'remove']
-buttonWidth: number = 55;
 packableNameList: string[] = []
 packableNameListString: string;
-  constructor() { }
+  constructor(
+    private windowService: WindowService, // used in template
+    private changeDetection: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     this.packableNameList = this.collection.packables.map(p=> p.name)
     this.packableNameListString = this.packableNameList.join(', ')
+    // this.sub = this.windowService.change.subscribe(()=>this.changeDetection.detectChanges())
+  }
+  ngOnDestroy(){
+    // this.sub.unsubscribe()
   }
 
   action(){

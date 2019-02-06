@@ -71,6 +71,7 @@ import { AppColorDirective } from '../shared/directives/app-color.directive';
 import { NewProfileDialogComponent } from '../profiles/new-profile-dialog/new-profile-dialog.component';
 import { CollectionSelectorComponent } from '../collections/collection-selector/collection-selector.component';
 import { CardButtonComponent } from '../shared-comps/card-button/card-button.component';
+import { SearchFieldComponent } from '../shared-comps/search-field/search-field.component';
 
 let imports = [
     ProfilesComponent,
@@ -131,7 +132,7 @@ let imports = [
         RouterModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent, ProfileSelectorPanelComponent, EditProfileDialogComponent, ProfileEditFormComponent, NameInputComponent, HorizontalIconSelectorComponent, AppColorDirective, NewProfileDialogComponent, CollectionSelectorComponent, CardButtonComponent],
+    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent, ProfileSelectorPanelComponent, EditProfileDialogComponent, ProfileEditFormComponent, NameInputComponent, HorizontalIconSelectorComponent, AppColorDirective, NewProfileDialogComponent, CollectionSelectorComponent, CardButtonComponent, SearchFieldComponent],
     exports: [...imports]
 })
 export class SharedModule {

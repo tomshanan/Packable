@@ -6,7 +6,7 @@
         [svgIcon]="buttonState"
         [disabled]="disabled"
         (onClick)="action()"
-        [buttonWidth]="buttonWidth+'px'">
+        [buttonWidth]="buttonWidth()+'px'">
         </icon-text-button>
   </ng-container>
   <ng-container *ngIf="actionType=='selection'">
@@ -14,13 +14,16 @@
       [svgIcon]="selectionState ? 'added' : 'unselected'"
       [disabled]="disabled"
       (onClick)="action()"
-      [buttonWidth]="buttonWidth+'px'">
+      [buttonWidth]="buttonWidth()+'px'">
       </icon-text-button>
   </ng-container>
 </div>
 <div class="flex-item detailBox">
-  <p class="detailBox-header">{{collection.name}}</p>
-  <div class="packable-list-container">{{packableNameListString}}</div>  
+  <p class="detailBox-header" [class.small-screen]="windowService.max('xs')">{{collection.name}}</p>
+  <div class="packable-list-container">
+    <list-concatinator [list]="packableNameList">
+    </list-concatinator>
+  </div>  
 </div>
 </div>
 </mat-card>

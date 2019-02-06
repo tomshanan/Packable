@@ -7,18 +7,12 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     width:100%;
 }
 
 .flex-item{
     padding:5px;
-}
-.flex-item:first-of-type{
-    padding-left: 12px;
-}
-.flex-item:last-of-type{
-    padding-right: 12px;
 }
 .actionBox{
     box-sizing: content-box;
@@ -31,6 +25,9 @@
 .detailBox-header{
     font-size: 1.5em;
 }
+.detailBox-header.small-screen{
+    font-size: 1.2em;
+}
 .packable-list-container{
     box-sizing: border-box;
     width:100%;
@@ -39,5 +36,4 @@
     text-overflow: ellipsis;
     font-size: 0.8em;
     line-height: 1.2em;
-    height: 1.2em;
 }

@@ -17,7 +17,7 @@ type profileCreationMethod = 'template' | 'copy' | 'new'
 @Component({
   selector: 'app-new-profile-dialog',
   templateUrl: './new-profile-dialog.component.html',
-  styleUrls: ['./new-profile-dialog.component.css'],
+  styleUrls: ['../../shared/css/dialog.css','./new-profile-dialog.component.css'],
   animations: [transitionTrigger]
 })
 export class NewProfileDialogComponent implements OnInit, OnDestroy {
@@ -27,7 +27,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   profile = new Profile();
   @ViewChild('profileForm') profileForm: ProfileEditFormComponent;
   profileFormValid: boolean;
-
+  searchString = '';
   collections: CollectionComplete[];
   selectedCollections: string[] = [];
 
@@ -44,6 +44,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.collections = this.colFac.getOriginalsFromStoreAndMakeComplete()
     // ADD REST FROM REMOTE DATABASE
+    
   }
   ngOnDestroy(){
   }

@@ -1,65 +1,76 @@
 <app-dialog-header [header]="stepHeading()" (close)="onClose()" [showReturn]="step>1" (return)="backStep()"></app-dialog-header>
 
-<mat-dialog-content>
-  
-  <div *ngIf="step === 1" @transitionTrigger>
-    <profile-edit-form [(profile)]="profile" (validChange)="profileEditFormValidation($event)" #profileForm>
-    </profile-edit-form>
-    <div class="mt-3">
-      <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('new')">
-        Create From Scratch
-        <p class="small text-muted">
-          Select and import the collections
-        </p>
-      </card-button>
-      <card-button disabled="true">
-        Create from Template
-        <p class="small text-muted">
-           Templates come with pre-selected collections.
+
+
+<div class="step-container" *ngIf="step === 1" @transitionTrigger>
+  <div class="dialog-flex-container">
+    <div class="dialog-row scrollable">
+      <profile-edit-form [(profile)]="profile" (validChange)="profileEditFormValidation($event)" #profileForm>
+      </profile-edit-form>
+      <div class="mt-3">
+        <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('new')">
+          Create From Scratch
+          <p class="small text-muted">
+            Select and import the collections
           </p>
-      </card-button>
-      <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('copy')">
-        Copy Existing Traveler
-        <p class="small text-muted">
+        </card-button>
+        <card-button disabled="true">
+          Create from Template
+          <p class="small text-muted">
+            Templates come with pre-selected collections.
+          </p>
+        </card-button>
+        <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('copy')">
+          Copy Existing Traveler
+          <p class="small text-muted">
             Use all the collections and settings of another Traverler you have already created.
-           </p>
-      </card-button>
+          </p>
+        </card-button>
+      </div>
     </div>
-
-  </div>
-  <div *ngIf="step === 2" [ngSwitch]="method" @transitionTrigger>
-    <div class="text-center">
-      <profile-icon [profile]="profile" [showName]="true" width="65px">
-      </profile-icon>
-    </div>
-    <ng-container *ngSwitchCase="'new'">
-      <p class="form-heading">Select the collections you would like this Traveler to make use of. You can always add more later.</p>
-      <collection-selector 
-        [collections]="collections" 
-        [(selected)]="selectedCollections">
-      </collection-selector>
-    </ng-container>
-    <ng-container *ngSwitchCase="'copy'">
-      Copy
-    </ng-container>
-    <ng-container *ngSwitchCase="'template'">
-      Template
-    </ng-container>
-  </div>
-  <div *ngIf="step === 3" @transitionTrigger>
-    <dialog-confirm-button>
-
-      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
-        <mat-icon>check</mat-icon>
-      </button>
-    </dialog-confirm-button>
   </div>
 
 
+</div>
+<div class="step-container" *ngIf="step === 2" [ngSwitch]="method" @transitionTrigger>
+  <ng-container *ngSwitchCase="'new'">
+      <div class="dialog-flex-container">
+          <div class="dialog-row">
+            <div class="text-center">
+                <profile-icon [profile]="profile" [showName]="true" width="65px">
+                </profile-icon>
+                <p class="form-heading">Select the collections you would like this Traveler to make use of. You can always add more
+                    later.</p>
+              </div>
+              <search-field
+              [(value)]="searchString"
+              placeholder="Search Collections">
+              </search-field> 
+          </div>
+          <div class="dialog-row scrollable">
+              <collection-selector [collections]="collections" [(selected)]="selectedCollections" [filterInput]="searchString">
+              </collection-selector>
+              <dialog-confirm-button>
+                  <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="true">
+                    <mat-icon>check</mat-icon>
+                  </button>
+                </dialog-confirm-button>
+          </div>
+      </div>
+  </ng-container>
 
+  <ng-container *ngSwitchCase="'copy'">
+    Copy
+  </ng-container>
 
-
-
-
-
-</mat-dialog-content>
+  <ng-container *ngSwitchCase="'template'">
+    Template
+  </ng-container>
+</div>
+<div class="step-container" *ngIf="step === 3" @transitionTrigger>
+  <dialog-confirm-button>
+    <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</div>

@@ -96,6 +96,6 @@
   <p class="small text-muted">These Collections have been removed from all Travelers and are currently not being used
     with any customization.</p>
   <ng-container *ngFor="let collection of unusedCollectionList">
-    <collection-details-card [collection]="collection" actionType="button" buttonState="add" (actionClick)="pushCollection(collection)"></collection-details-card>
+    <collection-details-card [collection]="collection" actionType="button" buttonWidth="45" buttonState="add" (actionClick)="pushCollection(collection)"></collection-details-card>
   </ng-container>
 </ng-container>

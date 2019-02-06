@@ -97,9 +97,9 @@
   }
   .profile.interactive:not(.selected) .mat-icon{
     transition: all 300ms ease;
-    bottom: -20%;
+    bottom: -15%;
   }
   .profile.interactive:not(.selected):hover .mat-icon{
     transition: all 300ms ease;
-    bottom: -15%;
+    bottom: -10%;
   }

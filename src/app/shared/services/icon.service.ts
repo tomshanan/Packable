@@ -86,7 +86,7 @@ export class IconService {
         icons.forEach(icon => {
             this.matIconRegistry.addSvgIcon(
                 icon,
-                this.domSanitizer.bypassSecurityTrustResourceUrl(`src/assets/icons/${path}/${icon}.svg`)
+                this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/${path}/${icon}.svg`)
             );
         });
     }

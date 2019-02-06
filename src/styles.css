@@ -1,11 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-.test-overlay-class {
-    border: 1px solid green;
+.dialog-full-height {
+    max-height: 100%;
+    height:100%;
 }
+.dialog-full-height mat-dialog-content {
+    max-height: 100%!important;
+}
+mat-icon > svg {
+    vertical-align: unset;
+}
+.mat-form-field-prefix, .mat-form-field-suffix{
+    align-self: flex-end;
+}
+
 .full-height{
-    
     min-height: 100vh;
 }
 
@@ -413,6 +423,7 @@ button.mat-icon-button.mini{
 .mini-mat-form-field .mat-form-field-infix {
     border: 0;
     padding: 0;
+    align-self: center;
 }
 .mini-mat-form-field .mat-form-field-label-wrapper, .mini-mat-form-field .mat-form-field-label {
     top: 0;
@@ -435,9 +446,7 @@ button.mat-icon-button.mini{
 .mat-dialog-container{
     overflow: hidden !important;
 }
-.mat-dialog-content{
-    max-height: unset;
-}
+
 .listEditing  .mat-content, .listEditing .mat-expansion-panel-header-title{
     overflow: visible!important;
 }

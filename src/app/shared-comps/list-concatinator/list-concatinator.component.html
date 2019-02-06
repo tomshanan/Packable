@@ -1,4 +1,9 @@
-<div class="textContainer" #textContainer>
-
+<div class="textContainer" #textContainer [class.showAll]="showAll">
+    <ng-container *ngFor="let obj of viewStrings">
+        <span class="string" *ngIf="obj.show || showAll">{{obj.text}}</span>
+    </ng-container>
+    <div class="more pointer" #moreEl [class.hide]="numberUnused == 0 || showAll" appColor="action" (click)="toggleShowAll(true)">...+{{numberUnused}}</div>
+    <div class="less pointer" *ngIf="showAll" appColor="action" (click)="toggleShowAll(false)"> show less</div>
 </div>
+
 <div class="testArea" #testArea></div>

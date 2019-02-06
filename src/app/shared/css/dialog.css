@@ -23,3 +23,26 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+.step-container{
+    height: 100%;
+    width:100%;
+}
+.dialog-flex-container{
+    height: 100%;
+    display: flex;
+    flex-direction:  column;
+    align-items: stretch;
+}
+.dialog-flex-container .dialog-row {
+    padding: 0 24px;
+    margin: 0 -24px;
+    overflow: hidden;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+.dialog-flex-container .dialog-row.scrollable{
+    overflow: auto;
+    flex-grow: 1;
+    flex-shrink: 1;
+}

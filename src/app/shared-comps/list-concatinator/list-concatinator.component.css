@@ -1,19 +1,38 @@
-:host{
+:host {
     display: block;
-    white-space: nowrap;
     width: 100%;
-    overflow: hidden;
 }
-.textContainer{
+
+.textContainer {
     display: inline-block;
     white-space: nowrap;
 }
-.textContainer > span:not(:last-of-type)::after{
-    content:', ';
+.textContainer.showAll{
+    white-space: normal;
 }
-.testArea{
+
+.textContainer>span.string:not(:last-of-type)::after {
+    content: ', ';
+}
+
+.testArea {
     display: inline-block;
     overflow: hidden;
     width: 0px;
     height: 0px;
+}
+
+.more,.less {
+    min-width: 25px;
+    display: inline-block;
+}
+.less{
+    padding-left: 0.5em;
+}
+
+.hide {
+    width: 0px;
+    min-width: 0px;
+    height: 0px;
+    overflow: hidden;
 }

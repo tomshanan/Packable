@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, Directive, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Directive, ElementRef, Renderer2, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { RippleAnimationConfig } from '@angular/material';
 import { WindowService, screenSize } from '../../shared/services/window.service';
 import { isDefined } from '@app/shared/global-functions';
@@ -10,7 +10,7 @@ import { appColors, color } from '../../shared/app-colors';
   templateUrl: './icon-text-button.component.html',
   styleUrls: ['./icon-text-button.component.css']
 })
-export class IconTextButtonComponent implements OnInit {
+export class IconTextButtonComponent implements OnInit,OnChanges {
   @Input('text') text: string = '';
   @Input('svgIcon') svgIcon: string;
   @Input('matIcon') matIcon: string;
@@ -45,6 +45,12 @@ export class IconTextButtonComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.initSizing()
+  }
+  ngOnChanges(changes:SimpleChanges){
+    this.initSizing()
+  }
+  initSizing(){
     this.color = this.appColors[this.inputColor]
     if (this.setSize()){
       this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', this.buttonWidth)

@@ -65,7 +65,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private selectorService: StoreSelectorService,
     private destService: DestinationDataService,
-    private windowService: WindowService, // used by template
+    public windowService: WindowService, // used by template
     private weatherService: WeatherService,
     private fb:FormBuilder,
     private profileFactory: ProfileFactory,

@@ -41,7 +41,7 @@ export class DateRangeSelectorComponent implements OnInit {
   selectorOpen = false;
   minDate: NgbDateStruct;
 
-  constructor(private calendar: NgbCalendar, private windowSize:WindowService) {
+  constructor(private calendar: NgbCalendar, public windowSize:WindowService) {
     this.minDate = calendar.getToday();
   }
 
@@ -89,7 +89,7 @@ export class DateRangeSelectorComponent implements OnInit {
     }
   }
 
-  onDateSelection(date: NgbDateStruct, d: NgbInputDatepicker) {
+  onDateSelection(date: NgbDateStruct) {
     if (!this.fromDate && !this.toDate) {
       this.fromDate = date;
     } else if (this.fromDate && !this.toDate && after(date, this.fromDate)) {

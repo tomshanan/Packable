@@ -39,7 +39,7 @@ export class ChooseProfileDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: DialogData_ChooseProfiles,
     public dialogRef: MatDialogRef<ChooseProfileDialogComponent>,
     private store: Store<fromApp.appState>,
-    private windowService: WindowService
+    public windowService: WindowService
   ) { 
     this.collection = data.collection;
     this.profileGroup = data.profileGroup;

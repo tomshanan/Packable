@@ -9,7 +9,7 @@ import { appColors } from '@app/shared/app-colors';
 export class CardButtonComponent implements OnInit {
   @Input() disabled:boolean = false;
   constructor(
-    private appColors:appColors
+    public appColors:appColors
   ) { }
 
   ngOnInit() {

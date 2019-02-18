@@ -13,16 +13,16 @@ export class HorizontalIconSelectorComponent implements OnInit, OnDestroy {
   @Output('scrollEvent') emitScrollEvent = new EventEmitter<number>();
   public scrolling = new Subject<number>()
 
-  private moreLeft:boolean;
-  private moreRight:boolean;
-  private windowSub:Subscription;
+  public moreLeft:boolean;
+  public moreRight:boolean;
+  public windowSub:Subscription;
 
   @ViewChild('selectorContainer') selectorContainer: ElementRef;
   @ViewChild('contentContainer') contentContainer: ElementRef;
   @ViewChild('scrollArea') scrollArea: ElementRef;
 
   constructor(
-    private windowService:WindowService,
+    public windowService:WindowService,
     private renderer: Renderer2
   ) { }
 

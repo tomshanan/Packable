@@ -28,7 +28,7 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy,
     public dialogRef:MatDialogRef<any>,
     private hostElement: ElementRef,
     private renderer: Renderer2,
-    private windowService: WindowService
+    public windowService: WindowService
   ) { }
 
   ngOnInit() {

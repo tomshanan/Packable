@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
     private colFac:CollectionFactory,
     private iconService:IconService,
     private storage: StorageService,
-    private windowService: WindowService,
+    public windowService: WindowService,
     private rendere: Renderer2,
   ) { 
     // this.icons = iconService.profileIcons.icons.slice()

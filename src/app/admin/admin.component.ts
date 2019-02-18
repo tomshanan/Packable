@@ -17,7 +17,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   loadingSimulate: boolean = false
   sub:Subscription;
   constructor(
-    private user: UserService,
+    public user: UserService,
     private store: Store<fromApp.appState>,
     private storeSelector: StoreSelectorService
   ) { }

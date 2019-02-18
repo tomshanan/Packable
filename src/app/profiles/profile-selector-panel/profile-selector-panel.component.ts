@@ -34,7 +34,7 @@ export class ProfileSelectorPanelComponent implements OnInit  {
   selectorOpen: boolean = true
 
   constructor(
-    private windowService: WindowService,
+    public windowService: WindowService,
     private dialog: MatDialog,
   ) { }
 

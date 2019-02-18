@@ -34,7 +34,7 @@ export class ListConcatinatorComponent implements OnInit, OnChanges,AfterContent
 
 
   constructor(
-    private windowService: WindowService,
+    public windowService: WindowService,
     private element: ElementRef,
     private renderer: Renderer2,
   ) { }

@@ -23,7 +23,7 @@ import { StoreSelectorService } from '../../shared/services/store-selector.servi
 export class AdminUserTableComponent implements OnInit,OnDestroy, DoCheck, AfterContentInit, AfterContentChecked,AfterViewInit,AfterViewChecked {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  dataSource: AdminUserTableDataSource;
+  public dataSource: AdminUserTableDataSource;
   constructor(
     private storageService:StorageService,
     private dialog: MatDialog,

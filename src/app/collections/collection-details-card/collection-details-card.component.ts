@@ -35,7 +35,7 @@ buttonStates = ['added' , 'delete' , 'add' , 'remove']
 packableNameList: string[] = []
 packableNameListString: string;
   constructor(
-    private windowService: WindowService, // used in template
+    public windowService: WindowService, // used in template
     private changeDetection: ChangeDetectorRef
   ) { }
 

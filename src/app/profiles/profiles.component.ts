@@ -45,7 +45,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private profileFactory: ProfileFactory,
     private colFac: CollectionFactory,
-    private windowService: WindowService,
+    public windowService: WindowService,
     private cotnext: ContextService,
     public dialog: MatDialog,
 

@@ -72,7 +72,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     private wcFactory: weatherFactory,
     public dialog: MatDialog,
     private modalService: NgbModal,
-    private windowService: WindowService // for template
+    public windowService: WindowService // for template
   ) { }
 
   ngOnInit() {

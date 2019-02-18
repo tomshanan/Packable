@@ -9,7 +9,7 @@ import { UserService } from '../../shared/services/user.service';
 export class UsersComponent implements OnInit {
 
   constructor(
-    private user: UserService
+    public user: UserService
   ) { }
 
   ngOnInit() {

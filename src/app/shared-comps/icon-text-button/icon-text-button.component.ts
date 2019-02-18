@@ -38,7 +38,7 @@ export class IconTextButtonComponent implements OnInit,OnChanges {
   </icon-text-button>
    */
   constructor(
-    private windowService: WindowService,
+    public windowService: WindowService,
     private appColors: appColors,
     private hostElement: ElementRef,
     private renderer: Renderer2,

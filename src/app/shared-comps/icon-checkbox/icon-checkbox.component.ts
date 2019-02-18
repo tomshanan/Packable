@@ -25,7 +25,7 @@ export class IconCheckboxComponent implements OnInit {
 
   constructor(
     private iconService: IconService,
-    private wService: WindowService,
+    public wService: WindowService,
     private renderer: Renderer2,
     private elRef: ElementRef
   ) { }

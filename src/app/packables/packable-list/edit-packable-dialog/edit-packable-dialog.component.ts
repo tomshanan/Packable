@@ -60,7 +60,7 @@ export class EditPackableDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<EditPackableDialogComponent>,
     private wFactory: weatherFactory,
     private store: Store<fromApp.appState>,
-    private windowService: WindowService,
+    public windowService: WindowService,
     private context: ContextService
   ) {
     this.packable = data.pakable || new PackableComplete();

@@ -58,7 +58,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private context: ContextService,
     private storeSelector: StoreSelectorService,
-    private windowService: WindowService,
+    public windowService: WindowService,
     public dialog: MatDialog,
     private store: Store<fromApp.appState>,
     private proFac: ProfileFactory,

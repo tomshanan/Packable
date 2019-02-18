@@ -31,7 +31,7 @@ export class WeatherConditionsFormComponent implements OnInit, OnChanges {
   limitTemp: boolean = false;
   
   constructor(
-    private windowService: WindowService,
+    public windowService: WindowService,
   ) {
     
   }

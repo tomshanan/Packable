@@ -27,7 +27,7 @@ export class AdminUserTableDataSource extends DataSource<User> {
     private paginator: MatPaginator, 
     private sort: MatSort, 
     private store: Store<fromApp.appState>,
-    private data
+    public data
     ) {
     super();
   }

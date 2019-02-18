@@ -1,6 +1,6 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
 import { Observable, of as observableOf, merge, Subscription } from 'rxjs';
 import { userPermissions } from '../../user/store/userState.model';
 import { StoreSelectorService } from '@app/core';
@@ -21,12 +21,13 @@ import { User } from '../store/adminState.model';
  */
 export class AdminUserTableDataSource extends DataSource<User> {
   dataObservable: Observable<User[]>;
-  data: User[] = [];
+  // data: User[] = [];
   subs: Subscription;
   constructor(
     private paginator: MatPaginator, 
     private sort: MatSort, 
     private store: Store<fromApp.appState>,
+    private data
     ) {
     super();
   }
@@ -42,9 +43,10 @@ export class AdminUserTableDataSource extends DataSource<User> {
   connect(): Observable<User[]> {
     this.dataObservable = this.store.select('admin').pipe(map(state=>state.users))
     this.subs = this.dataObservable.subscribe(data=>{
-        this.data = data
-        console.log('received data:',data);
         
+          this.data = data
+          console.log('received data:',data);  
+          
     })
       
     // Combine everything that affects the rendered data into one update
@@ -59,10 +61,11 @@ export class AdminUserTableDataSource extends DataSource<User> {
     // Set the paginator's length
     this.paginator.length = this.data.length
 
-
-    return merge(...dataMutations).pipe(map(() => {
+    return merge(...dataMutations).pipe(
+    map(() => {
+      console.log('emitted', this.data);
       return this.getPagedData(this.getSortedData([...this.data]));
-    }));
+    }))
   }
 
   /**

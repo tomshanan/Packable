@@ -6,5 +6,6 @@ export interface User {
     permissions: userPermissions
 }
 export interface State {
-    users: User[]
+    users: User[],
+    simulateUser: boolean,
 }

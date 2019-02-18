@@ -9,6 +9,7 @@ import { Trip, displayTrip } from '../models/trip.model';
 import { DestinationDataService } from './location-data.service';
 import * as moment from 'moment';
 import { PackingList } from '../models/packing-list.model';
+import {State as AdminState} from '@app/admin/store/adminState.model'
 
 @Injectable()
 export class StoreSelectorService{    
@@ -16,20 +17,21 @@ export class StoreSelectorService{
     public collections_obs:Observable<{collections: CollectionOriginal[]}>;
     public profiles_obs:Observable<{profiles: Profile[]}>;
     public trips_obs:Observable<{trips: Trip[],packingLists:PackingList[]}>;
-    public adminUserData_obs: Observable<{}>
+    public adminState_obs: Observable<AdminState>
 
     private _originalPackables: PackableOriginal[];
     private _originalCollections: CollectionOriginal[];
     private _profiles: Profile[];
     private _trips: Trip[];
     private _packingLists: PackingList[]
+    private _adminState: AdminState
     
     public get originalPackables(): PackableOriginal[] {return this._originalPackables.slice()}
     public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
     public get profiles(): Profile[] {return this._profiles.slice()}
     public get trips(): Trip[]  {return this._trips.slice()}
     public get packingLists(): PackingList[] { return this._packingLists.slice()}
-
+    public get adminState(): AdminState { return this._adminState}
 
 
     constructor(private store:Store<fromApp.appState>, private destServices: DestinationDataService){
@@ -37,6 +39,7 @@ export class StoreSelectorService{
         this.collections_obs = this.store.select('collections');
         this.profiles_obs = this.store.select('profiles');
         this.trips_obs = this.store.select('trips');
+        this.adminState_obs = this.store.select('admin')
 
         this.packables_obs.subscribe(packablesState =>{
             this._originalPackables = packablesState.packables;
@@ -51,7 +54,9 @@ export class StoreSelectorService{
             this._trips = tripState.trips;
             this._packingLists = tripState.packingLists
         })
-        
+        this.adminState_obs.subscribe(adminState =>{
+            this._adminState = adminState
+        })
     }
 
     getTripById(id:string):Trip{

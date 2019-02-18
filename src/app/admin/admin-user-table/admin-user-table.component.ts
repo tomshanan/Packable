@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy, AfterContentInit } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, AfterContentInit, DoCheck, AfterContentChecked, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { AdminUserTableDataSource } from './admin-user-table-datasource';
 import { StorageService } from '../../shared/storage/storage.service';
@@ -13,13 +13,14 @@ import * as fromApp from '@shared/app.reducers';
 import { reducers } from '../../shared/app.reducers';
 import { User } from '../store/adminState.model';
 import * as adminActions from '../store/admin.actions';
+import { StoreSelectorService } from '../../shared/services/store-selector.service';
 
 @Component({
   selector: 'admin-user-table',
   templateUrl: './admin-user-table.component.html',
   styleUrls: ['./admin-user-table.component.css']
 })
-export class AdminUserTableComponent implements OnInit,OnDestroy {
+export class AdminUserTableComponent implements OnInit,OnDestroy, DoCheck, AfterContentInit, AfterContentChecked,AfterViewInit,AfterViewChecked {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSource: AdminUserTableDataSource;
@@ -27,7 +28,8 @@ export class AdminUserTableComponent implements OnInit,OnDestroy {
     private storageService:StorageService,
     private dialog: MatDialog,
     private user: UserService,
-    private store: Store<fromApp.appState>
+    private store: Store<fromApp.appState>,
+    private storeSelector: StoreSelectorService,
     ){}
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['id', 'alias', 'permissions', 'actions'];
@@ -37,15 +39,34 @@ export class AdminUserTableComponent implements OnInit,OnDestroy {
   // }
   ngOnInit() {
     // console.log('ngOnInit');
+    let data = this.storeSelector.adminState.users
     this.storageService.adminListenToUserData(true)
-    this.dataSource = new AdminUserTableDataSource(this.paginator, this.sort, this.store);
+    this.dataSource = new AdminUserTableDataSource(this.paginator, this.sort, this.store, data);
     // console.log('set dataSource:', this.dataSource);
+  
+  }
+  ngDoCheck(){
+    // console.log('ngDoCheck',arguments);
     
   }
+  ngAfterContentInit(){
+    // console.log('ngAfterContentInit',arguments);
+    
+  }
+  ngAfterContentChecked(){
+    // console.log('ngAfterContentChecked', arguments)
 
-  
+  }
+  ngAfterViewInit(){
+    // console.log('ngAfterViewInit',arguments)
+  }
+  ngAfterViewChecked(){
+    // console.log('ngAfterViewChecked',arguments)
+  }
  
   ngOnDestroy(){
+    // console.log('destoryed', arguments);
+    
     this.storageService.adminListenToUserData(false)
   }
 
@@ -58,7 +79,7 @@ export class AdminUserTableComponent implements OnInit,OnDestroy {
     }
     return strings.join(', ')
   }
-
+s
   actionPermissions(row:User){
     if(this.user.id !== row.id && this.user.permissions.setPermissions){
       let permissionsDialog = this.dialog.open(SetPermissionsDialogComponent, {

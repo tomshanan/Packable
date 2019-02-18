@@ -191,7 +191,7 @@ export class StorageService {
                         alias:records[record].settings.alias
                         }) 
                     }
-                    this.store.dispatch(new adminActions.adminSetState({users:newData}))
+                    this.store.dispatch(new adminActions.adminSetUsers(newData))
                 })
             } else {
                 //this.adminUserConfig_Obs.complete()

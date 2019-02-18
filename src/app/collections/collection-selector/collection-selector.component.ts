@@ -15,9 +15,9 @@ import { Subscription } from 'rxjs';
 export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy, AfterViewInit {
   @Input() useFilter: boolean = false;
   @Input() filterInput: string = '';
-
   @Input() collections: CollectionComplete[];
   @Input() selected: string[] = [];
+  @Input() starIcons: boolean = false;
   @Output() selectedChange = new EventEmitter<string[]>()
   @ViewChild('collectionList') collectionList: ElementRef;
   list: SelectedList;
@@ -44,8 +44,9 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy,
     })
   }
   resizeHostElement(){
-    let height = this.hostElement.nativeElement.parentElement.clientHeight
-    this.renderer.setStyle(this.hostElement.nativeElement, 'min-height', (height-80)+"px")
+    let parent = this.hostElement.nativeElement.parentElement
+    let height = parent.offsetHeight
+    this.renderer.setStyle(this.hostElement.nativeElement, 'min-height', (height-82)+"px")
   }
   ngOnDestroy(){
     this.dialogRef.removePanelClass('dialog-full-height')

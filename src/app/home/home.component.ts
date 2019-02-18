@@ -36,15 +36,16 @@ export class HomeComponent implements OnInit {
     console.log(e);
   }
   ngOnInit() {
-    let collections = this.store.originalCollections;
-    this.collections = this.colFac.makeCompleteArray(collections)
-    let randomSelection = randomBetween(0, this.collections.length-1)
-    this.selectedCollections.push(this.collections[randomSelection].id)
   }
   
   generateData(){
-    if(confirm("This Will override your user data, and save it! Are you sure?")){
+    if(confirm("This Will override your user data, Are you sure?")){
       this.storage.generateDummyData();
+    }
+  }
+  saveDummyDate(){
+    if(confirm("This Will SAVE the dummy data! Are you sure?")){
+      this.storage.setAllUserData();
     }
   }
 

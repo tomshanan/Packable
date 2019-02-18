@@ -1,29 +1,24 @@
-<mat-card class="collection-card">
-<div class="flex-container">
-<div class="flex-item actionBox">
-  <ng-container *ngIf="actionType=='button'">
-        <icon-text-button
-        [svgIcon]="buttonState"
-        [disabled]="disabled"
-        (onClick)="action()"
-        [buttonWidth]="buttonWidth()+'px'">
-        </icon-text-button>
-  </ng-container>
-  <ng-container *ngIf="actionType=='selection'">
-      <icon-text-button
-      [svgIcon]="selectionState ? 'added' : 'unselected'"
-      [disabled]="disabled"
-      (onClick)="action()"
-      [buttonWidth]="buttonWidth()+'px'">
-      </icon-text-button>
-  </ng-container>
+<div class="collection-card-container">
+  <mat-card class="collection-card">
+    <div class="flex-container">
+      <div class="flex-item actionBox">
+        <ng-container *ngIf="actionType=='button'">
+          <icon-text-button [svgIcon]="buttonState" [disabled]="disabled" (onClick)="action()" [buttonWidth]="buttonWidth()+'px'">
+          </icon-text-button>
+        </ng-container>
+        <ng-container *ngIf="actionType=='selection'">
+          <icon-text-button [svgIcon]="selectionState ? selectionOnIcon : selectionOffIcon" [disabled]="disabled" (onClick)="action()"
+            [buttonWidth]="buttonWidth()+'px'">
+          </icon-text-button>
+        </ng-container>
+      </div>
+      <div class="flex-item detailBox">
+        <p class="detailBox-header" [class.small-screen]="windowService.max('xs')">{{collection.name}}</p>
+        <div class="packable-list-container">
+          <list-concatinator [list]="packableNameList">
+          </list-concatinator>
+        </div>
+      </div>
+    </div>
+  </mat-card>
 </div>
-<div class="flex-item detailBox">
-  <p class="detailBox-header" [class.small-screen]="windowService.max('xs')">{{collection.name}}</p>
-  <div class="packable-list-container">
-    <list-concatinator [list]="packableNameList">
-    </list-concatinator>
-  </div>  
-</div>
-</div>
-</mat-card>

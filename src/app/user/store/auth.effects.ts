@@ -10,6 +10,8 @@ import * as tripActions  from '../../trips/store/trip.actions';
 import * as profileActions from '../../profiles/store/profile.actions';
 import * as collectionActions from '../../collections/store/collections.actions'
 import * as packableActions from '../../packables/store/packables.actions'
+import * as uesrActions from '../../user/store/user.actions'
+import { defaultUserSettings } from './userState.model';
 
 @Injectable()
 export class AuthEffects {
@@ -55,10 +57,17 @@ export class AuthEffects {
              )
         }),
     )
+    @Effect({dispatch:false}) authRegister = this.actions$.pipe(
+        ofType(AuthActions.REGISTER),
+        tap(()=>{
+            this.storageService.setInitialUserConfig()
+        })
+    )
     @Effect({dispatch:false}) authGetUserData = this.actions$.pipe(
         ofType(AuthActions.LOGIN),
         tap(()=>{
-            this.storageService.getAllUserData()
+            this.storageService.getAllUserItems()
+            this.storageService.getUserConfig()
         })
     )
     @Effect() authLogOut = this.actions$.pipe(
@@ -68,6 +77,8 @@ export class AuthEffects {
                 new packableActions.setPackableState([]),
                 new collectionActions.setCollectionState([]),
                 new profileActions.setProfileState([]),
+                new uesrActions.setUserSettings(null),
+                new uesrActions.setUserPermissions(null),
                 new tripActions.setTripState({trips:[],packingLists:[]})
             ]
         })

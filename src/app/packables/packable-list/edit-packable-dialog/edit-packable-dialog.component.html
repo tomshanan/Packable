@@ -14,8 +14,8 @@
         </app-packable-edit-form>
     </div>
     <div  @transitionTrigger *ngIf="step == 2">
-        <p class="text-center text-success">
-            The Packable has been {{ isNew ? 'created' : 'updated'}} successfully!
+        <p class="text-center">
+           Push changes to Collections and Travelers:
         </p>
         <app-choose-collections-dialog [PackableId]="packable.id" [(selectedIds)]="selectedCollections"
             (confirm)="onConfirmCollections($event)">

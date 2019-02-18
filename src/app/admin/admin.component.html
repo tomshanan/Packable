@@ -1,0 +1,10 @@
+<app-nav [header]="'Admin Settings'" [icon]="'fas fa-user-shield'"></app-nav>
+
+<ng-container *ngIf="user.permissions.userManagement; else noPermissions">
+Admin settings go here
+</ng-container>
+<ng-template #noPermissions>
+  <p class="text-muted small">
+    It looks like you don't have the permissions to view this data
+  </p>
+</ng-template>

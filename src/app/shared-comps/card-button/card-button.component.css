@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    height: 75px;
+    min-height: 75px;
     margin: 5px 0px;
 }
 .flex-item{
@@ -13,6 +13,8 @@
     color: black;
     padding-left: 12px;
     flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
 }
 .disabled .content{
     opacity: 0.6;
@@ -23,5 +25,5 @@
     transition:all 300ms;
 }
 .cardButton:not(.disabled):hover .actionIcon{
-    padding-right: 5px;
+    transform:translateX(5px);
 }

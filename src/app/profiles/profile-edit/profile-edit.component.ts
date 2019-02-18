@@ -105,7 +105,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
 
   prepareEditMode(memoryProfile:Profile){
     this.editMode = true;
-    this.editingProfile = this.profileFactory.getCompleteProfiles([memoryProfile])[0];
+    this.editingProfile = this.profileFactory.makeComplete([memoryProfile])[0];
     this.editingProfileId = this.editingProfile.id;
   }
   navSetup(){

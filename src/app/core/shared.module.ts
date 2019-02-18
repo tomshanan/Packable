@@ -72,6 +72,11 @@ import { NewProfileDialogComponent } from '../profiles/new-profile-dialog/new-pr
 import { CollectionSelectorComponent } from '../collections/collection-selector/collection-selector.component';
 import { CardButtonComponent } from '../shared-comps/card-button/card-button.component';
 import { SearchFieldComponent } from '../shared-comps/search-field/search-field.component';
+import { AdminComponent } from '../admin/admin.component';
+import { AdminUserTableComponent } from '../admin/admin-user-table/admin-user-table.component';
+import { MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/material';
+import { SetPermissionsDialogComponent } from '../admin/set-permissions-dialog/set-permissions-dialog.component';
+import { UsersComponent } from '../admin/users/users.component';
 
 let imports = [
     ProfilesComponent,
@@ -119,7 +124,25 @@ let imports = [
     CollectionSettingsComponent,
     SlideToggleWithTextComponent, 
     PackableCardComponent, 
-    ImportPackablesDialogComponent
+    ImportPackablesDialogComponent,
+    AdminUserTableComponent,
+    AnimateSizeDirective, 
+    IconTextButtonComponent,
+    CollectionDetailsCardComponent, 
+    ListConcatinatorComponent, 
+    NewCollectionDialogComponent, 
+    ImportPackablesSelectorComponent, 
+    ProfileSelectorPanelComponent, 
+    EditProfileDialogComponent, 
+    ProfileEditFormComponent, 
+    NameInputComponent, 
+    HorizontalIconSelectorComponent, 
+    AppColorDirective, 
+    NewProfileDialogComponent, 
+    CollectionSelectorComponent, 
+    CardButtonComponent, 
+    SearchFieldComponent, 
+    AdminComponent,
 ]
 @NgModule({
     imports: [
@@ -130,9 +153,12 @@ let imports = [
         AppMaterialModule,
         HttpClientModule,
         RouterModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, AnimateSizeDirective, IconTextButtonComponent, CollectionDetailsCardComponent, ListConcatinatorComponent, NewCollectionDialogComponent, ImportPackablesSelectorComponent, ProfileSelectorPanelComponent, EditProfileDialogComponent, ProfileEditFormComponent, NameInputComponent, HorizontalIconSelectorComponent, AppColorDirective, NewProfileDialogComponent, CollectionSelectorComponent, CardButtonComponent, SearchFieldComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent],
     exports: [...imports]
 })
 export class SharedModule {

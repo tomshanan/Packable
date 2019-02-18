@@ -8,6 +8,7 @@
 }
 .mobile .scroll-area{
     overflow-x: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .content-container {

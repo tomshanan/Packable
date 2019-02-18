@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
-import { emit } from 'cluster';
 import { WindowService } from '../../shared/services/window.service';
 import { Subscription } from 'rxjs';
 
@@ -20,6 +19,10 @@ export class CollectionDetailsCardComponent implements OnInit,OnDestroy {
 @Input('collection') collection: CollectionComplete;
 @Input('actionType') actionType: actionType = 'button';
 @Input('selectionState') selectionState: selectionState = false
+
+@Input('selectionOnIcon') selectionOnIcon: string = 'added'
+@Input('selectionOffIcon') selectionOffIcon: string = 'unselected'
+
 @Input('buttonState') buttonState: buttonState = 'add'
 @Input('disabled') disabled: boolean = false;
 @Output('actionClick') actionClick = new EventEmitter<buttonAction>()

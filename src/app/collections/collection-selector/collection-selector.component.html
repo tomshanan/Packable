@@ -3,6 +3,8 @@
         <collection-details-card
         [collection]="collection"
         actionType="selection"
+        [selectionOnIcon]="starIcons ? 'star' : 'added'"
+        [selectionOffIcon]="starIcons ? 'star_border' : 'unselected'"
         [selectionState]="list.isSelected(collection.id)"
         (actionClick)="toggleSelection(collection.id, $event)">
         </collection-details-card>

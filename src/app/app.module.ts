@@ -25,13 +25,18 @@ import { ImportPackablesDialogComponent } from './packables/packable-list/import
 import { NewCollectionDialogComponent } from './collections/collection-list/new-collection-dialog/new-collection-dialog.component';
 import { EditProfileDialogComponent } from './profiles/edit-profile-dialog/edit-profile-dialog.component';
 import { NewProfileDialogComponent } from './profiles/new-profile-dialog/new-profile-dialog.component';
+import { AdminUserTableComponent } from './admin/admin-user-table/admin-user-table.component';
+import { MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/material';
+import { SetPermissionsDialogComponent } from './admin/set-permissions-dialog/set-permissions-dialog.component';
+import { userEffects } from './user/store/user.effects';
+import { adminEffects } from './admin/store/admin.effects';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-  ],
+    ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -39,7 +44,7 @@ import { NewProfileDialogComponent } from './profiles/new-profile-dialog/new-pro
     CoreModule,
     SharedModule,
     StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects, PackableEffects, TripEffects])
+    EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects, PackableEffects, TripEffects, userEffects, adminEffects]),
   ],
   bootstrap: [AppComponent],
   entryComponents: [
@@ -52,7 +57,8 @@ import { NewProfileDialogComponent } from './profiles/new-profile-dialog/new-pro
     ImportPackablesDialogComponent,
     EditProfileDialogComponent,
     NewCollectionDialogComponent,
-    NewProfileDialogComponent
+    NewProfileDialogComponent,
+    SetPermissionsDialogComponent
   ]
 
 })

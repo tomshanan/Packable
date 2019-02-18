@@ -1,0 +1,33 @@
+.full-width-table {
+  width: 100%;
+}
+.admin-user-table{
+  width: 100%;
+  overflow: hidden;
+}
+.admin-user-table .mat-cell {
+  overflow: hidden;
+  white-space: normal;
+}
+.admin-user-table .mat-cell:not(:last-of-type) {
+  padding-right: 12px;
+}
+.admin-user-table .wrap-break-word {
+  overflow-wrap:break-word;
+  word-wrap:break-word;
+  word-break: break-all;
+}
+
+.cell-id{
+  font-size: 0.5em;
+  line-height: 1em;
+}
+.cell-alias{
+
+}
+.cell-permissions{
+  font-size: 0.8em;
+}
+.cell-actions{
+  
+}

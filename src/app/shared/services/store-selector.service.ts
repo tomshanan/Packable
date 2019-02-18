@@ -2,9 +2,9 @@ import { Store } from "@ngrx/store";
 import * as fromApp from '../app.reducers'
 import { Injectable } from '@angular/core';
 import { Observable } from "rxjs";
-import { PackableOriginal, PackableAny, PackableComplete, PackablePrivate } from '../models/packable.model';
-import { CollectionOriginal, CollectionAny, CollectionComplete, isCollectionOriginal, isCollectionPrivate } from '../models/collection.model';
-import { Profile, ProfileComplete } from "../models/profile.model";
+import { PackableOriginal, PackablePrivate } from '../models/packable.model';
+import { CollectionOriginal } from '../models/collection.model';
+import { Profile } from "../models/profile.model";
 import { Trip, displayTrip } from '../models/trip.model';
 import { DestinationDataService } from './location-data.service';
 import * as moment from 'moment';
@@ -16,6 +16,7 @@ export class StoreSelectorService{
     public collections_obs:Observable<{collections: CollectionOriginal[]}>;
     public profiles_obs:Observable<{profiles: Profile[]}>;
     public trips_obs:Observable<{trips: Trip[],packingLists:PackingList[]}>;
+    public adminUserData_obs: Observable<{}>
 
     private _originalPackables: PackableOriginal[];
     private _originalCollections: CollectionOriginal[];
@@ -50,6 +51,7 @@ export class StoreSelectorService{
             this._trips = tripState.trips;
             this._packingLists = tripState.packingLists
         })
+        
     }
 
     getTripById(id:string):Trip{

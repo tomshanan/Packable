@@ -8,6 +8,7 @@ import { takeUntil, filter, take } from 'rxjs/operators';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { MatDialog } from '@angular/material';
 import { NewProfileDialogComponent } from '../new-profile-dialog/new-profile-dialog.component';
+import { isDefined } from '../../shared/global-functions';
 
 @Component({
   selector: 'profile-selector-panel',
@@ -69,5 +70,12 @@ export class ProfileSelectorPanelComponent implements OnInit  {
       autoFocus: false,
       disableClose: true,
     })
+    newProfileDialog.afterClosed().pipe(take(1)).subscribe((profile?:Profile)=>{
+      if(isDefined(profile)){
+        this.selected = profile.id
+        this.onSelectedProfiles([profile.id])
+      }
+    })
   }
+  
 }

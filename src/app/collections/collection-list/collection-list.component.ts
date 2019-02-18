@@ -100,7 +100,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   }
   getProfileCompleteCollections(): CollectionComplete[]{
     return this.proFac
-    .getCompleteProfiles(this.storeSelector.profiles)
+    .makeComplete(this.storeSelector.profiles)
     .findId(this.profileId)
     .collections
   }

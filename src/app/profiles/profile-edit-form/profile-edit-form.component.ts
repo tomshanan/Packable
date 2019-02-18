@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { Profile } from '../../shared/models/profile.model';
+import { Profile, ProfileComplete } from '../../shared/models/profile.model';
 import { FormControl } from '@angular/forms';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { NameInputChangeEvent, NameInputComponent } from '../../shared-comps/name-input/name-input.component';
@@ -13,10 +13,10 @@ import { isDefined } from '../../shared/global-functions';
   styleUrls: ['./profile-edit-form.component.css']
 })
 export class ProfileEditFormComponent implements OnInit {
-  @Input() profile: Profile;
+  @Input() profile: ProfileComplete;
   @Output() profileChange = new EventEmitter<Profile>()
   @Output() validChange = new EventEmitter<boolean>()
-  edittedProfile: Profile;
+  edittedProfile: ProfileComplete;
   valid: boolean = true;
   usedProfileNames:string[] = []
   icons: string[] = []
@@ -35,7 +35,7 @@ export class ProfileEditFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.edittedProfile = this.proFac.duplicateProfile(this.profile)
+    this.edittedProfile = new ProfileComplete(this.profile.id, this.profile.name, this.profile.collections.slice(),this.profile.avatar)
     this.profileName = this.edittedProfile.name
     this.usedProfileNames = this.storeSelector.profiles.map(p=>p.name.toLowerCase())
     let icon = this.edittedProfile.avatar.icon

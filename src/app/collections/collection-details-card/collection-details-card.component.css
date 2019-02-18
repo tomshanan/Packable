@@ -1,7 +1,8 @@
+.collection-card-container{
+    padding:5px 0px;
+}
 .collection-card{
     padding: 0;
-    margin-top: 5px;
-    margin-bottom: 10px;
 }
 .flex-container{
     box-sizing: border-box;

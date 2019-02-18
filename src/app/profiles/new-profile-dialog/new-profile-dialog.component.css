@@ -1,0 +1,23 @@
+.profile-card-flex{
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.profile-card-icon{
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-self: flex-start
+}
+.profile-card-details{
+    flex-grow: 1;
+    padding-left:0.5em;
+    overflow: hidden;
+}
+.profile-card-details-collection-list{
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.8em;
+    line-height: 1.2em;
+} 

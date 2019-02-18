@@ -22,7 +22,9 @@ export function randomBetween(min:number,max:number):number {
   return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-
+export function path(...arr:string[]):string{
+  return arr.join('/')
+}
 
 export class FilteredArray {
   private _original: filterItem[];

@@ -11,6 +11,8 @@ import { PackingListComponent } from '../trips/packing-list/packing-list.compone
 import { UserComponent } from '../user/user.component';
 import { AuthGuard } from '../user/auth-guard.service';
 import { HomeComponent } from '../home/home.component';
+import { AdminComponent } from '../admin/admin.component';
+import { UsersComponent } from '../admin/users/users.component';
 
 const appRoutes:Routes = [
     {path: '', pathMatch: 'full', component:HomeComponent},
@@ -20,6 +22,8 @@ const appRoutes:Routes = [
     {path: 'travelers', pathMatch: 'full', component:ProfilesComponent, canActivate: [AuthGuard]},
     {path: 'packables', pathMatch: 'full', component:PackablesComponent, canActivate: [AuthGuard]},
     {path: 'collections', pathMatch: 'full', component:CollectionsComponent, canActivate: [AuthGuard]},
+    {path: 'admin/settings', pathMatch: 'full', component:AdminComponent, canActivate: [AuthGuard]},
+    {path: 'admin/users', pathMatch: 'full', component:UsersComponent, canActivate: [AuthGuard]},
     {path: '**', redirectTo: 'user'}
 ];
 @NgModule({

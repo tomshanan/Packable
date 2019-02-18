@@ -34,43 +34,81 @@
 </div>
 <div class="step-container" *ngIf="step === 2" [ngSwitch]="method" @transitionTrigger>
   <ng-container *ngSwitchCase="'new'">
-      <div class="dialog-flex-container">
-          <div class="dialog-row">
-            <div class="text-center">
-                <profile-icon [profile]="profile" [showName]="true" width="65px">
-                </profile-icon>
-                <p class="form-heading">Select the collections you would like this Traveler to make use of. You can always add more
-                    later.</p>
-              </div>
-              <search-field
-              [(value)]="searchString"
-              placeholder="Search Collections">
-              </search-field> 
-          </div>
-          <div class="dialog-row scrollable">
-              <collection-selector [collections]="collections" [(selected)]="selectedCollections" [filterInput]="searchString">
-              </collection-selector>
-              <dialog-confirm-button>
-                  <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="true">
-                    <mat-icon>check</mat-icon>
-                  </button>
-                </dialog-confirm-button>
-          </div>
+    <div class="dialog-flex-container">
+      <div class="dialog-row">
+        <div class="text-center">
+          <profile-icon [profile]="profile" [showName]="true" width="65px">
+          </profile-icon>
+        </div>
+        <p class="form-heading">Import Collections:</p>
+        <search-field [(value)]="searchString" placeholder="Search Collections">
+        </search-field>
       </div>
+      <div class="dialog-row scrollable">
+        <collection-selector [collections]="collections" [(selected)]="selectedCollections" [filterInput]="searchString">
+        </collection-selector>
+        <dialog-confirm-button>
+          <button mat-fab class="mx-1" color="primary" (click)="onChooseOriginalCollections()" [disabled]="selectedCollections.length<1">
+            <mat-icon>check</mat-icon>
+          </button>
+        </dialog-confirm-button>
+      </div>
+    </div>
   </ng-container>
 
-  <ng-container *ngSwitchCase="'copy'">
-    Copy
-  </ng-container>
+<ng-container *ngSwitchCase="'copy'">
+    <div class="dialog-flex-container">
+        <div class="dialog-row">
+          <div class="text-center">
+            <profile-icon [profile]="profile" [showName]="true" width="65px">
+            </profile-icon>
+          </div>
+          <p class="form-heading">Select a Traveler to copy:</p>
+        </div>
+        <div class="dialog-row scrollable">
+            <ng-container *ngFor="let profile of allProfiles">
+                <card-button (click)="onChooseProfile(profile)">
+                  <div class="profile-card-flex">
+                    <div class="profile-card-icon">
+                      <profile-icon [profile]="profile" [showName]="false" width="50px">
+                      </profile-icon>
+                    </div>
+                    <div class="profile-card-details">
+                      <h5 class="p-0 m-0">{{profile.name}}</h5>
+                      <div class="profile-card-details-collection-list">
+                        <list-concatinator [list]="getCollectionListById(profile.id)" lines="2"></list-concatinator>
+                      </div>
+                    </div>
+                  </div>
+                </card-button>
+              </ng-container>            
+        </div>
+    </div>
+</ng-container>
 
-  <ng-container *ngSwitchCase="'template'">
-    Template
-  </ng-container>
+<ng-container *ngSwitchCase="'template'">
+  Template
+</ng-container>
+
 </div>
 <div class="step-container" *ngIf="step === 3" @transitionTrigger>
-  <dialog-confirm-button>
-    <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
-      <mat-icon>check</mat-icon>
-    </button>
-  </dialog-confirm-button>
-</div>
+    <div class="dialog-flex-container">
+        <div class="dialog-row">
+          <div class="text-center">
+            <profile-icon [profile]="profile" [showName]="true" width="65px">
+            </profile-icon>
+          </div>
+          <p class="form-heading">Import Collections:</p>
+        </div>
+        <div class="dialog-row scrollable">
+          <collection-selector [collections]="profile.collections" [starIcons]="true" [(selected)]="selectedEssentialCollections">
+          </collection-selector>
+          <dialog-confirm-button>
+              <button mat-fab class="mx-1" color="primary" (click)="onComplete()">
+                <mat-icon>check</mat-icon>
+              </button>
+          </dialog-confirm-button>
+        </div>
+      </div>
+  
+</div> 

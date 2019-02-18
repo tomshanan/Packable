@@ -12,6 +12,21 @@
         <br *ngIf="listItem.type == 'gap' && listItem.active">
     </ng-template>
     <br>
+    <ng-container *ngIf="adminViewReducer()">
+        <ng-template ngFor let-listItem [ngForOf]="adminNav">
+            <a 
+                *ngIf="adminCanView(listItem)"
+                class="nav-link navLink text-right" 
+                [ngClass]="{'small': listItem.size=='sub'}"
+                (click)="routeTo(listItem.link)"
+                routerLinkActive="active">
+                {{listItem.text}}
+            </a>
+            <br *ngIf="listItem.type == 'gap' && listItem.active">
+        </ng-template>
+        <br>
+    </ng-container>
+
     <ng-template ngFor let-listItem [ngForOf]="userNav">
         <a 
             *ngIf="canView(listItem)"

@@ -5,6 +5,29 @@ import * as fromAuth from '../../user/store/auth.reducers'
 import * as fromApp from '../../shared/app.reducers';
 import { Store } from '@ngrx/store';
 import { Router, ActivatedRoute } from '@angular/router';
+import { UserService } from '../../shared/services/user.service';
+import { userPermissions, permissionTypes } from '../../user/store/userState.model';
+
+interface listItem {
+  text:string,
+  size: 'main' | 'sub',
+  link:string,
+  showAuth: boolean,
+  showPublic: boolean,
+}
+interface userListItem {
+  text:string,
+  size: 'main' | 'sub',
+  showAuth: boolean,
+  showPublic: boolean,
+  fragment: string,
+}
+interface adminListItem {
+  text:string,
+  size: 'main' | 'sub',
+  link:string,
+  adminPermissions: permissionTypes[],
+}
 
 @Component({
   selector: 'app-nav-list',
@@ -18,6 +41,7 @@ export class NavListComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private user: UserService,
     private store: Store<fromApp.appState>,
     private router: Router,
     private activatedRoute: ActivatedRoute
@@ -28,10 +52,9 @@ export class NavListComponent implements OnInit {
     })
   }
   
-  mainNav = [
+  mainNav:listItem[] = [
     {
       text:'Home',
-      type:'text',
       size: 'main',
       link:'/',
       showAuth: true,
@@ -39,7 +62,6 @@ export class NavListComponent implements OnInit {
     },
     {
       text:'Trips',
-      type:'text',
       size: 'main',
       link:'/trips',
       showAuth: true,
@@ -47,7 +69,6 @@ export class NavListComponent implements OnInit {
     },
     {
       text:'Travelers',
-      type:'text',
       size: 'main',
       link:'/travelers',
       showAuth: true,
@@ -55,7 +76,6 @@ export class NavListComponent implements OnInit {
     },
     {
       text:'Collections',
-      type:'text',
       size: 'main',
       link:'/collections',
       showAuth: true,
@@ -63,22 +83,30 @@ export class NavListComponent implements OnInit {
     },
     {
       text:'Packables',
-      type:'text',
       size: 'main',
       link:'/packables',
       showAuth: true,
       showPublic: false
     },
+    
+  ]
+  adminNav: adminListItem[] = [
     {
-      type:'gap',
-      showAuth: false,
-      showPublic: false
+      text:'Admin Settings',
+      size: 'main',
+      link:'/admin/settings',
+      adminPermissions:['creator','userManagement']
+    },
+    {
+      text:'Users',
+      size: 'main',
+      link:'/admin/users',
+      adminPermissions:['userManagement']
     },
   ]
-  userNav = [
+  userNav: userListItem[] = [
     {
       text:'User Settings',
-      type:'text',
       size: 'sub',
       fragment:'settings',
       showAuth: true,
@@ -86,7 +114,6 @@ export class NavListComponent implements OnInit {
     },
     {
       text:'Login',
-      type:'text',
       size: 'sub',
       fragment:'login',
       showAuth: false,
@@ -94,7 +121,6 @@ export class NavListComponent implements OnInit {
     },
     {
       text:'Register',
-      type:'text',
       size: 'sub',
       fragment:'register',
       showAuth: false,
@@ -102,7 +128,6 @@ export class NavListComponent implements OnInit {
     },
     {
       text:'Logout',
-      type:'text',
       size: 'sub',
       fragment:'logout',
       showAuth: true,
@@ -118,7 +143,18 @@ export class NavListComponent implements OnInit {
       return listItem.showPublic
     }
   }
-
+  adminViewReducer():boolean{
+    return this.adminNav.some(v=>this.adminCanView(v))
+  }
+  adminCanView(listItem:{adminPermissions:permissionTypes[]}){
+    if(this.isAuthenticated && listItem.adminPermissions.some(p=>{
+      return !!this.user.permissions[p]
+    })){
+      return true
+    } else {
+      return false
+    }
+  }
   routeTo(link:string, fragment:string=""){
     let settings = fragment!="" ? {fragment:fragment} : {};
     this.router.navigate([link], settings)

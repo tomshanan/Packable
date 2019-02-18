@@ -1,0 +1,23 @@
+import { Injectable } from '@angular/core';
+import { Actions, Effect, ofType } from '@ngrx/effects';
+
+import * as userActions from './user.actions'
+import { StorageService } from '../../shared/storage/storage.service';
+import { tap } from 'rxjs/operators';
+
+@Injectable()
+export class userEffects{
+    constructor(
+        private actions$:Actions,
+        private storageService: StorageService
+    ){}
+    @Effect({dispatch: false}) 
+    updatePermissionsEffect = this.actions$.pipe(
+        ofType(
+            userActions.SET_USER_SETTINGS,
+            ),
+        tap(()=>{
+            this.storageService.setUserSettings()
+        })
+        )
+}

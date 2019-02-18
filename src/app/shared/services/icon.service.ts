@@ -41,6 +41,8 @@ export class IconService {
     appIcons:iconGroup = {
         path: 'app',
         icons: [
+            'star',
+            'star_border',
             'together',
             't-shirt',
             't-shirt2-add',

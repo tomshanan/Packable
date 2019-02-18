@@ -1,0 +1,8 @@
+<app-nav [header]="'Users'" [icon]="'fas fa-users'"></app-nav>
+
+<admin-user-table  *ngIf="user.permissions.userManagement; else noPermissions"></admin-user-table>
+<ng-template #noPermissions>
+  <p class="text-muted small">
+    It looks like you don't have the permissions to view this data
+  </p>
+</ng-template>

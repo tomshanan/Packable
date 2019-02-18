@@ -1,33 +1,39 @@
 :host {
     display: block;
     width: 100%;
+    font-size: 1em;
+    line-height: 1.1em;
 }
 
 .textContainer {
     display: inline-block;
-    white-space: nowrap;
 }
 .textContainer.showAll{
     white-space: normal;
+    height: auto;
 }
 
 .textContainer>span.string:not(:last-of-type)::after {
     content: ', ';
 }
-
+.string{
+    display: inline;
+}
 .testArea {
     display: inline-block;
     overflow: hidden;
+    white-space: nowrap;
     width: 0px;
     height: 0px;
 }
 
 .more,.less {
-    min-width: 25px;
+    min-width: 30px;
     display: inline-block;
 }
 .less{
     padding-left: 0.5em;
+    float:right;
 }
 
 .hide {

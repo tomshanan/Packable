@@ -15,23 +15,35 @@ export class ProfileFactory{
         private packableFactory: PackableFactory,
         private collectionFactory: CollectionFactory
     ){}
-        public duplicateProfile =(profile:Profile): Profile =>{
-            return new Profile(
-                profile.id,
-                profile.name,
-                profile.collections ? profile.collections.map(c=> this.collectionFactory.duplicatePrivateCollection(c)) : [],
-                profile.avatar ? profile.avatar : new Avatar(),
-            )
-        }
-    public getCompleteProfiles =(profiles: Profile[]): ProfileComplete[] =>{
+
+    public duplicateProfile =(profile:Profile): Profile =>{
+        return new Profile(
+            profile.id,
+            profile.name,
+            profile.collections ? profile.collections.map(c=> this.collectionFactory.duplicatePrivateCollection(c)) : [],
+            profile.avatar ? profile.avatar : new Avatar(),
+        )
+    }
+    public completeToPrivate(p: ProfileComplete): Profile{
+        return new Profile(
+            p.id,
+            p.name,
+            p.collections.map(c=>this.collectionFactory.completeToPrivate(c)),
+            new Avatar(p.avatar.icon, p.avatar.color)
+        )
+    }
+    public getAllProfilesAndMakeComplete():ProfileComplete[]{
+        let profiles = this.storeSelector.profiles
+        return this.makeComplete(profiles)
+    }
+    public makeComplete =(profiles: Profile[]): ProfileComplete[] =>{
         return profiles.map(profile => {
             let completeCollections = this.collectionFactory.makeCompleteArray(profile.collections)
             return new ProfileComplete(
                 profile.id,
                 profile.name,
                 completeCollections,
-                profile,
-                profile.avatar
+                new Avatar(profile.avatar.icon, profile.avatar.color)
             )
         })
     }
@@ -41,7 +53,7 @@ export class ProfileFactory{
             let p = this.storeSelector.getProfileById(id);
             p && profiles.push(p);
         })
-        return this.getCompleteProfiles(profiles);
+        return this.makeComplete(profiles);
     }
     public addEditCollection(profile:Profile,collection:CollectionPrivate):Profile{
         let colIndex = profile.collections.idIndex(collection.id)

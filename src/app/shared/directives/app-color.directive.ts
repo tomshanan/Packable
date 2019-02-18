@@ -6,13 +6,14 @@ import { isDefined } from '../global-functions';
   selector: '[appColor]',
   host: {
     '[style.transition]': '"all 200ms"',
-    '[style.cursor]': '"pointer"',
+    '[style.cursor]': 'disableState() ? "initial" : "pointer"',
   }
 })
 export class AppColorDirective implements OnInit, OnChanges {
   element: any;
   @Input('appColor') inputColor:keyof appColors = 'action';
   @Input('appColorTarget') targetElement;
+  @Input('disabled') disabled: boolean = false;
   color: color;
 
   @HostListener('mouseenter') onMouseEnter() {
@@ -45,32 +46,42 @@ export class AppColorDirective implements OnInit, OnChanges {
     private appColors:appColors,
     private renderer: Renderer2
   ) { 
-    this.element = this.elRef.nativeElement;
   }
+
   ngOnInit(){
-    console.log()
-    if(this.targetElement){
-      this.element = this.targetElement
+    this.initElement();
+  }
+  initElement(){
+    if(this.element){
+      this.renderer.removeStyle(this.element,'color')
     }
+    this.element = this.targetElement || this.elRef.nativeElement;
     this.setInitialColor()
   }
+
   ngOnChanges(changes:SimpleChanges){
     if(changes['inputColor']){
       this.setInitialColor()
     }
+    if(changes['targetElement']){
+      this.initElement()
+    }
   }
   setInitialColor(){
     this.color = this.appColors[this.inputColor]
-    this.renderer.setStyle(this.element,'color',this.color.inactive)
+    this.setColor(this.color.inactive)
   }
-  get disableState(){
-    return this.element.getAttribute('disabled')
+  disableState(){
+    let disabled = this.disabled
+    return disabled === true
   }
-  private setColor(color){
-    if(this.disableState === true){
-      this.renderer.setStyle(this.element,'color',this.color.disabled)
-    } else {
-      this.renderer.setStyle(this.element,'color',color)
-    }
+  private setColor(color:string){
+    if(this.element){
+      if(this.disableState()){
+        this.renderer.setStyle(this.element,'color',this.color.disabled)
+      } else {
+        this.renderer.setStyle(this.element,'color',color)
+      }
+    } 
   }
 }

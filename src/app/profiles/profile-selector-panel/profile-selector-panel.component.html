@@ -1,7 +1,7 @@
 <div class="pofileSelectorContainer" 
   #container>
   <div class="selectedProfile d-flex flex-row align-items-center"  [class.hide]="selectorOpen" *ngIf="selected">
-    <div class="selectorTrigger pointer" (click)="toggleProfileSelector()" appColor="action">
+    <div class="selectorTrigger pointer" appColor="action" [appColorTarget]="settingsButton"  (click)="onClickSettings()">
         <div class="selectedProfile-iconContainer">
             <profile-icon 
             [profileId]='selected' 
@@ -14,13 +14,17 @@
         <p class="h3 m-0 ml-1 mb-1" *ngIf="!selectorOpen" @showTrigger>
           {{getSelectedProfileName()}}
         </p>
-        <div class="switchIcon" *ngIf="!selectorOpen" @showTrigger>
-            <mat-icon [inline]="true">more_horiz</mat-icon>
-        </div>    
+        <div #settingsButton>
+          <button mat-icon-button  *ngIf="!selectorOpen" @showTrigger >
+              <mat-icon>settings</mat-icon>
+            </button>
+        </div>
+        
       </div>
-    <button mat-icon-button color="primary" (click)="onClickSettings()"  class="mt-1 ml-auto" *ngIf="!selectorOpen">
-      <mat-icon>settings</mat-icon>
-    </button>
+       
+      <button mat-icon-button appColor="action" (click)="toggleProfileSelector()"  class="ml-auto" *ngIf="!selectorOpen">
+          <mat-icon>group</mat-icon>
+        </button>
   </div>
   <div class="horizontalSelector" [class.hide]="!selectorOpen">
       <horizontal-icon-selector stepWidth="55" #iconSelector>
@@ -35,10 +39,10 @@
         </profile-selector>
         <div class="d-inline-block">
             <icon-text-button
-            svgIcon="add"
-            (onClick)="newProfile()"
-            buttonWidth="55px"
-            innerPadding="0.1em">
+              svgIcon="add"
+              (onClick)="newProfile()"
+              buttonWidth="55px"
+              innerPadding="0.1em">
             </icon-text-button>
         </div>
     </horizontal-icon-selector> 

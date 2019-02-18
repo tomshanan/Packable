@@ -69,7 +69,7 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
       this.action = 'add'
     }
 
-    this.completeProfiles = this.pFac.getCompleteProfiles(this.storeSelector.profiles)
+    this.completeProfiles = this.pFac.makeComplete(this.storeSelector.profiles)
     this.completeCollections = this.cFac.makeCompleteArray(this.storeSelector.originalCollections)
     this.ColProTree = this.buildTree();
   }

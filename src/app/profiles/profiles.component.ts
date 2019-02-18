@@ -61,7 +61,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
     this.stateSubscriptions = this.storeSelector.profiles_obs.subscribe(state => {
       console.log('profile state emitted', state);
       this.profiles = state.profiles;
-      this.completeProfiles = this.profileFactory.getCompleteProfiles(state.profiles);
+      this.completeProfiles = this.profileFactory.makeComplete(state.profiles);
       this.setProfileAndCollections()
     })
     this.stateSubscriptions.add(

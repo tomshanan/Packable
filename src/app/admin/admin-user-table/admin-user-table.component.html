@@ -1,0 +1,60 @@
+<div class="mat-elevation-z1 admin-user-table">
+  <table mat-table class="full-width-table" [dataSource]="dataSource" matSort aria-label="Elements">
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+      <td mat-cell *matCellDef="let row" class="wrap-break-word cell-id">
+        <span class="text-muted">
+            {{row.id}}
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="alias">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias</th>
+      <td mat-cell *matCellDef="let row" class="cell-alias">{{row.alias}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="permissions">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Permissions</th>
+      <td mat-cell *matCellDef="let row" class="cell-permissions">
+        <span>
+            {{joinPermissions(row.permissions)}}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+        <td mat-cell *matCellDef="let row" class="cell-actions">
+          <button mat-icon-button *ngIf="!row.permissions.userManagement" (click)="actionDelete(row)"  appColor="action">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+          <button mat-icon-button *ngIf="user.permissions.setPermissions" (click)="actionPermissions(row)"  appColor="action" [disabled]="user.id === row.id">
+              <mat-icon>security</mat-icon>
+          </button>
+          <button mat-icon-button [disabled]="true"  appColor="action">
+              <mat-icon>mail_outline</mat-icon>
+          </button>
+          <button mat-icon-button [disabled]="true" appColor="action">
+              <mat-icon>vpn_key</mat-icon>
+          </button>
+
+
+
+
+        </td>
+      </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource.data.length"
+      [pageIndex]="0"
+      [pageSize]="50"
+      [pageSizeOptions]="[25, 50, 100, 250]">
+  </mat-paginator>
+</div>

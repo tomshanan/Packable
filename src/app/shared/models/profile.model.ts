@@ -28,7 +28,6 @@ export class ProfileComplete {
         public id: string = '',
         public name: string = '',
         public collections: CollectionComplete[] = [],
-        public parent: Profile = new Profile(),
         public avatar: Avatar = new Avatar(),
     ) { }
 }

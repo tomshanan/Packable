@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { Profile, Avatar } from '../../shared/models/profile.model';
+import { Profile, Avatar, ProfileComplete } from '../../shared/models/profile.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import * as profileActions from '@app/profiles/store/profile.actions'
 import * as fromApp from '@shared/app.reducers';
@@ -14,7 +14,7 @@ import { ProfileEditFormComponent } from '../profile-edit-form/profile-edit-form
   styleUrls: ['./edit-profile-dialog.component.css']
 })
 export class EditProfileDialogComponent implements OnInit {
-  profile:Profile;
+  profile:ProfileComplete;
   profileName:string = '';
   @ViewChild('profileForm') profileForm:ProfileEditFormComponent;
 
@@ -25,7 +25,7 @@ export class EditProfileDialogComponent implements OnInit {
     private proFac:ProfileFactory,
     private storeSelector: StoreSelectorService,
   ) { 
-    this.profile = data.profile
+    this.profile = this.proFac.makeComplete([data.profile])[0]
     this.profileName = this.profile.name
   }
 
@@ -40,7 +40,8 @@ export class EditProfileDialogComponent implements OnInit {
   }
   onConfirm(){
     if(this.valid()){
-      this.store.dispatch(new profileActions.editProfile(this.profile))
+      let newProfile = this.proFac.completeToPrivate(this.profile)
+      this.store.dispatch(new profileActions.editProfile(newProfile))
       this.onClose();
     }
   }

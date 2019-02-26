@@ -39,6 +39,7 @@ export class ContextService {
     this.emitChanges()
   }
   public getProfile():Profile {
+    console.log('getProfile called in context')
     return this.storeSelector.getProfileById(this.profileId)
   }
   public getCollection():CollectionComplete {

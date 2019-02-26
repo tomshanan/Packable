@@ -197,7 +197,7 @@ export class ProfileEditComponent implements OnInit, OnDestroy {
       this.saveProfileToMemory(newProfile)
       this.router.navigate(['../'+slugName(newProfile.name)], {relativeTo:this.activatedRoute})
     } else {
-      this.store.dispatch(new profileActions.editProfile(newProfile))
+      this.store.dispatch(new profileActions.editProfiles([newProfile]))
       this.return();
     }
   }

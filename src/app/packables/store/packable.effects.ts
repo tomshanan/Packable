@@ -14,17 +14,16 @@ export class PackableEffects {
         private actions$:Actions
     ){}
 
-    @Effect({dispatch:false}) savePackableState = this.actions$.pipe(
-        ofType(PackableActions.ADD_ORIGINAL_PACKABLE,
-                PackableActions.EDIT_ORIGINAL_PACKABLE),
-        tap(()=>{
-            this.storageServices.setUserData('packables')
+    @Effect({dispatch:false}) addEditPackableEffect = this.actions$.pipe(
+        ofType(PackableActions.UPDATE_ORIGINAL_PACKABLE),
+        tap((action:PackableActions.updateOriginalPackable)=>{
+            this.storageServices.saveItemsInUser('packables',[action.payload])
         })
     )
     @Effect() removeOriginalPackable = this.actions$.pipe(
         ofType<packableActions.removeOriginalPackables>(packableActions.REMOVE_ORIGINAL_PACKABLES),
         map(action=>{
-           return new collectionActions.deleteCollectionsPackables(action.payload) 
+           return new collectionActions.removePackablesFromAllCollections(action.payload) 
         })
         // ==> Collections reducers ==> Profile Reducers ==> Database
     )

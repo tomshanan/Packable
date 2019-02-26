@@ -13,6 +13,7 @@ import { PackableComplete } from '../../../shared/models/packable.model';
 import { ContextService } from '../../../shared/services/context.service';
 import { Subscription } from 'rxjs';
 import { editTrip } from '../../../trips/store/trip.actions';
+import { timeStamp } from '@app/shared/global-functions';
 
 export type CollectionPanelView = 'list' | 'settings';
 
@@ -43,46 +44,55 @@ export class CollectionPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnInit() {
     console.log(`CollectionPanelView - ngOnInit (${this.collection.name})`);
-    if(this.collection){
-      this.context.setCollection(this.collection.id)
-    } 
-    this.collection = this.context.getCollection()
+    
     this.init()
+    this.subscription = this.storeSelector.profiles_obs.subscribe(() => {
+      if (this.collection) {
+        this.context.setCollection(this.collection.id)
+      }
+      this.init()
+    })
+
   }
-  ngOnChanges(changes: SimpleChanges){
-    if(changes['collection']){
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['collection']) {
       console.log(`collection panel detected change in Collection (${this.collection.name})`);
       this.init()
     }
   }
-  init(){
+  init() {
+    
+    this.collection = this.context.getCollection()
     this.packables = this.collection.packables
-    if(!this.profileId && this.context.profileId){
+    if (!this.profileId && this.context.profileId) {
       this.profileId = this.context.profileId
       console.log('profile-id was not set in colleciton-panel, so retrieved it from contextService');
     }
 
   }
-  
-  ngOnDestroy(){
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe()
   }
-  remove(){
-   this.removeCollection.emit()
+  remove() {
+    this.removeCollection.emit()
   }
-  updateSettings(collection:CollectionComplete){
+  updateSettings(collection: CollectionComplete) {
     this.collection = collection;
+    this.collection.dateModified = timeStamp();
     let profile = this.storeSelector.getProfileById(this.profileId)
     let colIndex = profile.collections.idIndex(collection.id)
     profile.collections[colIndex] = this.colFac.completeToPrivate(collection)
-    this.store.dispatch(new profileActions.editProfile(profile))
+    profile.dateModified = timeStamp()
+    this.store.dispatch(new profileActions.editProfiles([profile]))
     this.emitUpdate();
   }
 
-  updatePackables(packables:PackableComplete[]){
+  updatePackables(packables: PackableComplete[]) {
     this.packables = packables
     this.collection.packables = packables
   }
-  emitUpdate(){
+  emitUpdate() {
     this.change.emit()
   }
 }

@@ -12,12 +12,20 @@ export class userEffects{
         private storageService: StorageService
     ){}
     @Effect({dispatch: false}) 
-    updatePermissionsEffect = this.actions$.pipe(
+    user_updateSettingsEffect = this.actions$.pipe(
         ofType(
             userActions.SET_USER_SETTINGS,
             ),
         tap(()=>{
-            this.storageService.setUserSettings()
+            this.storageService.saveUserSettings()
         })
         )
+    @Effect({dispatch: false})
+    user_setStateEffect = this.actions$.pipe(
+        ofType(userActions.SET_USER_STATE),
+        tap((action:userActions.setUserState)=>{
+            this.storageService.initialGetAllItems()
+            this.storageService.listenToUserItems()
+        })
+    )
 }

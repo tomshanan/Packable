@@ -2,31 +2,26 @@ import { Action } from '@ngrx/store';
 import { CollectionPrivate, CollectionOriginal } from '../../shared/models/collection.model';
 import { PackableOriginal } from '../../shared/models/packable.model';
 
-export const ADD_ORIGINAL_COLLECTION = 'ADD_COLLECTION';
-export const REMOVE_ORIGINAL_COLLECTION = 'REMOVE_COLLECTION';
-export const EDIT_ORIGINAL_COLLECTION = 'EDIT_COLLECTION';
-export const DELETE_COLLECTION_PACKABLES = 'DELETE_COLLECTION_PACKABLES';
+export const REMOVE_ORIGINAL_COLLECTIONS = 'REMOVE_COLLECTION';
+export const UPDATE_ORIGINAL_COLLECTION = 'EDIT_COLLECTION';
+export const REMOVE_PACKABLES_FROM_COLLECTIONS = 'REMOVE_PACKABLES_FROM_COLLECTIONS';
 export const SET_COLLECTION_STATE = 'SET_COLLECTION_STATE';
 
 export class setCollectionState  implements Action{
     readonly type = SET_COLLECTION_STATE;
     constructor(public payload: CollectionOriginal[]){};
 }
-export class addOriginalCollection  implements Action{
-    readonly type = ADD_ORIGINAL_COLLECTION;
-    constructor(public payload: CollectionOriginal){};
-}
-export class editOriginalCollection  implements Action{
-    readonly type = EDIT_ORIGINAL_COLLECTION;
+export class updateOriginalCollection  implements Action{
+    readonly type = UPDATE_ORIGINAL_COLLECTION;
     constructor(public payload:CollectionOriginal){};
 }
-export class removeOriginalCollection  implements Action{
-    readonly type = REMOVE_ORIGINAL_COLLECTION;
-    constructor(public payload: string){};
+export class removeOriginalCollections  implements Action{
+    readonly type = REMOVE_ORIGINAL_COLLECTIONS;
+    constructor(public payload: string[]){};
 }
-export class deleteCollectionsPackables  implements Action{
-    readonly type = DELETE_COLLECTION_PACKABLES;
+export class removePackablesFromAllCollections  implements Action{
+    readonly type = REMOVE_PACKABLES_FROM_COLLECTIONS;
     constructor(public payload: string[]){};
 }
 
-export type theActions = addOriginalCollection | editOriginalCollection | removeOriginalCollection | deleteCollectionsPackables | setCollectionState;
+export type theActions = updateOriginalCollection | removeOriginalCollections | removePackablesFromAllCollections | setCollectionState;

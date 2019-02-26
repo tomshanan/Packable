@@ -19,6 +19,8 @@ export class CollectionComplete {
         public packables: PackableComplete[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
+        public dateModified: number = new Date().valueOf()
+
     ) {
     }
 }
@@ -31,6 +33,8 @@ export class CollectionOriginal {
         public packables: PackablePrivate[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
+        public dateModified: number = new Date().valueOf()
+
     ) {
     }
 }
@@ -42,6 +46,8 @@ export class CollectionPrivate {
         public packables: PackablePrivate[] = [],
         public essential: boolean = false,
         public weatherRules: WeatherRule = new WeatherRule(),
+        public dateModified: number = new Date().valueOf()
+
     ){
     }
 }

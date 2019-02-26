@@ -25,6 +25,7 @@ export class CollectionFactory {
             packable.packables ? packable.packables.map(p => this.packableFactory.clonePackablePrivate(p)) : [],
             packable.essential,
             this.weatherFactory.deepCopy(packable.weatherRules),
+            packable.dateModified
         )
 
     }
@@ -34,7 +35,8 @@ export class CollectionFactory {
             original.name,
             original.packables ? original.packables.slice() : [],
             this.weatherFactory.deepCopy(original.weatherRules),
-            original.userCreated
+            original.userCreated,
+            original.dateModified
         )
     }
     public newPrivateCollection = (original: CollectionOriginal, patchValue?: {}): CollectionPrivate => {
@@ -43,7 +45,8 @@ export class CollectionFactory {
             original.id,
             privatePackables,
             false,
-            this.weatherFactory.deepCopy(original.weatherRules)
+            this.weatherFactory.deepCopy(original.weatherRules),
+            original.dateModified
         );
         if (patchValue) {
             for (var property in patchValue) {
@@ -72,7 +75,9 @@ export class CollectionFactory {
             complete.id,
             complete.packables.slice(),
             complete.essential,
-            this.weatherFactory.deepCopy(complete.weatherRules))
+            this.weatherFactory.deepCopy(complete.weatherRules),
+            complete.dateModified
+        )
     }
     public completeToOriginal = (complete:CollectionComplete):CollectionOriginal => {
         return new CollectionOriginal(
@@ -80,7 +85,8 @@ export class CollectionFactory {
             complete.name,
             complete.packables.map(p=>this.packableFactory.completeToPrivate(p)),
             this.weatherFactory.deepCopy(complete.weatherRules),
-            complete.userCreated
+            complete.userCreated,
+            complete.dateModified
         )
     }
     public makeComplete = (collection: CollectionAny): CollectionComplete => {
@@ -92,7 +98,8 @@ export class CollectionFactory {
                 false,
                 this.packableFactory.makeCompleteFromArray(collection.packables),
                 this.weatherFactory.deepCopy(collection.weatherRules),
-                collection.userCreated
+                collection.userCreated,
+                collection.dateModified
             )
         } else {
             let original = this.storeSelector.getCollectionById(collection.id)
@@ -103,7 +110,8 @@ export class CollectionFactory {
                 collection.essential,
                 completePackables,
                 this.weatherFactory.deepCopy(collection.weatherRules),
-                original.userCreated
+                original.userCreated,
+                collection.dateModified
             )
         }
     }

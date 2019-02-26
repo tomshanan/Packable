@@ -21,33 +21,31 @@ export function collectionsReducers(state: State = initialState, action: Collect
                 ...state,
                 collections: action.payload
             }
-        case CollectionActions.ADD_ORIGINAL_COLLECTION:
-            return {
-                ...state,
-                collections: [action.payload, ...state.collections]
-            }
-        case CollectionActions.EDIT_ORIGINAL_COLLECTION:
+        case CollectionActions.UPDATE_ORIGINAL_COLLECTION:
             const editId = action.payload.id;
-            const editIndex = state.collections.findIndex(c => c.id == editId);
-            const collection = state.collections[editIndex]
-            const updatedCollection = {
-                ...collection,
-                ...action.payload
+            const editIndex = stateCollections.idIndex(editId);
+            if(editIndex > -1){
+                stateCollections[editIndex] = action.payload
+            } else {
+                stateCollections.unshift(action.payload)
             }
-            stateCollections[editIndex] = updatedCollection;
             return {
                 ...state,
                 collections: [...stateCollections]
             }
-        case CollectionActions.REMOVE_ORIGINAL_COLLECTION:
-            let removeIndex = state.collections.findIndex(c=>c.id==action.payload);
-            const removeCollections = state.collections.slice();
-            removeCollections.splice(removeIndex, 1);
+        case CollectionActions.REMOVE_ORIGINAL_COLLECTIONS:
+            let ids = action.payload
+            ids.forEach(id=>{
+                let removeIndex = stateCollections.idIndex(id);
+                if(removeIndex>-1){
+                    stateCollections.splice(removeIndex,1)
+                }
+            })
             return {
                 ...state,
-                collections: [...removeCollections]
+                collections: [...stateCollections]
             }
-        case CollectionActions.DELETE_COLLECTION_PACKABLES:
+        case CollectionActions.REMOVE_PACKABLES_FROM_COLLECTIONS:
             action.payload.forEach(id=>{
                 stateCollections.forEach(collection =>{
                     const index = collection.packables.findIndex(p =>p.id === id);

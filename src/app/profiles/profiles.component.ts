@@ -36,12 +36,12 @@ export class ProfilesComponent implements OnInit, OnDestroy {
   selectedProfile: Profile;
   profileCollections: CollectionComplete[];
 
-  onSelectedProfiles() {
-    this.cotnext.setBoth(null, this.selectedProfileId)
-  }
+  
   constructor(
     private store: Store<fromApp.appState>,
     private storeSelector: StoreSelectorService,
+    private storage:StorageService,
+
     private modalService: NgbModal,
     private profileFactory: ProfileFactory,
     private colFac: CollectionFactory,
@@ -59,23 +59,29 @@ export class ProfilesComponent implements OnInit, OnDestroy {
   }
   ngOnInit() {
     this.stateSubscriptions = this.storeSelector.profiles_obs.subscribe(state => {
+      // update list of profiles if Profile State
       console.log('profile state emitted', state);
       this.profiles = state.profiles;
       this.completeProfiles = this.profileFactory.makeComplete(state.profiles);
+      console.log('complete profiles to display:',this.completeProfiles)
       this.setProfileAndCollections()
     })
     this.stateSubscriptions.add(
+      // change comp's loaded profile if context changes
       this.cotnext.changes.subscribe(changes => {
         this.setProfileAndCollections()
       })
     )
-
     this.cotnext.reset();
-    if (isDefined(this.selectedProfileId)) {
-      this.cotnext.setBoth(null, this.selectedProfileId)
-    }
+    // if (isDefined(this.selectedProfileId)) {
+    //   this.cotnext.setBoth(null, this.selectedProfileId)
+    // }
   }
-  setProfileAndCollections() {
+  onSelectedProfiles() { // when profile selector emits a new profile
+    this.cotnext.setBoth(null, this.selectedProfileId)
+  }
+  setProfileAndCollections() { 
+    // set components loaded profile
     this.selectedProfile = this.cotnext.getProfile();
     this.selectedProfileId = this.cotnext.profileId
     if (this.selectedProfile) {
@@ -84,6 +90,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy() {
     this.stateSubscriptions.unsubscribe()
+
   }
   openModal(tempRef: TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);

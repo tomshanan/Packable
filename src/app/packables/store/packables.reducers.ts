@@ -18,20 +18,14 @@ export function packablesReducers(state = initialState, action: PackableActions.
                 ...state,
                 packables: action.payload
             }
-        case PackableActions.ADD_ORIGINAL_PACKABLE:
-            return {
-                ...state,
-                packables: [action.payload, ...state.packables]
+        case PackableActions.UPDATE_ORIGINAL_PACKABLE:
+            let payloadPackable: PackableOriginal = action.payload;
+            let editIndex: number = statePackables.idIndex(payloadPackable.id);
+            if(editIndex > -1){
+                statePackables[editIndex] = payloadPackable
+            } else{
+                statePackables.unshift(payloadPackable)
             }
-        case PackableActions.EDIT_ORIGINAL_PACKABLE:
-            let editPackable: PackableOriginal = action.payload;
-            let editIndex: number = state.packables.findIndex(p => p.id == editPackable.id);
-            const packable:PackableOriginal = state.packables[editIndex];
-            const updatedPackable = {
-                ...packable,
-                ...action.payload
-            }
-            statePackables[editIndex] = updatedPackable;
             return {
                 ...state,
                 packables: [...statePackables]

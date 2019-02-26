@@ -10,6 +10,7 @@ import { DestinationDataService } from './location-data.service';
 import * as moment from 'moment';
 import { PackingList } from '../models/packing-list.model';
 import {State as AdminState} from '@app/admin/store/adminState.model'
+import { UserService } from './user.service';
 
 @Injectable()
 export class StoreSelectorService{    
@@ -32,9 +33,11 @@ export class StoreSelectorService{
     public get trips(): Trip[]  {return this._trips.slice()}
     public get packingLists(): PackingList[] { return this._packingLists.slice()}
     public get adminState(): AdminState { return this._adminState}
+    public get isLibraryStore():boolean {
+        return this.user.permissions.creator && this.adminState.simulateUser===false
+    }
 
-
-    constructor(private store:Store<fromApp.appState>, private destServices: DestinationDataService){
+    constructor(private store:Store<fromApp.appState>, private destServices: DestinationDataService, private user: UserService){
         this.packables_obs = this.store.select('packables');
         this.collections_obs = this.store.select('collections');
         this.profiles_obs = this.store.select('profiles');

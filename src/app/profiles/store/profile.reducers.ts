@@ -25,15 +25,18 @@ export function profileReducers(state = initialState, action: ProfileActions.the
                 ...state,
                 profiles: [...state.profiles, profile]
             }
-        case ProfileActions.EDIT_PROFILE:
-            id = action.payload.id;
-            index = state.profiles.findIndex(p=>p.id === id);
-            profile = stateProfiles[index];
-            updatedProfile = {
-                ...profile,
-                ...action.payload
-            }
-            stateProfiles[index] = updatedProfile;
+        case ProfileActions.EDIT_PROFILES:
+            let editProfiles = action.payload
+            editProfiles.forEach(p =>{
+                id = p.id;
+                index = stateProfiles.idIndex(id);
+                profile = stateProfiles[index];
+                updatedProfile = {
+                    ...profile,
+                    ...p
+                }
+                stateProfiles[index] = updatedProfile;
+            })
             return {
                 ...state,
                 profiles: [...stateProfiles]
@@ -46,7 +49,7 @@ export function profileReducers(state = initialState, action: ProfileActions.the
                 ...state,
                 profiles: [...stateProfiles]
             }
-        case ProfileActions.DELETE_PROFILE_PACKABLES:
+        case ProfileActions.DELETE_PACKABLES_FROM_PROFILES:
             let ids = action.payload;
             ids.forEach(id=>{
                 stateProfiles.forEach(profile => {
@@ -62,7 +65,7 @@ export function profileReducers(state = initialState, action: ProfileActions.the
                 ...state,
                 profiles: [...stateProfiles]
             }
-        case ProfileActions.DELETE_PROFILE_COLLECTION:
+        case ProfileActions.DELETE_COLLECTIONS_FROM_PROFILES:
             id = action.payload
             stateProfiles.map((profile)=>{
                 profile.collections = profile.collections.filter(c=>c.id != id)

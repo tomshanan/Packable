@@ -36,13 +36,19 @@ import * as AdminActions from '@app/admin/store/admin.actions'
 import { UserService } from '../services/user.service';
 import * as adminActions from '../../admin/store/admin.actions';
 import { User } from '../../admin/store/adminState.model';
+import { PackingList } from '../models/packing-list.model';
 export type nodeOptions = 'packables' | 'collections' | 'profiles' | 'tripState';
 
+type updates = { [path: string]: any } 
 type configItem = {[id:string]:userConfig}
+type firebaseItem =  {[id:string]:{[x:string]:any}}
+type localItem = {id:string, [x:string]:any}
+
 const USER_CONFIG = 'userConfig'
 const USERS = 'users'
 const SETTINGS = 'settings'
 const PERMISSIONS = 'permissions'
+const LIBRARY = 'library'
 
 @Injectable()
 export class StorageService {
@@ -62,80 +68,223 @@ export class StorageService {
     ) {
 
     }
-    test() {
-        this.getAllUserItems()
+    private get userId():string{
+        return firebase.auth().currentUser.uid
+    }
+    private get pathToUserItems():string{
+        if(this.storeSelector.isLibraryStore){
+            console.log('<<  Accessing items in Library >>');
+            return LIBRARY
+        } else {
+            return path(USERS,this.userId)
+        }
+    }
+    private checkAuth(logmessage: any = ''): boolean {
+        if (this.authService.isAuthenticated) {
+            return true
+        } else {
+            console.log('Could Not Authenticate.\n', logmessage);
+            return false
+        }
     }
 
-    // fixWeatherRules(item){
-    //     if(item.hasOwnProperty('weatherRules')){
-    //         let wr = item.weatherRules;
-    //         if(!wr.hasOwnProperty('weatherTypes')){
-    //             item.weatherRules = this.weatherFactory.deepCopy(wr);
-    //         }
-    //     }
-    //     return item
-    // }
-    getAllUserItems() {
+    
+    getUserConfig() {
         if (this.checkAuth()) {
-            let userId = firebase.auth().currentUser.uid
-            console.log('trying UID: ', userId);
-            firebase.database().ref('/users/' + userId).once('value', snapshot => {
+            console.log('requesting config')
+            firebase.database().ref(path(USER_CONFIG,this.userId)).once('value', snapshot => {
                 let data = snapshot.val();
-                if (data['packables']) {
-                    let packables = data['packables'].map((p: PackableOriginal) => this.packableFactory.clonePackableOriginal(p))
-                    this.store.dispatch(new packableActions.setPackableState(packables))
+                console.log('receiving config data:', JSON.stringify(data))
+                if (data) {
+                    console.log(`saving user state`);
+                    this.store.dispatch(new userActions.setUserState(data))
                 } else {
-                    this.store.dispatch(new packableActions.setPackableState([]))
+                    console.log(`data was empty`);
+                    this.setInitialUserConfig()
                 }
-                if (data['collections']) {
-                    let collections = data['collections'].map((c: CollectionOriginal) => this.collectionFactory.duplicateOriginalCollection(c))
-                    this.store.dispatch(new collectionActions.setCollectionState(collections))
-                } else {
-                    this.store.dispatch(new collectionActions.setCollectionState([]))
-                }
-                if (data['profiles']) {
-                    let profiles = data['profiles'].map((profile: Profile) => this.profileFactory.duplicateProfile(profile))
-                    this.store.dispatch(new profileAction.setProfileState(profiles))
-                } else {
-                    this.store.dispatch(new profileAction.setProfileState([]))
-                }
-                if (data['tripState']) {
-                    console.log('tripState:', data['tripState']);
-                    let _trips = data['tripState']['trips'] ? data['tripState']['trips'].map(t => this.tripFactory.duplicateTrip(t)) : [];
-                    let _packingLists = data['tripState']['packingLists'] || [];
-                    this.store.dispatch(new tripActions.setTripState({
-                        trips: _trips,
-                        packingLists: _packingLists
-                    }))
-                } else {
-                    this.store.dispatch(new tripActions.setTripState({
-                        trips: [],
-                        packingLists: []
-                    }))
-                }
+            }).catch(e=>{
+                console.log(e.message)
+                this.setInitialUserConfig()
+            })
+        }
+    }
+    listenToUserItems(){
+        if (this.checkAuth()) {
+            let target:'user'|'library' = this.storeSelector.isLibraryStore ? 'library' : 'user';
+            console.log('Current listening target: '+target)
+            let callBack = ()=> {
+                console.log(`~~-> listening to: ${this.pathToUserItems}`)
+                firebase.database().ref(this.pathToUserItems).on('child_changed', (snapshot)=>{
+                    let data: {[x:string]:any} = {}
+                    let node = snapshot.key
+                    data[node] = snapshot.val()
+                    console.log(`received live data from ${node} library: `+JSON.stringify(data))
+                    this.tidayAndStoreUserItems(data)
+                })
+            } 
+            if (target == 'user') {
+                firebase.database().ref(LIBRARY).off()
+                callBack()
+            } else if (target == 'library'){
+                firebase.database().ref(path(USERS,this.userId)).off()
+                callBack()
+            }
+            
+        }
+    }
+    
+    initialGetAllItems() {
+        if (this.checkAuth()) {
+            let path = this.pathToUserItems
+            console.log(`getting all items with path ${path}`);
+            firebase.database().ref(path).once('value', snapshot => {
+                console.log('received initial items')
+                let data = snapshot.val();
+                this.tidayAndStoreUserItems(data)
+            }).catch(e=>console.log(e.message))
+        }
+    }
+    private tidayAndStoreUserItems(data:{}):void{
+        if(data!==null){
+            console.log(`received user items from DB:`,JSON.stringify(data));
+            console.log('saving items in store');
+            if(data['packables']){
+                let packables:PackableOriginal[] = this.unwrapForLocalStore(data['packables']).map((p: PackableOriginal) => this.packableFactory.clonePackableOriginal(p))
+                this.store.dispatch(new packableActions.setPackableState(packables))
+            }
+            if(data['collections']){
+                let collections:CollectionOriginal[] = this.unwrapForLocalStore(data['collections']).map((c: CollectionOriginal) => this.collectionFactory.duplicateOriginalCollection(c))
+                this.store.dispatch(new collectionActions.setCollectionState(collections))
+            }
+            if(data['profiles']){
+                let profiles:Profile[] =  this.unwrapForLocalStore(data['profiles']).map((profile: Profile) => this.profileFactory.duplicateProfile(profile))
+                this.store.dispatch(new profileAction.setProfileState(profiles))
+            }
+            if(data['tripState']){
+                let _trips: Trip[] =  data['tripState']['trips'] ? this.unwrapForLocalStore(data['tripState']['trips']).map((t:Trip) => this.tripFactory.duplicateTrip(t)) : [];
+                let _packingLists: PackingList[] =  data['tripState']['packingLists'] ? this.unwrapForLocalStore(data['tripState']['packingLists']): [];
+                this.store.dispatch(new tripActions.setTripState({
+                    trips: _trips,
+                    packingLists: _packingLists
+                }))
+            }
+        }
+    }
+    setUserItemsNode(node: nodeOptions) {
+        if (this.checkAuth()) {
+            let data;
+            switch (node) {
+                case 'packables':
+                    data = this.wrapForStorage(this.storeSelector.originalPackables);
+                    break;
+                case 'collections':
+                    data = this.wrapForStorage(this.storeSelector.originalCollections);
+                    break;
+                case 'profiles':
+                    data = this.wrapForStorage(this.storeSelector.profiles);
+                    break;
+                case 'tripState':
+                    data = {
+                        trips: this.wrapForStorage(this.storeSelector.trips),
+                        packingLists: this.wrapForStorage(this.storeSelector.packingLists)
+                    }
+                    break;
+            }
+            firebase.database().ref(path(this.pathToUserItems,node)).set(data)
+                .then(() => {
+                    console.log(`<-~-> saved ${node} successfully`);
+                }, (e) => {
+                    console.warn(`<-~-> FAILED to save ${node}`, e);
+                })
+        }
+    }
+    saveItemsInUser(node: nodeOptions,items:localItem[]){
+        if (this.checkAuth()) {
+            let updates: updates = {}
+            let wrappedItems = this.wrapForStorage(items)
+            for(let item in wrappedItems){
+                let itempath = path(this.pathToUserItems,node,item)
+                updates[itempath] = wrappedItems[item]
+            }
+            firebase.database().ref().update(updates).then(()=>{console.log('Saved items (updateItemsInUser)',updates);
+            })
+        }
+    }
+    removeItemsInUser(node: nodeOptions,ids:string[]){
+        if (this.checkAuth()) {
+            let updates: updates = {}
+            ids.forEach(id=>{
+                let itemPath = path(this.pathToUserItems,node,id)
+                updates[itemPath] = null
+            })
+            firebase.database().ref().update(updates).then(()=>{console.log('Removed items (removeItemsInUser)',updates);
             })
         }
     }
 
-    setAllUserData() {
+    setAllUserItemsAndSettings() {
         if (this.checkAuth()) {
-            let userId = firebase.auth().currentUser.uid
-            let updates: { [s: string]: any } = {}
+            console.log(`Setting all user items and settings to FireBase (setAllUserItemsAndSettings)`);
+            let updates: updates = {}
             let userData = {
-                packables: this.storeSelector.originalPackables,
-                collections: this.storeSelector.originalCollections,
-                profiles: this.storeSelector.profiles,
+                packables: this.wrapForStorage(this.storeSelector.originalPackables),
+                collections: this.wrapForStorage(this.storeSelector.originalCollections),
+                profiles: this.wrapForStorage(this.storeSelector.profiles),
                 tripState: {
-                    trips: this.storeSelector.trips,
-                    packingLists: this.storeSelector.packingLists
+                    trips: this.wrapForStorage(this.storeSelector.trips),
+                    packingLists: this.wrapForStorage(this.storeSelector.packingLists)
                 },
             }
-            updates[path(USERS,userId)] = userData
-            updates[path(USER_CONFIG,userId,SETTINGS)] = this.user.settings
-
-            firebase.database().ref('users/' + userId).set(userData).then()
+            updates[this.pathToUserItems] = userData
+            updates[path(USER_CONFIG,this.userId,SETTINGS)] = this.user.settings
+            firebase.database().ref().update(updates).then(()=>{console.log('Saved (setAllUserItemsAndSettings)');
+            })
         }
     }
+    saveUserSettings(){
+        if (this.checkAuth()) {
+            let data = this.user.settings
+            firebase.database().ref(path(USER_CONFIG,this.userId,SETTINGS)).set(data).then(()=>{console.log('Saved (saveUserSettings)');
+            })
+        }
+    }
+    setInitialUserConfig() {
+        console.log(`setting initial user data`);
+        if (this.checkAuth()) {
+            let initialConfig = defaultUserConfigState
+            initialConfig.settings.alias = firebase.auth().currentUser.email.split('@')[0]
+            console.log(`saving initial data to firebase`);
+            firebase.database().ref(path(USER_CONFIG,this.userId)).set(initialConfig)
+                .then(() => {
+                    console.log('set userState in store:', initialConfig)
+                    this.store.dispatch(new userActions.setUserState(initialConfig))
+                }, (e) => {
+                    console.log('failed to set userConfig:', e)
+                })
+        }
+    }
+
+    
+    adminDeleteUsers(ids:string[]){
+        if (this.checkAuth()) {
+            if (this.user.permissions.userManagement) {
+                console.log('attempting to delete users')
+                let updates: updates = {}
+                ids.forEach(id => {
+                    updates[path(USER_CONFIG,id)] = null
+                    updates[path(USERS,id)] = null
+                }) 
+                firebase.database().ref().update(updates).then(()=>{
+                    console.log('users deleted', updates);
+                }).catch(e=>{
+                    console.log('unable to delete users', updates, e['message']);
+                });
+            } else {
+                console.warn('You are unable to delete users.')
+            }
+        }
+    }
+
     adminSetUserData(action) {
         console.log('attempting to change permissions', action)
         if (this.checkAuth()) {
@@ -143,7 +292,7 @@ export class StorageService {
                 && this.user.permissions.setPermissions) {
                 console.log('attempting to change permissions')
                 let changes = (<AdminActions.adminSetPermissions>action).payload
-                let updates: { [s: string]: userPermissions } = {}
+                let updates: updates = {}
                 changes.forEach(change => {
                     updates[path(USER_CONFIG,change.id,PERMISSIONS)] = change.permissions
                 }) 
@@ -155,27 +304,10 @@ export class StorageService {
             }
         }
     }
-    getUserConfig() {
-        if (this.checkAuth()) {
-            let userId = firebase.auth().currentUser.uid
-            console.log('requesting config')
-            firebase.database().ref(path(USER_CONFIG,userId)).once('value', snapshot => {
-                let data = snapshot.val();
-                console.log('receiving config data:', data)
-                if (data) {
-                    this.store.dispatch(new userActions.setUserState(data))
-                } else {
-                    this.setInitialUserConfig()
-                }
-            }).catch(e=>{
-                console.log(e.message)
-                this.setInitialUserConfig()
-            })
-        }
-    }
+    
     
     //adminUserConfig_Obs: Subject<configItem>
-    adminListenToUserData(listen:boolean = true) {
+    adminListenToUserConfig(listen:boolean = true) {
         if (this.checkAuth()) {
             if (this.user.permissions.userManagement) {
             if(!!listen){
@@ -200,65 +332,24 @@ export class StorageService {
             }
         }
     }
-    setUserSettings(){
-        if (this.checkAuth()) {
-            let userId = firebase.auth().currentUser.uid
-            let data = this.user.settings
-            firebase.database().ref(path(USER_CONFIG,userId,SETTINGS)).set(data).then()
-        }
+    
+    wrapForStorage(items:localItem[]):firebaseItem {
+        let firebaseData: firebaseItem = {}
+        items.forEach(item=>{
+            let newItem = firebaseData[item.id] = Object.assign({},item)
+            delete newItem.id
+        })
+        return firebaseData
     }
-    setInitialUserConfig() {
-        if (this.checkAuth()) {
-            let userId = firebase.auth().currentUser.uid
-            let initialConfig = defaultUserConfigState
-            initialConfig.settings.alias = firebase.auth().currentUser.email.split('@')[0]
-            firebase.database().ref(path(USER_CONFIG,userId)).set(initialConfig)
-                .then(() => {
-                    console.log('set userCongig:', initialConfig)
-                    this.store.dispatch(new userActions.setUserState(initialConfig))
-                }, (e) => {
-                    console.log('failed to set userConfig:', e)
-                })
+    unwrapForLocalStore<T extends localItem>(firebaseItems:firebaseItem):T[]{
+        let itemArray: T[] = [];
+        for(let item in firebaseItems){
+            let newItem:T = <T>{id:item, ...firebaseItems[item]}
+            itemArray.push(newItem)
         }
+        return itemArray
     }
-
-    setUserData(node: nodeOptions) {
-        if (this.checkAuth()) {
-            let userId = firebase.auth().currentUser.uid
-            let data;
-            switch (node) {
-                case 'packables':
-                    data = this.storeSelector.originalPackables;
-                    break;
-                case 'collections':
-                    data = this.storeSelector.originalCollections;
-                    break;
-                case 'profiles':
-                    data = this.storeSelector.profiles;
-                    break;
-                case 'tripState':
-                    data = {
-                        trips: this.storeSelector.trips,
-                        packingLists: this.storeSelector.packingLists
-                    }
-                    break;
-            }
-            firebase.database().ref(path(USERS,userId,node)).set(data)
-                .then(() => {
-                    console.log(`<-~-> saved ${node} successfully`, 'background: green;');
-                }, (e) => {
-                    console.warn(`<-~-> FAILED to save ${node}`, e);
-                })
-        }
-    }
-    checkAuth(logmessage: any = ''): boolean {
-        if (this.authService.isAuthenticated) {
-            return true
-        } else {
-            console.log('Could Not Authenticate.\n', logmessage);
-            return false
-        }
-    }
+    
 
     generateDummyData() {
         let packableNames = ['Ski Pants', 'Jumper', 'shorts', 'Belt', 't-shirt', 'gym pants', 'sun glasses', 'toothbrush', 'toothpaste', 'gloves', 'jeans', 'earphones', 'tissues', 'shorts', 'shirt', 'radio', 'towel', 'sun screen']
@@ -288,7 +379,7 @@ export class StorageService {
                 conditionsUsed = [...conditionsUsed, ...conditionsUnused.splice(choice, 1)]
             }
             let weather = new WeatherRule(min, max, conditionsUsed)
-            let packable = new PackableOriginal(Guid.newGuid(), name, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }], weather)
+            let packable = new PackableOriginal(Guid.newGuid(), name, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }], weather, true)
             allPackables.push(packable)
         })
         this.store.dispatch(new packableActions.setPackableState(allPackables))

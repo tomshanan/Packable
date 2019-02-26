@@ -18,6 +18,7 @@ export class AuthService {
             this.isAuthenticated = state.authenticated
             this.token = state.token
         })
+        
     }
 
     logout(){

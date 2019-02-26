@@ -30,6 +30,7 @@ import { MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/mate
 import { SetPermissionsDialogComponent } from './admin/set-permissions-dialog/set-permissions-dialog.component';
 import { userEffects } from './user/store/user.effects';
 import { adminEffects } from './admin/store/admin.effects';
+import { RenameCollectionDialogComponent } from './collections/collection-list/collection-panel/collection-settings/rename-collection-dialog/rename-collection-dialog.component';
 
 
 
@@ -58,7 +59,8 @@ import { adminEffects } from './admin/store/admin.effects';
     EditProfileDialogComponent,
     NewCollectionDialogComponent,
     NewProfileDialogComponent,
-    SetPermissionsDialogComponent
+    SetPermissionsDialogComponent,
+    RenameCollectionDialogComponent
   ]
 
 })

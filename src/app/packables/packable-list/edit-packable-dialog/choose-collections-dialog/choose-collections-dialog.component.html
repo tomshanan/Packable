@@ -1,71 +1,48 @@
-<p class="text-center small">
-  <a class="inline-link" (click)="addAll()">All</a> / <a class="inline-link" (click)="removeAll()">None</a>
-</p> 
-
-
- <div *ngIf="false"> <!--*ngFor="let collection of ColProTree; let i = index" -->
-  <div class="collection-header d-flex align-items-start">
-    <mat-checkbox 
-    [checked]="isCollectionChecked(collection)" 
-    [indeterminate]="isCollectionIntermediate(collection)"
-    (change)="toggleCollection(i, $event)">
-    {{collection.name}}</mat-checkbox>
-    <a class="px-2" (click)="toggleBranch(i)" *ngIf="!isCollectionChecked(collection)">
-        <mat-icon *ngIf="!collection.branchOpen" [inline]="true">expand_more</mat-icon>
-        <mat-icon *ngIf="collection.branchOpen" [inline]="true">expand_less</mat-icon>
-    </a>
-  </div>
-  <div class="pl-3 profile-selection " 
-  *ngIf="collection.selected.length>0 || collection.branchOpen"
-      @expandAndFadeTrigger>
-      <profile-selector 
-      class="dim"
-      [class.undim]="collection.selected.length>0"
-      iconWidth="45px" 
-      [profiles]="collection.profiles" 
-      [selected]="collection.selected" 
-      [multiselect]="true"
-      [showNames]="true"
-      (selectedChange)="updateSelectedProfiles($event,i)">
-    </profile-selector>
-    
-  </div>
-</div>
-
-<div 
-class="selectable-dropdown popout" 
-[class.selected]="isCollectionChecked(collection)" 
-*ngFor="let collection of ColProTree; let i = index">
-
-    <div class="slectedable-dropdown-header" (click)="toggleCollection(i)">
-      <span>{{collection.name}}</span>
-    </div>
-    <div class="selectable-dropdown-content">
-      <div *ngIf="!isCollectionChecked(collection)" @quickTransitionTrigger (click)="toggleCollection(i, true)">
-        <span class="text-muted font-italic small" *ngFor="let profile of collection.profiles; let i = index">
-          {{profile.name}}{{collection.profiles.length - 1 > i ? ', ': ''}}
-        </span>
+<p class="text-center">
+    <span *ngIf="action == 'add'">Add Packable to Travelers and Collections:</span>
+    <span *ngIf="action == 'update'">Push Packable changes to Travelers and Collections:</span>
+</p>
+<ng-container *ngIf="ColProTree.length>0; else noCollections">
+    <p class="text-center small">
+        <a class="inline-link" (click)="addAll()">All</a> / <a class="inline-link" (click)="removeAll()">None</a>
+      </p> 
+  <div 
+  class="selectable-dropdown popout" 
+  [class.selected]="isCollectionChecked(collection)" 
+  *ngFor="let collection of ColProTree; let i = index">
+  
+      <div class="slectedable-dropdown-header" (click)="toggleCollection(i)">
+        <span>{{collection.name}}</span>
       </div>
-      <div *ngIf="isCollectionChecked(collection)" @quickTransitionTrigger>
-          <profile-selector 
-          class="dim"
-          [class.undim]="collection.selected.length>0"
-          iconWidth="45px" 
-          [profiles]="collection.profiles" 
-          [selected]="collection.selected" 
-          [multiselect]="true"
-          [showNames]="true"
-          (selectedChange)="updateSelectedProfiles($event,i)">
-        </profile-selector>
+      <div class="selectable-dropdown-content">
+        <div *ngIf="!isCollectionChecked(collection)" @quickTransitionTrigger (click)="toggleCollection(i, true)">
+          <span class="text-muted font-italic small" *ngFor="let profile of collection.profiles; let i = index">
+            {{profile.name}}{{collection.profiles.length - 1 > i ? ', ': ''}}
+          </span>
+        </div>
+        <div *ngIf="isCollectionChecked(collection)" @quickTransitionTrigger>
+            <profile-selector 
+            class="dim"
+            [class.undim]="collection.selected.length>0"
+            iconWidth="45px" 
+            [profiles]="collection.profiles" 
+            [selected]="collection.selected" 
+            [multiselect]="true"
+            [showNames]="true"
+            (selectedChange)="updateSelectedProfiles($event,i)">
+          </profile-selector>
+        </div>
       </div>
     </div>
-  </div>
-
-
-
+</ng-container>
+<ng-template #noCollections>
+    <p class="text-center text-warning">
+      There are no Traveler Collections to push this Packable into at the moment. Please try adding a Collection to a Traveler first.
+    </p>
+</ng-template>
 
 <dialog-confirm-button>
-    <button mat-fab color="primary" (click)="onConfirm()" [disabled]="this.selectedIds.length===0">
+    <button mat-fab color="primary" (click)="onConfirm()">
         <mat-icon>check</mat-icon>
     </button>
 </dialog-confirm-button>

@@ -17,6 +17,7 @@ export class Profile {
         public name: string = '',
         public collections: CollectionPrivate[] = [],
         public avatar: Avatar = new Avatar(),
+        public dateModified: number = new Date().valueOf()
     ) { 
         if(!isDefined(id)){
             this.id = Guid.newGuid();
@@ -29,5 +30,6 @@ export class ProfileComplete {
         public name: string = '',
         public collections: CollectionComplete[] = [],
         public avatar: Avatar = new Avatar(),
+        public dateModified: number = new Date().valueOf()
     ) { }
 }

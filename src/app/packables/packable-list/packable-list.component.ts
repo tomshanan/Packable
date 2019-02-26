@@ -17,7 +17,7 @@ import { WindowService } from '@shared/services/window.service';
 import { weatherFactory } from '@app/shared/factories/weather.factory';
 import { CollectionFactory } from '@shared/factories/collection.factory';
 import { ProfileFactory } from '@shared/factories/profile.factory';
-import { expandAndFadeTrigger, addRemoveElementTrigger } from '../../shared/animations';
+import { expandAndFadeTrigger, addRemoveElementTrigger, blockInitialAnimations } from '../../shared/animations';
 import { take } from 'rxjs/operators';
 import { ConfirmDialog } from '../../shared-comps/dialogs/confirm-dialog/confirm.dialog';
 import { ChooseProfileDialogComponent, DialogData_ChooseProfiles } from '../../collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
@@ -36,7 +36,7 @@ type updateViewAction = 'update' | 'add' | 'delete';
     '../../shared/css/mat-card-list.css',
     './packable-list.component.css'
   ],
-  animations: [expandAndFadeTrigger, addRemoveElementTrigger]
+  animations: [expandAndFadeTrigger, addRemoveElementTrigger, blockInitialAnimations]
 })
 export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
 
@@ -44,7 +44,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   editingCollectionId: string; 
   editingProfileId: string; 
 
-  @Input('packables') completePackables: PackableComplete[];
+  @Input('packables') inputPackables: PackableComplete[];
   @Output() packablesChange = new EventEmitter<PackableComplete[]>()
   @Input() useCard: boolean = false;
 
@@ -57,9 +57,9 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     disableClose: true,
     autoFocus: false
   }
-  editList: boolean;
-  selected: string[];
-  recentlyChanged: string[];
+  editList: boolean = false;
+  selected: string[] = []
+  recentlyChanged: string[] = []
 
   constructor(
     private bulkActions:BulkActionsService,
@@ -76,13 +76,17 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   ) { }
 
   ngOnInit() {
+    this.recentlyChanged = [];
+    this.selected = [];
+    this.editList = false;
     this.initView()
     this.subscription = this.context.changes.subscribe(()=>{
       //this.initView()
     })
   }
   ngOnChanges(changes:SimpleChanges){
-    if(changes['completePackables']){
+    if(changes['inputPackables']){
+      console.log(`packableList recieved new packables`, this.inputPackables);
       this.initView()
     }
   }
@@ -93,34 +97,39 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   initView() {
     this.editingProfileId = this.context.profileId
     this.editingCollectionId = this.context.collectionId
-    this.packableList = this.completePackables.slice();
-    this.recentlyChanged = [];
-    this.selected = [];
-    this.editList = false;
+    this.packableList.compare(this.inputPackables,(item)=>{
+      this.addRecentlyChanged(item.id)
+    });
   }
 
   updateViewObject(packables: PackableComplete[], action: updateViewAction) {
     if (!this.packableList) {
       // this.completePackables = this.getCompletePackables()
-      this.packableList = this.completePackables.slice()
+      this.packableList = this.inputPackables.slice()
     } else if (packables) {
-      this.clearRecentlyChanged()
-      packables.forEach(p => {
-        let index = this.packableList.idIndex(p.id)
-        if (action == 'delete' && index != -1) {
-          this.packableList.splice(index, 1)
-        } else {
-          if (action == 'update' && index > -1) {
-            let newPackable = this.pacFactory.makeComplete(p)
-            this.packableList.splice(index, 1, newPackable)
-            this.addRecentlyChanged(p.id)
-          } else if (action == 'add' && index == -1) {
-            this.packableList.unshift(p)
-          } else {
-            console.warn(`Could not update View for packable "${p.name}" id:\n${p.id}`)
-          }
+      packables.forEach(packable => {
+        let index = this.packableList.idIndex(packable.id)
+        switch(action){
+          case 'add':
+            if(index===-1){
+              this.packableList.unshift(packable)
+              this.addRecentlyChanged(packable.id)
+            }
+            break;
+          case 'delete':
+            if(index!=-1){
+              this.packableList.splice(index, 1)
+            }
+            break;
+          case 'update':
+            if(index){
+              this.packableList[index] = packable
+              this.addRecentlyChanged(packable.id)
+            }
+          default:
+            console.log('Could not update PackableList view for '+packable.name)
         }
-      });
+      })
       this.packablesChange.emit(this.packableList)
     }
   }
@@ -134,6 +143,9 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   addRecentlyChanged(id){
     if(!this.isRecentlyChanged(id)){
       this.recentlyChanged.push(id)
+      setTimeout(()=>{
+        this.removeRecentelyChanged(id)
+      },60000)
     }
   }
   removeRecentelyChanged(id){
@@ -208,7 +220,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     let editingPackable: PackableComplete,
       data: DialogData_EditPackable
 
-    editingPackable = this.completePackables.findId(packableId)
+    editingPackable = this.inputPackables.findId(packableId)
     data = {
       pakable: editingPackable,
       isNew: false

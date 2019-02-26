@@ -11,7 +11,7 @@ import * as profileActions from '../../profiles/store/profile.actions';
 import * as collectionActions from '../../collections/store/collections.actions'
 import * as packableActions from '../../packables/store/packables.actions'
 import * as uesrActions from '../../user/store/user.actions'
-import { defaultUserSettings } from './userState.model';
+import { defaultUserSettings, defaultVisitorPermissions } from './userState.model';
 
 @Injectable()
 export class AuthEffects {
@@ -57,28 +57,28 @@ export class AuthEffects {
              )
         }),
     )
-    @Effect({dispatch:false}) authRegister = this.actions$.pipe(
+    @Effect({dispatch:false}) authRegisterEffect = this.actions$.pipe(
         ofType(AuthActions.REGISTER),
         tap(()=>{
             this.storageService.setInitialUserConfig()
         })
     )
-    @Effect({dispatch:false}) authGetUserData = this.actions$.pipe(
+    @Effect({dispatch:false}) authLoginEffect = this.actions$.pipe(
         ofType(AuthActions.LOGIN),
         tap(()=>{
-            this.storageService.getAllUserItems()
+            console.log('authLoginEffect will now get user config data')
             this.storageService.getUserConfig()
         })
     )
-    @Effect() authLogOut = this.actions$.pipe(
+    @Effect() authLogOutEffect = this.actions$.pipe(
         ofType<AuthActions.Logout>(AuthActions.LOGOUT),
         mergeMap(()=>{
             return [
                 new packableActions.setPackableState([]),
                 new collectionActions.setCollectionState([]),
                 new profileActions.setProfileState([]),
-                new uesrActions.setUserSettings(null),
-                new uesrActions.setUserPermissions(null),
+                new uesrActions.setUserSettings(defaultUserSettings),
+                new uesrActions.setUserPermissions(defaultVisitorPermissions),
                 new tripActions.setTripState({trips:[],packingLists:[]})
             ]
         })

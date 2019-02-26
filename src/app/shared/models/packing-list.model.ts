@@ -32,7 +32,7 @@ export interface PackingListPackable {
 
 export class PackingList {
     constructor(
-        public tripId: string,
+        public id: string,
         public updated: string = moment().format(),
         public data: packingListData = new packingListData(),
         public packables: PackingListPackable[] =[],

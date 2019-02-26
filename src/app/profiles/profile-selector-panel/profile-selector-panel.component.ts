@@ -25,7 +25,7 @@ import { isDefined } from '../../shared/global-functions';
     ])
   ]
 })
-export class ProfileSelectorPanelComponent implements OnInit  {
+export class ProfileSelectorPanelComponent implements OnInit,OnChanges {
   @Input('profiles') profiles: Profile[] = []
   @Input('selected') selected: string = ''
   @Output('selectedChange') selectedChange = new EventEmitter<string>()
@@ -47,7 +47,9 @@ export class ProfileSelectorPanelComponent implements OnInit  {
   }
   ngOnInit() {
   }
-
+  ngOnChanges(changes:SimpleChanges){
+    changes['profiles'] && console.log('Profile Selector received profiles: ', this.profiles)
+  }
   onSelectedProfiles(ids: string[]){
     this.selectedChange.emit(ids[0])
     this.iconSelector.scrolling.pipe(filter(x=>x===0), take(1)).subscribe(scroll => {

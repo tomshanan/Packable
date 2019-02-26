@@ -9,6 +9,9 @@
   <p class="small text-muted" *ngIf="collection.essential">This Collection will be automatically added to this Traveler on every trip.</p>
 </ng-container> 
 <app-weather-conditions-form [(weather)]="collection.weatherRules" (weatherChange)="emitUpdate()" *ngIf="profileId"></app-weather-conditions-form>
+<span class="form-heading" *ngIf="collection.userCreated">
+    <button mat-raised-button color="none" (click)="renameCollection()">Rename Collection</button>
+  </span>
 <span class="form-heading">
   <button mat-raised-button color="none" (click)="applyCollection()">Apply Settings to Travelers</button>
 </span>

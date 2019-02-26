@@ -13,7 +13,9 @@ import * as profileActions from '@app/profiles/store/profile.actions';
 import { PackablePrivate, PackableOriginal } from '../models/packable.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
 import { CollectionComplete } from '../models/collection.model';
-import { isDefined } from '../global-functions';
+import { isDefined, timeStamp } from '../global-functions';
+import { editProfiles } from '../../profiles/store/profile.actions';
+import { Profile } from '../models/profile.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,86 +31,102 @@ export class BulkActionsService {
     private context: ContextService,
     private wcFactory: weatherFactory,
   ) { }
-  
+
   // ---- [ COLLECTIONS ] - BULK ACTIONS
-  public removeCollectionsFromProfiles(collectionIds:string[], profileIds: string[]){
-    if(collectionIds.length >0 && profileIds.length > 0){
-      let profiles = this.storeSelector.profiles;
-      profileIds.forEach(pId=>{
+  public removeCollectionsFromProfiles(collectionIds: string[], profileIds: string[]) {
+    if (collectionIds.length > 0 && profileIds.length > 0) {
+      let profiles = this.storeSelector.profiles.filter(p=>profileIds.includes(p.id));
+      profileIds.forEach(pId => {
         let profile = profiles.findId(pId)
-        profile.collections = profile.collections.filter(c=> !collectionIds.includes(c.id))
+        profile.collections = profile.collections.filter(c => !collectionIds.includes(c.id))
       })
-      this.store.dispatch(new profileActions.setProfileState(profiles))
+      this.store.dispatch(new profileActions.editProfiles(profiles))
     }
   }
- 
-  public pushCollectionsToProfiles(collections:CollectionComplete[], profileIds: string[]){
-    if(collections.length >0 && profileIds.length > 0){
-      let privateCollections = collections.map(c=>this.colFac.completeToPrivate(c))
-      let profiles = this.storeSelector.profiles;
-      privateCollections.forEach(privateCol=>{
-        profileIds.forEach(pId=>{
+
+  public pushCollectionsToProfiles(collections: CollectionComplete[], profileIds: string[]) {
+    if (collections.length > 0 && profileIds.length > 0) {
+      let privateCollections = collections.map(c => this.colFac.completeToPrivate(c))
+      let profiles = this.storeSelector.profiles.filter(p=>profileIds.includes(p.id));
+      privateCollections.forEach(privateCol => {
+        profileIds.forEach(pId => {
           let profile = profiles.findId(pId)
           let index = profile.collections.idIndex(privateCol.id)
-          if(index !== -1){
-            profile.collections.splice(index,1,privateCol)
+          if (index !== -1) {
+            profile.collections.splice(index, 1, privateCol)
           } else {
             profile.collections.unshift(privateCol)
           }
         })
       })
-      this.store.dispatch(new profileActions.setProfileState(profiles))
+      this.store.dispatch(new profileActions.editProfiles(profiles))
     }
   }
   //  --- [ PACKABLES ] - BULK ACTIONS
 
-  public removePackablesByCP(packables:string[], CPs?:CollectionProfile[]){
-    if(CPs && CPs.length>0){
-      let profiles = this.storeSelector.profiles;
+  public removePackablesByCP(packables: string[], CPs?: CollectionProfile[]) {
+    if (CPs && CPs.length > 0) {
+
+      let allProfiles = this.storeSelector.profiles
+      let modifiedProfiles:Profile[] = []
       CPs.forEach(CP => {
-        let profile = profiles.findId(CP.pId)
-        if (profile){
+        let profile = allProfiles.findId(CP.pId)
+        if (profile) {
           let col = profile.collections.findId(CP.cId)
-          if (col){
-            col.packables = col.packables.filter(p=> !packables.includes(p.id))
+          if (col) {
+            col.packables = col.packables.filter(p => !packables.includes(p.id))
+            col.dateModified = timeStamp()
+            profile.dateModified = timeStamp()
+            modifiedProfiles.push(profile)
           }
         }
+        this.store.dispatch(new profileActions.editProfiles(modifiedProfiles))
       })
-      this.store.dispatch(new profileActions.setProfileState(profiles))
     } else {
-      //this.store.dispatch(new packableActions.removeOriginalPackables(packables))
       console.error('Did not recieve valid CollectionProfile array', CPs);
     }
-  } 
+  }
 
-  public pushPackablesByCP(packables:string[],CPs?:CollectionProfile[]){
-    if(CPs && CPs.length>0){
-      if(this.context.collectionId){
+  public pushPackablesByCP(packables: string[], CPs?: CollectionProfile[]) {
+    if (CPs && CPs.length > 0) {
+      if (this.context.collectionId) {
         this.pushContextPackablesByCP(packables, CPs)
       } else {
-        this.pushOriginalPackablesByCP(packables,CPs)
+        this.pushOriginalPackablesByCP(packables, CPs)
       }
     }
   }
-  public pushContextPackablesByCP(packables:string[], CPs?:CollectionProfile[]){
-    if(CPs && CPs.length>0 && this.context.collectionId && this.context.profileId){
+  public pushContextPackablesByCP(packables: string[], CPs?: CollectionProfile[]) {
+    if (CPs && CPs.length > 0 && this.context.collectionId && this.context.profileId) {
       let privatePackables = this.storeSelector
-        .getAllPrivatePackables(this.context.collectionId,this.context.profileId)
-        .filter(p=>packables.includes(p.id))
-        this.pushPrivatePackablesByCP(privatePackables, CPs)
-    }
-  }
-  public pushOriginalPackablesByCP(packables:string[], CPs:CollectionProfile[]){
-    if(CPs && CPs.length>0){
-      let privatePackables =packables.map(id=>this.pacFac.makePrivateFromId(id))
+        .getAllPrivatePackables(this.context.collectionId, this.context.profileId)
+        .filter(p => packables.includes(p.id))
       this.pushPrivatePackablesByCP(privatePackables, CPs)
     }
   }
-  private pushPrivatePackablesByCP(privatePackables:PackablePrivate[], CPs:CollectionProfile[]){
-    if(CPs && CPs.length>0 && privatePackables && privatePackables.length>0){
-      let profiles = this.storeSelector.profiles;
-      profiles = this.proFac.addEditPackablesByCP(profiles,privatePackables,CPs)
-      this.store.dispatch(new profileActions.setProfileState(profiles))
+  public pushOriginalPackablesByCP(packables: string[], CPs: CollectionProfile[]) {
+    if (CPs && CPs.length > 0) {
+      let privatePackables = packables.map(id => this.pacFac.makePrivateFromId(id))
+      this.pushPrivatePackablesByCP(privatePackables, CPs)
+    }
+  }
+  private pushPrivatePackablesByCP(privatePackables: PackablePrivate[], CPs: CollectionProfile[]) {
+    if (CPs && CPs.length > 0 && privatePackables && privatePackables.length > 0) {
+      let allProfiles = this.storeSelector.profiles;
+      let modifiedProfiles:Profile[] = []
+      CPs.forEach(cp => {
+        let profile = allProfiles.findId(cp.pId)
+        if (profile) {
+          let collection = profile.collections.findId(cp.cId)
+          if (collection) {
+            collection = this.colFac.addEditPackables(collection, privatePackables)
+            collection.dateModified = timeStamp()
+            profile.dateModified = timeStamp()
+            modifiedProfiles.push(profile)
+          }
+        }
+      })
+      this.store.dispatch(new profileActions.editProfiles(modifiedProfiles))
     }
   }
 }

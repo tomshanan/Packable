@@ -81,7 +81,7 @@ a.navLink{
     transition: 0.3s, letter-spacing 1s;
 }
 a.navLink:hover{
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     color: white!important;
 }
 a.navLink.active,a.navLink:active{

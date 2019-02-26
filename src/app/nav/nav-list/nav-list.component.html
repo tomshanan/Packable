@@ -1,4 +1,5 @@
 <nav class="nav flex-column">
+
     <ng-template ngFor let-listItem [ngForOf]="mainNav">
         <a 
             *ngIf="canView(listItem)" 
@@ -26,16 +27,35 @@
         </ng-template>
         <br>
     </ng-container>
-
-    <ng-template ngFor let-listItem [ngForOf]="userNav">
-        <a 
-            *ngIf="canView(listItem)"
+    <ng-container *ngIf="isAuthenticated; else login">
+        <span class="nav-link text-right">
+            <a 
+                class="navLink"
+                routerLink="user"
+                fragment="settings"
+                routerLinkActive="active">
+                {{username}}</a>
+            &nbsp;(<a 
+            class="navLink small" 
+            routerLink="user"
+            fragment="logout"
+            routerLinkActive="active">Logout</a>)
+        </span>
+    </ng-container>
+    <ng-template #login>
+            <a 
             class="nav-link navLink text-right" 
-            [ngClass]="{'small': listItem.size=='sub'}"
-            (click)="routeTo('/user', listItem.fragment)"
+            routerLink="user"
+            fragment="login"
             routerLinkActive="active">
-            {{listItem.text}}
+            Login
         </a>
-        <br *ngIf="listItem.type == 'gap' && listItem.active">
+        <a 
+            class="nav-link navLink text-right small" 
+            routerLink="user"
+            fragment="register"
+            routerLinkActive="active">
+            Register
+        </a>
     </ng-template>
 </nav>

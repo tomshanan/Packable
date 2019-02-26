@@ -1,6 +1,10 @@
 import { item } from './services/list-editor.service';
 import { filterItem } from '@app/shared-comps/item-selector/item-selector.component';
 
+export function timeStamp():number{
+  let newStamp = new Date().valueOf()
+  return newStamp
+}
 export function isDefined(property:any, object:any = {}){
   return object && property!==null && property !==undefined && property!=='' && property != []
 }

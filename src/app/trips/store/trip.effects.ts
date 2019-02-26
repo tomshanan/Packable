@@ -11,14 +11,14 @@ export class TripEffects {
         private actions$:Actions
     ){}
 
-    @Effect({dispatch:false}) saveTripState = this.actions$.pipe(
+    @Effect({dispatch:false}) changeTripEffect = this.actions$.pipe(
         ofType(TripActions.ADD_TRIP,
             TripActions.EDIT_TRIP,
             TripActions.REMOVE_TRIP,
             TripActions.REMOVE_TRIP_ACTIVITY,
             TripActions.REMOVE_TRIP_PROFILE),
         tap(()=>{
-            this.storageServices.setUserData('tripState')
+            this.storageServices.setUserItemsNode('tripState')
         })
     )
 }

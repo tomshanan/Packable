@@ -24,7 +24,8 @@ export class PackableFactory {
         return new PackablePrivate(
             p.id,
             this.cloneQuantityRules(p.quantityRules),
-            this.weatherFactory.deepCopy(p.weatherRules)
+            this.weatherFactory.deepCopy(p.weatherRules),
+            p.dateModified
         )
     }
     public clonePackableOriginal = (p: PackableOriginal): PackableOriginal => {
@@ -32,7 +33,9 @@ export class PackableFactory {
             p.id,
             p.name,
             this.cloneQuantityRules(p.quantityRules),
-            this.weatherFactory.deepCopy(p.weatherRules)
+            this.weatherFactory.deepCopy(p.weatherRules),
+            p.userCreated,
+            p.dateModified
         )
     }
 
@@ -40,7 +43,8 @@ export class PackableFactory {
         let newPackable = new PackablePrivate(
             original.id,
             original.quantityRules.slice(),
-            this.weatherFactory.deepCopy(original.weatherRules)
+            this.weatherFactory.deepCopy(original.weatherRules),
+            original.dateModified
         )
         return newPackable;
     }
@@ -66,7 +70,8 @@ export class PackableFactory {
                 packable.name,
                 packable.quantityRules.slice(),
                 this.weatherFactory.deepCopy(packable.weatherRules),
-                packable.userCreated
+                packable.userCreated,
+                packable.dateModified
             )
         } else {
             let original = this.storeSelector.getPackableById(packable.id)
@@ -75,7 +80,8 @@ export class PackableFactory {
                 original.name,
                 packable.quantityRules.slice(),
                 this.weatherFactory.deepCopy(packable.weatherRules),
-                original.userCreated
+                original.userCreated,
+                packable.dateModified
             )
         }
     }
@@ -92,7 +98,8 @@ export class PackableFactory {
         return new PackablePrivate(
             completePackable.id,
             completePackable.quantityRules.slice(),
-            this.weatherFactory.deepCopy(completePackable.weatherRules)
+            this.weatherFactory.deepCopy(completePackable.weatherRules),
+            completePackable.dateModified
         )
     }
     public completeToOriginal = (completePackable: PackableComplete): PackableOriginal =>{
@@ -101,7 +108,8 @@ export class PackableFactory {
             completePackable.name,
             completePackable.quantityRules.slice(),
             this.weatherFactory.deepCopy(completePackable.weatherRules),
-            completePackable.userCreated
+            completePackable.userCreated,
+            completePackable.dateModified
         )
     }
 

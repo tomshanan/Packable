@@ -1,4 +1,4 @@
-import { State, userPermissions, defaultPermissions, defaultUserConfigState } from "./userState.model";
+import { State, userPermissions, defaultUserPermissions, defaultUserConfigState } from "./userState.model";
 import * as userActions from "./user.actions";
 
 export function userReducers(state = defaultUserConfigState, action: userActions.userActions){

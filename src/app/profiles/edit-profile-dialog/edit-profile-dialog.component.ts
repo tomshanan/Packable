@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { ProfileEditFormComponent } from '../profile-edit-form/profile-edit-form.component';
+import { timeStamp } from '@app/shared/global-functions';
 
 @Component({
   selector: 'app-edit-profile-dialog',
@@ -35,13 +36,12 @@ export class EditProfileDialogComponent implements OnInit {
   valid():boolean{
     return this.profileForm.valid
   }
-  logProfile(){
-    console.log(this.profileForm);
-  }
+
   onConfirm(){
     if(this.valid()){
       let newProfile = this.proFac.completeToPrivate(this.profile)
-      this.store.dispatch(new profileActions.editProfile(newProfile))
+      newProfile.dateModified = timeStamp()
+      this.store.dispatch(new profileActions.editProfiles([newProfile]))
       this.onClose();
     }
   }

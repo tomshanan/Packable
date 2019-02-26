@@ -4,6 +4,7 @@ import * as collectionActions from './collections.actions'
 import { StorageService } from '../../shared/storage/storage.service';
 import { tap, map, switchMap } from 'rxjs/operators';
 import * as profileActions from '@app/profiles/store/profile.actions';
+import { removeOriginalCollections, REMOVE_ORIGINAL_COLLECTIONS } from './collections.actions';
 
 @Injectable()
 export class CollectionEffects{
@@ -12,18 +13,24 @@ export class CollectionEffects{
         private storageService: StorageService
     ){}
 
-    @Effect({dispatch:false}) saveCollectionState = this.actions$.pipe(
-        ofType(
-            collectionActions.ADD_ORIGINAL_COLLECTION,
-            collectionActions.EDIT_ORIGINAL_COLLECTION,
-            collectionActions.REMOVE_ORIGINAL_COLLECTION),
-        tap(()=>{
-            this.storageService.setUserData('collections')
+    @Effect({dispatch:false}) updateCollectionEffect = this.actions$.pipe(
+        ofType<collectionActions.updateOriginalCollection>(collectionActions.UPDATE_ORIGINAL_COLLECTION),
+        tap((action:collectionActions.updateOriginalCollection)=>{
+            this.storageService.saveItemsInUser('collections', [action.payload])
         })
     )
+    
+    @Effect({dispatch:false}) removeCollectionEffect = this.actions$.pipe(
+        ofType<collectionActions.removeOriginalCollections>(collectionActions.REMOVE_ORIGINAL_COLLECTIONS),
+        tap((action:collectionActions.removeOriginalCollections)=>{
+            this.storageService.removeItemsInUser('collections', action.payload)
+        })
+        // ADD: DISPATCH REMOVE FROM COLLECTION FROM PROFILE
+    )
+
     // FROM Packable Effects ==>
-    @Effect() deleteCollectionPackable = this.actions$.pipe(
-        ofType<collectionActions.deleteCollectionsPackables>(collectionActions.DELETE_COLLECTION_PACKABLES),
+    @Effect() removePackablesFromCollectionEffect = this.actions$.pipe(
+        ofType<collectionActions.removePackablesFromAllCollections>(collectionActions.REMOVE_PACKABLES_FROM_COLLECTIONS),
         map(action=>{
            return new profileActions.deleteProfilePackables(action.payload)  
            // ==> Profile reducers ==> Database

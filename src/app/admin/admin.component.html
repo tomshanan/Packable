@@ -1,6 +1,6 @@
 <app-nav [header]="'Admin Settings'" [icon]="'fas fa-user-shield'"></app-nav>
 
-<ng-container *ngIf="user.permissions.userManagement; else noPermissions">
+<ng-container *ngIf="user.permissions.creator; else noPermissions">
   <slide-toggle-with-text 
   [checked]="simulateState"
    text="Simulate User" 

@@ -49,7 +49,6 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   currentlyOpenPanel: MatExpansionPanel;
   contextProvided: boolean;
   collectionList: CollectionViewObject[];
-  unusedCollectionList: CollectionComplete[];
   selectedPanel: CollectionPanelView;
   listEditing: boolean = false;
   selected = new SelectedList();
@@ -73,25 +72,18 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (!this.contextProvided) {
       this.collectionList = this.buildCollectionList(this.inputCollections)
-      this.unusedCollectionList =
-        this.buildCollectionList(this.inputCollections, true)
-          .filter(x => x.profileGroup.length === 0)
-          .map(x => x.complete)
     } else {
       this.collectionList = this.buildCollectionList(this.getProfileCompleteCollections())
     }
-    // this.contextSubscription = this.context.changes.subscribe(()=>{
-    //   this.profileId = this.context.profileId;
-    // })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.collectionList && changes['collections']) {
-      this.updateCollectionList(this.inputCollections)
+    if (this.collectionList && changes['inputCollections']) {
       console.log(`received changes and updated collection list`);
-      this.updateUnusedCollectionList(this.inputCollections)
+      this.updateCollectionList(this.inputCollections)
     }
     if (this.collectionList && changes['profileId']) {
+      console.log(`profile id updated: ${changes['profileId'].previousValue} => ${changes['profileId'].currentValue}`)
       this.collectionList = this.buildCollectionList(this.getProfileCompleteCollections())
     }
   }
@@ -99,11 +91,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     // this.contextSubscription.unsubscribe();
   }
   getProfileCompleteCollections(): CollectionComplete[]{
-    return this.proFac
-    .makeComplete(this.storeSelector.profiles)
-    .findId(this.profileId)
-    .collections
+    return this.proFac.getCompleteProfilesByIds([this.profileId])[0].collections
   }
+
   checkboxChange(e: MatCheckboxChange, id: string) {
     if (e.checked) {
       this.selected.add(id)
@@ -136,42 +126,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-
-  updateCollectionList(collections: CollectionComplete[], includeUnused: boolean = false) {
-    if (this.collectionList) {
-      collections.forEach(c => {
-        if (this.collectionList.idIndex(c.id) === -1) {
-          let viewObj = this.buildViewObject(c)
-          if (includeUnused || viewObj.profileGroup.length > 0) {
-            this.collectionList.unshift(viewObj)
-          }
-        }
-      })
-    }
-    this.collectionList.slice().forEach(c => {
-      let remove = false;
-      if (collections.idIndex(c.id) === -1) {
-        remove = true;
-      } else {
-        let viewObj = this.buildViewObject(collections.findId(c.id))
-        if (!includeUnused && viewObj.profileGroup.length === 0) {
-          remove = true;
-        }
-      }
-      if (remove) {
-        let i = this.collectionList.idIndex(c.id)
-        this.collectionList.splice(i, 1)
-      }
-    })
-  }
-  updateUnusedCollectionList(collections: CollectionComplete[]) {
-    if (!this.contextProvided) {
-      this.unusedCollectionList =
-        this.buildCollectionList(collections, true)
-          .filter(x => x.profileGroup.length === 0)
-          .map(x => x.complete)
-      console.log('unused collection list updated:\n', this.unusedCollectionList)
-    }
+  updateCollectionList(updatedCollections: CollectionComplete[]) {
+    let updateViewObject = this.buildCollectionList(updatedCollections)
+    this.collectionList.compare(updateViewObject)
   }
 
   buildCollectionList(collections: CollectionComplete[], includeUnused: boolean = false): CollectionViewObject[] {
@@ -184,14 +141,15 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       id: c.id,
       name: c.name,
       essential: c.essential,
+      complete: c,
       expanded: false,
       panel: 'list',
       profileSelector: !this.profileId,
       selectedProfile: this.profileId,
-      profileGroup: this.storeSelector.getProfilesWithCollectionId(c.id),
-      complete: c
+      profileGroup: this.storeSelector.getProfilesWithCollectionId(c.id)
     }
   }
+
   togglePanel(id: string, panel: CollectionPanelView, matPanel: MatExpansionPanel) {
     let col = this.collectionList.findId(id)
     if (col.expanded && col.panel === panel) {
@@ -268,7 +226,6 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       let index = this.inputCollections.idIndex(id)
       //this.inputCollections.splice(index, 1)
       this.updateCollectionList(this.inputCollections)
-      this.updateUnusedCollectionList(this.inputCollections)
     } else {
       let col = this.collectionList.findId(id)
       col.profileSelector = true;
@@ -320,7 +277,6 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
         this.bulkActions.removeCollectionsFromProfiles(selectedIds, profiles.map(x => x.id))
         this.storeSelector.profiles_obs.pipe(take(1)).subscribe(() => {
           this.updateCollectionList(this.inputCollections)
-          this.updateUnusedCollectionList(this.inputCollections)
           this.selected.clear()
         })
       }
@@ -345,18 +301,19 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     });
     chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
       if (profileIds.length > 0) {
+        let profilesFiltered = profiles.filter(p=>profileIds.includes(p.id))
         let privateCol = this.colFac.completeToPrivate(collection);
         profileIds.forEach(pId => {
-          let profile = profiles.findId(pId)
+          let profile = profilesFiltered.findId(pId)
           profile = this.proFac.addEditCollection(profile, privateCol)
         });
-        this.store.dispatch(new profileActions.setProfileState(profiles))
+        this.store.dispatch(new profileActions.editProfiles(profilesFiltered))
         this.updateCollectionList(this.inputCollections)
-        this.updateUnusedCollectionList(this.inputCollections)
         this.selected.clear()
       }
     })
   }
+
   newCollection() {
     let newCollection = this.dialog.open(NewCollectionDialogComponent, {
       ...this.dialogSettings,
@@ -367,7 +324,6 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
         console.log(`Created collection:\n`,collection);
         this.storeSelector.profiles_obs.pipe(take(1)).subscribe(() => {
           this.updateCollectionList(this.inputCollections)
-          this.updateUnusedCollectionList(this.inputCollections)
         })
       }
     })

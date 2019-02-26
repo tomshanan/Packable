@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef  } from '@angular/core';
+import { Component, OnInit, TemplateRef, OnDestroy  } from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../shared-comps/modal/modal.component';
 
@@ -8,6 +8,8 @@ import { PackableFactory } from '../shared/factories/packable.factory';
 import { PackableComplete } from '../shared/models/packable.model';
 import { ContextService } from '../shared/services/context.service';
 import { blockInitialAnimations } from '../shared/animations';
+import { Subscription } from 'rxjs';
+import { StorageService } from '../shared/storage/storage.service';
 
 @Component({
   selector: 'app-packables',
@@ -15,13 +17,13 @@ import { blockInitialAnimations } from '../shared/animations';
   styleUrls: [
     './packables.component.css'
   ],
-  animations: [blockInitialAnimations]
 })
-export class PackablesComponent implements OnInit {
-
+export class PackablesComponent implements OnInit, OnDestroy {
+sub: Subscription;
   constructor(
     public dialog: MatDialog,
     private storeSelector: StoreSelectorService,
+    private storage: StorageService,
     private pacFac: PackableFactory,
     private modalService: NgbModal,
     private context: ContextService,
@@ -30,10 +32,14 @@ export class PackablesComponent implements OnInit {
   packables: PackableComplete[];
   ngOnInit() {
     this.context.reset();
-    let originals = this.storeSelector.originalPackables
-    this.packables = this.pacFac.makeCompleteFromArray(originals)
+    this.sub = this.storeSelector.packables_obs.subscribe(state=>{
+      console.log('packables recieved new state:',state.packables);
+      this.packables = this.pacFac.makeCompleteFromArray(state.packables)
+    })
   }
-
+  ngOnDestroy(){
+    this.sub.unsubscribe()
+  }
   openModal(tempRef:TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;

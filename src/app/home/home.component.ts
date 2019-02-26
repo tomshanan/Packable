@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
   }
   saveDummyDate(){
     if(confirm("This Will SAVE the dummy data! Are you sure?")){
-      this.storage.setAllUserData();
+      this.storage.setAllUserItemsAndSettings();
     }
   }
 

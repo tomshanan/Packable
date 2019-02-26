@@ -62,6 +62,5 @@ export class NameInputComponent implements OnInit,AfterViewInit {
       valid: this.nameInput.valid
     })
     this.value = this.nameInput.value
-    console.log('name input change:\n',this.nameInput)
   }
 }

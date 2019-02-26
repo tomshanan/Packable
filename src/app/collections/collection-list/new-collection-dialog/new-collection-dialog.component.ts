@@ -83,7 +83,7 @@ export class NewCollectionDialogComponent implements OnInit {
   }
   confirmProfiles(){
     let originalCollection = this.colFac.completeToOriginal(this.collection)
-    this.store.dispatch(new collectionActions.addOriginalCollection(originalCollection))
+    this.store.dispatch(new collectionActions.updateOriginalCollection(originalCollection))
     this.bulkActions.pushCollectionsToProfiles([this.collection], this.selectedProfiles)
     this.onClose(this.collection);
   }

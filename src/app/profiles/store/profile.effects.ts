@@ -16,18 +16,18 @@ export class ProfileEffects{
     @Effect({dispatch:false}) saveProfileState = this.actions$.pipe(
         ofType(
             profileActions.ADD_PROFILE,
-            profileActions.DELETE_PROFILE_COLLECTION,
-            profileActions.EDIT_PROFILE,
+            profileActions.DELETE_COLLECTIONS_FROM_PROFILES,
+            profileActions.EDIT_PROFILES,
             profileActions.REMOVE_PROFILE),
         tap(()=>{
-            this.storageServices.setUserData('profiles')
+            this.storageServices.setUserItemsNode('profiles')
         })
     )
     // from Packable Effects ==> Collection Effects ==>
     @Effect({dispatch:false}) deleteProfilePackable = this.actions$.pipe(
-        ofType<profileActions.deleteProfilePackables>(profileActions.DELETE_PROFILE_PACKABLES),
+        ofType<profileActions.deleteProfilePackables>(profileActions.DELETE_PACKABLES_FROM_PROFILES),
         tap(()=>{
-            this.storageServices.setAllUserData();
+            this.storageServices.setAllUserItemsAndSettings();
         })
     )
 }

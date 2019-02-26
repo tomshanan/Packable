@@ -71,7 +71,7 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
             }
         case TripActions.UPDATE_PACKING_LIST:
             const newList = action.payload;
-            const updateListIndex = state.packingLists.findIndex(p=>p.tripId === newList.tripId);
+            const updateListIndex = state.packingLists.findIndex(p=>p.id === newList.id);
             if(updateListIndex > -1){
                 let newListState = state.packingLists.slice();
                 newListState[updateListIndex] = newList;

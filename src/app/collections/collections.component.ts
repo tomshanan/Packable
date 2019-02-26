@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, Output, TemplateRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, TemplateRef, ViewChild } from '@angular/core';
 import * as fromApp from '../shared/app.reducers';
 import { Store } from '@ngrx/store';
-import { Observable ,  Subscription } from 'rxjs';
+import { Observable ,  Subscription, combineLatest } from 'rxjs';
 import { CollectionPrivate, CollectionOriginal, CollectionComplete } from '../shared/models/collection.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MemoryService } from '../shared/services/memory.service';
@@ -13,6 +13,8 @@ import { CollectionFactory } from '../shared/factories/collection.factory';
 import { take } from 'rxjs/operators';
 import { ContextService } from '../shared/services/context.service';
 import { blockInitialAnimations } from '../shared/animations';
+import { StorageService } from '../shared/storage/storage.service';
+import { CollectionListComponent } from './collection-list/collection-list.component';
 
 @Component({
   selector: 'app-collections',
@@ -24,16 +26,20 @@ import { blockInitialAnimations } from '../shared/animations';
 })
 export class CollectionsComponent implements OnInit,OnDestroy {
   @Output('test') test:string = 'test worked';
+  @ViewChild('usedCollectionsComponent') usedCollectionsComponent: CollectionListComponent;
   collectionState_obs: Observable<{collections: CollectionOriginal[]}>
-  collectionState_sub: Subscription;
+  subs: Subscription;
   collections: CollectionComplete[];
+  unusedCollections: CollectionComplete[];
+
   constructor(
     private store:Store<fromApp.appState>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private memoryService: MemoryService,
     private collectionFactory: CollectionFactory,
-    private selectorService: StoreSelectorService,
+    private storeSelector: StoreSelectorService,
+    private storage:StorageService,
     private modalService: NgbModal,
     private context: ContextService,
 
@@ -41,25 +47,28 @@ export class CollectionsComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.context.reset();
-    this.collectionState_obs = this.store.select('collections');
-    this.collectionState_sub = this.collectionState_obs.subscribe(state =>{
-      this.collections = this.collectionFactory.makeCompleteArray(state.collections)
+
+    this.subs = combineLatest(this.storeSelector.profiles_obs,this.storeSelector.collections_obs).subscribe(([proState,colState]) =>{
+      console.log('collections - received new state');
+      let profiles = proState.profiles
+      // collections = select only collections which are being used by a profile
+      this.collections = this.collectionFactory.makeCompleteArray(colState.collections).filter(col=>{
+        return profiles.some(p=>p.collections.idIndex(col.id)!=-1)
+      })
+      // unused collections = select only collections which are NOT being used by a profile
+      this.unusedCollections = this.collectionFactory.makeCompleteArray(colState.collections).filter(col=>{
+        return profiles.every(p=>p.collections.idIndex(col.id)==-1)
+      })
     })
   }
 
   ngOnDestroy(){
-    this.collectionState_sub.unsubscribe();
+    this.subs.unsubscribe();
   }
-  editCollection(id:string){
-    // this.memoryService.resetAll();
-    // let collection = this.selectorService.getCollectionById(id)
-    // this.memoryService.set('ORIGINAL_COLLECTION',collection);
-    // this.router.navigate([slugName(collection.name)], {relativeTo: this.activatedRoute})
+  pushCollection(collection:CollectionComplete){
+    this.usedCollectionsComponent.pushCollection(collection)
   }
-  newCollection(){
-    // this.memoryService.resetAll();
-    // this.router.navigate(["new"], {relativeTo: this.activatedRoute})
-  }
+
   openModal(tempRef:TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;

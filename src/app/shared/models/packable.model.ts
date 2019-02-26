@@ -25,6 +25,7 @@ export class PackableComplete {
         public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
+        public dateModified: number = new Date().valueOf()
     ) { }
 }
 export class PackableOriginal {
@@ -34,7 +35,8 @@ export class PackableOriginal {
         public name: string = '',
         public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),
-        public userCreated: boolean = false
+        public userCreated: boolean = false,
+        public dateModified: number = new Date().valueOf()
     ) {
     }
 }
@@ -44,6 +46,7 @@ export class PackablePrivate {
         public id: string,
         public quantityRules: QuantityRule[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
+        public dateModified: number = new Date().valueOf()
     ) { }
 }
 export type PackableAny = PackablePrivate | PackableOriginal;

@@ -77,6 +77,7 @@ import { AdminUserTableComponent } from '../admin/admin-user-table/admin-user-ta
 import { MatTableModule, MatPaginatorModule, MatSortModule } from '@angular/material';
 import { SetPermissionsDialogComponent } from '../admin/set-permissions-dialog/set-permissions-dialog.component';
 import { UsersComponent } from '../admin/users/users.component';
+import { RenameCollectionDialogComponent } from '../collections/collection-list/collection-panel/collection-settings/rename-collection-dialog/rename-collection-dialog.component';
 
 let imports = [
     ProfilesComponent,
@@ -158,7 +159,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, RenameCollectionDialogComponent],
     exports: [...imports]
 })
 export class SharedModule {

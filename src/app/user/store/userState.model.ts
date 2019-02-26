@@ -16,18 +16,24 @@ export interface State {
 
 
 export const defaultUserSettings: UserSettings = {
-    alias: 'User'
+    alias: 'Visitor'
 }
 
-export const defaultPermissions:userPermissions = {
+export const defaultUserPermissions:userPermissions = {
     setPermissions: false,
     userManagement: false,
     creator: false,
     user: true
 }
+export const defaultVisitorPermissions:userPermissions = {
+    setPermissions: false,
+    userManagement: false,
+    creator: false,
+    user: false
+}
 
 export const defaultUserConfigState: State = {
-    permissions:defaultPermissions,
+    permissions:defaultUserPermissions,
     settings:defaultUserSettings
 }
 

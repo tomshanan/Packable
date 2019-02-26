@@ -4,6 +4,7 @@ import { Avatar } from '@app/shared/models/profile.model';
 import { Profile } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { Subscription } from 'rxjs';
+import { isDefined } from '../../shared/global-functions';
 
 @Component({
   selector: 'profile-icon',
@@ -11,9 +12,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./profile-icon.component.css']
 })
 export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
-  ngOnChanges(changes: SimpleChanges): void {
-    this.init();
-  }
+  
 
   @Input() icon: string = 'default';
   @Input('name') inputName: string = 'Traveler'
@@ -39,10 +38,12 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   ) { 
     
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    this.init();
+  }
   ngOnInit() {
     this.init();
-    this.sub = this.storeSelector.profiles_obs.subscribe(()=>{
+    this.sub = this.storeSelector.profiles_obs.subscribe((state)=>{
       this.init();
     })
   }
@@ -51,7 +52,7 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   }
   init(){
     this.renderer.setStyle(this.profileIcon.nativeElement, 'width', this.inputWidth)
-    if(this.profileId){
+    if(isDefined(this.profileId)){
       this.profile = this.storeSelector.getProfileById(this.profileId)
     }
     if(this.profile){

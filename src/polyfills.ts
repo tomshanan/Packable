@@ -32,6 +32,7 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+type comparableItem = { id: string, dateModified: number }
 
 declare global {
     interface Array<T> {
@@ -47,7 +48,7 @@ declare global {
          * This will mutate an Array (this), removing elements missing from the comparison Array, and adding ones that are missing from the original (this).
          * @param compare The array to compare with. 
          */
-        compareAddRemove(compare: T[]): T[];
+        compare(compare: T[], callback?: (changedItem?:T)=>any): T[];
         /**
          * Returns a new array without undefined and null objects, and without empty arrays and string
          */
@@ -59,10 +60,10 @@ declare global {
         removeIds(removeArray:T[]):T[];
     }
 }
-type itemWithId = { id: string }
+
 
 if (!Array.prototype.findId) {
-    Array.prototype.findId = function <T extends itemWithId>(this: T[], id: string): T {
+    Array.prototype.findId = function <T extends comparableItem>(this: T[], id: string): T {
         return this.find(e => {
             if (e && 'id' in e) {
                 return e.id === id
@@ -74,7 +75,7 @@ if (!Array.prototype.findId) {
 }
 
 if (!Array.prototype.idIndex) {
-    Array.prototype.idIndex = function <T extends itemWithId>(this: T[], id: string): number {
+    Array.prototype.idIndex = function <T extends comparableItem>(this: T[], id: string): number {
             return this.findIndex(e => {
                 if (e && 'id' in e) {
                     return e.id === id
@@ -86,17 +87,30 @@ if (!Array.prototype.idIndex) {
     }
 }
 
-if (!Array.prototype.compareAddRemove) {
-    Array.prototype.compareAddRemove = function <T extends itemWithId>(this: T[], compare: T[]): T[] {
-        compare.forEach(item => {
-            if (!this.findId(item.id)) {
-                this.unshift(item)
+if (!Array.prototype.compare) {
+    Array.prototype.compare = function <T extends comparableItem>(this: T[], updatedArray: T[], callback:(changedItem?:T)=>any = ()=>{}): T[] {
+        updatedArray.forEach((item,i,arr) => {
+            if('id' in item){
+                if (!this.findId(item.id)) {
+                    this.unshift(item)
+                    callback(item)
+                    console.log('Added new item:'+item['name']);
+                } 
+            } else {
+                arr.splice(i,1)
             }
         })
-        this.slice().forEach((item) => {
-            if (!compare.findId(item.id)) {
-                const i = this.idIndex(item.id)
-                this.splice(i, 1)
+        this.slice().forEach((oldItem) => {
+            if('id' in oldItem){
+                const i = this.idIndex(oldItem.id)
+                let newItem = updatedArray.findId(oldItem.id)
+                if (!newItem) {
+                    this.splice(i, 1)
+                } else if (('dateModified' in newItem && 'dateModified' in oldItem)&&(newItem.dateModified > oldItem.dateModified)){
+                    this.splice(i,1,newItem)
+                    callback(newItem)
+                    console.log('Replaced old item:',oldItem,'\nwith new item:',newItem);
+                }
             }
         })
         return this
@@ -112,10 +126,10 @@ if (!Array.prototype.clearUndefined) {
 }
 
 if(!Array.prototype.removeIds){
-    Array.prototype.removeIds = function <T extends itemWithId>(this:T[], removeArray:T[]):T[]{
+    Array.prototype.removeIds = function <T extends comparableItem>(this:T[], removeArray:T[]):T[]{
         return this.clearUndefined().filter(item => {
             if(item !== undefined && item !== null && 'id' in item){
-                return removeArray.idIndex(item.id) < 0
+                return removeArray.includes(item.id)
             } else {
                 return false
             }

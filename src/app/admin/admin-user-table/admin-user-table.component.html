@@ -28,7 +28,7 @@
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
         <td mat-cell *matCellDef="let row" class="cell-actions">
-          <button mat-icon-button *ngIf="!row.permissions.userManagement" (click)="actionDelete(row)"  appColor="action">
+          <button mat-icon-button *ngIf="!row.permissions.userManagement" (click)="actionDelete([row])"  appColor="action">
             <mat-icon>delete_outline</mat-icon>
           </button>
           <button mat-icon-button *ngIf="user.permissions.setPermissions" (click)="actionPermissions(row)"  appColor="action" [disabled]="user.id === row.id">

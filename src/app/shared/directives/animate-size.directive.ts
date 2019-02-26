@@ -43,7 +43,7 @@ export class AnimateSizeDirective implements OnChanges {
     }
   }
   lockSize(){
-    console.log(`lcok size: ${this.animateSize}`)
+    console.log(`lock container size: ${this.animateSize}`)
     this.renderer.setStyle(this.element.nativeElement,'height',this.animateSize+'px')
   }
   

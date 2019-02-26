@@ -6,6 +6,7 @@ import * as adminActions from '@app/admin/store/admin.actions'
 import { Subscription } from 'rxjs';
 import { StoreSelectorService } from '@app/core';
 import { MatSlideToggleChange } from '@angular/material';
+import { StorageService } from '../shared/storage/storage.service';
 
 @Component({
   selector: 'app-admin',
@@ -19,7 +20,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   constructor(
     public user: UserService,
     private store: Store<fromApp.appState>,
-    private storeSelector: StoreSelectorService
+    private storeSelector: StoreSelectorService,
+    private storageService: StorageService,
   ) { }
 
   ngOnInit() {

@@ -1,5 +1,6 @@
 <div class="d-inline-block" *ngFor="let profile of profilesView" @slideInTrigger>
     <profile-icon 
+    *ngIf="profile"
     [profileId]='profile.id' 
     [showName]="showNames"  
     [isInteractive]="true" 

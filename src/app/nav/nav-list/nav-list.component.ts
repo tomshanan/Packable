@@ -2,11 +2,13 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from '../../user/auth.service';
 import { Observable } from 'rxjs';
 import * as fromAuth from '../../user/store/auth.reducers'
+import * as fromUser from '../../user/store/userState.model'
 import * as fromApp from '../../shared/app.reducers';
 import { Store } from '@ngrx/store';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../../shared/services/user.service';
-import { userPermissions, permissionTypes } from '../../user/store/userState.model';
+import { userPermissions, permissionTypes, State } from '../../user/store/userState.model';
+import { combineLatest } from 'rxjs';
 
 interface listItem {
   text:string,
@@ -37,8 +39,10 @@ interface adminListItem {
 export class NavListComponent implements OnInit {
   @Output() navigate= new EventEmitter<void>()
   authState: Observable<fromAuth.State>
+  userState: Observable<fromUser.State>
   isAuthenticated: boolean;
-
+  username: string;
+  
   constructor(
     private authService: AuthService,
     private user: UserService,
@@ -47,9 +51,13 @@ export class NavListComponent implements OnInit {
     private activatedRoute: ActivatedRoute
   ) { 
     this.authState = this.store.select('auth');
-    this.authState.subscribe(state =>{
-      this.isAuthenticated = state.authenticated;
-    })
+    this.userState = this.store.select('user');
+    let stateObs = combineLatest(this.authState,this.userState).subscribe(
+      ([auth,user])=>{
+        this.isAuthenticated = auth.authenticated;
+        this.username = user.settings.alias
+      }
+    )
   }
   
   mainNav:listItem[] = [
@@ -104,39 +112,10 @@ export class NavListComponent implements OnInit {
       adminPermissions:['userManagement']
     },
   ]
-  userNav: userListItem[] = [
-    {
-      text:'User Settings',
-      size: 'sub',
-      fragment:'settings',
-      showAuth: true,
-      showPublic: false
-    },
-    {
-      text:'Login',
-      size: 'sub',
-      fragment:'login',
-      showAuth: false,
-      showPublic: true
-    },
-    {
-      text:'Register',
-      size: 'sub',
-      fragment:'register',
-      showAuth: false,
-      showPublic: true
-    },
-    {
-      text:'Logout',
-      size: 'sub',
-      fragment:'logout',
-      showAuth: true,
-      showPublic: false
-    }
-  ]
+
   
   canView(listItem:{showAuth: boolean, showPublic:boolean}):boolean{
-    return true // FOR DEVELOPMENT
+    //return true // FOR DEVELOPMENT
     if(this.isAuthenticated){
       return listItem.showAuth
     } else {

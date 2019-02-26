@@ -1,7 +1,7 @@
 <app-dialog-header [super]="profileName ? profileName : ''" header="Settings" (close)="onClose()"></app-dialog-header>
 
 <mat-dialog-content>
-  <profile-edit-form [(profile)]="profile" (profileChange)="logProfile()" #profileForm>
+  <profile-edit-form [(profile)]="profile" #profileForm>
   </profile-edit-form>
   <dialog-confirm-button>
       <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">

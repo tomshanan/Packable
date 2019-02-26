@@ -17,8 +17,9 @@ import * as fromApp from '@shared/app.reducers';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import { WindowService } from '../../../shared/services/window.service';
 import { expandAndFadeTrigger, transitionTrigger } from '../../../shared/animations';
-import { indexOfId } from '../../../shared/global-functions';
+import { indexOfId, timeStamp } from '../../../shared/global-functions';
 import { ContextService } from '../../../shared/services/context.service';
+import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
 
 export interface DialogData_EditPackable {
   pakable?: PackableComplete,
@@ -61,7 +62,8 @@ export class EditPackableDialogComponent implements OnInit {
     private wFactory: weatherFactory,
     private store: Store<fromApp.appState>,
     public windowService: WindowService,
-    private context: ContextService
+    private context: ContextService,
+    private bulkActions: BulkActionsService
   ) {
     this.packable = data.pakable || new PackableComplete();
     this.isNew = data.isNew || false;
@@ -106,33 +108,27 @@ export class EditPackableDialogComponent implements OnInit {
       this.packable.name,
       this.packable.quantityRules.slice(),
       this.wFactory.deepCopy(this.packable.weatherRules),
-      this.isNew || this.packable.userCreated
+      this.isNew || this.packable.userCreated,
+      timeStamp()
     )
-    if (this.isNew) {
-      this.store.dispatch(new packableActions.addOriginalPackable(this.newPackable))
-    } else {
-      this.store.dispatch(new packableActions.editOriginalPackable(this.newPackable))
-    }
+    
+    this.store.dispatch(new packableActions.updateOriginalPackable(this.newPackable))
+    
     if (this.collectionId && this.selectedProfiles.length > 0) {
       // UPDATE SELECTED PROFILES WITH NEW PRIVATE PACKABLE
-      let privatePackable = this.pacFac.makePrivate(this.newPackable)
       let profiles = this.storeSelector.profiles
       let CPs: CollectionProfile[] = []
       this.selectedProfiles.forEach((pId) => {
         CPs.push({pId: pId,cId: this.collectionId})
       })
-      profiles = this.proFac.addEditPackablesByCP(profiles,[privatePackable],CPs)
-      this.store.dispatch(new profileActions.setProfileState(profiles))
+      this.bulkActions.pushOriginalPackablesByCP([this.newPackable.id],CPs)
       this.onClose(this.packable);
     } else {
       this.step = 2;
     }
   }
   onConfirmCollections(confirm: CollectionSelectorConfirmEvent) {
-    let newPrivate = this.pacFac.makePrivate(this.newPackable);
-    let profiles = this.storeSelector.profiles;
-    profiles = this.proFac.addEditPackablesByCP(profiles,[newPrivate],confirm.selectedIds)
-    this.store.dispatch(new profileActions.setProfileState(profiles))
+    this.bulkActions.pushOriginalPackablesByCP([this.newPackable.id],confirm.selectedIds)
     this.onClose(this.packable);
   }
 }

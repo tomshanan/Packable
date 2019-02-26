@@ -90,7 +90,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     if (!!memoryTrip) {
       this.trip_obs = this.store.select('trips')
       this.state_subscription = this.trip_obs.pipe(take(1)).subscribe(tripState => {
-        this.packingList = tripState.packingLists.find(pl => pl.tripId == memoryTrip.id);
+        this.packingList = tripState.packingLists.find(pl => pl.id == memoryTrip.id);
         console.log('<< Loaded PackingList: ',this.packingList)
         this.trip = tripState.trips.find(trip => trip.id == memoryTrip.id);
         if (!this.packingList) {

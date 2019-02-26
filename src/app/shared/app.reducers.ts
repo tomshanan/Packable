@@ -7,6 +7,8 @@ import * as fromUserModel from "../user/store/userState.model"
 import * as fromUserReducers from "../user/store/user.reducers"
 import * as fromaAdminModel from "../admin/store/adminState.model"
 import * as fromaAdmin from "../admin/store/admin.reducers"
+import * as fromLibraryModel from "@shared/library/library.model"
+import * as fromLibrary from "@shared/library/library.reducers"
 import { ActionReducerMap } from "@ngrx/store";
 
 
@@ -17,7 +19,8 @@ export interface appState {
     trips: fromTrips.State,
     auth: fromAuth.State,
     user: fromUserModel.State,
-    admin: fromaAdminModel.State
+    admin: fromaAdminModel.State,
+    library: fromLibraryModel.State
 }
 
 export const reducers:ActionReducerMap<appState> = {
@@ -27,5 +30,6 @@ export const reducers:ActionReducerMap<appState> = {
     trips: fromTrips.tripReducers,
     auth: fromAuth.AuthReducers,
     user: fromUserReducers.userReducers,
-    admin: fromaAdmin.adminReducers
+    admin: fromaAdmin.adminReducers,
+    library: fromLibrary.libarayReducers
 }

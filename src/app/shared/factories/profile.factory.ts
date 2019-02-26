@@ -22,6 +22,7 @@ export class ProfileFactory{
             profile.name,
             profile.collections ? profile.collections.map(c=> this.collectionFactory.duplicatePrivateCollection(c)) : [],
             profile.avatar ? profile.avatar : new Avatar(),
+            profile.dateModified
         )
     }
     public completeToPrivate(p: ProfileComplete): Profile{
@@ -29,7 +30,8 @@ export class ProfileFactory{
             p.id,
             p.name,
             p.collections.map(c=>this.collectionFactory.completeToPrivate(c)),
-            new Avatar(p.avatar.icon, p.avatar.color)
+            new Avatar(p.avatar.icon, p.avatar.color),
+            p.dateModified
         )
     }
     public getAllProfilesAndMakeComplete():ProfileComplete[]{
@@ -43,7 +45,8 @@ export class ProfileFactory{
                 profile.id,
                 profile.name,
                 completeCollections,
-                new Avatar(profile.avatar.icon, profile.avatar.color)
+                new Avatar(profile.avatar.icon, profile.avatar.color),
+                profile.dateModified
             )
         })
     }
@@ -64,17 +67,17 @@ export class ProfileFactory{
         } 
         return profile
     }
-    public addEditPackablesByCP(profiles: Profile[], packables:PackablePrivate[], cps: CollectionProfile[]):Profile[]{
-        cps.forEach(cp=>{
-            let profile = profiles.find(p=>p.id == cp.pId)
-            if(profile){
-                let collection = profile.collections.find(collection=>collection.id == cp.cId)
-                if (collection){
-                    collection = this.collectionFactory.addEditPackables(collection,packables)
-                }
-            }
+    // public addEditPackablesByCP(profiles: Profile[], packables:PackablePrivate[], cps: CollectionProfile[]):Profile[]{
+    //     cps.forEach(cp=>{
+    //         let profile = profiles.find(p=>p.id == cp.pId)
+    //         if(profile){
+    //             let collection = profile.collections.find(collection=>collection.id == cp.cId)
+    //             if (collection){
+    //                 collection = this.collectionFactory.addEditPackables(collection,packables)
+    //             }
+    //         }
             
-        })
-        return profiles
-    }
+    //     })
+    //     return profiles
+    // }
 }

@@ -3,19 +3,15 @@ import { PackableOriginal } from '../../shared/models/packable.model';
 
 export const ADD_ORIGINAL_PACKABLE = 'ADD_ORIGINAL_PACKABLE';
 export const REMOVE_ORIGINAL_PACKABLES = 'REMOVE_ORIGINAL_PACKABLES';
-export const EDIT_ORIGINAL_PACKABLE = 'EDIT_ORIGINAL_PACKABLE';
+export const UPDATE_ORIGINAL_PACKABLE = 'UPDATE_ORIGINAL_PACKABLE';
 export const SET_PACKABLE_STATE = 'SET_PACKABLE_STATE';
 
 export class setPackableState  implements Action{
     readonly type = SET_PACKABLE_STATE;
     constructor(public payload: PackableOriginal[]){};
 }
-export class addOriginalPackable  implements Action{
-    readonly type = ADD_ORIGINAL_PACKABLE;
-    constructor(public payload: PackableOriginal){};
-}
-export class editOriginalPackable  implements Action{
-    readonly type = EDIT_ORIGINAL_PACKABLE;
+export class updateOriginalPackable  implements Action{
+    readonly type = UPDATE_ORIGINAL_PACKABLE;
     constructor(public payload: PackableOriginal){};
 }
 export class removeOriginalPackables  implements Action{
@@ -23,4 +19,4 @@ export class removeOriginalPackables  implements Action{
     constructor(public payload: string[]){};
 }
 
-export type theActions = addOriginalPackable | editOriginalPackable | removeOriginalPackables | setPackableState;
+export type theActions = updateOriginalPackable | removeOriginalPackables | setPackableState;

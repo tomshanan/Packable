@@ -69,40 +69,19 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
     return tempProfileView
   }
   ngOnChanges(changes: SimpleChanges): void {
+   
     if (isDefined(this.selectedView) && changes['selected']) {
       this.selectedView = this.selected.slice();
     }
     if (isDefined(this.selectedView) && this.selectedFirst) {
       this.profilesView = this.bringSelectedToTop();
     }
-    if (this.profilesView.length > 0 && changes['profiles']) {
-      if (this.ready) {
-        this.compare();
-      } else {
-        this.readySubject.subscribe(ready => {
-          if (ready) {
-            this.compare()
-          }
-        })
-      }
+    if(this.profilesView && changes['profiles']){
+      this.profilesView.compare(this.profiles)
+    }
+  }
 
-    }
-  }
-  compare() {
-    if (this.profilesView.length > 0 && this.profiles.length > 0) {
-      this.profiles.forEach(item => {
-        if (this.profilesView.idIndex(item.id) < 0) {
-          this.profilesView.unshift(item)
-        }
-      })
-      this.profilesView.slice().forEach((item) => {
-        if (this.profiles.idIndex(item.id) < 0) {
-          const i = this.profilesView.idIndex(item.id)
-          this.profilesView.splice(i, 1)
-        }
-      })
-    }
-  }
+  // }
 
   initSelected() { }
   isSelected(id: string): boolean {

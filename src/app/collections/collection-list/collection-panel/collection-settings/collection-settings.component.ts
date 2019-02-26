@@ -107,7 +107,10 @@ export class CollectionSettingsComponent implements OnInit, OnChanges, OnDestroy
     }
     this.emitUpdate();
   }
+  renameCollection(){
 
+  }
+  
   applyCollection(){
     let usedProfiles = this.storeSelector.getProfilesWithCollectionId(this.collection.id)
     let data:DialogData_ChooseProfiles = {

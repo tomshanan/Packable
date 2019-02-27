@@ -1,5 +1,5 @@
 import { PackablePrivate, PackableComplete } from './packable.model';
-import { Guid } from '../global-functions';
+import { Guid, timeStamp } from '../global-functions';
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { WeatherRule } from './weather.model';
@@ -19,8 +19,8 @@ export class CollectionComplete {
         public packables: PackableComplete[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
-        public dateModified: number = new Date().valueOf()
-
+        public dateModified: number = timeStamp(),
+        public locations: string[] = []
     ) {
     }
 }
@@ -33,8 +33,8 @@ export class CollectionOriginal {
         public packables: PackablePrivate[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
-        public dateModified: number = new Date().valueOf()
-
+        public dateModified: number =  timeStamp(),
+        public locations: string[] = []
     ) {
     }
 }
@@ -46,8 +46,7 @@ export class CollectionPrivate {
         public packables: PackablePrivate[] = [],
         public essential: boolean = false,
         public weatherRules: WeatherRule = new WeatherRule(),
-        public dateModified: number = new Date().valueOf()
-
+        public dateModified: number =  timeStamp(),
     ){
     }
 }

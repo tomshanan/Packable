@@ -10,13 +10,13 @@ export class setPackableState  implements Action{
     readonly type = SET_PACKABLE_STATE;
     constructor(public payload: PackableOriginal[]){};
 }
-export class updateOriginalPackable  implements Action{
+export class updateOriginalPackables  implements Action{
     readonly type = UPDATE_ORIGINAL_PACKABLE;
-    constructor(public payload: PackableOriginal){};
+    constructor(public payload: PackableOriginal[]){};
 }
 export class removeOriginalPackables  implements Action{
     readonly type = REMOVE_ORIGINAL_PACKABLES;
     constructor(public payload: string[]){};
 }
 
-export type theActions = updateOriginalPackable | removeOriginalPackables | setPackableState;
+export type theActions = updateOriginalPackables | removeOriginalPackables | setPackableState;

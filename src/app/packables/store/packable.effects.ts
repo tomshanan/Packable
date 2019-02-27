@@ -16,8 +16,8 @@ export class PackableEffects {
 
     @Effect({dispatch:false}) addEditPackableEffect = this.actions$.pipe(
         ofType(PackableActions.UPDATE_ORIGINAL_PACKABLE),
-        tap((action:PackableActions.updateOriginalPackable)=>{
-            this.storageServices.saveItemsInUser('packables',[action.payload])
+        tap((action:PackableActions.updateOriginalPackables)=>{
+            this.storageServices.saveItemsInUser('packables',action.payload)
         })
     )
     @Effect() removeOriginalPackable = this.actions$.pipe(

@@ -94,7 +94,7 @@ if (!Array.prototype.compare) {
                 if (!this.findId(item.id)) {
                     this.unshift(item)
                     callback(item)
-                    console.log('Added new item:'+item['name']);
+                    //console.log('Added new item:'+item['name']);
                 } 
             } else {
                 arr.splice(i,1)
@@ -109,7 +109,7 @@ if (!Array.prototype.compare) {
                 } else if (('dateModified' in newItem && 'dateModified' in oldItem)&&(newItem.dateModified > oldItem.dateModified)){
                     this.splice(i,1,newItem)
                     callback(newItem)
-                    console.log('Replaced old item:',oldItem,'\nwith new item:',newItem);
+                    //console.log('Replaced old item:',oldItem,'\nwith new item:',newItem);
                 }
             }
         })

@@ -1,5 +1,5 @@
 import { WeatherRule } from './weather.model';
-import { Guid } from '../global-functions';
+import { Guid, timeStamp } from '../global-functions';
 
 export type QuantityType = "period" | "profile" | "trip";
 
@@ -25,7 +25,7 @@ export class PackableComplete {
         public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
-        public dateModified: number = new Date().valueOf()
+        public dateModified: number = timeStamp()
     ) { }
 }
 export class PackableOriginal {
@@ -36,7 +36,7 @@ export class PackableOriginal {
         public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
-        public dateModified: number = new Date().valueOf()
+        public dateModified: number = timeStamp()
     ) {
     }
 }
@@ -46,7 +46,7 @@ export class PackablePrivate {
         public id: string,
         public quantityRules: QuantityRule[] = [],
         public weatherRules: WeatherRule = new WeatherRule(),
-        public dateModified: number = new Date().valueOf()
+        public dateModified: number = timeStamp()
     ) { }
 }
 export type PackableAny = PackablePrivate | PackableOriginal;

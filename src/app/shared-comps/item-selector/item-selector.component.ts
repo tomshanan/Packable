@@ -1,16 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, Type, TemplateRef, Renderer2, ElementRef, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import * as fromApp from '../../shared/app.reducers';
-import { FilteredArray, objectInArray } from '../../shared/global-functions';
-import { ListEditorService, listEditorParams, item } from '../../shared/services/list-editor.service';
-import { ActivatedRoute, Router, Params } from '@angular/router';
-import { Location } from '@angular/common';
-import { MemoryService } from '../../shared/services/memory.service';
-import { navParams } from '../mobile-nav/mobile-nav.component';
-import { modalConfig, ModalComponent } from '../modal/modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Profile } from '../../shared/models/profile.model';
+import { FilteredArray } from '../../shared/global-functions';
 import { listItemTrigger, quickTransitionTrigger, animateSize } from '../../shared/animations';
 import { AnimationEvent } from '@angular/animations';
 
@@ -20,6 +9,7 @@ export interface filterItem{
   id: string,
   name: string,
   type: filterItemLocality,
+  sortPosition: number
 }
 
 
@@ -50,6 +40,7 @@ export class ItemSelectorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.listUsed,this.listOriginal)
     this.listFiltered = new FilteredArray()
     this.listFiltered.original = this.listOriginal
     this.resetFilters()

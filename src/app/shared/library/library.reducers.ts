@@ -6,12 +6,19 @@ export function libarayReducers(state = initialLibraryState, action: libraryActi
         case libraryActions.SET_LIBRARY_STATE:
             return {
                 library: action.payload.library,
-                metaData: action.payload.metaData
+                metaData: action.payload.metaData,
+                loading: false
             }
         case libraryActions.UPDATE_META_DATA:
             return {
                 ...state,
-                metaData: {...state.metaData, ...action.payload}
+                metaData: {...state.metaData, ...action.payload},
+                loading: false
+            }
+        case libraryActions.LOAD_LIBRARY:
+            return {
+                ...state,
+                loading:true
             }
         default:
             return state

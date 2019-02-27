@@ -14,6 +14,8 @@ import * as collectionActions from '../../collections/store/collections.actions'
 import * as tripActions from '../../trips/store/trip.actions';
 import * as profileAction from '../../profiles/store/profile.actions'
 import * as userActions from '../../user/store/user.actions'
+import * as libraryActions from '@shared/library/library.actions'
+import {State as LibraryState} from '@shared/library/library.model'
 import { PackableFactory } from '../factories/packable.factory';
 import { WeatherRule, weatherOptions, weatherType } from '../models/weather.model';
 import { weatherFactory } from '../factories/weather.factory';
@@ -37,6 +39,7 @@ import { UserService } from '../services/user.service';
 import * as adminActions from '../../admin/store/admin.actions';
 import { User } from '../../admin/store/adminState.model';
 import { PackingList } from '../models/packing-list.model';
+import { initialLibraryState } from '../library/library.model';
 export type nodeOptions = 'packables' | 'collections' | 'profiles' | 'tripState';
 
 type updates = { [path: string]: any } 
@@ -132,7 +135,42 @@ export class StorageService {
             
         }
     }
-    
+    getLibrary(){
+        if(this.checkAuth() && !this.storeSelector.isLibraryStore){
+            firebase.database().ref(LIBRARY).once('value', snapshot => {
+                console.log(`received library items`)
+                let data = snapshot.val()
+                let newLibraryState: LibraryState = initialLibraryState
+                if(data['packables']){
+                    let packables:PackableOriginal[] = this.unwrapForLocalStore(data['packables']).map((p: PackableOriginal) => {
+                        let packable = this.packableFactory.clonePackableOriginal(p)
+                        packable.userCreated = false
+                        return packable
+                    })
+                    newLibraryState.library.packables = packables
+                }
+                if(data['collections']){
+                    let collections:CollectionOriginal[] = this.unwrapForLocalStore(data['collections']).map((c: CollectionOriginal) => {
+                        let collection = this.collectionFactory.duplicateOriginalCollection(c)
+                        collection.userCreated = false 
+                        return collection
+                    })
+                    newLibraryState.library.collections = collections
+                }
+                if(data['profiles']){
+                    let profiles:Profile[] =  this.unwrapForLocalStore(data['profiles']).map((p: Profile) => {
+                        let profile = this.profileFactory.duplicateProfile(p)
+                        return profile
+                    })
+                    newLibraryState.library.profiles = profiles
+                }
+                if(data['metaData']){
+                    newLibraryState.metaData = data['metaData']
+                }
+                this.store.dispatch(new libraryActions.SetLibraryState(newLibraryState))
+            }) // ERROR HANDELING GOES HERE, SEND EMPTY LIBRARY STATE TO STOP LOADING STATE
+        }
+    }
     initialGetAllItems() {
         if (this.checkAuth()) {
             let path = this.pathToUserItems

@@ -31,6 +31,7 @@ import { SetPermissionsDialogComponent } from './admin/set-permissions-dialog/se
 import { userEffects } from './user/store/user.effects';
 import { adminEffects } from './admin/store/admin.effects';
 import { RenameCollectionDialogComponent } from './collections/collection-list/collection-panel/collection-settings/rename-collection-dialog/rename-collection-dialog.component';
+import { LibraryEffects } from './shared/library/library.effects';
 
 
 
@@ -45,7 +46,7 @@ import { RenameCollectionDialogComponent } from './collections/collection-list/c
     CoreModule,
     SharedModule,
     StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects, PackableEffects, TripEffects, userEffects, adminEffects]),
+    EffectsModule.forRoot([AuthEffects, CollectionEffects, ProfileEffects, PackableEffects, TripEffects, userEffects, adminEffects, LibraryEffects]),
   ],
   bootstrap: [AppComponent],
   entryComponents: [

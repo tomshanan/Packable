@@ -1,11 +1,11 @@
-<div  @blockInitialAnimations *ngIf="packableList && packableList.length>0; else noneToDisplay">
+<div  @blockInitialAnimations *ngIf="packableList">
   <div class="mat-card-list_containter">
     <mat-card class="options" [class.cardless]="!editList" [class.editing]="editList" [class.in-expansion-panel]="editingCollectionId">
       <div class="checkbox-container" @expandAndFadeTrigger *ngIf="editList">
         <mat-checkbox [indeterminate]="masterCheckboxIsIntermediate()" [checked]="masterCheckboxIsChecked()" (change)="masterCheckboxToggle()">
         </mat-checkbox>
       </div>
-      <a class="inline-link withIcon pl-0 option" title="Edit List" (click)="toggleEditList()" *ngIf="!editList" @expandAndFadeTrigger>
+      <a class="inline-link withIcon pl-0 option" title="Edit List" (click)="toggleEditList()" *ngIf="!editList && packableList.length>0" @expandAndFadeTrigger>
         <mat-icon>ballot</mat-icon>
         <span class="pl-1">Select </span>
       </a>
@@ -46,23 +46,24 @@
         <mat-icon class="m-0">close</mat-icon>
       </a>
     </mat-card>
-  
-    <div @addRemoveElementTrigger *ngFor="let packable of packableList; let i = index"
-    [class.bottom-seperator]="!useCard && packableList.length-1 > i">
-      <packable-card
-      [packable]="packable"
-      [useCard]="useCard"
-      [editList]="editList"
-      [recentlyChanged]="isRecentlyChanged(packable.id)"
-      [selected]="isSelected(packable.id)"
-      (packableChange)="packableChange(PackableComplete)"
-      (remove)="removePackable(packable.id)"
-      (clickPackable)="editPackable(packable.id)"
-      (checkboxChange)="toggleSelection(packable.id, $event)">
-      </packable-card>
-    </div>
+    <ng-container *ngIf="packableList.length>0; else noneToDisplay">
+      <div @addRemoveElementTrigger *ngFor="let packable of packableList; let i = index"
+      [class.bottom-seperator]="!useCard && packableList.length-1 > i">
+        <packable-card
+        [packable]="packable"
+        [useCard]="useCard"
+        [editList]="editList"
+        [recentlyChanged]="isRecentlyChanged(packable.id)"
+        [selected]="isSelected(packable.id)"
+        (packableChange)="packableChange(PackableComplete)"
+        (remove)="removePackable(packable.id)"
+        (clickPackable)="editPackable(packable.id)"
+        (checkboxChange)="toggleSelection(packable.id, $event)">
+        </packable-card>
+      </div>
+    </ng-container>
+    <ng-template #noneToDisplay>
+        <p class="small text-muted">There are no Packables to display</p>
+      </ng-template>
   </div>
 </div>
-<ng-template #noneToDisplay>
-  <p class="small text-muted">There are no Packables to display</p>
-</ng-template>

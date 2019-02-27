@@ -112,7 +112,7 @@ export class EditPackableDialogComponent implements OnInit {
       timeStamp()
     )
     
-    this.store.dispatch(new packableActions.updateOriginalPackable(this.newPackable))
+    this.store.dispatch(new packableActions.updateOriginalPackables([this.newPackable]))
     
     if (this.collectionId && this.selectedProfiles.length > 0) {
       // UPDATE SELECTED PROFILES WITH NEW PRIVATE PACKABLE

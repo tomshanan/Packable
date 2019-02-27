@@ -1,6 +1,14 @@
 <app-item-selector 
+  *ngIf="loaded && completeList; else loading"
   [completeList]="completeList" 
   [usedList]="usedList" 
   (onSelect)="updateSelected($event)"
   (confirm)="onConfirm()">
 </app-item-selector>
+<ng-template #loading>
+  <span class="text-muted text-center small pt-2">
+      Loading Packable Library
+      <br>
+      <mat-spinner diameter="20"></mat-spinner>
+  </span>
+</ng-template>

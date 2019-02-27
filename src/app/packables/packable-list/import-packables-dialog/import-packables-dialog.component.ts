@@ -17,6 +17,7 @@ import { setPackableState } from '../../store/packables.actions';
 import { transitionTrigger } from '../../../shared/animations';
 import { CollectionProfile } from '../edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
 import { importPackables_selection } from './import-packables-selector/import-packables-selector.component';
+import { timeStamp } from '../../../shared/global-functions';
 
 export interface importPackables_data {
   header:string,
@@ -53,7 +54,7 @@ export class ImportPackablesDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ImportPackablesDialogComponent>,
   ) { 
     this.header = this.data.header || 'Add Packables'
-    if(!!context.collectionId){
+    if(!!this.context.collectionId){
       this.collection = context.getCollection();
       this.collectionName = this.collection.name
     }
@@ -73,11 +74,11 @@ export class ImportPackablesDialogComponent implements OnInit {
   confirmPackables(e:importPackables_selection){
     if(this.step == 1){ 
       this.selectedRemotePackables = e.remoteItems
-      this.storeRemotePackables()
       if(this.collection){
         this.selectedOriginalPackables = [...e.localItems,...e.remoteItems]
         this.step++
       } else {
+        this.storeRemotePackables()
         let completeRemote = this.pacFac.makeCompleteFromArray(this.selectedRemotePackables)
         this.onClose(completeRemote) // send new remotePackables to onClose
       }
@@ -89,16 +90,17 @@ export class ImportPackablesDialogComponent implements OnInit {
       let CPs = this.selectedProfiles.map(pId => {
         return {pId: pId, cId: this.collection.id}
       })
+      this.storeRemotePackables()
       this.bulkActions.pushOriginalPackablesByCP(this.selectedOriginalPackables.map(p=>p.id),CPs)
       let completePackables = this.pacFac.makeCompleteFromArray(this.selectedOriginalPackables)
       this.onClose(completePackables, CPs)
     }
   }
   storeRemotePackables(){
-    // ONCE WE HAVE REMOTE PACKABLES, ADD:
-      // let packables = this.storeSelector.originalPackables
-      // packables.unshift(...this.selectedRemotePackables)
-      // this.store.dispatch(new packableActions.setPackableState(packables))
+    this.selectedRemotePackables.forEach(p=>{
+      p.dateModified = timeStamp()
+    })
+    this.store.dispatch(new packableActions.updateOriginalPackables(this.selectedRemotePackables))
   }
 
   onClose(packables:PackableComplete[] = [], CPs:CollectionProfile[] = []){

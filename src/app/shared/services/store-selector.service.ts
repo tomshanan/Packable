@@ -10,7 +10,9 @@ import { DestinationDataService } from './location-data.service';
 import * as moment from 'moment';
 import { PackingList } from '../models/packing-list.model';
 import {State as AdminState} from '@app/admin/store/adminState.model'
+import {State as libraryState, libraryItem, remotePackable, remoteCollection, remoteProfile} from '@shared/library/library.model'
 import { UserService } from './user.service';
+import { ItemLibrary, MetaDataNode, ItemMetaData } from '../library/library.model';
 
 @Injectable()
 export class StoreSelectorService{    
@@ -19,6 +21,7 @@ export class StoreSelectorService{
     public profiles_obs:Observable<{profiles: Profile[]}>;
     public trips_obs:Observable<{trips: Trip[],packingLists:PackingList[]}>;
     public adminState_obs: Observable<AdminState>
+    public libraryState_obs: Observable<libraryState>
 
     private _originalPackables: PackableOriginal[];
     private _originalCollections: CollectionOriginal[];
@@ -26,16 +29,7 @@ export class StoreSelectorService{
     private _trips: Trip[];
     private _packingLists: PackingList[]
     private _adminState: AdminState
-    
-    public get originalPackables(): PackableOriginal[] {return this._originalPackables.slice()}
-    public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
-    public get profiles(): Profile[] {return this._profiles.slice()}
-    public get trips(): Trip[]  {return this._trips.slice()}
-    public get packingLists(): PackingList[] { return this._packingLists.slice()}
-    public get adminState(): AdminState { return this._adminState}
-    public get isLibraryStore():boolean {
-        return this.user.permissions.creator && this.adminState.simulateUser===false
-    }
+    private _libraryState: libraryState
 
     constructor(private store:Store<fromApp.appState>, private destServices: DestinationDataService, private user: UserService){
         this.packables_obs = this.store.select('packables');
@@ -43,6 +37,7 @@ export class StoreSelectorService{
         this.profiles_obs = this.store.select('profiles');
         this.trips_obs = this.store.select('trips');
         this.adminState_obs = this.store.select('admin')
+        this.libraryState_obs = this.store.select('library')
 
         this.packables_obs.subscribe(packablesState =>{
             this._originalPackables = packablesState.packables;
@@ -60,6 +55,56 @@ export class StoreSelectorService{
         this.adminState_obs.subscribe(adminState =>{
             this._adminState = adminState
         })
+        this.libraryState_obs.subscribe(libState =>{
+            console.log('StoreSelector: library state updeted',libState);
+            this._libraryState = libState
+        })
+    }
+    public get originalPackables(): PackableOriginal[] {return this._originalPackables.slice()}
+    public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
+    public get profiles(): Profile[] {return this._profiles.slice()}
+    public get trips(): Trip[]  {return this._trips.slice()}
+    public get packingLists(): PackingList[] { return this._packingLists.slice()}
+    public get adminState(): AdminState { return this._adminState}
+    public get isLibraryStore():boolean {
+        return this.user.permissions.creator && this.adminState.simulateUser===false
+    }
+    public get libraryState():libraryState { 
+        let lib = Object.assign({},this._libraryState)
+        // // DEEPER COPY:
+        // for (let node in lib.library){
+        //     lib.library[node] = lib.library[node].slice()
+        // }
+        // lib.metaData = Object.assign({},lib.metaData)
+        // for (let node in lib.metaData){
+        //     lib.metaData[node] = Object.assign({}, lib.metaData[node])
+        // }
+        return lib
+    }
+    getLibraryItemById(node:keyof ItemLibrary,id:string):libraryItem{
+        return this.libraryState.library[node].findId(id) || 
+        (console.warn(`could not find item id: ${id} in Library/${node}`), null);
+    }
+    
+    getLibraryItemsByIds(node:keyof ItemLibrary,ids:string[]):libraryItem[]{
+       let itemsArray:libraryItem[] = this.libraryState.library[node]
+       return itemsArray.filter((x:libraryItem)=>ids.includes(x.id))
+    }
+    getMetaDataForId(id:string): ItemMetaData{
+        return this.libraryState.metaData[id]
+    }
+
+    getRemotePackables():remotePackable[]{
+        let packables = this.libraryState.library.packables
+        return packables.map(p=>new remotePackable(p,this.getMetaDataForId(p.id)))
+    }
+    getRemoteCollections():remoteCollection[]{
+        let collections = this.libraryState.library.collections
+        return collections.map(c=>new remoteCollection(c,this.getMetaDataForId(c.id)))
+    }
+    getRemoteProfiles():remoteProfile[]{
+        let profiles = this.libraryState.library.profiles
+        return profiles.map(p=>new remoteProfile(p,this.getMetaDataForId(p.id)))
     }
 
     getTripById(id:string):Trip{

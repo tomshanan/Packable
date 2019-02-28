@@ -8,7 +8,7 @@ export type libraryItem = PackableOriginal | CollectionOriginal | Profile;
 export class remotePackable extends PackableOriginal {
     metaData: ItemMetaData = new ItemMetaData()
     constructor(p:PackableOriginal, metaData:ItemMetaData){
-        super(p.id,p.name,p.quantityRules,p.weatherRules,false,p.dateModified)
+        super(p.id,p.name,p.quantityRules,p.weatherRules,false,p.dateModified, p.deleted)
         this.metaData = {...this.metaData,...metaData}
     }
 }
@@ -50,6 +50,7 @@ export interface State {
     library: ItemLibrary,
     metaData: MetaDataNode,
     loading: boolean
+    error: string;
 }
 
 export const initialLibrary: ItemLibrary = {
@@ -59,6 +60,7 @@ export const initialLibrary: ItemLibrary = {
 }
 export const initialLibraryState:State = {
     loading: false,
+    error: null,
     library: initialLibrary,
     metaData: {}
 }

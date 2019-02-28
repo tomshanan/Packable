@@ -61,25 +61,28 @@ export class FilteredArray {
     return this;
   }
 
-  public filterUsed = function(property: string, ...usedArrays): any {
-    let filteredList = this.filtered;
-    if (filteredList.length === 0) {
+  public filterUsed = function(property: string, ...usedArrays:any[]): any {
+    let filtered = this.filtered;
+    if (filtered.length === 0) {
       return this;
     }
-    usedArrays.forEach(usedArray => {
-      usedArray.forEach(item=>{
-        if(objectInArray(filteredList,item,property)){
-          const index = filteredList.findIndex(x => x[property]==item[property]);
-          filteredList.splice(index,1)
-        }
-      })
+    let usedArray = [].concat(...usedArrays)
+    usedArray.forEach(item=>{
+      if(objectInArray(filtered,item,property)){
+        const index = filtered.findIndex(x => x[property]==item[property]);
+        filtered.splice(index,1)
+      }
     })
+    console.log('Original List:',this.original, '\nUSED:',usedArray,'\n Filter resulted in:',filtered)
+    if(filtered.length === 0){
+      this.reset()
+    } 
     return this;
   }
 
   public filterFromSearch = function(property: string, searchInput: string): any {
     let filteredList:item[] = this.filtered;
-    if (filteredList.length === 0 || !searchInput || searchInput == "") {
+    if (filteredList.length === 0 || !isDefined(searchInput)) {
       return this;
     } else {
       let returnArray = [];

@@ -42,7 +42,6 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
   @ViewChild(QuantityRuleListComponent) QuantityRuleList:QuantityRuleListComponent;
   
   showProfileSelector: boolean = false;
-  storePackables: PackableOriginal[];
   isDefined = isDefined;
   usedPackableNames: string[] =[];
   packableName: FormControl;
@@ -59,7 +58,6 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
       Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), 
       this.validate_usedName.bind(this)
     ])
-    this.storePackables = this.storeSelector.originalPackables
     if (this.isNew) {
       this.packable = new PackableComplete();
       this.packableName.setValue('');

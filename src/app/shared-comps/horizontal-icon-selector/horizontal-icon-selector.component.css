@@ -26,7 +26,19 @@
     position: absolute;
     top: 0;
 }
-
+.nav-icon-container{
+    box-sizing: content-box;
+    padding: 0.1em;
+    background: white;
+    border: 1px solid #e2e2e2;
+    height: 24px;
+}
+.navigate.left  .nav-icon-container{
+    border-left: none;
+}
+.navigate.right  .nav-icon-container{
+    border-right: none;
+}
 .navigate:hover {
     cursor: pointer;
 }
@@ -34,30 +46,16 @@
 .navigate.left {
     align-items: flex-start;
     left: 0;
-    background: rgba(255, 255, 255, 1);
-    background: -moz-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 0)));
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: -o-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: -ms-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1);
+    box-shadow: inset 7px 0px 8px -7px rgba(0,0,0,0.2);
 }
-.navigate.left > mat-icon{
+.navigate.left mat-icon{
     transform: rotate(180deg);
 }
 
 .navigate.right {
     align-items: flex-end;
     right: 0;
-    background: rgba(255, 255, 255, 0);
-    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(100%, rgba(255, 255, 255, 1)));
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=1);
+    box-shadow: inset -7px 0px 8px -7px rgba(0,0,0,0.2);
 }
 
 .mobile .navigate {

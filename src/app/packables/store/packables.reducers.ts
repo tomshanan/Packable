@@ -35,7 +35,11 @@ export function packablesReducers(state = initialState, action: PackableActions.
         case PackableActions.REMOVE_ORIGINAL_PACKABLES:
             action.payload.forEach(id=>{
                 let removeIndex = statePackables.findIndex(x=>x.id=== id);
-                statePackables.splice(removeIndex, 1);
+                if(statePackables[removeIndex].userCreated){
+                    statePackables.splice(removeIndex, 1);
+                } else {
+                    statePackables[removeIndex].deleted = true
+                }
             })
             return {
                 ...state,

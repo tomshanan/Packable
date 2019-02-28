@@ -25,7 +25,8 @@ export class PackableComplete {
         public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
-        public dateModified: number = timeStamp()
+        public dateModified: number = timeStamp(),
+        public deleted: boolean = false
     ) { }
 }
 export class PackableOriginal {
@@ -36,7 +37,8 @@ export class PackableOriginal {
         public quantityRules: QuantityRule[] = [new QuantityRule()],
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
-        public dateModified: number = timeStamp()
+        public dateModified: number = timeStamp(),
+        public deleted: boolean = false
     ) {
     }
 }

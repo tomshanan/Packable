@@ -109,7 +109,8 @@ export class EditPackableDialogComponent implements OnInit {
       this.packable.quantityRules.slice(),
       this.wFactory.deepCopy(this.packable.weatherRules),
       this.isNew || this.packable.userCreated,
-      timeStamp()
+      timeStamp(),
+      this.packable.deleted
     )
     
     this.store.dispatch(new packableActions.updateOriginalPackables([this.newPackable]))

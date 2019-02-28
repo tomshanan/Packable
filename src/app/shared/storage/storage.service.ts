@@ -22,7 +22,7 @@ import { weatherFactory } from '../factories/weather.factory';
 import { CollectionFactory } from '../factories/collection.factory';
 import { ProfileFactory } from '../factories/profile.factory';
 import { TripFactory } from '../factories/trip.factory';
-import { randomBetween, Guid, path } from '../global-functions';
+import { randomBetween, Guid, path, timeStamp } from '../global-functions';
 import { absoluteMax, absoluteMin } from '../services/weather.service';
 import { IconService } from '../services/icon.service';
 import { ColorGeneratorService } from '../services/color-gen.service';
@@ -136,7 +136,7 @@ export class StorageService {
         }
     }
     getLibrary(){
-        if(this.checkAuth() && !this.storeSelector.isLibraryStore){
+        if(this.checkAuth()){
             firebase.database().ref(LIBRARY).once('value', snapshot => {
                 console.log(`received library items`)
                 let data = snapshot.val()
@@ -168,7 +168,12 @@ export class StorageService {
                     newLibraryState.metaData = data['metaData']
                 }
                 this.store.dispatch(new libraryActions.SetLibraryState(newLibraryState))
+            }).catch(e=>{
+                this.store.dispatch(new libraryActions.loadLibraryError(e['message']))
             }) // ERROR HANDELING GOES HERE, SEND EMPTY LIBRARY STATE TO STOP LOADING STATE
+        } else {
+            this.store.dispatch(new libraryActions.loadLibraryError('Cannot Authenticate User'))
+
         }
     }
     initialGetAllItems() {
@@ -417,7 +422,7 @@ export class StorageService {
                 conditionsUsed = [...conditionsUsed, ...conditionsUnused.splice(choice, 1)]
             }
             let weather = new WeatherRule(min, max, conditionsUsed)
-            let packable = new PackableOriginal(Guid.newGuid(), name, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }], weather, true)
+            let packable = new PackableOriginal(Guid.newGuid(), name, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }], weather, true,timeStamp(),false)
             allPackables.push(packable)
         })
         this.store.dispatch(new packableActions.setPackableState(allPackables))

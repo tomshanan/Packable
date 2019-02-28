@@ -44,7 +44,10 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
       if(state.loading){
         this.loaded = false
         console.log('State still loading',state)
-      } else {
+      } else{
+        if(state.error){
+          console.warn(state.error)
+        }
         this.initList()
       }
     })
@@ -54,7 +57,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
     this.sub.unsubscribe()
   }
   initList(){
-    this.originalPackables= this.storeSelector.originalPackables
+    this.originalPackables= this.storeSelector.originalPackables.filter(p=>!p.deleted)
     let localList = this.createFilterObject(this.originalPackables,'local')
     let usedIds = this.originalPackables.map(p=>p.id)
     this.remotePackables = this.storeSelector.getRemotePackables().filter(p=>!usedIds.includes(p.id))
@@ -65,8 +68,9 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
       this.completeList = [...localList,...remoteList] 
     } else {
       this.usedList = [...localList]
-      this.completeList = [...remoteList] 
+      this.completeList = [...localList,...remoteList] 
     }
+    console.log('Used List:',this.usedList,'\nCompelte List::',this.completeList)
     this.loaded = true
   }
   createFilterObject(inputObjects:{id:string,name:string}[],locality:filterItemLocality):filterItem[]{

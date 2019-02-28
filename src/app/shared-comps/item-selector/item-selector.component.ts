@@ -65,7 +65,7 @@ export class ItemSelectorComponent implements OnInit {
       clearTimeout(this.filterTimeout)
       this.filterTimeout = setTimeout(()=>{
         this.applySearchFilter()
-      }, 800)
+      }, 300)
     }
   }
 

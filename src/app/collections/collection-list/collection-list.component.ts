@@ -23,6 +23,7 @@ import { ConfirmDialog, ConfirmDialogData } from '../../shared-comps/dialogs/con
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
 import { NewCollectionDialogComponent } from './new-collection-dialog/new-collection-dialog.component';
 import { Subscription } from 'rxjs';
+import { PackableFactory } from '../../shared/factories/packable.factory';
 
 interface CollectionViewObject {
   id: string,
@@ -61,6 +62,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     public dialog: MatDialog,
     private store: Store<fromApp.appState>,
     private proFac: ProfileFactory,
+    private pacFac: PackableFactory,
     private colFac: CollectionFactory,
     private bulkActions: BulkActionsService,
   ) { }
@@ -285,6 +287,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
 
   pushCollection(collection: CollectionComplete) {
     console.log('Push Collection Called')
+    let revivedPackables = collection.packables.filter(p=>p.deleted).map(p=>this.pacFac.completeToOriginal(p))
     let profiles = this.storeSelector.profiles
     let data: DialogData_ChooseProfiles = {
       collection: collection,
@@ -292,7 +295,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       selectedProfiles: [],
       header: 'Choose Profiles',
       super: 'Adding Collection',
-      content: `Please select the Travelers you would like to add this Collection to:`
+      content: `${revivedPackables.length>0 ? '<p class="my-1">This action will also import the following Packables:<br>'+revivedPackables.map(p=>p.name).join(', ')+"</p>" : ''}Please select the Travelers you would like to add this Collection to:`
     }
     let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
       ...this.dialogSettings,
@@ -307,6 +310,8 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
           let profile = profilesFiltered.findId(pId)
           profile = this.proFac.addEditCollection(profile, privateCol)
         });
+        revivedPackables.forEach(p=>p.deleted=false)
+        this.store.dispatch(new packableActions.updateOriginalPackables(revivedPackables))
         this.store.dispatch(new profileActions.editProfiles(profilesFiltered))
         this.updateCollectionList(this.inputCollections)
         this.selected.clear()

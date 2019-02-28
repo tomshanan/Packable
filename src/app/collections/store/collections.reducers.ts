@@ -48,9 +48,11 @@ export function collectionsReducers(state: State = initialState, action: Collect
         case CollectionActions.REMOVE_PACKABLES_FROM_COLLECTIONS:
             action.payload.forEach(id=>{
                 stateCollections.forEach(collection =>{
+                    if(collection.userCreated){
                     const index = collection.packables.findIndex(p =>p.id === id);
-                    if(index != -1){
-                        collection.packables.splice(index,1);
+                        if(index != -1){
+                            collection.packables.splice(index,1);
+                        }
                     }
                 })
             })

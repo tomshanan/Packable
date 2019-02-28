@@ -95,11 +95,19 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   }
   
   initView() {
+    let newPackables = this.inputPackables.filter(p=>!p.deleted)
+    if(this.editingProfileId == this.context.profileId && this.editingCollectionId == this.context.collectionId){
+      this.packableList.compare(newPackables,(item)=>{
+        this.addRecentlyChanged(item.id)
+      });
+    } else {
+      this.recentlyChanged = [];
+      this.selected = [];
+      this.editList = false;
+      this.packableList = newPackables
+    }
     this.editingProfileId = this.context.profileId
     this.editingCollectionId = this.context.collectionId
-    this.packableList.compare(this.inputPackables,(item)=>{
-      this.addRecentlyChanged(item.id)
-    });
   }
 
   updateViewObject(packables: PackableComplete[], action: updateViewAction) {

@@ -98,7 +98,7 @@
             <profile-icon [profile]="profile" [showName]="true" width="65px">
             </profile-icon>
           </div>
-          <p class="form-heading">Import Collections:</p>
+          <p class="form-heading">Select the Essential Collections:</p>
         </div>
         <div class="dialog-row scrollable">
           <collection-selector [collections]="profile.collections" [starIcons]="true" [(selected)]="selectedEssentialCollections">
@@ -106,7 +106,7 @@
           <dialog-confirm-button>
               <button mat-fab class="mx-1" color="primary" (click)="onComplete()">
                 <mat-icon>check</mat-icon>
-              </button>
+              </button> 
           </dialog-confirm-button>
         </div>
       </div>

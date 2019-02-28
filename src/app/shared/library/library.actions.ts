@@ -3,6 +3,7 @@ import { State, ItemLibrary, ItemMetaData, MetaDataNode } from './library.model'
 export const SET_LIBRARY_STATE = "SET_LIBRARY_STATE"
 export const UPDATE_META_DATA = "UPDATE_META_DATA"
 export const LOAD_LIBRARY = "LOAD_LIBRARY"
+export const LOAD_LIBRARY_ERROR = "LOAD_LIBRARY_ERROR"
 
 export class SetLibraryState implements Action{
     readonly type = SET_LIBRARY_STATE;
@@ -16,5 +17,9 @@ export class loadLibrary implements Action{
     readonly type = LOAD_LIBRARY;
     constructor(){};
 }
+export class loadLibraryError implements Action{
+    readonly type = LOAD_LIBRARY_ERROR;
+    constructor(public payload: string){};
+}
 
-export type actionsTypes = SetLibraryState | UpdateMetaData | loadLibrary;
+export type actionsTypes = SetLibraryState | UpdateMetaData | loadLibrary | loadLibraryError;

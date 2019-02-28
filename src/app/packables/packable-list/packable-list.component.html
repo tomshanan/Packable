@@ -28,7 +28,7 @@
         </a>
       </ng-container>
       <ng-template #regOptions>
-        <a class="inline-link withIcon option" title="Import Packables" (click)="importPackables()">
+        <a class="inline-link withIcon option" title="Import Packables" (click)="importPackables()" *ngIf="editingCollectionId || !storeSelector.isLibraryStore">
           <div class="icon-container icon-sizer">
             <mat-icon svgIcon="t-shirt2-import"></mat-icon>
           </div>

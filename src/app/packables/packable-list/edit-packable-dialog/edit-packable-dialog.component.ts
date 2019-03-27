@@ -65,9 +65,9 @@ export class EditPackableDialogComponent implements OnInit {
     private context: ContextService,
     private bulkActions: BulkActionsService
   ) {
-    this.packable = data.pakable || new PackableComplete();
+    this.packable = Object.assign(new PackableComplete(), data.pakable)
     this.isNew = data.isNew || false;
-    this.editName = this.isNew || this.packable.userCreated || false;
+    this.editName = this.isNew || (!this.context.collectionId && this.packable.userCreated) || false;
   }
 
 
@@ -101,6 +101,7 @@ export class EditPackableDialogComponent implements OnInit {
     selectedProfiles: string[]
   }) {
     this.packable = data.packable;
+    this.packable.dateModified = timeStamp()
     this.selectedProfiles = data.selectedProfiles;
     // save original packable
     this.newPackable = new PackableOriginal(
@@ -109,27 +110,36 @@ export class EditPackableDialogComponent implements OnInit {
       this.packable.quantityRules.slice(),
       this.wFactory.deepCopy(this.packable.weatherRules),
       this.isNew || this.packable.userCreated,
-      timeStamp(),
+      this.packable.dateModified,
       this.packable.deleted
     )
-    
-    this.store.dispatch(new packableActions.updateOriginalPackables([this.newPackable]))
-    
+    if(this.isNew || !this.collectionId){
+      // update original packable if no collection id is set
+      console.log('EDIT PACKABLE: updating original packable / registering new packable');
+      this.store.dispatch(new packableActions.updateOriginalPackables([this.newPackable]))
+    }
+    if(this.collectionId && !this.context.profileId){
+      // update original collection if no profile id is set
+      console.log('EDIT PACKABLE: updating original collection');
+      this.bulkActions.pushOriginalPackablesByCP([this.newPackable],[{pId:null,cId:this.collectionId}])
+    }
     if (this.collectionId && this.selectedProfiles.length > 0) {
       // UPDATE SELECTED PROFILES WITH NEW PRIVATE PACKABLE
-      let profiles = this.storeSelector.profiles
+      console.log('EDIT PACKABLE: updating selected profiles');
       let CPs: CollectionProfile[] = []
       this.selectedProfiles.forEach((pId) => {
         CPs.push({pId: pId,cId: this.collectionId})
       })
-      this.bulkActions.pushOriginalPackablesByCP([this.newPackable.id],CPs)
+      this.bulkActions.pushOriginalPackablesByCP([this.newPackable],CPs)
       this.onClose(this.packable);
-    } else {
+    } else if (!this.collectionId && !this.context.profileId && this.storeSelector.profiles.some(p=>p.collections.length>0)){
       this.step = 2;
+    } else {
+      this.onClose(this.newPackable)
     }
   }
   onConfirmCollections(confirm: CollectionSelectorConfirmEvent) {
-    this.bulkActions.pushOriginalPackablesByCP([this.newPackable.id],confirm.selectedIds)
+    this.bulkActions.pushOriginalPackablesByCP([this.newPackable],confirm.selectedIds)
     this.onClose(this.packable);
   }
 }

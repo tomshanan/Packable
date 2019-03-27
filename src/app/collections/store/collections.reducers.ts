@@ -22,13 +22,17 @@ export function collectionsReducers(state: State = initialState, action: Collect
                 collections: action.payload
             }
         case CollectionActions.UPDATE_ORIGINAL_COLLECTION:
-            const editId = action.payload.id;
-            const editIndex = stateCollections.idIndex(editId);
-            if(editIndex > -1){
-                stateCollections[editIndex] = action.payload
-            } else {
-                stateCollections.unshift(action.payload)
-            }
+            let newCollections = action.payload
+            newCollections.forEach(collection=>{
+                const editIndex = stateCollections.idIndex(collection.id);
+                if(editIndex > -1){
+                    stateCollections[editIndex] = collection
+                } else {
+                    stateCollections.unshift(collection)
+                }
+            })
+            console.log('collection state updated: ', stateCollections);
+            
             return {
                 ...state,
                 collections: [...stateCollections]
@@ -38,7 +42,12 @@ export function collectionsReducers(state: State = initialState, action: Collect
             ids.forEach(id=>{
                 let removeIndex = stateCollections.idIndex(id);
                 if(removeIndex>-1){
-                    stateCollections.splice(removeIndex,1)
+                    let c = stateCollections[removeIndex]
+                    if(c.userCreated){
+                        stateCollections.splice(removeIndex,1)
+                    } else {
+                        c.deleted = true
+                    }
                 }
             })
             return {
@@ -46,15 +55,9 @@ export function collectionsReducers(state: State = initialState, action: Collect
                 collections: [...stateCollections]
             }
         case CollectionActions.REMOVE_PACKABLES_FROM_COLLECTIONS:
-            action.payload.forEach(id=>{
-                stateCollections.forEach(collection =>{
-                    if(collection.userCreated){
-                    const index = collection.packables.findIndex(p =>p.id === id);
-                        if(index != -1){
-                            collection.packables.splice(index,1);
-                        }
-                    }
-                })
+            let pacIds = action.payload
+            stateCollections.forEach(c => {
+                c.packables = c.packables.filter(p=> !pacIds.includes(p.id))
             })
             return {
                 ...state,

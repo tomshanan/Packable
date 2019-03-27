@@ -47,9 +47,9 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
   @Output() selectedIdsChange = new EventEmitter<CollectionProfile[]>();
   @Output() confirm = new EventEmitter<CollectionSelectorConfirmEvent>();
 
+  collectionsOpen: string[] = []
+
   action: 'add' | 'update' = 'add';
-  completeProfiles: ProfileComplete[] = [];
-  completeCollections: CollectionComplete[] = [];
   ColProTree: CollectionBranch[];
 
   constructor(
@@ -61,6 +61,8 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     let filteredProfileGroup = this.PackableId != null ? this.storeSelector.getProfilesWithPackableId(this.PackableId) : [];
+    console.log('CHOOSE COLLECTION DIALOG: filteredProfileGroup',filteredProfileGroup)
+
     if (filteredProfileGroup.length > 0) {
       this.CollectionProfileGroup = this.createCollectionProfileGroupByPackable(filteredProfileGroup, this.PackableId)
       this.action = 'update'
@@ -68,14 +70,12 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
       this.CollectionProfileGroup = this.createCollectionProfileGroupByPackable(this.storeSelector.profiles)
       this.action = 'add'
     }
-    
-    this.completeProfiles = this.pFac.makeComplete(this.storeSelector.profiles)
-    this.completeCollections = this.cFac.makeCompleteArray(this.storeSelector.originalCollections)
-    this.ColProTree = this.buildTree();
+      this.ColProTree = this.buildTree();
   }
 
   createCollectionProfileGroupByPackable(profiles: Profile[], packableId: string = null): CollectionProfile[] {
     let collectionProfileGroup: CollectionProfile[] = []
+    console.log('CHOOSE COLLECTION DIALOG: createCollectionProfileGroupByPackable received Profiles:',profiles)
     profiles.forEach(p => {
       p.collections.forEach(c => {
         if (packableId == null || c.packables.some(Packable => Packable.id == packableId)) {
@@ -88,6 +88,7 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
 
   buildTree(): CollectionBranch[] {
     let tree: CollectionBranch[] = [];
+    console.log('CHOOSE COLLECTION DIALOG: Building tree from CollectionProfileGroup',this.CollectionProfileGroup)
     this.CollectionProfileGroup.forEach(colPro => {
       let profile = this.storeSelector.getProfileById(colPro.pId)
       let indexOfCollection = tree.findIndex(colBranch => colBranch.id == colPro.cId)
@@ -127,13 +128,17 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
     }
     
   }
-  toggleCollection(colIndex: number, state: boolean = null) {
+  toggleCollection(colIndex: number, state: boolean = null) {   
     let col = this.ColProTree[colIndex]
-    if (state == true || col.selected.length == 0 && state !== false) {
-      col.selected = col.profiles.slice().map(p => p.id)
+    if (state !== false && !col.branchOpen) {
       this.toggleBranch(colIndex,true)
-    } else {
-      col.selected = []
+      col.selected = col.profiles.slice().map(p => p.id)
+      
+    } else if(state !== true && col.branchOpen){
+      this.toggleBranch(colIndex,false)
+      if(state === false){
+        col.selected = []
+      }
     }
     this.emitSelection()
   }
@@ -151,6 +156,7 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
   addAll() {
     this.ColProTree.forEach(collection => {
       collection.selected = collection.profiles.map(p => p.id)
+      collection.branchOpen = true
       collection.profiles.forEach(profile => {
         let obj = { cId: collection.id, pId: profile.id }
         if (!this.isObjSelected(obj)) {

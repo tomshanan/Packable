@@ -12,7 +12,12 @@ import { CollectionComplete } from '@app/shared/models/collection.model';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { Subscription } from 'rxjs';
 import { ColorGeneratorService } from '../../shared/services/color-gen.service';
-import { titleCase, Guid } from '../../shared/global-functions';
+import { titleCase, Guid, timeStamp } from '../../shared/global-functions';
+import * as libraryActions from '@shared/library/library.actions';
+import { remoteCollection } from '@app/shared/library/library.model';
+import * as collectionActions from '@app/collections/store/collections.actions';
+import * as packableActions from '@app/packables/store/packables.actions';
+import { BulkActionsService } from '@app/shared/services/bulk-actions.service';
 
 type profileCreationMethod = 'template' | 'copy' | 'new'
 @Component({
@@ -34,8 +39,11 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   selectedEssentialCollections: string[] = [];
 
   allProfiles: ProfileComplete[];
+  templateProfiles: ProfileComplete[]
   profileCollectionStrings: {id:string,list:string[]}[] = [];
-  remoteCollections: CollectionComplete[];
+  remoteCollections: remoteCollection[];
+  subs: Subscription;
+  loadingCollections: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {},
@@ -45,19 +53,32 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     private colFac: CollectionFactory,
     private storeSelector: StoreSelectorService,
     private colorGen: ColorGeneratorService,
+    private bulkActions:BulkActionsService,
   ) { }
 
   ngOnInit() {
-    this.collections = this.colFac.getOriginalsFromStoreAndMakeComplete()
+    this.subs = this.storeSelector.libraryState_obs.subscribe((state)=>{
+      if(state.loading){
+        this.loadingCollections = true
+      } else {
+        this.init()
+        this.loadingCollections = false
+      }
+    })
+    this.store.dispatch(new libraryActions.loadLibrary())
+  }
+  init(){
+    this.collections = this.colFac.getImportCollectionList()
     this.allProfiles = this.proFac.getAllProfilesAndMakeComplete()
-    this.profileCollectionStrings = this.allProfiles.map(p=>{
+    console.log('NEWPROFILE DIALOG: allProfiles', this.allProfiles)
+    this.templateProfiles = this.proFac.makeComplete(this.storeSelector.getRemoteProfiles()) 
+    console.log('NEWPROFILE DIALOG: templateProfiles', this.templateProfiles)
+    this.profileCollectionStrings = [...this.allProfiles, ...this.templateProfiles].map(p=>{
       return {
         id: p.id,
         list: p.collections.map(c=> titleCase(c.name))
       }
     })
-    // ADD COLLECTIONS FROM REMOTE DATABASE
-
   }
   getCollectionListById(id:string):string[]{
     return this.profileCollectionStrings.findId(id).list
@@ -97,24 +118,25 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     get collections and apply to this.profile
     this.step++
   */
-  onChooseProfile(profile: Profile) {
-    let collections = profile.collections
-    let completeCollections = this.colFac.makeCompleteArray(collections)
-    this.onChooseCollections(completeCollections)
+  onChooseProfile(profile: ProfileComplete) {
+    this.selectedCollections = profile.collections.map(c=>c.id)
+    this.onChooseOriginalCollections()
   }
   onChooseOriginalCollections() {
-    let collections = this.colFac.getCompleteByIdArray(this.selectedCollections)
-    let removeCollections = [] //GET REMOTE COLLECTIONS -> make complete
-    this.onChooseCollections(collections, removeCollections)
+    let localCollections = this.colFac.getAllComplete().filter(c=>this.selectedCollections.includes(c.id))
+    let localCollectionsIds = localCollections.map(c=>c.id)
+    //GET REMOTE COLLECTIONS -> filter only selected ones -> filter ones already being used in local library
+    this.remoteCollections =  this.storeSelector.getRemoteCollections().filter(c=> 
+      this.selectedCollections.includes(c.id) && !localCollectionsIds.includes(c.id)) 
+    let completeRemoteCollections = this.colFac.makeCompleteArray(this.remoteCollections)
+    this.onChooseCollections(localCollections, completeRemoteCollections)
   }
   onChooseCollections(collections: CollectionComplete[] = [], remoteCollections: CollectionComplete[] = []) {
     // store remote collections in profile, and save for processing before final step
-    this.remoteCollections = remoteCollections
     this.profile.collections = [...collections,...remoteCollections]
     this.selectedEssentialCollections = this.profile.collections.filter(c=>c.essential).map(c=>c.id)
     this.step++
     console.log(this.profile);
-    
   }
 
   /* when complete step 3: 
@@ -125,11 +147,15 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   close modal
 */
   onComplete() {
+    
+    // SAVE REMOTE REMOTE COLLECTIONS IN STORAGE
+    this.bulkActions.processImportCollections(this.remoteCollections.map(c=>c.id))
+    // Set Essential Collections in profile
     this.selectedEssentialCollections.forEach(id=>{
       this.profile.collections.findId(id).essential = true
     })
-    // SAVE REMOTE REMOTE COLLECTIONS IN STORAGE
     this.profile.id = Guid.newGuid()
+    this.profile.dateModified = timeStamp()
     let newProfile = this.proFac.completeToPrivate(this.profile)
     this.store.dispatch(new profileActions.addProfile(newProfile))
     this.onClose(newProfile)

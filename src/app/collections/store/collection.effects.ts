@@ -14,9 +14,9 @@ export class CollectionEffects{
     ){}
 
     @Effect({dispatch:false}) updateCollectionEffect = this.actions$.pipe(
-        ofType<collectionActions.updateOriginalCollection>(collectionActions.UPDATE_ORIGINAL_COLLECTION),
-        tap((action:collectionActions.updateOriginalCollection)=>{
-            this.storageService.saveItemsInUser('collections', [action.payload])
+        ofType<collectionActions.updateOriginalCollections>(collectionActions.UPDATE_ORIGINAL_COLLECTION),
+        tap((action:collectionActions.updateOriginalCollections)=>{
+            this.storageService.saveItemsInUser('collections', action.payload)
         })
     )
     

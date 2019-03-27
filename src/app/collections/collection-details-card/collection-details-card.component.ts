@@ -4,7 +4,7 @@ import { WindowService } from '../../shared/services/window.service';
 import { Subscription } from 'rxjs';
 
 
-export type actionType = 'button' | 'selection'
+export type actionType = 'button' | 'selection' | 'none'
 export type selectionState  = boolean
 export type buttonState = 'added' | 'delete' | 'add' | 'remove'
 export type buttonAction = 'select' | 'deselect' | 'delete' | 'add' | 'remove';
@@ -18,12 +18,13 @@ export class CollectionDetailsCardComponent implements OnInit,OnDestroy {
 
 @Input('collection') collection: CollectionComplete;
 @Input('actionType') actionType: actionType = 'button';
-@Input('selectionState') selectionState: selectionState = false
+@Input('selectionState') selectionState: selectionState = false;
 
-@Input('selectionOnIcon') selectionOnIcon: string = 'added'
-@Input('selectionOffIcon') selectionOffIcon: string = 'unselected'
+@Input('selectionOnIcon') selectionOnIcon: string = 'added';
+@Input('selectionOffIcon') selectionOffIcon: string = 'unselected';
+@Input('staticIcon') staticIcon: string = 'check';
 
-@Input('buttonState') buttonState: buttonState = 'add'
+@Input('buttonState') buttonState: buttonState = 'add';
 @Input('disabled') disabled: boolean = false;
 @Output('actionClick') actionClick = new EventEmitter<buttonAction>()
 buttonWidth(): string {
@@ -40,6 +41,7 @@ packableNameListString: string;
   ) { }
 
   ngOnInit() {
+    console.log('Details Card recieved collection:', this.collection);
     this.packableNameList = this.collection.packables.map(p=> p.name)
     this.packableNameListString = this.packableNameList.join(', ')
     // this.sub = this.windowService.change.subscribe(()=>this.changeDetection.detectChanges())
@@ -49,7 +51,7 @@ packableNameListString: string;
   }
 
   action(){
-    if(!this.disabled){
+    if(!this.disabled && this.actionType !='none'){
       let action:buttonAction;
       if(this.actionType == 'button'){
         switch(this.buttonState){

@@ -59,24 +59,24 @@ export class CollectionSettingsComponent implements OnInit, OnChanges, OnDestroy
       this.inputProfileId = this.context.profileId
     }
     this.updateDialogData()
-    this.subscription = this.context.changes.subscribe(newcontext=>{
-      this.inputCollection = this.context.getCollection()
-      this.inputProfileId = this.context.profileId
+    // this.subscription = this.context.changes.subscribe(newcontext=>{
+    //   this.updateCollection();
+    // })
+  }
+  ngOnChanges(changes:SimpleChanges) {
+    if(changes['inputCollection']){
+      console.log(`CollectionSettings:`,"Received Changes for collection", this.inputCollection)
       this.updateCollection();
-    })
+    }
   }
   ngOnDestroy(){
-    this.subscription.unsubscribe()
+    // this.subscription.unsubscribe()
   }
   updateCollection(){
-    if (this.inputCollection && this.inputProfileId){
-      if(this.collection.id != this.inputCollection.id || this.profileId != this.inputProfileId){
-        this.collection = this.inputCollection
-        this.profileId = this.inputProfileId;
-        console.log(`collection settings for "${this.collection.name}" has loaded/changed:`, this.collection);
-        this.updateDialogData()
-      }
-    }
+    this.collection = this.inputCollection || this.context.getCollection()
+    this.profileId = this.inputProfileId || this.context.profileId
+    console.log(`CollectionSettings: settings for "${this.collection.name}" has loaded/changed:`, this.collection);
+    this.updateDialogData()
   }
   updateDialogData(){
     this.dialogData = {
@@ -85,13 +85,7 @@ export class CollectionSettingsComponent implements OnInit, OnChanges, OnDestroy
       selectedProfiles: [this.profileId]
     }
   }
-  ngOnChanges(changes:SimpleChanges) {
-    if(changes['collection']){
-      this.updateCollection();
-      
-    }
-    
-  }
+
 
   emitUpdate(){
     console.log('sending collection to be updated:\n',this.collection);
@@ -111,69 +105,6 @@ export class CollectionSettingsComponent implements OnInit, OnChanges, OnDestroy
 
   }
   
-  applyCollection(){
-    let usedProfiles = this.storeSelector.getProfilesWithCollectionId(this.collection.id)
-    let data:DialogData_ChooseProfiles = {
-      ...this.dialogData,
-      header: `Select Profiles`,
-      content: `<small>This will override existing Collections (including all Packables and settings)</small>`,
-      super: `Apply Changes To Travelers`,
-      profileGroup: usedProfiles,
-
-    }
-    let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
-      ...this.dialogSettings,
-      disableClose: false,
-      data: data
-    });
-    chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
-      if (profileIds.length > 0) {
-        this.bulkActions.pushCollectionsToProfiles([this.inputCollection],profileIds)
-        this.emitUpdate();
-      }
-    })
-  }
-  addCollection(){
-    let usedProfiles = this.storeSelector.getProfilesWithCollectionId(this.collection.id)
-    let data:DialogData_ChooseProfiles = {
-      ...this.dialogData,
-      header: `Select Profiles`,
-      content: `<small>Select the profiles you would like to add this Collection to.</small>`,
-      super: `Applying Collection To Travelers`,
-      // profileGroup - get only the profiles that do not use this collection
-      profileGroup: this.storeSelector.profiles.removeIds(usedProfiles)
-
-    }
-    let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
-      ...this.dialogSettings,
-      disableClose: false,
-      data: data
-    });
-    chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
-      if (profileIds.length > 0) {
-        this.bulkActions.pushCollectionsToProfiles([this.inputCollection],profileIds)
-        this.emitUpdate();
-      }
-    })
-  }
-  removeCollection(){
-    let data:DialogData_ChooseProfiles = {
-      ...this.dialogData,
-      header: `Select Profiles`,
-      content: `Please select the profiles you would like to remove this Collection from`,
-      super: `Deleting Collection`
-    }
-    let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
-      ...this.dialogSettings,
-      disableClose: false,
-      data: data
-    });
-    chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
-      if (profileIds.length > 0) {
-        this.bulkActions.removeCollectionsFromProfiles([this.inputCollection.id],profileIds)
-        this.remove.emit()
-      }
-    })
-  }
+  
 
 }

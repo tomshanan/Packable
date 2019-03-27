@@ -5,13 +5,6 @@ import { timeStamp } from '../global-functions';
 
 export type libraryItem = PackableOriginal | CollectionOriginal | Profile;
 
-export class remotePackable extends PackableOriginal {
-    metaData: ItemMetaData = new ItemMetaData()
-    constructor(p:PackableOriginal, metaData:ItemMetaData){
-        super(p.id,p.name,p.quantityRules,p.weatherRules,false,p.dateModified, p.deleted)
-        this.metaData = {...this.metaData,...metaData}
-    }
-}
 export class remoteCollection extends CollectionOriginal {
     metaData: ItemMetaData = new ItemMetaData()
     constructor(c:CollectionOriginal, metaData:ItemMetaData){

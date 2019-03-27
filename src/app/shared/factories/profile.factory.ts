@@ -3,10 +3,11 @@ import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableFactory } from './packable.factory';
 import { CollectionFactory } from './collection.factory';
 import { Profile, ProfileComplete, Avatar } from '../models/profile.model';
-import { CollectionPrivate } from '../models/collection.model';
+import { CollectionPrivate, CollectionComplete } from '../models/collection.model';
 import { indexOfId } from '../global-functions';
 import { PackablePrivate } from '../models/packable.model';
 import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { remoteProfile } from '../library/library.model';
 
 @Injectable()
 export class ProfileFactory{
@@ -16,7 +17,7 @@ export class ProfileFactory{
         private collectionFactory: CollectionFactory
     ){}
 
-    public duplicateProfile =(profile:Profile): Profile =>{
+    public duplicateProfile =(profile:Profile|remoteProfile): Profile =>{
         return new Profile(
             profile.id,
             profile.name,
@@ -24,6 +25,9 @@ export class ProfileFactory{
             profile.avatar ? profile.avatar : new Avatar(),
             profile.dateModified
         )
+    }
+    public remoteToOriginal = (profiles:remoteProfile[]):Profile[]=>{
+        return profiles.map(p=>this.duplicateProfile(p))
     }
     public completeToPrivate(p: ProfileComplete): Profile{
         return new Profile(

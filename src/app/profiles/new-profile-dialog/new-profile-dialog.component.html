@@ -14,7 +14,7 @@
             Select and import the collections
           </p>
         </card-button>
-        <card-button disabled="true">
+        <card-button [disabled]="storeSelector.isLibraryStore" (click)="profileFormValid && onChooseMethod('template')">
           Create from Template
           <p class="small text-muted">
             Templates come with pre-selected collections.
@@ -48,7 +48,7 @@
         <collection-selector [collections]="collections" [(selected)]="selectedCollections" [filterInput]="searchString">
         </collection-selector>
         <dialog-confirm-button>
-          <button mat-fab class="mx-1" color="primary" (click)="onChooseOriginalCollections()" [disabled]="selectedCollections.length<1">
+          <button mat-fab class="mx-1" color="primary" (click)="onChooseOriginalCollections()" [disabled]="selectedCollections.length==0">
             <mat-icon>check</mat-icon>
           </button>
         </dialog-confirm-button>
@@ -87,7 +87,33 @@
 </ng-container>
 
 <ng-container *ngSwitchCase="'template'">
-  Template
+    <div class="dialog-flex-container">
+        <div class="dialog-row">
+          <div class="text-center">
+            <profile-icon [profile]="profile" [showName]="true" width="65px">
+            </profile-icon>
+          </div>
+          <p class="form-heading">Select a Traveler Template:</p>
+        </div>
+        <div class="dialog-row scrollable">
+            <ng-container *ngFor="let profile of templateProfiles">
+                <card-button (click)="onChooseProfile(profile)">
+                  <div class="profile-card-flex">
+                    <div class="profile-card-icon">
+                      <profile-icon [profile]="profile" [fullFrame]="true" [showName]="false" width="50px">
+                      </profile-icon>
+                    </div>
+                    <div class="profile-card-details">
+                      <h5 class="p-0 m-0">{{profile.name}}</h5>
+                      <div class="profile-card-details-collection-list">
+                        <list-concatinator [list]="getCollectionListById(profile.id)" lines="2"></list-concatinator>
+                      </div>
+                    </div>
+                  </div>
+                </card-button>
+              </ng-container>            
+        </div>
+    </div>
 </ng-container>
 
 </div>

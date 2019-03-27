@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { MatSlideToggleChange, MatSlideToggle } from '@angular/material';
 import { quickTransitionTrigger } from '../../shared/animations';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'slide-toggle-with-text',
@@ -16,6 +17,8 @@ export class SlideToggleWithTextComponent implements OnInit {
   @Output('checkedChange') isCheckedChange = new EventEmitter<boolean>()
   @Output() change = new EventEmitter<MatSlideToggleChange>()
   @Output('textClick') onTextClick = new EventEmitter<void>()
+  @ViewChild('toggle') matToggle: MatSlideToggle;
+  @ViewChild('toggle') toggleElement: ElementRef;
 /*
   <slide-toggle-with-text 
   [checked]="booleanVar"
@@ -28,12 +31,25 @@ export class SlideToggleWithTextComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
   }
   textClick(){
     this.onTextClick.emit()
   }
+  toggle(){
+    //this.isChecked != this.isChecked
+    //this.toggleElement.nativeElement.click()
+    this.matToggle.checked = !this.isChecked
+    this.isChecked = !this.isChecked
+    this.isCheckedChange.emit(this.isChecked)
+    this.change.emit({
+      checked:this.isChecked,
+      source: this.matToggle
+    })
+    // this.matToggle.toggleChange.emit()
+  }
   toggleChange(e:MatSlideToggleChange){
-    this.isChecked = e.checked;
+    this.isChecked = e ? e.checked : !this.isChecked;
     this.isCheckedChange.emit(this.isChecked)
     this.change.emit(e)
   }

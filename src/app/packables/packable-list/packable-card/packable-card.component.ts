@@ -4,6 +4,8 @@ import { MatCheckboxChange } from '@angular/material';
 import { weatherFactory } from '../../../shared/factories/weather.factory';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import { expandAndFadeTrigger, addRemoveElementTrigger } from '../../../shared/animations';
+import { timeStamp } from '@app/shared/global-functions';
+import * as moment from 'moment'
 
 export interface ruleIcon {
   icon: string,
@@ -15,6 +17,7 @@ interface packableDetails {
   name: string,
   rules: string[],
   icons: ruleIcon[],
+  new: boolean
 }
 
 @Component({
@@ -41,7 +44,6 @@ EDIT    -> handle modal window for packable
   [packable]="packableComplete"
   [useCard]="boolean"
   [editList]="boolean"
-  [recentlyChanged]="boolean"
   [selected]="boolean"
   (packableChange)="event(PackableComplete)"
   (remove)="event(void)"
@@ -49,7 +51,7 @@ EDIT    -> handle modal window for packable
   (checkboxChange)="event(bolean)">
  </packable-card>
 */
-  @Input('packable') packableComplete: PackableComplete;
+  @Input('packable') inputPackable: PackableComplete;
   @Output() packableChange= new EventEmitter<PackableComplete>()
   @Output() remove = new EventEmitter<void>() 
   @Output() clickPackable = new EventEmitter<void>()
@@ -57,8 +59,9 @@ EDIT    -> handle modal window for packable
 
   @Input() useCard: boolean = true;
   @Input() editList: boolean = false;
-  @Input() recentlyChanged: boolean = false;
   @Input() selected: boolean = false;
+
+  timeout = setTimeout(()=>{},0)
 
   constructor(
     private wcFactory: weatherFactory,
@@ -70,24 +73,34 @@ EDIT    -> handle modal window for packable
 
   ngOnInit() {
     // use input packable and build backable view object
-    this.packable = this.buildViewObject(this.packableComplete)
+    this.packable = this.buildViewObject(this.inputPackable)
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['packableComplete']){
-      this.packable = this.buildViewObject(this.packableComplete)
+    if(changes['inputPackable'] || changes['packable']){
+      console.log('PACKABLE CARD:', 'received new packable',this.inputPackable);
+      this.packable = this.buildViewObject(this.inputPackable)
     }
   }
   onPackableChange(){
-    this.packableChange.emit(this.packableComplete)
-    this.buildViewObject(this.packableComplete)
+    this.packableChange.emit(this.inputPackable)
+    this.buildViewObject(this.inputPackable)
   }
   // if packable needs to change send it back up to the list (as complete)
   buildViewObject(p: PackableComplete, options?: { [P in keyof packableDetails]?: any }): packableDetails {
+    let aMinuteAgo = timeStamp() - 60000
+    let isNew = p.dateModified > aMinuteAgo;
+    if(isNew){
+      clearTimeout(this.timeout)
+      this.timeout = setTimeout(()=>{
+        this.packable.new = false;
+      },60000)
+    }
     return {
       id: p.id,
       name: p.name,
       rules: this.pacFactory.getQuantityStrings(p.quantityRules),
       icons: this.wcFactory.getWeatherIcons(p.weatherRules),
+      new: isNew,
       ...options
     }
   }

@@ -1,8 +1,8 @@
 import { Store } from "@ngrx/store";
 import * as fromApp from '../app.reducers'
 import { Injectable } from '@angular/core';
-import { Observable } from "rxjs";
-import { PackableOriginal, PackablePrivate } from '../models/packable.model';
+import { Observable, combineLatest } from "rxjs";
+import { PackableOriginal, PackablePrivate, remotePackable } from '../models/packable.model';
 import { CollectionOriginal } from '../models/collection.model';
 import { Profile } from "../models/profile.model";
 import { Trip, displayTrip } from '../models/trip.model';
@@ -10,9 +10,10 @@ import { DestinationDataService } from './location-data.service';
 import * as moment from 'moment';
 import { PackingList } from '../models/packing-list.model';
 import {State as AdminState} from '@app/admin/store/adminState.model'
-import {State as libraryState, libraryItem, remotePackable, remoteCollection, remoteProfile} from '@shared/library/library.model'
+import {State as libraryState, libraryItem, remoteCollection, remoteProfile} from '@shared/library/library.model'
 import { UserService } from './user.service';
 import { ItemLibrary, MetaDataNode, ItemMetaData } from '../library/library.model';
+import { isDefined } from '../global-functions';
 
 @Injectable()
 export class StoreSelectorService{    
@@ -30,6 +31,7 @@ export class StoreSelectorService{
     private _packingLists: PackingList[]
     private _adminState: AdminState
     private _libraryState: libraryState
+    store_obs: Observable<[{ packables: PackableOriginal[]; }, { collections: CollectionOriginal[]; }, { profiles: Profile[]; }, { trips: Trip[]; packingLists: PackingList[]; }]>;
 
     constructor(private store:Store<fromApp.appState>, private destServices: DestinationDataService, private user: UserService){
         this.packables_obs = this.store.select('packables');
@@ -38,6 +40,7 @@ export class StoreSelectorService{
         this.trips_obs = this.store.select('trips');
         this.adminState_obs = this.store.select('admin')
         this.libraryState_obs = this.store.select('library')
+        this.store_obs = combineLatest(this.packables_obs,this.collections_obs,this.profiles_obs,this.trips_obs)
 
         this.packables_obs.subscribe(packablesState =>{
             this._originalPackables = packablesState.packables;
@@ -59,6 +62,7 @@ export class StoreSelectorService{
             console.log('StoreSelector: library state updeted',libState);
             this._libraryState = libState
         })
+        
     }
     public get originalPackables(): PackableOriginal[] {return this._originalPackables.slice()}
     public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
@@ -94,17 +98,32 @@ export class StoreSelectorService{
         return this.libraryState.metaData[id]
     }
 
-    getRemotePackables():remotePackable[]{
+    getRemotePackables(ids?:string[]):remotePackable[]{
         let packables = this.libraryState.library.packables
-        return packables.map(p=>new remotePackable(p,this.getMetaDataForId(p.id)))
+        let remotePackables = packables.map(p=>new remotePackable(p,this.getMetaDataForId(p.id)))
+        if(isDefined(ids)){
+            return remotePackables.filter(c=>ids.includes(c.id))
+        } else {
+            return remotePackables
+        } 
     }
-    getRemoteCollections():remoteCollection[]{
+    getRemoteCollections(ids?:string[]):remoteCollection[]{
         let collections = this.libraryState.library.collections
-        return collections.map(c=>new remoteCollection(c,this.getMetaDataForId(c.id)))
+        let remoteCollections = collections.map(c=>new remoteCollection(c,this.getMetaDataForId(c.id)))
+        if(isDefined(ids)){
+            return remoteCollections.filter(c=>ids.includes(c.id))
+        } else {
+            return remoteCollections
+        }
     }
-    getRemoteProfiles():remoteProfile[]{
+    getRemoteProfiles(ids?:string[]):remoteProfile[]{
         let profiles = this.libraryState.library.profiles
-        return profiles.map(p=>new remoteProfile(p,this.getMetaDataForId(p.id)))
+        let remoteProfiles = profiles.map(p=>new remoteProfile(p,this.getMetaDataForId(p.id)))
+        if(isDefined(ids)){
+            return remoteProfiles.filter(c=>ids.includes(c.id))
+        } else {
+            return remoteProfiles
+        } 
     }
 
     getTripById(id:string):Trip{

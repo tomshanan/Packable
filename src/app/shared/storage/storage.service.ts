@@ -40,7 +40,9 @@ import * as adminActions from '../../admin/store/admin.actions';
 import { User } from '../../admin/store/adminState.model';
 import { PackingList } from '../models/packing-list.model';
 import { initialLibraryState } from '../library/library.model';
+import { Router, ActivatedRoute } from '@angular/router';
 export type nodeOptions = 'packables' | 'collections' | 'profiles' | 'tripState';
+export type nodeOrAll = nodeOptions | 'all'
 
 type updates = { [path: string]: any } 
 type configItem = {[id:string]:userConfig}
@@ -67,7 +69,8 @@ export class StorageService {
         private iconService: IconService,
         private colorGen: ColorGeneratorService,
         private weatherFactory: weatherFactory,
-
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
     ) {
 
     }
@@ -76,7 +79,7 @@ export class StorageService {
     }
     private get pathToUserItems():string{
         if(this.storeSelector.isLibraryStore){
-            console.log('<<  Accessing items in Library >>');
+            console.log('STORAGE:','<<  Accessing items in Library >>');
             return LIBRARY
         } else {
             return path(USERS,this.userId)
@@ -86,7 +89,7 @@ export class StorageService {
         if (this.authService.isAuthenticated) {
             return true
         } else {
-            console.log('Could Not Authenticate.\n', logmessage);
+            console.log('STORAGE:','Could Not Authenticate.\n', logmessage);
             return false
         }
     }
@@ -94,19 +97,19 @@ export class StorageService {
     
     getUserConfig() {
         if (this.checkAuth()) {
-            console.log('requesting config')
+            console.log('STORAGE:','requesting config')
             firebase.database().ref(path(USER_CONFIG,this.userId)).once('value', snapshot => {
                 let data = snapshot.val();
-                console.log('receiving config data:', JSON.stringify(data))
+                console.log('STORAGE:','receiving config data') // , JSON.stringify(data)
                 if (data) {
-                    console.log(`saving user state`);
+                    console.log('STORAGE:',`saving user state`);
                     this.store.dispatch(new userActions.setUserState(data))
                 } else {
-                    console.log(`data was empty`);
+                    console.log('STORAGE:',`data was empty`);
                     this.setInitialUserConfig()
                 }
             }).catch(e=>{
-                console.log(e.message)
+                console.log('STORAGE:',e.message)
                 this.setInitialUserConfig()
             })
         }
@@ -114,15 +117,27 @@ export class StorageService {
     listenToUserItems(){
         if (this.checkAuth()) {
             let target:'user'|'library' = this.storeSelector.isLibraryStore ? 'library' : 'user';
-            console.log('Current listening target: '+target)
+            console.log('STORAGE:','Current listening target: '+target)
             let callBack = ()=> {
-                console.log(`~~-> listening to: ${this.pathToUserItems}`)
+                console.log('STORAGE:',`~~-> listening to: ${this.pathToUserItems}`)
                 firebase.database().ref(this.pathToUserItems).on('child_changed', (snapshot)=>{
                     let data: {[x:string]:any} = {}
-                    let node = snapshot.key
+                    let node = <nodeOptions>snapshot.key
                     data[node] = snapshot.val()
-                    console.log(`received live data from ${node} library: `+JSON.stringify(data))
-                    this.tidayAndStoreUserItems(data)
+                    console.log('STORAGE:',`received CHANGED data from ${node} library `)//+JSON.stringify(data)
+                    this.tidayAndStoreUserItems(data,[node])
+                })
+                firebase.database().ref(this.pathToUserItems).on('child_added', (snapshot)=>{
+                    let data: {[x:string]:any} = {}
+                    let node = <nodeOptions>snapshot.key
+                    data[node] = snapshot.val()
+                    console.log('STORAGE:',`received ADDED data from ${node} library `)//+JSON.stringify(data)
+                    this.tidayAndStoreUserItems(data,[node])
+                })
+                firebase.database().ref(this.pathToUserItems).on('child_removed', (snapshot)=>{
+                    let node = <nodeOptions>snapshot.key
+                    console.log('STORAGE:',`received REMOVED data from ${node} library `)//+JSON.stringify(data)
+                    this.tidayAndStoreUserItems({},[node])
                 })
             } 
             if (target == 'user') {
@@ -138,7 +153,7 @@ export class StorageService {
     getLibrary(){
         if(this.checkAuth()){
             firebase.database().ref(LIBRARY).once('value', snapshot => {
-                console.log(`received library items`)
+                console.log('STORAGE:',`received library items`)
                 let data = snapshot.val()
                 let newLibraryState: LibraryState = initialLibraryState
                 if(data['packables']){
@@ -179,29 +194,35 @@ export class StorageService {
     initialGetAllItems() {
         if (this.checkAuth()) {
             let path = this.pathToUserItems
-            console.log(`getting all items with path ${path}`);
+            console.log('STORAGE:',`getting all items with path ${path}`);
             firebase.database().ref(path).once('value', snapshot => {
-                console.log('received initial items')
+                console.log('STORAGE:','received initial items')
                 let data = snapshot.val();
-                this.tidayAndStoreUserItems(data)
-            }).catch(e=>console.log(e.message))
+                this.tidayAndStoreUserItems(data,['all'])
+            }).catch(e=>console.log('STORAGE:',e.message))
         }
     }
-    private tidayAndStoreUserItems(data:{}):void{
+    private tidayAndStoreUserItems(data:{},replace:nodeOrAll[]=[]):void{
         if(data!==null){
-            console.log(`received user items from DB:`,JSON.stringify(data));
-            console.log('saving items in store');
+            console.log('STORAGE:',`tidayAndStoreUserItems received data`,data,'\nReplace:',replace); //JSON.stringify(data)
+
             if(data['packables']){
                 let packables:PackableOriginal[] = this.unwrapForLocalStore(data['packables']).map((p: PackableOriginal) => this.packableFactory.clonePackableOriginal(p))
                 this.store.dispatch(new packableActions.setPackableState(packables))
+            } else if (replace.includes('all') || replace.includes('packables')){
+                this.store.dispatch(new packableActions.setPackableState([]))
             }
             if(data['collections']){
                 let collections:CollectionOriginal[] = this.unwrapForLocalStore(data['collections']).map((c: CollectionOriginal) => this.collectionFactory.duplicateOriginalCollection(c))
                 this.store.dispatch(new collectionActions.setCollectionState(collections))
+            }else if (replace.includes('all') || replace.includes('collections')){
+                this.store.dispatch(new collectionActions.setCollectionState([]))
             }
             if(data['profiles']){
                 let profiles:Profile[] =  this.unwrapForLocalStore(data['profiles']).map((profile: Profile) => this.profileFactory.duplicateProfile(profile))
                 this.store.dispatch(new profileAction.setProfileState(profiles))
+            } else if (replace.includes('all') || replace.includes('profiles')){
+                this.store.dispatch(new profileAction.setProfileState([]))
             }
             if(data['tripState']){
                 let _trips: Trip[] =  data['tripState']['trips'] ? this.unwrapForLocalStore(data['tripState']['trips']).map((t:Trip) => this.tripFactory.duplicateTrip(t)) : [];
@@ -209,6 +230,11 @@ export class StorageService {
                 this.store.dispatch(new tripActions.setTripState({
                     trips: _trips,
                     packingLists: _packingLists
+                }))
+            }else if (replace.includes('all') || replace.includes('tripState')){
+                this.store.dispatch(new tripActions.setTripState({
+                    trips: [],
+                    packingLists: []
                 }))
             }
         }
@@ -235,7 +261,7 @@ export class StorageService {
             }
             firebase.database().ref(path(this.pathToUserItems,node)).set(data)
                 .then(() => {
-                    console.log(`<-~-> saved ${node} successfully`);
+                    console.log('STORAGE:',`<-~-> saved ${node} successfully`);
                 }, (e) => {
                     console.warn(`<-~-> FAILED to save ${node}`, e);
                 })
@@ -249,7 +275,7 @@ export class StorageService {
                 let itempath = path(this.pathToUserItems,node,item)
                 updates[itempath] = wrappedItems[item]
             }
-            firebase.database().ref().update(updates).then(()=>{console.log('Saved items (updateItemsInUser)',updates);
+            firebase.database().ref().update(updates).then(()=>{console.log('STORAGE:','Saved items (updateItemsInUser)',updates);
             })
         }
     }
@@ -260,14 +286,14 @@ export class StorageService {
                 let itemPath = path(this.pathToUserItems,node,id)
                 updates[itemPath] = null
             })
-            firebase.database().ref().update(updates).then(()=>{console.log('Removed items (removeItemsInUser)',updates);
+            firebase.database().ref().update(updates).then(()=>{console.log('STORAGE:','Removed items (removeItemsInUser)',updates);
             })
         }
     }
 
     setAllUserItemsAndSettings() {
         if (this.checkAuth()) {
-            console.log(`Setting all user items and settings to FireBase (setAllUserItemsAndSettings)`);
+            console.log('STORAGE:',`Setting all user items and settings to FireBase (setAllUserItemsAndSettings)`);
             let updates: updates = {}
             let userData = {
                 packables: this.wrapForStorage(this.storeSelector.originalPackables),
@@ -280,29 +306,29 @@ export class StorageService {
             }
             updates[this.pathToUserItems] = userData
             updates[path(USER_CONFIG,this.userId,SETTINGS)] = this.user.settings
-            firebase.database().ref().update(updates).then(()=>{console.log('Saved (setAllUserItemsAndSettings)');
+            firebase.database().ref().update(updates).then(()=>{console.log('STORAGE:','Saved (setAllUserItemsAndSettings)');
             })
         }
     }
     saveUserSettings(){
         if (this.checkAuth()) {
             let data = this.user.settings
-            firebase.database().ref(path(USER_CONFIG,this.userId,SETTINGS)).set(data).then(()=>{console.log('Saved (saveUserSettings)');
+            firebase.database().ref(path(USER_CONFIG,this.userId,SETTINGS)).set(data).then(()=>{console.log('STORAGE:','Saved (saveUserSettings)');
             })
         }
     }
     setInitialUserConfig() {
-        console.log(`setting initial user data`);
+        console.log('STORAGE:',`setting initial user data`);
         if (this.checkAuth()) {
             let initialConfig = defaultUserConfigState
             initialConfig.settings.alias = firebase.auth().currentUser.email.split('@')[0]
-            console.log(`saving initial data to firebase`);
+            console.log('STORAGE:',`saving initial data to firebase`);
             firebase.database().ref(path(USER_CONFIG,this.userId)).set(initialConfig)
                 .then(() => {
-                    console.log('set userState in store:', initialConfig)
+                    console.log('STORAGE:','set userState in store:', initialConfig)
                     this.store.dispatch(new userActions.setUserState(initialConfig))
                 }, (e) => {
-                    console.log('failed to set userConfig:', e)
+                    console.log('STORAGE:','failed to set userConfig:', e)
                 })
         }
     }
@@ -311,16 +337,16 @@ export class StorageService {
     adminDeleteUsers(ids:string[]){
         if (this.checkAuth()) {
             if (this.user.permissions.userManagement) {
-                console.log('attempting to delete users')
+                console.log('STORAGE:','attempting to delete users')
                 let updates: updates = {}
                 ids.forEach(id => {
                     updates[path(USER_CONFIG,id)] = null
                     updates[path(USERS,id)] = null
                 }) 
                 firebase.database().ref().update(updates).then(()=>{
-                    console.log('users deleted', updates);
+                    console.log('STORAGE:','users deleted', updates);
                 }).catch(e=>{
-                    console.log('unable to delete users', updates, e['message']);
+                    console.log('STORAGE:','unable to delete users', updates, e['message']);
                 });
             } else {
                 console.warn('You are unable to delete users.')
@@ -329,18 +355,18 @@ export class StorageService {
     }
 
     adminSetUserData(action) {
-        console.log('attempting to change permissions', action)
+        console.log('STORAGE:','attempting to change permissions', action)
         if (this.checkAuth()) {
             if (action.type == AdminActions.ADMIN_SET_PERMISSIONS
                 && this.user.permissions.setPermissions) {
-                console.log('attempting to change permissions')
+                console.log('STORAGE:','attempting to change permissions')
                 let changes = (<AdminActions.adminSetPermissions>action).payload
                 let updates: updates = {}
                 changes.forEach(change => {
                     updates[path(USER_CONFIG,change.id,PERMISSIONS)] = change.permissions
                 }) 
                 firebase.database().ref().update(updates).then(()=>{
-                    console.log('permissions updated');
+                    console.log('STORAGE:','permissions updated');
                 });
             } else {
                 console.warn('You are unable to change permissions.')
@@ -388,6 +414,9 @@ export class StorageService {
         let itemArray: T[] = [];
         for(let item in firebaseItems){
             let newItem:T = <T>{id:item, ...firebaseItems[item]}
+            if('userCreated' in newItem && this.storeSelector.isLibraryStore){
+                newItem['userCreated'] = true
+            }
             itemArray.push(newItem)
         }
         return itemArray
@@ -431,7 +460,7 @@ export class StorageService {
         let allCollections: CollectionOriginal[] = [];
         collectionNames.forEach(name => {
             let packableIds = allPackables.map(p => this.packableFactory.makePrivate(p)).filter(() => Math.random() > 0.6)
-            let collection = new CollectionOriginal(Guid.newGuid(), name, packableIds)
+            let collection = new CollectionOriginal(Guid.newGuid(), name, packableIds,new WeatherRule(),true)
             allCollections.push(collection)
         })
         this.store.dispatch(new collectionActions.setCollectionState(allCollections))

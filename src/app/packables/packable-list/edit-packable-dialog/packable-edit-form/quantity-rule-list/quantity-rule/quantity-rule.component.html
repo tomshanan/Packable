@@ -3,42 +3,37 @@
   <mat-card class="quantity-rule">
     <div class="quantity-rule-input-containter">
       <span >
-        <mat-form-field class="quantity-rule-type mini-mat-form-field mr-2" floatLabel="never">
-          <mat-select [formControl]="type" (selectionChange)="emitUpdate()">
-              <mat-select-trigger>
-                  <mat-icon *ngIf="type.value == 'period'">date_range</mat-icon>
-                  <mat-icon *ngIf="type.value == 'profile'">person</mat-icon>
-                  <mat-icon *ngIf="type.value == 'trip'" svgIcon="together"></mat-icon>
-              </mat-select-trigger>
-            <mat-option value="period" style="align-items:center">
-              <div class="d-flex align-items-center">
-                <mat-icon>date_range</mat-icon> <span>Per Day/s</span>
-              </div>
-            </mat-option>
-            <mat-option value="profile">
-                <div class="d-flex align-items-center">
-                  <mat-icon>person</mat-icon>
+        <button mat-icon-button [matMenuTriggerFor]="typeMenu" appColor="action">
+            <mat-icon *ngIf="type.value == 'period'">date_range</mat-icon>
+            <mat-icon *ngIf="type.value == 'profile'">person</mat-icon>
+            <mat-icon *ngIf="type.value == 'trip'" svgIcon="together"></mat-icon>
+        </button>
+        <mat-menu #typeMenu="matMenu" [hasBackdrop]="true">
+            <button mat-menu-item (click)="type.setValue('period')">
+                <mat-icon>date_range</mat-icon>
+                <span>Per Day/s</span>
+            </button>
+            <button mat-menu-item (click)="type.setValue('profile')">
+                <mat-icon>person</mat-icon>
                   <span>Per Traveler</span>
-                </div>
-            </mat-option>
-            <mat-option value="trip">
-                <div class="d-flex align-items-center">
-                  <mat-icon svgIcon="together"></mat-icon> 
-                  <span>To Share</span>
-                  </div>
-            </mat-option>
-          </mat-select>
-        </mat-form-field> 
-        <span class="d-inline-block">
+            </button>
+            <button mat-menu-item  (click)="type.setValue('trip')">
+                <mat-icon svgIcon="together"></mat-icon> 
+                <span>To Share</span>
+            </button>
+        </mat-menu>
+          
+        
+        <span class="d-inline-block align-text-top">
           <mat-form-field class="quantity-rule-amount mini-mat-form-field " floatLabel="never">
-            <input matInput type="tel" [formControl]="amount" class="text-center" (change)="emitUpdate()" (click)="$event.target.select()">
+            <input matInput type="tel" [formControl]="amount" class="text-center" (change)="emitUpdate()" (click)="$event.target.select()" autocomplete="off">
           </mat-form-field>
           <span *ngIf="type.value == 'profile'"> per Traveler</span>
           <span *ngIf="type.value == 'trip'"> to share</span>
           <span *ngIf="type.value == 'period'">
             <span  class="text-muted"> per </span>
             <mat-form-field class="quantity-rule-repAmount mini-mat-form-field" floatLabel="never">
-              <input matInput type="tel" [formControl]="repAmount"  class="text-center" (change)="emitUpdate()" (click)="$event.target.select()">
+              <input matInput type="tel" [formControl]="repAmount"  class="text-center" (change)="emitUpdate()" (click)="$event.target.select()" autocomplete="off">
             </mat-form-field>
             <span  class="text-muted"> day{{repAmount.value > 1 ? 's' : ''}} </span>
           </span>

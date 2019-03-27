@@ -16,6 +16,7 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy,
   @Input() useFilter: boolean = false;
   @Input() filterInput: string = '';
   @Input() collections: CollectionComplete[];
+  @Input() used: CollectionComplete[] = []
   @Input() selected: string[] = [];
   @Input() starIcons: boolean = false;
   @Output() selectedChange = new EventEmitter<string[]>()
@@ -46,7 +47,7 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy,
   resizeHostElement(){
     let parent = this.hostElement.nativeElement.parentElement
     let height = parent.offsetHeight
-    this.renderer.setStyle(this.hostElement.nativeElement, 'min-height', (height-82)+"px")
+    this.renderer.setStyle(this.hostElement.nativeElement, 'min-height', (height-95)+"px")
   }
   ngOnDestroy(){
     this.dialogRef.removePanelClass('dialog-full-height')
@@ -54,6 +55,7 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy,
   }
   initViewCollections() {
     this.viewCollections = this.collections.slice();
+    this.filterUsed()
   }
   ngOnChanges(changes: SimpleChanges) {
     if (changes['selected'] && this.selected && this.list) {
@@ -74,6 +76,15 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy,
     }
     this.selectedChange.emit(this.list.array)
   }
+  /* USED FILTER */
+  filterUsed(){
+    if(this.used && this.used.length>0){
+      this.viewCollections = this.viewCollections.filter(c=> !this.isUsed(c))
+    }
+  }
+  isUsed(collection:CollectionComplete):boolean{
+    return this.used.idIndex(collection.id) >= 0
+  }
 
   /* FILTER */
   inputChange() {
@@ -84,6 +95,7 @@ export class CollectionSelectorComponent implements OnInit, OnChanges,OnDestroy,
       this.initViewCollections();
     }
   }
+
 
   filterViewCollections(input: string) {
     let regex = new RegExp(/([^a-z0-9])+/, 'gi')

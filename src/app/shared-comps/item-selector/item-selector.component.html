@@ -1,14 +1,12 @@
 <div id="container">
   <div class="static-row">
-      <div class="input-group searchbar-container position-relative">
-        <div class="input-group-prepend">
-          <span class="input-group-text searchbar"><i class="fas fa-search"></i></span>
-        </div>
-        <input type="search" class="form-control searchbar py-o px-1 pr-3" [(ngModel)]="searchFilterInput" (keyup)="typeSearch()" (keyup.enter)="addItemFromSearch(listFiltered.filtered[0])" placeholder="Filter List">
-        <a class="pointer input-reset searchbar py-o" style="right:0px;" (click)="resetSearch()" *ngIf="searchFilterInput!=''">
-            <i class="far fa-times-circle text-muted"></i>
-        </a>
-      </div>
+      <search-field
+      [(value)]="searchFilterInput"
+      (valueChange)="typeSearch()"
+      (keyEnter)="addItemFromSearch(listFiltered.filtered[0])"
+      placeholder="Search Packables">
+      </search-field> 
+
   </div>
   <div id="basket" 
   [animateSize]="animateItemsState" 

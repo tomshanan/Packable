@@ -11,7 +11,7 @@
     <div class="packable" (click)="onClickPackable()">
 
       <div class="first-row">
-        <div class="name" [class.text-success]="recentlyChanged">
+        <div class="name" [class.text-success]="packable.new">
           <p>{{packable.name | titlecase}}</p>
         </div>
         <div class="rule-icons">
@@ -22,7 +22,7 @@
       </div>
 
       <div class="quantity">
-        <span *ngFor="let rule of packable.rules; let i=index" [class.text-success]="recentlyChanged">
+        <span *ngFor="let rule of packable.rules; let i=index" [class.text-success]="packable.new">
           {{rule}}{{ i == packable.rules.length-1 ? "" : ", " }}
         </span>
       </div>

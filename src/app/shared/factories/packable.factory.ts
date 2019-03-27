@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
-import { PackableOriginal, PackablePrivate, PackableAny, PackableComplete, isPackableOriginal, isPackablePrivate, isPackableComplete, QuantityRule } from '../models/packable.model';
+import { PackableOriginal, PackablePrivate, PackableAny, PackableComplete, isPackableOriginal, isPackablePrivate, isPackableComplete, QuantityRule, isPackableRemote, remotePackable } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
+import { isDefined } from '../global-functions';
 
 @Injectable()
 export class PackableFactory {
@@ -75,17 +76,21 @@ export class PackableFactory {
                 p.dateModified,
                 p.deleted
             )
-        } else {
-            let original = this.storeSelector.getPackableById(p.id)
-            return new PackableComplete(
-                p.id,
-                original.name,
-                p.quantityRules.slice(),
-                this.weatherFactory.deepCopy(p.weatherRules),
-                original.userCreated,
-                p.dateModified,
-                original.deleted
-            )
+        } else if (isPackablePrivate(p)){
+            let original = this.storeSelector.getPackableById(p.id) || this.storeSelector.getRemotePackables([p.id])[0]
+            if(isDefined(original)){
+                return new PackableComplete(
+                    p.id,
+                    original.name,
+                    p.quantityRules.slice(),
+                    this.weatherFactory.deepCopy(p.weatherRules),
+                    original.userCreated,
+                    p.dateModified,
+                    original.deleted
+                )
+            } else {
+                return undefined
+            }
         }
     }
     public makeCompleteFromArray = (packables: PackableAny[]): PackableComplete[] => {

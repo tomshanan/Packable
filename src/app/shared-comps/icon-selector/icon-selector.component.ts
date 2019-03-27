@@ -12,6 +12,7 @@ export class IconSelectorComponent implements OnInit {
   @Input() iconWidth: string = '50px';
   @Input() multiselect: boolean = false;
   @Input() selected: string[] = [];
+  @Input() templateIcons: boolean = false
   @Output() selectedChange = new EventEmitter<string[]>();
   
   constructor() { }

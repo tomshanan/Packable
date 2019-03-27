@@ -103,3 +103,6 @@
     transition: all 300ms ease;
     bottom: -10%;
   }
+  .fullFrame .mat-icon{
+    bottom: 0!important;
+  }

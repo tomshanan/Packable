@@ -26,15 +26,16 @@
     background: white;
     margin: 0.3em;
 }
-.slectedable-dropdown-header{
+.selectable-dropdown-header{
     border-radius: 0.5em 0.5em 0 0;
     padding: 0.25em 1em;
     transition: all 300ms;
+    position: relative;
 }
-.slectedable-dropdown-header > span {
+.selectable-dropdown-header > span {
     font-size: 1.3em
 }
-.slectedable-dropdown-header:hover{
+.selectable-dropdown-header:hover{
     cursor: pointer;
 }
 
@@ -43,5 +44,10 @@
 }
 .selectable-dropdown.selected{
     border-color: rgba(233, 30, 99, 1);
+}
+.close-button {
+    position: absolute!important;
+    right: 0!important;
+    top: 0!important;
 }
 

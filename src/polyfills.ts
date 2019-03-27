@@ -48,7 +48,7 @@ declare global {
          * This will mutate an Array (this), removing elements missing from the comparison Array, and adding ones that are missing from the original (this).
          * @param compare The array to compare with. 
          */
-        compare(compare: T[], callback?: (changedItem?:T)=>any): T[];
+        compare(compare: T[], callback?: (changedItem:T,action:'add'|'remove'|'update')=>any): T[];
         /**
          * Returns a new array without undefined and null objects, and without empty arrays and string
          */
@@ -88,15 +88,15 @@ if (!Array.prototype.idIndex) {
 }
 
 if (!Array.prototype.compare) {
-    Array.prototype.compare = function <T extends comparableItem>(this: T[], updatedArray: T[], callback:(changedItem?:T)=>any = ()=>{}): T[] {
+    Array.prototype.compare = function <T extends comparableItem>(this: T[], updatedArray: T[], callback:(changedItem:T,action:'add'|'remove'|'update')=>any): T[] {
         updatedArray.forEach((item,i,arr) => {
             if('id' in item){
                 if (!this.findId(item.id)) {
-                    this.unshift(item)
-                    callback(item)
+                    callback != null ? callback(item,'add') : this.unshift(item)
                     //console.log('Added new item:'+item['name']);
-                } 
-            } else {
+                }
+            } 
+            else {
                 arr.splice(i,1)
             }
         })
@@ -105,11 +105,10 @@ if (!Array.prototype.compare) {
                 const i = this.idIndex(oldItem.id)
                 let newItem = updatedArray.findId(oldItem.id)
                 if (!newItem) {
-                    this.splice(i, 1)
-                } else if (('dateModified' in newItem && 'dateModified' in oldItem)&&(newItem.dateModified > oldItem.dateModified)){
-                    this.splice(i,1,newItem)
-                    callback(newItem)
-                    //console.log('Replaced old item:',oldItem,'\nwith new item:',newItem);
+                    callback != null ? callback(oldItem,'remove') : this.splice(i, 1);
+                } else if (('dateModified' in newItem && 'dateModified' in oldItem)&&(newItem.dateModified !== oldItem.dateModified)){
+                    //console.log('Replacing old item:',oldItem,'\nwith new item:',newItem);
+                    callback != null ? callback(newItem,'update') : this.splice(i,1,newItem)
                 }
             }
         })
@@ -127,12 +126,14 @@ if (!Array.prototype.clearUndefined) {
 
 if(!Array.prototype.removeIds){
     Array.prototype.removeIds = function <T extends comparableItem>(this:T[], removeArray:T[]):T[]{
-        return this.clearUndefined().filter(item => {
-            if(item !== undefined && item !== null && 'id' in item){
-                return removeArray.includes(item.id)
-            } else {
-                return false
+        removeArray.forEach(item => {
+            if('id' in item){
+                let i = this.idIndex(item.id)
+                if(i > -1){
+                    this.splice(i,1)
+                }
             }
         })
+        return this
     }
 }

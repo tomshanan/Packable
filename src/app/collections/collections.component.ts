@@ -48,7 +48,7 @@ export class CollectionsComponent implements OnInit,OnDestroy {
   ngOnInit() {
     this.context.reset();
 
-    this.subs = combineLatest(this.storeSelector.profiles_obs,this.storeSelector.collections_obs).subscribe(([proState,colState]) =>{
+    this.subs = this.storeSelector.store_obs.subscribe(([pacState,colState,proState,tripState]) =>{
       console.log('collections - received new state');
       let profiles = proState.profiles
       // collections = select only collections which are being used by a profile
@@ -64,9 +64,6 @@ export class CollectionsComponent implements OnInit,OnDestroy {
 
   ngOnDestroy(){
     this.subs.unsubscribe();
-  }
-  pushCollection(collection:CollectionComplete){
-    this.usedCollectionsComponent.pushCollection(collection)
   }
 
   openModal(tempRef:TemplateRef<any>) {

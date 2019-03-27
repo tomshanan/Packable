@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { WindowService } from '../../../../shared/services/window.service';
 import { titleCase } from '../../../../shared/global-functions';
 import { Subscription } from 'rxjs';
+import { ContextService } from '../../../../shared/services/context.service';
 
 export interface DialogData_ChooseProfiles {
   collection: CollectionComplete,
@@ -39,7 +40,8 @@ export class ChooseProfileDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: DialogData_ChooseProfiles,
     public dialogRef: MatDialogRef<ChooseProfileDialogComponent>,
     private store: Store<fromApp.appState>,
-    public windowService: WindowService
+    public windowService: WindowService,
+    private context:ContextService
   ) { 
     this.collection = data.collection;
     this.profileGroup = data.profileGroup;
@@ -62,18 +64,14 @@ export class ChooseProfileDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.updateSize(this.windowService.max('xs') ? '99vw' : '500px')
   }
 
-  profileSelect(select:'all'|'none'){
-    if (select == 'all'){
-      this.selectedProfiles = this.profileGroup.map(p=>p.id)
-    } else {
-      this.selectedProfiles = [];
-    }
-  }
 
   onClose(ids:string[] = []){
     this.dialogRef.close(ids)
   }
   onConfirm(){
     this.onClose(this.selectedProfiles)
+  }
+  valid():boolean {
+    return this.selectedProfiles.length>0 || !this.context.profileId
   }
 }

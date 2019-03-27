@@ -2,11 +2,14 @@ import { Component, OnInit, Renderer2, ViewChild, ElementRef, OnDestroy, Input, 
 import { WindowService } from '../../shared/services/window.service';
 import { appColors } from '../../shared/app-colors';
 import { Subscription, Subject } from 'rxjs';
+import { fadeInOut } from '../../shared/animations';
+
 
 @Component({
   selector: 'horizontal-icon-selector',
   templateUrl: './horizontal-icon-selector.component.html',
-  styleUrls: ['./horizontal-icon-selector.component.css']
+  styleUrls: ['./horizontal-icon-selector.component.css'],
+  animations: [fadeInOut]
 })
 export class HorizontalIconSelectorComponent implements OnInit, OnDestroy {
   @Input('stepWidth') steps:number = 50;

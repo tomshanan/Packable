@@ -4,12 +4,12 @@
       <ng-content></ng-content>
     </div>
   </div>
-  <div class="navigate left" *ngIf="moreLeft" (click)="scrollLeft()" appColor="action">
+  <div class="navigate left" *ngIf="moreLeft" (click)="scrollLeft()" appColor="action" @fadeInOut>
     <div class="nav-icon-container">
       <mat-icon>arrow_forward_ios</mat-icon>
     </div>
   </div>
-  <div class="navigate right" *ngIf="moreRight" (click)="scrollRight()" appColor="action">
+  <div class="navigate right" *ngIf="moreRight" (click)="scrollRight()" appColor="action" @fadeInOut>
     <div class="nav-icon-container">
       <mat-icon>arrow_forward_ios</mat-icon>
     </div>

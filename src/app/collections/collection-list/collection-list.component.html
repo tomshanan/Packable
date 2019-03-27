@@ -1,4 +1,3 @@
-
 <div class="toolbar" [class.listEditing]="listEditing" [class.small-dispay-toolbar]="windowService.max('xs')">
     <ng-container *ngIf="listEditing === false">
       <icon-text-button text="Select" svgIcon="list" (onClick)="toggleListEditing(true)"></icon-text-button>
@@ -14,11 +13,13 @@
     </ng-container>
 
     <ng-container *ngIf="listEditing && !selected.isEmpty">
-        <icon-text-button [text]="'Remove('+selected.length+')'" matIcon="delete_forever" (click)="null" class="text-danger text-danger-hover" color="danger" (onClick)="removeSelectedCollections()"></icon-text-button>
+        <icon-text-button [text]="'Remove('+selected.length+')'" svgIcon="remove_from_travelers" class="text-warning text-danger-hover" color="danger" (onClick)="bulkActionRemoveSelectedCollections()"></icon-text-button>
+        <icon-text-button *ngIf="!context.profileId" [text]="'Delete('+selected.length+')'" matIcon="delete" class="text-danger text-danger-hover" color="danger" (onClick)="bulkActionDeleteSelectedCollections()"></icon-text-button>
     </ng-container>
+    
     <ng-container *ngIf="selected.isEmpty">
-      <icon-text-button text="Import" matIcon="cloud_download" (onClick)="null" showTextFromSize="xs"></icon-text-button>
-      <icon-text-button text="Create" svgIcon="collection3" (onClick)="newCollection()" showTextFromSize="xs"></icon-text-button>
+      <icon-text-button text="Import" matIcon="cloud_download" (onClick)="bulkActionImportCollections()" showTextFromSize="xs" *ngIf="profileId || !storeSelector.isLibraryStore"></icon-text-button>
+      <icon-text-button text="Create" svgIcon="collection3" (onClick)="actionNewCollection()" showTextFromSize="xs"></icon-text-button>
     </ng-container>
     <ng-container *ngIf="listEditing">
         <button mat-icon-button (click)="toggleListEditing(false)" class="closeButton">
@@ -49,44 +50,44 @@
       </mat-panel-title>
       <mat-panel-description class="collection-nav" *ngIf="!listEditing">
         &nbsp;
-        <ng-container *ngIf="!profileId && !!collection.selectedProfile && collection.expanded">
-            <profile-icon 
-              [profileId]="collection.selectedProfile"
-              [showName]="false"  
-              [isInteractive]="true" 
-              [isButton]="true" 
-              width="40px"
-              (click)="toggleProfileSelector(collection.id)" InnerLink>
-            </profile-icon>
-          </ng-container>
-        <button mat-icon-button (click)="togglePanel(collection.id, 'list', collectionMatPanel)" [color]="isPanelOpen(collection.id, 'list') ? 'accent' : 'primary'" InnerLink>
-          <mat-icon>list</mat-icon>
-        </button>
-        <button mat-icon-button (click)="togglePanel(collection.id, 'settings', collectionMatPanel)" [color]="isPanelOpen(collection.id, 'settings') ? 'accent' : 'primary'" InnerLink>
-          <mat-icon>settings</mat-icon>
-        </button>
+
+        <button mat-icon-button [matMenuTriggerFor]="menu" InnerLink>
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="actionEditSettings(collection)">
+              <mat-icon>settings</mat-icon>
+              <span>Edit Settings</span>
+            </button>
+            <button mat-menu-item (click)="actionAddCollection(collection)" *ngIf="totalProfiles > collection.profileGroup.length">
+              <mat-icon svgIcon="add_to_travelers" ></mat-icon>
+              <span>Add to Travelers...</span>
+            </button>
+            <button mat-menu-item (click)="actionApplyCollection(collection)" *ngIf="collection.profileGroup.length > 0">
+              <mat-icon svgIcon="push_to_travelers" ></mat-icon>
+              <span>Apply settings to Travelers...</span>
+            </button>
+            <button mat-menu-item appColor="danger" (click)="actionRemoveCollection(collection)" *ngIf="collection.profileGroup.length != 0">
+                <mat-icon svgIcon="remove_from_travelers"></mat-icon>
+                <span>Remove from Travelers...</span>
+            </button>
+            <button mat-menu-item appColor="danger" (click)="bulkActionDeleteSelectedCollections(collection.id)" *ngIf="!context.profileId">
+                <mat-icon>delete</mat-icon>
+                <span>Delete forever...</span>
+            </button>
+          </mat-menu>
+
+
       </mat-panel-description>
     </mat-expansion-panel-header>
     <div *ngIf="collection.expanded" @transitionTrigger>
-        <div *ngIf="!contextProvided && profileSelectorOpen(collection.id)" @evaporateTransitionTrigger class="text-center">
-            <profile-selector 
-              iconWidth="50px" 
-              [profiles]="collection.profileGroup" 
-              [selected]="[collection.selectedProfile]" 
-              (selectedChange)="changeProfileId(collection.id, $event)"
-              [multiselect]="false"
-              [showNames]="true">
-            </profile-selector>
-        </div>
-        <div *ngIf="collection.selectedProfile != null" @transitionTrigger>
           <app-collection-panel 
           [collection]="collection.complete" 
-          [selectedView]="collection.panel" 
           [profileId]="collection.selectedProfile"
-          (removeCollection)="removeCollection(collection.id)"
-          (change)="updateViewObject(collection.id)"
-          ></app-collection-panel>
-        </div>
+          (removeCollection)="onRemoveCollection(collection.id)"
+          (change)="updateViewObject(collection.id)">
+        </app-collection-panel>
+        
     </div>
   </mat-expansion-panel>
 </mat-accordion>

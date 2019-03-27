@@ -36,3 +36,6 @@ a{
     height: 1em;
     font-size: inherit;
 }
+.disabled:hover{
+    cursor: default!important;
+}

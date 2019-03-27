@@ -2,11 +2,24 @@
     <div *ngFor="let collection of viewCollections">
         <collection-details-card
         [collection]="collection"
-        actionType="selection"
+        [actionType]="isUsed(collection) ? 'none' : 'selection'"
         [selectionOnIcon]="starIcons ? 'star' : 'added'"
         [selectionOffIcon]="starIcons ? 'star_border' : 'unselected'"
+        [disabled]="isUsed(collection)"
+        staticIcon="check"
         [selectionState]="list.isSelected(collection.id)"
-        (actionClick)="toggleSelection(collection.id, $event)">
+        (actionClick)="!isUsed(collection) && toggleSelection(collection.id, $event)">
         </collection-details-card>
+      </div>
+      <div *ngIf="viewCollections && viewCollections.length === 0">
+        <p class="text-center text-muted small" *ngIf="used && used.length>0">
+          All Collections have been used.
+        </p>
+        <p class="text-center text-muted small" *ngIf="used && used.length === 0">
+          There are no available Collections to import
+        </p>
+        <p class="text-center text-muted small" *ngIf="filterInput != ''">
+          Could not find matching Collections
+        </p>
       </div>
 </div>

@@ -25,9 +25,10 @@ import { PushPackables_DialogData, PushPackablesDialogComponent } from './push-p
 import { ContextService } from '../../shared/services/context.service';
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
 import { ImportPackablesDialogComponent, importPackables_result } from './import-packables-dialog/import-packables-dialog.component';
+import { isDefined, timeStamp } from '../../shared/global-functions';
 
 
-type updateViewAction = 'update' | 'add' | 'delete';
+type updateViewAction = 'update' | 'add' | 'remove';
 
 @Component({
   selector: 'app-packable-list',
@@ -40,6 +41,8 @@ type updateViewAction = 'update' | 'add' | 'delete';
 })
 export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
 
+  @Input('collectionId') inputCollectionId: string; 
+  @Input('profileId') inputProfileId: string; 
 
   editingCollectionId: string; 
   editingProfileId: string; 
@@ -59,7 +62,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   }
   editList: boolean = false;
   selected: string[] = []
-  recentlyChanged: string[] = []
 
   constructor(
     private bulkActions:BulkActionsService,
@@ -76,66 +78,71 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   ) { }
 
   ngOnInit() {
-    this.recentlyChanged = [];
     this.selected = [];
     this.editList = false;
     this.initView()
-    this.subscription = this.context.changes.subscribe(()=>{
-      //this.initView()
-    })
   }
   ngOnChanges(changes:SimpleChanges){
     if(changes['inputPackables']){
       console.log(`packableList recieved new packables`, this.inputPackables);
       this.initView()
     }
+    if(changes['inputCollectionId']){
+      console.log(`packableList recieved new collection Id`, this.inputCollectionId);
+      this.initView()
+    }
+    if(changes['inputProfileId']){
+      console.log(`packableList recieved new profile id`, this.inputProfileId);
+      this.initView()
+    }
   }
   ngOnDestroy(){
-   this.subscription.unsubscribe()
   }
   
   initView() {
-    let newPackables = this.inputPackables.filter(p=>!p.deleted)
-    if(this.editingProfileId == this.context.profileId && this.editingCollectionId == this.context.collectionId){
-      this.packableList.compare(newPackables,(item)=>{
-        this.addRecentlyChanged(item.id)
+    let newPackables = this.inputPackables ? this.inputPackables.filter(p=>!p.deleted) : []
+    if(this.editingProfileId == this.inputProfileId && this.editingCollectionId == this.inputCollectionId){
+      // if context stays the same, update the list using compare function
+      console.log('PACKABLE LIST:','updating packableList with compare()',this.packableList.slice(),newPackables.slice());
+      this.packableList.compare(newPackables,(changeItem,action)=>{
+        this.updateViewObject([changeItem],action)
       });
     } else {
-      this.recentlyChanged = [];
+      // if the cotnext changed, reset the list completely
       this.selected = [];
       this.editList = false;
       this.packableList = newPackables
     }
-    this.editingProfileId = this.context.profileId
-    this.editingCollectionId = this.context.collectionId
+    this.editingProfileId = this.inputProfileId
+    this.editingCollectionId = this.inputCollectionId
   }
 
-  updateViewObject(packables: PackableComplete[], action: updateViewAction) {
+  updateViewObject(newPackables: PackableComplete[], action: updateViewAction) {
     if (!this.packableList) {
       // this.completePackables = this.getCompletePackables()
       this.packableList = this.inputPackables.slice()
-    } else if (packables) {
-      packables.forEach(packable => {
-        let index = this.packableList.idIndex(packable.id)
+    } else if (newPackables) {
+      newPackables.forEach(newPackable => {
+        let index = this.packableList.idIndex(newPackable.id)
         switch(action){
           case 'add':
             if(index===-1){
-              this.packableList.unshift(packable)
-              this.addRecentlyChanged(packable.id)
+              this.packableList.unshift(newPackable)
             }
             break;
-          case 'delete':
+          case 'remove':
             if(index!=-1){
               this.packableList.splice(index, 1)
             }
             break;
           case 'update':
-            if(index){
-              this.packableList[index] = packable
-              this.addRecentlyChanged(packable.id)
+            if(index>-1){
+              console.log('PACKABLE LIST, updateViewObject replaced packable:',newPackable)
+              this.packableList.splice(index,1,newPackable)
             }
+            break;
           default:
-            console.log('Could not update PackableList view for '+packable.name)
+            console.log('Could not update PackableList view for '+newPackable.name)
         }
       })
       this.packablesChange.emit(this.packableList)
@@ -144,36 +151,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   
   
   // LIST MANAGEMENT
-
-  isRecentlyChanged(id): boolean{
-    return this.recentlyChanged.includes(id)
-  }
-  addRecentlyChanged(id){
-    if(!this.isRecentlyChanged(id)){
-      this.recentlyChanged.push(id)
-      setTimeout(()=>{
-        this.removeRecentelyChanged(id)
-      },60000)
-    }
-  }
-  removeRecentelyChanged(id){
-    if(this.isRecentlyChanged(id)){
-      let i = this.recentlyChanged.findIndex(x=>x===id)
-      this.recentlyChanged.splice(i,1)
-    }
-  }
-  toggleRecentlyChanged(id){
-    if(this.isRecentlyChanged(id)){
-      this.removeRecentelyChanged(id)
-    } else {
-      this.addRecentlyChanged(id)
-    }
-  }
-  clearRecentlyChanged() {
-    this.recentlyChanged = []
-  }
-
-  
   isSelected(id){
     return this.selected.includes(id)
   }
@@ -227,7 +204,8 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   editPackable(packableId: string) { // EDIT PACKABLE DIALOG CREATES AND STORES THE EDITTED PACKABLE
     let editingPackable: PackableComplete,
       data: DialogData_EditPackable
-
+    this.context.setBoth(this.editingCollectionId, this.editingProfileId)
+    
     editingPackable = this.inputPackables.findId(packableId)
     data = {
       pakable: editingPackable,
@@ -239,14 +217,14 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     });
     dialogRef.afterClosed().pipe(take(1)).subscribe((packables:PackableComplete[]) => {
       console.log(`Received from modal:`, packables);
-      this.updateViewObject(packables, 'update')
+      //this.updateViewObject(packables, 'update')
     })
   }
 
   newPackable() { // EDIT PACKABLE DIALOG CREATES AND STORES THE NEW PACKABLE
     let editingPackable = new PackableComplete()
     editingPackable.userCreated = true;
-
+    this.context.setBoth(this.editingCollectionId, this.editingProfileId)
     let data: DialogData_EditPackable = {
       pakable: editingPackable,
       isNew: true,
@@ -257,15 +235,15 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     });
     dialogRef.afterClosed().pipe(take(1)).subscribe((packables:PackableComplete[]) => {
       console.log(`Received from modal:`, packables);
-      this.updateViewObject(packables, 'add')
+      //this.updateViewObject(packables, 'add')
+      this.toggleEditList(false)
+      this.selected = []
     })
   }
 
   pushSelectedPackables(header?:string){
     let ids = this.selected
-    console.log(ids)
     let names = this.storeSelector.getPackablesByIds(ids).map(p => p.name);
-    console.log(names)
     let multiple = names.length > 1;
     let data: PushPackables_DialogData = {
       content: `Select the Collections and Profiles on which to apply ${multiple ? 'these Packables and their' : 'this Packables and its'} settings.
@@ -280,29 +258,27 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       data: data
     });
     pushPackablesDialod.afterClosed().pipe(take(1)).subscribe(()=>{
+      this.toggleEditList(false)
       this.selected = []
     })
   }
   deleteSelectedPackables() {
     let ids = this.selected.slice()
-    let packables = this.packableList.filter(p=>ids.includes(p.id))
+    let deletePackables = this.packableList.filter(p=>ids.includes(p.id))
     let multiple = ids.length > 1;
 
+    this.context.setBoth(this.editingCollectionId, this.editingProfileId)
+
     if (this.editingCollectionId) {
-      // TO BE CHANGED AS A SINGLE ACTION TO REMOVE FROM LOCAL LIST 
-      // THEN PASS ON UPDATED LIST TO LIST CONTAINER
       let collectionComplete = this.colFactory.getCompleteById(this.editingCollectionId);
       let data: DialogData_ChooseProfiles = {
         collection: collectionComplete,
         profileGroup: this.storeSelector.getProfilesWithCollectionId(this.editingCollectionId),
-        selectedProfiles: [],
+        selectedProfiles: this.editingProfileId ? [this.editingProfileId] : [],
         header: 'Choose Profiles',
         content:
-          `You are removing <i>${multiple ? packables.length + ' Packables' : packables[0].name}</i> from <i>${collectionComplete.name}</i>.
+          `You are removing <i>${multiple ? deletePackables.length + ' Packables' : deletePackables[0].name}</i> from <i>${collectionComplete.name}</i>.
         <br>Select the Profiles you would like to update:`
-      }
-      if (this.editingProfileId) {
-        data.selectedProfiles = [this.editingProfileId]
       }
       let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
         ...this.dialogSettings,
@@ -310,21 +286,29 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
         data: data
       });
       chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
-        if (profileIds.length > 0) {
-          let deletePackables = this.packableList.filter(p=>ids.includes(p.id))
+        if (isDefined(profileIds)) {
           let CPs = profileIds.map((pid)=>{
             return {pId:pid,cId:this.editingCollectionId}
           })
           this.bulkActions.removePackablesByCP(ids,CPs)
           this.storeSelector.profiles_obs.pipe(take(1)).subscribe(()=>{
-            this.updateViewObject(deletePackables, 'delete') 
+            //this.updateViewObject(deletePackables, 'remove') 
+            this.toggleEditList(false)
             this.selected = []
           })
+        }
+        // If editing an original collections, update original collection in store
+        if (!this.editingProfileId && this.editingCollectionId){
+          let collection = this.storeSelector.getCollectionById(this.editingCollectionId)
+          let colPackables = collection.packables.filter(p=>!ids.includes(p.id))
+          collection.packables = colPackables
+          collection.dateModified = timeStamp()
+          this.store.dispatch(new collectionActions.updateOriginalCollections([collection]))
         }
       })
 
     } else {
-      let header = multiple ? `Delete ${packables.length} Packables?` : `Delete ${packables[0].name}?`
+      let header = multiple ? `Delete ${deletePackables.length} Packables?` : `Delete ${deletePackables[0].name}?`
       let content = `If you remove ${multiple ? 'these Packables they' : 'this Packable it'} will also be removed from all Collections and Profiles.<br> Delete anyway?`
       let confirmDeleteDialog = this.dialog.open(ConfirmDialog, {
         ...this.dialogSettings,
@@ -335,18 +319,20 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
         },
       });
       confirmDeleteDialog.afterClosed().pipe(take(1)).subscribe(confirm => {
+        console.log('confirmDeleteDialog: returned',confirm,ids);
         if (confirm == true) {
           this.store.dispatch(new packableActions.removeOriginalPackables(ids))
           this.storeSelector.packables_obs.pipe(take(1)).subscribe(() => {
-            this.updateViewObject(packables, 'delete')
+            //this.updateViewObject(deletePackables, 'remove')
+            this.toggleEditList(false)
+            this.selected = []
           })
         }
       })
     }
   }
   importPackables(){
-    // get used packables (complete)
-    // set header
+    this.context.setBoth(this.editingCollectionId, this.editingProfileId)
     let data = {
       header: 'Packables',
       usedPackables: this.packableList
@@ -361,8 +347,10 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       data: data
     });
     importPackablesDialog.afterClosed().pipe(take(1)).subscribe((result:importPackables_result)=>{
-      if(!this.context.profileId || result.CPs.some(cp=>cp.pId == this.context.profileId)){
-        this.updateViewObject(result.packables, 'add')
+      if(isDefined(result) && isDefined(result.packables) && (!this.editingProfileId || result.selectedProfiles.includes(this.editingProfileId))){
+        //this.updateViewObject(result.packables, 'add')
+        this.toggleEditList(false)
+        this.selected = []
       }
     })
   }

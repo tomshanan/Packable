@@ -12,7 +12,7 @@
   <button mat-button 
   *ngIf="nameInput.value!=''" 
   matSuffix mat-icon-button aria-label="Clear" 
-  (click)="nameInput.setValue('')">
+  (click)="resetName()">
     <mat-icon>close</mat-icon>
   </button>
   <mat-error *ngIf="nameInput.hasError('pattern') && !nameInput.hasError('usedName')">

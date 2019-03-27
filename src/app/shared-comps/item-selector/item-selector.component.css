@@ -1,8 +1,7 @@
 #container {
-    width:350px;
-    max-width: -webkit-fill-available;
-    height: stretch;
-    max-height: 90vh;
+    width:500px;
+    max-width: 99vw;
+    height: 100%;
     display: flex;
     flex-direction: column;
     margin-left: -24px;

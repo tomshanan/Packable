@@ -86,11 +86,10 @@ export class FilteredArray {
       return this;
     } else {
       let returnArray = [];
-      const preg = /[\s\-\_\(\)]/;
-      let searchArray = searchInput.split(preg);
+      let searchArray = searchInput.split(allowedSpacesRegEx);
       filteredList.forEach((item,i,array)=>{
         let match = false;
-        const itemString = item[property].split(preg).join('');
+        const itemString = item[property].split(allowedSpacesRegEx).join('');
         for (let searchItem of searchArray) {
           const regex = new RegExp(searchItem, 'i');
           const test = itemString.match(regex);
@@ -130,3 +129,9 @@ export function decodeHtml(html:string) {
   txt.innerHTML = html;
   return txt.value;
 }
+
+export function comparableName(str:string){
+  return str.trim().toLowerCase().split(allowedSpacesRegEx).join()
+}
+export const allowedSpacesRegEx = /[\s\-\_\(\)]+/;
+export const allowedNameRegEx = /^[A-Za-z0-9\s\-\_\(\)\']+$/;

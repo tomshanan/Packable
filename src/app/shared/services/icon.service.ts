@@ -42,6 +42,7 @@ export class IconService {
         path: 'app',
         icons: [
             'star',
+            'check',
             'star_border',
             'together',
             't-shirt',
@@ -57,6 +58,9 @@ export class IconService {
             'add',
             'added',
             'unselected',
+            'add_to_travelers',
+            'push_to_travelers',
+            'remove_from_travelers',
         ]
     }
     weatherIcons:iconGroup = {
@@ -73,6 +77,18 @@ export class IconService {
             'temp',
         ]
     }
+    profileTemplateIcons:iconGroup = {
+        path: 'profile_templates',
+        icons: [
+            'business',
+            'baby',
+            'backpacker',
+            'luggage',
+            'minimalist',
+            'todler',
+            'frequent_traveler',
+        ]
+    }
 
     constructor(
         private matIconRegistry: MatIconRegistry,
@@ -81,6 +97,7 @@ export class IconService {
         this.registerIcons(this.profileIcons)
         this.registerIcons(this.appIcons)
         this.registerIcons(this.weatherIcons)
+        this.registerIcons(this.profileTemplateIcons)
     }
 
     private registerIcons(iconGroup:iconGroup) {

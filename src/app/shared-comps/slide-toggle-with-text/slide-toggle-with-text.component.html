@@ -4,7 +4,7 @@
       {{text}}
     </span>
     <div class="ml-auto ml-sm-0 mr-sm-2">
-      <mat-slide-toggle (change)="toggleChange($event)" [checked]="isChecked"></mat-slide-toggle>
+      <mat-slide-toggle (change)="toggleChange($event)" [(checked)]="isChecked" #toggle></mat-slide-toggle>
     </div>
   </div>
   <div class="col-12" *ngIf="helpText" @quickTransitionTrigger>

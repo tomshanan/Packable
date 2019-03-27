@@ -20,7 +20,7 @@ export class ProfileEditFormComponent implements OnInit {
   valid: boolean = true;
   usedProfileNames:string[] = []
   icons: string[] = []
-  
+  templateIcons: boolean = false;
   @ViewChild('nameInput') nameInput: NameInputComponent;
 
   profileName: string;
@@ -31,7 +31,13 @@ export class ProfileEditFormComponent implements OnInit {
     private iconService: IconService,
     private proFac: ProfileFactory,
   ) { 
-    this.icons = this.iconService.profileIcons.icons.slice().filter(icon=>icon!='default')
+    if(this.storeSelector.isLibraryStore){
+      this.icons = this.iconService.profileTemplateIcons.icons.slice()
+      this.templateIcons = true;
+    } else {
+      this.icons = this.iconService.profileIcons.icons.slice().filter(icon=>icon!='default')
+      this.templateIcons = false;
+    }
   }
 
   ngOnInit() {

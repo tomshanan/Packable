@@ -21,6 +21,7 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   @Input() isSelected: boolean = false;
   @Input() isButton: boolean = false;
   @Input() dim: boolean = false;
+  @Input() fullFrame: boolean = false;
   @Input('width') inputWidth: string = "50px";
   @Input('color') inputColor: string = 'white';
   @Input() avatar:Avatar;  // will override icon and color

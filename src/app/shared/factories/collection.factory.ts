@@ -4,8 +4,9 @@ import { PackableFactory } from './packable.factory';
 import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplete, Activity, isCollectionOriginal } from '../models/collection.model';
 import { PackableComplete, PackablePrivate } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
-import { indexOfId } from '../global-functions';
+import { indexOfId, isDefined } from '../global-functions';
 import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { remoteCollection } from '@shared/library/library.model';
 
 type T = { packables: PackablePrivate[] }
 
@@ -13,7 +14,7 @@ type T = { packables: PackablePrivate[] }
 export class CollectionFactory {
     constructor(
         private storeSelector: StoreSelectorService,
-        private packableFactory: PackableFactory,
+        private pacFac: PackableFactory,
         private weatherFactory: weatherFactory,
     ) { }
     public isOriginal = (collection: CollectionAny): collection is CollectionOriginal => {
@@ -22,7 +23,7 @@ export class CollectionFactory {
     public duplicatePrivateCollection = (packable: CollectionPrivate): CollectionPrivate => {
         return new CollectionPrivate(
             packable.id,
-            packable.packables ? packable.packables.map(p => this.packableFactory.clonePackablePrivate(p)) : [],
+            packable.packables ? packable.packables.map(p => this.pacFac.clonePackablePrivate(p)) : [],
             packable.essential,
             this.weatherFactory.deepCopy(packable.weatherRules),
             packable.dateModified
@@ -37,11 +38,28 @@ export class CollectionFactory {
             this.weatherFactory.deepCopy(original.weatherRules),
             original.userCreated,
             original.dateModified,
-            original.locations
+            original.locations,
+            original.deleted
         )
     }
+    public remoteToComplete = (complete:remoteCollection[]):CollectionComplete[] => {
+        let originals = complete.map(c=>this.duplicateOriginalCollection(c))
+        return originals.map(c=>{
+            return new CollectionComplete(
+                c.id,
+                c.name,
+                false,
+                this.pacFac.makeCompleteFromArray(c.packables),
+                this.weatherFactory.deepCopy(c.weatherRules),
+                c.userCreated,
+                c.dateModified,
+                c.locations,
+                c.deleted
+            )
+        })
+    }
     public newPrivateCollection = (original: CollectionOriginal, patchValue?: {}): CollectionPrivate => {
-        let privatePackables = original.packables.map(p => this.packableFactory.makePrivate(p))
+        let privatePackables = original.packables.map(p => this.pacFac.makePrivate(p))
         let newCollection = new CollectionPrivate(
             original.id,
             privatePackables,
@@ -74,7 +92,7 @@ export class CollectionFactory {
     public completeToPrivate = (complete:CollectionComplete):CollectionPrivate => {
         return new CollectionPrivate(
             complete.id,
-            complete.packables.slice(),
+            complete.packables.map(p=>this.pacFac.completeToPrivate(p)),
             complete.essential,
             this.weatherFactory.deepCopy(complete.weatherRules),
             complete.dateModified
@@ -84,73 +102,100 @@ export class CollectionFactory {
         return new CollectionOriginal(
             complete.id,
             complete.name,
-            complete.packables.map(p=>this.packableFactory.completeToPrivate(p)),
+            complete.packables.map(p=>this.pacFac.completeToPrivate(p)),
             this.weatherFactory.deepCopy(complete.weatherRules),
             complete.userCreated,
             complete.dateModified,
-            complete.locations
+            complete.locations,
+            complete.deleted
         )
     }
     public makeComplete = (collection: CollectionAny): CollectionComplete => {
-        let returnCollection: CollectionComplete;
-        if (isCollectionOriginal(collection)) {
-            return new CollectionComplete(
-                collection.id,
-                collection.name,
-                false,
-                this.packableFactory.makeCompleteFromArray(collection.packables),
-                this.weatherFactory.deepCopy(collection.weatherRules),
-                collection.userCreated,
-                collection.dateModified,
-                collection.locations
-            )
+        if(collection){
+            if (isCollectionOriginal(collection)) {
+                return new CollectionComplete(
+                    collection.id,
+                    collection.name,
+                    false,
+                    this.pacFac.makeCompleteFromArray(collection.packables),
+                    this.weatherFactory.deepCopy(collection.weatherRules),
+                    collection.userCreated,
+                    collection.dateModified,
+                    collection.locations,
+                    collection.deleted
+                )
+            } else {
+                let original = this.storeSelector.getCollectionById(collection.id) || this.storeSelector.getRemoteCollections([collection.id])[0]
+                let completePackables = this.pacFac.makeCompleteFromArray(collection.packables)
+                return new CollectionComplete(
+                    collection.id,
+                    original.name,
+                    collection.essential,
+                    completePackables,
+                    this.weatherFactory.deepCopy(collection.weatherRules),
+                    original.userCreated,
+                    collection.dateModified,
+                    original.locations,
+                    original.deleted
+                )
+            }
         } else {
-            let original = this.storeSelector.getCollectionById(collection.id)
-            let completePackables = this.packableFactory.makeCompleteFromArray(collection.packables)
-            return new CollectionComplete(
-                collection.id,
-                original.name,
-                collection.essential,
-                completePackables,
-                this.weatherFactory.deepCopy(collection.weatherRules),
-                original.userCreated,
-                collection.dateModified,
-                original.locations
-            )
+            console.log('colFac.makeComplete: collection was not defined. Returned UNDEFINED');
+            return undefined
         }
     }
     public makeCompleteArray = (collections: CollectionAny[]): CollectionComplete[] => {
-        return collections.filter(c => {
-            return !!this.storeSelector.getCollectionById(c.id) ? true : (
-                console.log(`could not load id ${c.id} from store:`, this.storeSelector.originalCollections),
-                false)
-        }).map(c => this.makeComplete(c))
+        return collections.map(c => this.makeComplete(c))
     }
 
     /** Get a complete collection from the Store by collection ID
      * @param ids the Collection Id
      * @param profileIds optional: Profile ID, will return the collection from the profile, or return null if not found in profile. Omit to find the original collection.
      */
-    public getOriginalsFromStoreAndMakeComplete():CollectionComplete[]{
-        let collections = this.storeSelector.originalCollections
-        return this.makeCompleteArray(collections)
-    }
-    public getCompleteById(id: string, profileId?:string): CollectionComplete {
+    public getCompleteById(colId: string, profileId?:string): CollectionComplete {
         if(profileId){
-            return this.getCompleteFromProfile(id, profileId)
+            let profile = this.storeSelector.getProfileById(profileId)
+            return this.makeComplete(profile.collections.findId(colId))
         } else {
-            return this.makeComplete(this.storeSelector.getCollectionById(id))
+            return this.makeComplete(this.storeSelector.getCollectionById(colId))
         }
     }
 
     public getCompleteByIdArray(ids: string[]): CollectionComplete[] {
         return ids.map(id => this.getCompleteById(id))
     }
-    public getCompleteFromProfile(colId:string, proId:string):CollectionComplete{
-        let profile = this.storeSelector.getProfileById(proId)
-        return this.makeComplete(profile.collections.findId(colId))
+    public getAllCompleteFromProfile(profileId:string):CollectionComplete[]{
+        let profile = this.storeSelector.getProfileById(profileId)
+        return this.makeCompleteArray(profile.collections)
     }
+    public getAllComplete(filterDeleted: boolean = true):CollectionComplete[]{
+        let allComplete = this.makeCompleteArray(this.storeSelector.originalCollections)
+        if(filterDeleted === true){
+            return allComplete.filter(c=>!c.deleted)
+        } else {
+            return allComplete
+        }
+    }
+    public getAllCompleteRemote():CollectionComplete[]{
+        return this.makeCompleteArray(this.storeSelector.getRemoteCollections())
+    }
+    public getImportCollectionList():CollectionComplete[]{
+        let localCollections = this.getAllComplete()
+        console.log('getImportCollectionList: localCollections:', localCollections);
+        
+        let idsImported = localCollections.map(c=>c.id)
+    
+        let allRemoteCollections = this.storeSelector.getRemoteCollections()
+    
+        let filteredRemoteCollections = allRemoteCollections.filter(c=>!idsImported.includes(c.id)).sort((a,b)=>{
+          return a.metaData.metascore - b.metaData.metascore
+        })
+        console.log('getImportCollectionList: filteredRemoteCollections:', filteredRemoteCollections);
 
+        let completeRemote = this.makeCompleteArray(filteredRemoteCollections)
+        return [...localCollections,...completeRemote]
+    }
+    
     public addEditPackablesByCP(collections: CollectionOriginal[], packables: PackablePrivate[], cps: CollectionProfile[]): CollectionOriginal[] {
         let uniqueCollections = []
         cps.forEach(cp => {
@@ -168,10 +213,12 @@ export class CollectionFactory {
     public addEditPackables<T extends { packables: PackablePrivate[] }>(collection: T, packables: PackablePrivate[]): T {
         packables.forEach(packable => {
             let pacIndex = collection.packables.idIndex(packable.id)
-            if (pacIndex < 0) {
+            if (pacIndex === -1) {
                 collection.packables.unshift(packable)
+                console.log('PACK-FACTORY:','adding packable', packable);
             } else {
                 collection.packables.splice(pacIndex, 1, packable)
+                console.log('PACK-FACTORY:','updating packable', packable);
             }
         });
         return collection

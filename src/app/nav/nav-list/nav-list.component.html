@@ -58,4 +58,7 @@
             Register
         </a>
     </ng-template>
+    <ng-container *ngIf="user.permissions.creator">
+        <settings-simulate-user></settings-simulate-user>
+    </ng-container>
 </nav>

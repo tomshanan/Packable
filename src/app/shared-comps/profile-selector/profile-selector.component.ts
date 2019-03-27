@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
 import { Profile } from '../../shared/models/profile.model';
-import { slideInTrigger, blockInitialAnimations } from '../../shared/animations';
+import {  blockInitialAnimations, listItemTrigger, horizontalShringAndFade } from '../../shared/animations';
 import { isDefined } from '../../shared/global-functions';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, take } from 'rxjs/operators';
@@ -10,20 +10,20 @@ import { StoreSelectorService } from '../../shared/services/store-selector.servi
   selector: 'profile-selector',
   templateUrl: './profile-selector.component.html',
   styleUrls: ['./profile-selector.component.css'],
-  animations: [slideInTrigger,blockInitialAnimations]
+  animations: [horizontalShringAndFade,blockInitialAnimations]
 })
 export class ProfileSelectorComponent implements OnInit, OnChanges {
 
-  @Input() profiles: Profile[] = []
-  @Input() selected: string[] = [];
+  @Input('profiles') inputProfiles: Profile[] = []
+  @Input('selected') inputSelected: string[] = [];
   @Input() iconWidth: string = '50px';
   @Input() multiselect: boolean = false;
   @Input() showNames: boolean = true;
   @Input() selectedFirst: boolean = false;
   @Output() selectedChange = new EventEmitter<string[]>();
   @HostBinding('@blockInitialAnimations') blockInitialAnimations = blockInitialAnimations;
-  selectedView: string[] = []
-  profilesView: Profile[] = []
+  selected: string[] = []
+  profiles: Profile[] = []
   ready: boolean;
   readySubject = new Subject<boolean>()
 
@@ -45,12 +45,12 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.ready = false;
     this.readySubject.next(this.ready)
-    this.selectedView = this.selected.slice().clearUndefined();
-    this.profilesView = this.profiles.slice().clearUndefined();
-    if (this.selectedView.length > 0) {
-      this.profilesView = this.bringSelectedToTop();
+    this.selected = this.inputSelected.slice().clearUndefined();
+    this.profiles = this.inputProfiles.slice().clearUndefined();
+    if (this.selected.length > 0) {
+      this.profiles = this.bringSelectedToTop();
     } else {
-      this.profilesView = this.profiles.slice();
+      this.profiles = this.inputProfiles.slice();
     }
     this.ready = true;
     this.readySubject.next(this.ready)
@@ -58,9 +58,9 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
   }
 
   bringSelectedToTop(): Profile[] {
-    let tempProfileView: Profile[] = this.profilesView.slice()
-    if(this.selectedView && this.selectedView.length > 0){
-      this.selectedView.forEach(id => {
+    let tempProfileView: Profile[] = this.profiles.slice()
+    if(this.selected && this.selected.length > 0){
+      this.selected.forEach(id => {
         let i = tempProfileView.idIndex(id)
         let removed = tempProfileView.splice(i, 1)
         tempProfileView.unshift(removed[0])
@@ -70,14 +70,14 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
    
-    if (isDefined(this.selectedView) && changes['selected']) {
-      this.selectedView = this.selected.slice();
+    if (isDefined(this.selected) && changes['inputSelected']) {
+      this.selected = this.inputSelected.slice();
     }
-    if (isDefined(this.selectedView) && this.selectedFirst) {
-      this.profilesView = this.bringSelectedToTop();
+    if (isDefined(this.selected) && this.selectedFirst) {
+      this.profiles = this.bringSelectedToTop();
     }
-    if(this.profilesView && changes['profiles']){
-      this.profilesView.compare(this.profiles)
+    if(this.profiles && changes['inputProfiles']){
+      this.profiles.compare(this.inputProfiles)
     }
   }
 
@@ -85,15 +85,27 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
 
   initSelected() { }
   isSelected(id: string): boolean {
-    return this.selectedView.indexOf(id) > -1
+    return this.selected.indexOf(id) > -1
   }
   toggle(id: string): void {
     if (this.multiselect) {
-      let i = this.selectedView.indexOf(id)
-      i == -1 ? this.selectedView.push(id) : this.selectedView.splice(i, 1)
+      let i = this.selected.indexOf(id)
+      i == -1 ? this.selected.push(id) : this.selected.splice(i, 1)
     } else {
-      this.selectedView = [id];
+      this.selected = [id];
     }
-    this.selectedChange.emit(this.selectedView)
+    this.selectedChange.emit(this.selected)
+  }
+
+  profileSelect(select:'all'|'none'){
+    if(this.multiselect){
+      if(select == 'all'){
+        this.selected = this.profiles.map(p=>p.id)
+        this.selectedChange.emit(this.selected)
+      } else if (select == 'none'){
+        this.selected = []
+        this.selectedChange.emit(this.selected)
+      }
+    }
   }
 }

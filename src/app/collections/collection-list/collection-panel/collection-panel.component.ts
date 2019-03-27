@@ -15,8 +15,6 @@ import { Subscription } from 'rxjs';
 import { editTrip } from '../../../trips/store/trip.actions';
 import { timeStamp } from '@app/shared/global-functions';
 
-export type CollectionPanelView = 'list' | 'settings';
-
 @Component({
   selector: 'app-collection-panel',
   templateUrl: './collection-panel.component.html',
@@ -24,12 +22,12 @@ export type CollectionPanelView = 'list' | 'settings';
   animations: [transitionTrigger]
 })
 export class CollectionPanelComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() selectedView: CollectionPanelView = 'list';
-  @Input() collection: CollectionComplete;
+  @Input('collection') inputCollection: CollectionComplete;
   @Output() change = new EventEmitter<void>();
   @Output() removeCollection = new EventEmitter<void>();
-  @Input() profileId: string;
+  @Input() profileId: string;  // will default to context profile
 
+  collection: CollectionComplete;
   subscription: Subscription;
 
   constructor(
@@ -43,36 +41,28 @@ export class CollectionPanelComponent implements OnInit, OnDestroy, OnChanges {
   packables: PackableComplete[];
 
   ngOnInit() {
-    console.log(`CollectionPanelView - ngOnInit (${this.collection.name})`);
-    
-    this.init()
-    this.subscription = this.storeSelector.profiles_obs.subscribe(() => {
-      if (this.collection) {
-        this.context.setCollection(this.collection.id)
-      }
-      this.init()
-    })
-
+    console.log('CollectionPanel:',`ngOnInit (${this.inputCollection.name})`);
+    this.initContext()
   }
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['collection']) {
-      console.log(`collection panel detected change in Collection (${this.collection.name})`);
-      this.init()
+    console.log('CollectionPanel CHANGES:',changes,this.inputCollection)
+    if (changes['inputCollection'] && this.inputCollection) {
+      console.log('CollectionPanel:',`detected change in Collection (${this.inputCollection.name})`, this.inputCollection);
+      this.initContext()
     }
   }
-  init() {
-    
-    this.collection = this.context.getCollection()
-    this.packables = this.collection.packables
+  initContext() {
+    console.log('CollectionPanel:','initContext', this.inputCollection);
+    this.collection = this.inputCollection 
+    this.packables = this.collection ? this.collection.packables : []
     if (!this.profileId && this.context.profileId) {
       this.profileId = this.context.profileId
-      console.log('profile-id was not set in colleciton-panel, so retrieved it from contextService');
+      console.log('CollectionPanel:','profile-id was not set in colleciton-panel, so retrieved it from contextService');
     }
-
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe()
+    //this.subscription.unsubscribe()
   }
   remove() {
     this.removeCollection.emit()

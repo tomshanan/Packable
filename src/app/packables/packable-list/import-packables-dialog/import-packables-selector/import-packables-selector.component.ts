@@ -2,8 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angu
 import { CollectionComplete } from '../../../../shared/models/collection.model';
 import { filterItemLocality, filterItem } from '../../../../shared-comps/item-selector/item-selector.component';
 import { StoreSelectorService } from '../../../../shared/services/store-selector.service';
-import { PackableOriginal } from '../../../../shared/models/packable.model';
-import { remotePackable } from '../../../../shared/library/library.model';
+import { PackableOriginal, remotePackable } from '../../../../shared/models/packable.model';
 import { PackableFactory } from '../../../../shared/factories/packable.factory';
 import { Subscription } from 'rxjs';
 import { StorageService } from '../../../../shared/storage/storage.service';

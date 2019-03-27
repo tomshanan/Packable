@@ -1,4 +1,4 @@
-<div class="pofileSelectorContainer" 
+<div class="pofileSelectorContainer"
   #container>
   <div class="selectedProfile d-flex flex-row align-items-center"  [class.hide]="selectorOpen" *ngIf="selected">
     <div class="selectorTrigger pointer" appColor="action" [appColorTarget]="settingsButton"  (click)="onClickSettings()">
@@ -29,6 +29,7 @@
   <div class="horizontalSelector" [class.hide]="!selectorOpen">
       <horizontal-icon-selector stepWidth="55" #iconSelector>
           <profile-selector 
+         
           iconWidth="55PX" 
           [profiles]="profiles" 
           [selected]="selected ? [selected] : []" 

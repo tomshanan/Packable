@@ -54,4 +54,5 @@ export class SelectedList {
     get isEmpty():boolean{
         return this.length === 0
     }
+
 }

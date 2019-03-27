@@ -9,6 +9,7 @@ export class SearchFieldComponent implements OnInit {
   @Input() value: string;
   @Input() placeholder: string;
   @Output() valueChange = new EventEmitter<string>()
+  @Output() keyEnter = new EventEmitter<void>()
 /**
 <search-field
 [(value)]="searchString"
@@ -26,5 +27,7 @@ placeholder="Search Collections">
     this.value = '';
     this.inputChange()
   }
-
+  onKeyEnter(){
+    this.keyEnter.emit()
+  }
 }

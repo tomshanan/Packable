@@ -7,11 +7,6 @@
     <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
       [showNames]="true">
     </profile-selector>
-    <p>
-      <a class="inline-link small p-2" (click)="profileSelect('all')">All</a>
-      <span>/</span>
-      <a class="inline-link small p-2" (click)="profileSelect('none')">None</a>
-    </p>
   </div>
 
 
@@ -19,7 +14,7 @@
       <button mat-fab class="mx-1" color="none" (click)="onClose()">
         <mat-icon>close</mat-icon>
       </button>
-      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="selectedProfiles.length==0">
+      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
         <mat-icon>check</mat-icon>
       </button>
     </dialog-confirm-button>

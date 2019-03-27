@@ -12,7 +12,7 @@ import { CollectionProfile } from '../../packables/packable-list/edit-packable-d
 import * as profileActions from '@app/profiles/store/profile.actions';
 import { PackablePrivate, PackableOriginal } from '../models/packable.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
-import { CollectionComplete } from '../models/collection.model';
+import { CollectionComplete, CollectionOriginal } from '../models/collection.model';
 import { isDefined, timeStamp } from '../global-functions';
 import { editProfiles } from '../../profiles/store/profile.actions';
 import { Profile } from '../models/profile.model';
@@ -43,7 +43,40 @@ export class BulkActionsService {
       this.store.dispatch(new profileActions.editProfiles(profiles))
     }
   }
+  public processImportCollections(selectedColIds:string[],profileIds?:string[]){
+    let localCollections = this.colFac.getAllComplete()
+    let allRemoteCollections = this.storeSelector.getRemoteCollections()
+    let allRemotePackables = this.storeSelector.getRemotePackables()
 
+    let selectedRemoteCollections = allRemoteCollections.filter(c=>selectedColIds.includes(c.id))
+    
+    let newOriginals = selectedRemoteCollections.map(c=>this.colFac.duplicateOriginalCollection(c))
+    console.log('BULK ACTION: dispatch updateOriginalCollections',newOriginals)
+    this.store.dispatch(new collectionActions.updateOriginalCollections(newOriginals))
+    // REVIVE / ADD MISSING PACKABLES TO PACKABLE STORE
+    let packablesInRemote:string[] = []
+    selectedRemoteCollections.forEach(col =>{
+      col.packables.forEach(pac=>{
+        if(!packablesInRemote.includes(pac.id)){
+          packablesInRemote.push(pac.id)
+        }
+      })
+    })
+    let importedPackables = 
+      allRemotePackables
+      .filter(p=>packablesInRemote.includes(p.id))
+      .map(p=>this.pacFac.clonePackableOriginal(p));
+    console.log('BULK ACTION: dispatch addMissingPackables',importedPackables)
+    this.store.dispatch(new packableActions.addMissingPackables(importedPackables))
+    // BULK ACTION- ADD SELECTED COLLECTIONS TO PROFILES
+    if(isDefined(profileIds)){
+      let newCompletes = this.colFac.remoteToComplete(selectedRemoteCollections)
+      let selectedLocal = localCollections.filter(c=>selectedColIds.includes(c.id))
+      let allComplete = [...selectedLocal,...newCompletes]
+      this.pushCollectionsToProfiles(allComplete,profileIds)
+    }
+  }
+  
   public pushCollectionsToProfiles(collections: CollectionComplete[], profileIds: string[]) {
     if (collections.length > 0 && profileIds.length > 0) {
       let privateCollections = collections.map(c => this.colFac.completeToPrivate(c))
@@ -87,11 +120,12 @@ export class BulkActionsService {
     }
   }
 
-  public pushPackablesByCP(packables: string[], CPs?: CollectionProfile[]) {
+  public pushPackablesByCP(ids: string[], CPs?: CollectionProfile[]) {
     if (CPs && CPs.length > 0) {
       if (this.context.collectionId) {
-        this.pushContextPackablesByCP(packables, CPs)
+        this.pushContextPackablesByCP(ids, CPs)
       } else {
+        let packables = this.storeSelector.originalPackables.filter(p=>ids.includes(p.id))
         this.pushOriginalPackablesByCP(packables, CPs)
       }
     }
@@ -104,9 +138,12 @@ export class BulkActionsService {
       this.pushPrivatePackablesByCP(privatePackables, CPs)
     }
   }
-  public pushOriginalPackablesByCP(packables: string[], CPs: CollectionProfile[]) {
+  public pushOriginalPackablesByCP(packables: PackableOriginal[], CPs: CollectionProfile[]) {
     if (CPs && CPs.length > 0) {
-      let privatePackables = packables.map(id => this.pacFac.makePrivateFromId(id))
+      let privatePackables = packables.map(p => { 
+        p.dateModified = timeStamp();
+         return this.pacFac.makePrivate(p)
+        })
       this.pushPrivatePackablesByCP(privatePackables, CPs)
     }
   }
@@ -114,19 +151,30 @@ export class BulkActionsService {
     if (CPs && CPs.length > 0 && privatePackables && privatePackables.length > 0) {
       let allProfiles = this.storeSelector.profiles;
       let modifiedProfiles:Profile[] = []
+      let modifiedCollections: CollectionOriginal[] = [];
       CPs.forEach(cp => {
-        let profile = allProfiles.findId(cp.pId)
-        if (profile) {
-          let collection = profile.collections.findId(cp.cId)
-          if (collection) {
-            collection = this.colFac.addEditPackables(collection, privatePackables)
+          let profile = allProfiles.findId(cp.pId)
+          if (profile) {
+            let collection = profile.collections.findId(cp.cId)
+            if (collection) {
+              collection = this.colFac.addEditPackables(collection, privatePackables)
+              collection.dateModified = timeStamp()
+              profile.dateModified = timeStamp()
+              modifiedProfiles.push(profile)
+            }
+          } else if(cp.pId === null){
+            let collection = this.storeSelector.getCollectionById(cp.cId)
+            collection = this.colFac.addEditPackables(collection,privatePackables)
             collection.dateModified = timeStamp()
-            profile.dateModified = timeStamp()
-            modifiedProfiles.push(profile)
+            modifiedCollections.push(collection)
           }
-        }
       })
-      this.store.dispatch(new profileActions.editProfiles(modifiedProfiles))
+      if(modifiedProfiles.length>0){
+        this.store.dispatch(new profileActions.editProfiles(modifiedProfiles))
+      }
+      if(modifiedCollections.length>0){
+        this.store.dispatch(new collectionActions.updateOriginalCollections(modifiedCollections))
+      }
     }
   }
 }

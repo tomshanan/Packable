@@ -23,7 +23,7 @@ export function profileReducers(state = initialState, action: ProfileActions.the
             profile = action.payload;
             return {
                 ...state,
-                profiles: [...state.profiles, profile]
+                profiles: [profile, ...state.profiles]
             }
         case ProfileActions.EDIT_PROFILES:
             let editProfiles = action.payload

@@ -18,19 +18,20 @@ import { ProfileFactory } from '@shared/factories/profile.factory';
 import { BulkActionsService } from '@shared/services/bulk-actions.service';
 import { CollectionFactory } from '@app/shared/factories/collection.factory';
 import { transitionTrigger } from '@shared/animations';
+import * as packableActions from '@app/packables/store/packables.actions';
+import { NameInputChangeEvent } from '@app/shared-comps/name-input/name-input.component';
 
 @Component({
   selector: 'app-new-collection-dialog',
   templateUrl: './new-collection-dialog.component.html',
-  styleUrls: ['./new-collection-dialog.component.css'],
+  styleUrls: ['../../../shared/css/dialog.css','./new-collection-dialog.component.css'],
   animations: [transitionTrigger]
 })
 export class NewCollectionDialogComponent implements OnInit {
   collectionName: string;
-  collectionNameInput: FormControl;
   collection:CollectionComplete;
   usedCollectionNames: string[];
-
+  collectionNameValid: boolean = true;
   step: number = 1;
   remotePackables: PackableOriginal[];
 
@@ -52,42 +53,62 @@ export class NewCollectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.usedCollectionNames = this.storeSelector.getUsedCollectionNames()
-    this.collectionNameInput = new FormControl('',[
-      Validators.required, 
-      Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), 
-      this.validate_usedName.bind(this)
-    ])
+    this.collectionName = ''
     this.collection = new CollectionComplete(Guid.newGuid());
     this.collection.userCreated = true;
     this.profileGroup = this.storeSelector.profiles
     if(this.context.profileId){
       this.selectedProfiles=[this.context.profileId]
     }
+    this.stepSettings()
   }
 
-
+  setName(e:NameInputChangeEvent){
+    this.collectionNameValid = e.valid
+    if(e.valid){
+      this.collectionName = e.value
+    }
+  }
   onClose(collection: CollectionComplete = null) {
     this.dialogRef.close(collection)
   }
   confirmName(){
-    if(this.collectionNameInput.valid){
-      this.collection.name = this.collectionName = this.collectionNameInput.value;
-      this.step++
+    if(this.collectionNameValid){
+      this.collection.name = this.collectionName
+      this.nextStep()
     }
   }
   confirmPackables(e:importPackables_selection){
     this.remotePackables = e.remoteItems
     let compeletePackables = this.pacFac.makeCompleteFromArray([...e.remoteItems,...e.localItems])
     this.collection.packables = compeletePackables
-    this.step++
+    this.nextStep()
+    
   }
   confirmProfiles(){
     let originalCollection = this.colFac.completeToOriginal(this.collection)
-    this.store.dispatch(new collectionActions.updateOriginalCollection(originalCollection))
+    this.store.dispatch(new packableActions.addMissingPackables(this.remotePackables))
+    this.store.dispatch(new collectionActions.updateOriginalCollections([originalCollection]))
     this.bulkActions.pushCollectionsToProfiles([this.collection], this.selectedProfiles)
     this.onClose(this.collection);
   }
-
+  nextStep(){
+    this.step++
+    this.stepSettings()
+  }
+  returnStep(){
+    this.step--
+    this.stepSettings()
+  }
+  stepSettings(){
+    if(this.step==1 || this.step==3){
+      this.dialogRef.addPanelClass('dialog-form')
+      this.dialogRef.removePanelClass('dialog-full-height')
+    } else {
+      this.dialogRef.addPanelClass('dialog-full-height')
+      this.dialogRef.removePanelClass('dialog-form')
+    }
+  }
   validate_usedName(control: FormControl): { [s: string]: boolean } {
     let input = control.value.toLowerCase();
     if (this.usedCollectionNames.indexOf(input) > -1) {

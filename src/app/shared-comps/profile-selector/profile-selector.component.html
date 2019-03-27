@@ -1,4 +1,4 @@
-<div class="d-inline-block" *ngFor="let profile of profilesView" @slideInTrigger>
+<div class="d-inline-block" *ngFor="let profile of profiles" @horizontalShringAndFade>
     <profile-icon 
     *ngIf="profile"
     [profileId]='profile.id' 
@@ -10,3 +10,8 @@
     (click)="toggle(profile.id)">
   </profile-icon>
 </div>
+<p *ngIf="multiselect">
+    <a class="inline-link small p-2" (click)="profileSelect('all')">All</a>
+    <span>/</span>
+    <a class="inline-link small p-2" (click)="profileSelect('none')">None</a>
+  </p>

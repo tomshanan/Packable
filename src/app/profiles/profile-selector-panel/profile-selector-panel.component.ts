@@ -48,18 +48,30 @@ export class ProfileSelectorPanelComponent implements OnInit,OnChanges {
   ngOnInit() {
   }
   ngOnChanges(changes:SimpleChanges){
-    changes['profiles'] && console.log('Profile Selector received profiles: ', this.profiles)
+    if(changes['profiles'] || changes['selected']){
+      console.log('Profile Selector received profiles: ', this.profiles)
+      if(isDefined(this.selected) && this.profiles.idIndex(this.selected) == -1){
+        this.onSelectedProfiles([null])
+      } else if(!isDefined(this.selected)){
+        this.selectorOpen = true;
+      }
+      setTimeout(() => {
+        this.iconSelector.scrollEvent()
+      }, 500);
+    }
   }
   onSelectedProfiles(ids: string[]){
     this.selectedChange.emit(ids[0])
-    this.iconSelector.scrolling.pipe(filter(x=>x===0), take(1)).subscribe(scroll => {
-      if(scroll === 0){
-        setTimeout(()=>{
-          this.toggleProfileSelector()
-        },100)
-      }
-    })
-    this.iconSelector.scrollToTop();
+    // if(isDefined(ids.clearUndefined())){
+      this.iconSelector.scrolling.pipe(filter(x=>x===0), take(1)).subscribe(scroll => {
+        if(scroll === 0){
+          setTimeout(()=>{
+            this.toggleProfileSelector()
+          },100)
+        }
+      })
+      this.iconSelector.scrollToTop();
+    // }
   }
   onClickSettings(){
     this.clickSettings.emit()

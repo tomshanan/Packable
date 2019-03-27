@@ -11,8 +11,13 @@
             [buttonWidth]="buttonWidth()+'px'">
           </icon-text-button>
         </ng-container>
+        <ng-container *ngIf="actionType=='none'">
+            <icon-text-button [svgIcon]="staticIcon" [disabled]="true"
+              [buttonWidth]="buttonWidth()+'px'" color="muted">
+            </icon-text-button>
+          </ng-container>
       </div>
-      <div class="flex-item detailBox">
+      <div class="flex-item detailBox" [class.text-muted]="disabled">
         <p class="detailBox-header" [class.small-screen]="windowService.max('xs')">{{collection.name}}</p>
         <div class="packable-list-container">
           <list-concatinator [list]="packableNameList">

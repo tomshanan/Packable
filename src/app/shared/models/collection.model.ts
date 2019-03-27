@@ -20,7 +20,9 @@ export class CollectionComplete {
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
         public dateModified: number = timeStamp(),
-        public locations: string[] = []
+        public locations: string[] = [],
+        public deleted: boolean  = false
+
     ) {
     }
 }
@@ -34,7 +36,8 @@ export class CollectionOriginal {
         public weatherRules: WeatherRule = new WeatherRule(),
         public userCreated: boolean = false,
         public dateModified: number =  timeStamp(),
-        public locations: string[] = []
+        public locations: string[] = [],
+        public deleted: boolean  = false
     ) {
     }
 }

@@ -29,11 +29,11 @@ import { CollectionFactory } from '../shared/factories/collection.factory';
 export class ProfilesComponent implements OnInit, OnDestroy {
 
   profilesState_obs: Observable<{ profiles: Profile[] }>;
-  stateSubscriptions: Subscription;
-  completeProfiles: ProfileComplete[];
-  profiles: Profile[];
+  subs: Subscription;
+  profiles: Profile[] = []
   selectedProfileId: string;
   selectedProfile: Profile;
+  completeProfile: ProfileComplete;
   profileCollections: CollectionComplete[];
 
   
@@ -46,7 +46,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
     private profileFactory: ProfileFactory,
     private colFac: CollectionFactory,
     public windowService: WindowService,
-    private cotnext: ContextService,
+    private context: ContextService,
     public dialog: MatDialog,
 
   ) { }
@@ -58,39 +58,46 @@ export class ProfilesComponent implements OnInit, OnDestroy {
     autoFocus: false
   }
   ngOnInit() {
-    this.stateSubscriptions = this.storeSelector.profiles_obs.subscribe(state => {
+    this.context.reset();
+    this.subs = this.storeSelector.profiles_obs.subscribe(state => {
       // update list of profiles if Profile State
       console.log('profile state emitted', state);
-      this.profiles = state.profiles;
-      this.completeProfiles = this.profileFactory.makeComplete(state.profiles);
-      console.log('complete profiles to display:',this.completeProfiles)
+      this.profiles = state.profiles
       this.setProfileAndCollections()
+
+      // console.log('complete profiles to display:',this.completeProfiles)
+      // if(this.selectedProfileId != null && this.profiles.idIndex(this.selectedProfileId) === -1){
+      //   this.context.reset();
+      //   this.selectedProfileId = null;
+      // } else {
+      //   this.setProfileAndCollections()
+      // }
     })
-    this.stateSubscriptions.add(
-      // change comp's loaded profile if context changes
-      this.cotnext.changes.subscribe(changes => {
-        this.setProfileAndCollections()
-      })
-    )
-    this.cotnext.reset();
-    // if (isDefined(this.selectedProfileId)) {
-    //   this.cotnext.setBoth(null, this.selectedProfileId)
-    // }
+    // this.subs.add(this.context.changes.subscribe(()=>{
+    //   if(this.context.profileId){
+    //     this.setProfileAndCollections()
+    //   }
+    // }))
   }
   onSelectedProfiles() { // when profile selector emits a new profile
-    this.cotnext.setBoth(null, this.selectedProfileId)
+    this.context.setBoth(null, this.selectedProfileId)
+    this.setProfileAndCollections()
   }
   setProfileAndCollections() { 
     // set components loaded profile
-    this.selectedProfile = this.cotnext.getProfile();
-    this.selectedProfileId = this.cotnext.profileId
-    if (this.selectedProfile) {
-      this.profileCollections = this.selectedProfile.collections.map(c => this.colFac.makeComplete(c));
-    }
+    this.selectedProfile = this.context.getProfile();
+    this.selectedProfileId = this.context.profileId
+    console.log("PROFILES: selected profile contexts:",this.selectedProfile, this.selectedProfileId)
+    if(!isDefined(this.selectedProfile)){
+      this.context.reset();
+      this.profileCollections = []
+    } else{
+      this.completeProfile = this.profileFactory.makeComplete([this.selectedProfile])[0]
+      this.profileCollections = this.completeProfile.collections
+    } 
   }
   ngOnDestroy() {
-    this.stateSubscriptions.unsubscribe()
-
+    this.subs.unsubscribe()
   }
   openModal(tempRef: TemplateRef<any>) {
     const modal = this.modalService.open(ModalComponent);
@@ -98,6 +105,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
   }
 
   editProfile() {
+    this.context.setBoth(null, this.selectedProfileId)
     let data = {
       profile: this.selectedProfile
     }

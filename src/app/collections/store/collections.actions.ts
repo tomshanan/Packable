@@ -11,9 +11,9 @@ export class setCollectionState  implements Action{
     readonly type = SET_COLLECTION_STATE;
     constructor(public payload: CollectionOriginal[]){};
 }
-export class updateOriginalCollection  implements Action{
+export class updateOriginalCollections  implements Action{
     readonly type = UPDATE_ORIGINAL_COLLECTION;
-    constructor(public payload:CollectionOriginal){};
+    constructor(public payload:CollectionOriginal[]){};
 }
 export class removeOriginalCollections  implements Action{
     readonly type = REMOVE_ORIGINAL_COLLECTIONS;
@@ -24,4 +24,4 @@ export class removePackablesFromAllCollections  implements Action{
     constructor(public payload: string[]){};
 }
 
-export type theActions = updateOriginalCollection | removeOriginalCollections | removePackablesFromAllCollections | setCollectionState;
+export type theActions = updateOriginalCollections | removeOriginalCollections | removePackablesFromAllCollections | setCollectionState;

@@ -4,13 +4,15 @@ import { PackableOriginal, QuantityRule } from '@shared/models/packable.model';
 import { WeatherRule } from '@models/weather.model';
 import { PackableComplete } from '@shared/models/packable.model';
 import { ProfileComplete } from '@shared/models/profile.model';
-import { isDefined } from '@shared/global-functions';
+import { isDefined, titleCase } from '@shared/global-functions';
 import { Profile } from '@shared/models/profile.model';
 import { ProfileFactory } from '@shared/factories/profile.factory';
 import { CollectionComplete } from '@shared/models/collection.model';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { QuantityRuleListComponent } from './quantity-rule-list/quantity-rule-list.component';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { ContextService } from '@app/shared/services/context.service';
+import { NameInputChangeEvent } from '@app/shared-comps/name-input/name-input.component';
 
 @Component({
   selector: 'app-packable-edit-form',
@@ -22,6 +24,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 export class PackableEditFormComponent implements OnInit, OnChanges {
   constructor(
     private storeSelector: StoreSelectorService,
+    private context: ContextService,
   ) {
   }
 
@@ -44,8 +47,8 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
   showProfileSelector: boolean = false;
   isDefined = isDefined;
   usedPackableNames: string[] =[];
-  packableName: FormControl;
-
+  packableName: string = ''
+  nameValid: boolean = true;
 
 
   ngOnInit() {
@@ -53,16 +56,11 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
   }
 
   resetForm() {
-    this.packableName = new FormControl('',[
-      Validators.required, 
-      Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), 
-      this.validate_usedName.bind(this)
-    ])
     if (this.isNew) {
       this.packable = new PackableComplete();
-      this.packableName.setValue('');
+      this.packableName = ''
     } else {
-      this.packableName.setValue(this.packable.name)
+      this.packableName = this.packable.name
     }
     this.showProfileSelector = (this.collectionId && this.profileGroup && this.profileGroup.length > 0) ? true : false
     if (this.editName){
@@ -95,7 +93,7 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
   }
   onConfirm() {
     if (this.editName) {
-      this.packable.name = this.packableName.value
+      this.packable.name = this.packableName
     }
     if(this.valid()){
       this.confirm.emit({
@@ -105,29 +103,23 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
     }
   }
 
-  onEditName(state: boolean = true) {
-    this.packableName.setValue(this.packable.name)
-    this.editName = state;
-  }
-  log(e) {
-    console.log(e);
+  onEditName(e:NameInputChangeEvent) {
+    this.nameValid = e.valid;
+    if(e.valid){
+      this.packableName = titleCase(e.value.trim())
+    }
   }
 
-  /*--------- FORM VALIDATION ---------*/
-  validate_usedName(control: FormControl): { [s: string]: boolean } {
-    let input = control.value.toLowerCase();
-    if (this.usedPackableNames.indexOf(input) > -1 && (this.isNew || input !== this.packable.name.toLowerCase())) {
-      return { 'usedName': true };
-    }
-    return null;
+  log(e) {
+    console.log(e);
   }
 
 
   valid():boolean{
     let valid = true;
-    if(this.showProfileSelector && this.selectedProfiles.length == 0){
+    if(this.context.profileId && this.showProfileSelector && this.selectedProfiles.length == 0){
       valid = false;
-    } else if( this.editName && !this.packableName.valid){
+    } else if( this.editName && !this.nameValid){
       valid = false
     } else if( this.packable.quantityRules.length == 0 || !this.QuantityRuleList.valid){
       valid = false;

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatInput } from '@angular/material';
+import { allowedNameRegEx, comparableName } from '@app/shared/global-functions';
 
 export interface NameInputChangeEvent {
   oldValue:string,
@@ -15,7 +16,8 @@ export interface NameInputChangeEvent {
 export class NameInputComponent implements OnInit,AfterViewInit {
   @Input() title: string = 'Item';
   @Input() value: string = '';
-  @Input() usedNames: string[] = [];
+  @Input('usedNames') usedNamesInput: string[] = [];
+  usedNames: string[] = [];
   @Output() valueChange = new EventEmitter<string>()
   @Output() changeEvent = new EventEmitter<NameInputChangeEvent>()
   @ViewChild('editNameInput') editNameInput: ElementRef;
@@ -27,7 +29,7 @@ export class NameInputComponent implements OnInit,AfterViewInit {
   [value]='myNameValue'
   [usedNames]='getUsedNames()'
   (valueChange)='changeOfValue($event:string)'
-  (change)='changeEvent($event:NameInputChangeEvent)'>
+  (changeEvent)='changeEvent($event:NameInputChangeEvent)'>
   </name-input>
  */
   nameInput: FormControl = new FormControl('')
@@ -35,17 +37,18 @@ export class NameInputComponent implements OnInit,AfterViewInit {
   constructor() {
   }
   validate_usedName(control: FormControl): { [s: string]: boolean } {
-    let input = control.value.toLowerCase();
-    if (this.usedNames.includes(input) && input !== this.allowedName.toLowerCase() ) {
+    let input = comparableName(control.value)
+    if (this.usedNames.includes(input) && input !== comparableName(this.allowedName)) {
       return { 'usedName': true };
     }
     return null;
   }
   ngOnInit() {
+    this.usedNames = this.usedNamesInput.map(str=>comparableName(str))
     this.allowedName = this.value;
     this.nameInput= new FormControl(this.value, [
       Validators.required, 
-      Validators.pattern(/^[a-zA-Z0-9\s\-\_\(\)]+$/), 
+      Validators.pattern(allowedNameRegEx), 
       this.validate_usedName.bind(this)
     ])
   }
@@ -53,6 +56,10 @@ export class NameInputComponent implements OnInit,AfterViewInit {
     setTimeout(()=>{
       this.editNameInput.nativeElement.focus()
     },100)
+  }
+  resetName(){
+    this.nameInput.setValue('')
+    this.emitChange()
   }
   emitChange(){
     this.valueChange.emit(this.nameInput.value)

@@ -15,6 +15,18 @@ export const animateSize = trigger('grow', [
       params: { startHeight: 0, endHeight: 0}
     })
   ]);
+  export const fadeInOut = 
+    trigger('fadeInOut', [
+        transition('void <=> *', [
+            animate('.3s ease', 
+                keyframes([
+                    style({ opacity: '0'}),
+                    style({ opacity: '1'})
+                ])
+            )]
+        )
+    ])
+            
 
 export const dropInTrigger =
     trigger('dropInTrigger', [
@@ -130,6 +142,22 @@ export const listItemTrigger = trigger('listItemTrigger', [
         animate('200ms', keyframes([
             style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*"}),
             style({ opacity: 0, transform: 'scale(0)',  width:"0px", height: "0px"}),
+        ])),
+    ])
+])
+export const horizontalShringAndFade = trigger('horizontalShringAndFade', [
+    transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0)',  width:"0px"}),
+        animate('200ms 100ms', keyframes([
+            style({ opacity: 0, transform: 'scale(0)', width:"0px"}),
+            style({ opacity: 1, transform: 'scale(1)', width: "*"}),
+        ])),
+    ]),
+    transition(':leave', [
+        style({ opacity: 1, transform: 'scale(1)', width: "*"}),
+        animate('200ms', keyframes([
+            style({ opacity: 1, transform: 'scale(1)', width: "*" }),
+            style({ opacity: 0, transform: 'scale(0)',  width:"0px"}),
         ])),
     ])
 ])

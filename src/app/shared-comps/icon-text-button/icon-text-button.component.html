@@ -2,9 +2,10 @@
   class="inline-link withIcon" 
   [title]="text" 
   (click)="onClick()" 
+  [class.disabled]="disabled"
   (mouseover)="hoverState = true"
   (mouseout)="hoverState = false"
-  [ngStyle]="hoverState ? 
+  [ngStyle]="!disabled && hoverState ? 
     {'color': color.hover} :
     {'color': color.inactive}"
   #rippleTrigger>

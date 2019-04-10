@@ -80,7 +80,9 @@ export class ImportPackablesDialogComponent implements OnInit {
       if (this.collection) {
         this.selectedOriginalPackables = [...e.localItems, ...e.remoteItems]
         this.step++
-        if(this.profileGroup.length < 2){
+        /*  if profile group is empty, or if we are working inside a profile,
+            then skip profile selection*/
+        if(this.profileGroup.length === 0 || (this.context.profileId && this.profileGroup.length < 2)){
           this.confirmProfiles()
         } else {
           this.dialogRef.removePanelClass('dialog-full-height')

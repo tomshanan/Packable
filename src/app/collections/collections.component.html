@@ -4,12 +4,12 @@
     <app-collection-list [collections]="collections" @blockInitialAnimations #usedCollectionsComponent></app-collection-list>
   </div>
 </div>
-<div class="row mt-3"  *ngIf="unusedCollections && unusedCollections.length>0">
+<!-- <div class="row mt-3"  *ngIf="unusedCollections && unusedCollections.length>0">
   <div class="col-12">
     <h5>Collections Not in Use</h5>
     <app-collection-list [collections]="unusedCollections" @blockInitialAnimations #usedCollectionsComponent></app-collection-list>
   </div>
-</div>
+</div> -->
 
 <ng-template #collectionModal>
   <H5>Collections</H5>

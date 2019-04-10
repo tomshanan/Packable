@@ -73,3 +73,23 @@
  .mat-expansion-panel-header[aria-disabled=true] {
     color: rgba(0,0,0,1);
 }
+
+.used-by-container{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.used-by-container > *{
+    margin-left:0.1em;
+}
+.used-by-more {
+    box-sizing: border-box;
+    height: 20px;
+    width: 20px;
+    font-size: 0.5em;
+    line-height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

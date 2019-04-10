@@ -48,16 +48,6 @@ export function packablesReducers(state = initialState, action: PackableActions.
                 ...state,
                 packables: [...statePackables]
             }
-        case PackableActions.ADD_MISSING_PACKABLES_FROM_COLLECTIONS:
-            let collectionPackables: PackableOriginal[] = action.payload;
-            collectionPackables.forEach(newPac=>{
-                let index = statePackables.idIndex(newPac.id)
-                if(index === -1){
-                    statePackables.unshift(newPac)
-                } else if (statePackables[index].deleted && !statePackables[index].userCreated){
-                    statePackables[index] = newPac
-                }
-            })
             return {
                 ...state,
                 packables: [...statePackables]

@@ -51,14 +51,16 @@ export class CollectionsComponent implements OnInit,OnDestroy {
     this.subs = this.storeSelector.store_obs.subscribe(([pacState,colState,proState,tripState]) =>{
       console.log('collections - received new state');
       let profiles = proState.profiles
+      this.collections = this.collectionFactory.makeCompleteArray(colState.collections)
       // collections = select only collections which are being used by a profile
-      this.collections = this.collectionFactory.makeCompleteArray(colState.collections).filter(col=>{
+      /*.filter(col=>{
         return profiles.some(p=>p.collections.idIndex(col.id)!=-1)
       })
       // unused collections = select only collections which are NOT being used by a profile
       this.unusedCollections = this.collectionFactory.makeCompleteArray(colState.collections).filter(col=>{
         return profiles.every(p=>p.collections.idIndex(col.id)==-1)
       })
+      */
     })
   }
 

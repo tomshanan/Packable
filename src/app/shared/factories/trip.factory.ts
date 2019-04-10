@@ -11,8 +11,8 @@ export class TripFactory {
             trip.endDate,
             trip.destinationId,
             trip.profiles || [],
-            trip.activities || [],
-            trip.updated
+            trip.collections || [],
+            trip.dateModified
         )
     }
 }

@@ -77,7 +77,7 @@ EDIT    -> handle modal window for packable
   }
   ngOnChanges(changes: SimpleChanges): void {
     if(changes['inputPackable'] || changes['packable']){
-      console.log('PACKABLE CARD:', 'received new packable',this.inputPackable);
+      //console.log('PACKABLE CARD:', 'received new packable',this.inputPackable);
       this.packable = this.buildViewObject(this.inputPackable)
     }
   }

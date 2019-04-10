@@ -1,42 +1,57 @@
 <div class="pofileSelectorContainer"
   #container>
   <div class="selectedProfile d-flex flex-row align-items-center"  [class.hide]="selectorOpen" *ngIf="selected">
-    <div class="selectorTrigger pointer" appColor="action" [appColorTarget]="settingsButton"  (click)="onClickSettings()">
+    <button mat-icon-button appColor="action" (click)="toggleProfileSelector()" *ngIf="!selectorOpen">
+      <mat-icon>arrow_back_ios</mat-icon>
+    </button>
+    <div class="selectorTrigger">
         <div class="selectedProfile-iconContainer">
             <profile-icon 
             [profileId]='selected' 
             [showName]="false"  
             [isInteractive]="false" 
             [isButton]="false" 
+            [color]="storeSelector.isLibraryStore ? 'white' : null"
+            [fullFrame]="storeSelector.isLibraryStore ? true : false"
             width="55px">
           </profile-icon>
         </div>
         <p class="h3 m-0 ml-1 mb-1" *ngIf="!selectorOpen" @showTrigger>
           {{getSelectedProfileName()}}
         </p>
-        <div #settingsButton>
-          <button mat-icon-button  *ngIf="!selectorOpen" @showTrigger >
+        <div #settingsButton *ngIf="!selectorOpen" @showTrigger>
+          <button mat-icon-button [matMenuTriggerFor]="profileMenu" appColor="action">
               <mat-icon>settings</mat-icon>
             </button>
+            <mat-menu #profileMenu="matMenu">
+              <button mat-menu-item (click)="onClickSettings()">
+                <mat-icon>settings</mat-icon>
+                <span>Edit Settings</span>
+              </button>
+              <button mat-menu-item (click)="onDeleteProfile(selected)">
+                <mat-icon>delete</mat-icon>
+                <span>Delete Traveler</span>
+              </button>
+            </mat-menu>
         </div>
         
       </div>
        
-      <button mat-icon-button appColor="action" (click)="toggleProfileSelector()"  class="ml-auto" *ngIf="!selectorOpen">
-          <mat-icon>group</mat-icon>
-        </button>
+      
   </div>
   <div class="horizontalSelector" [class.hide]="!selectorOpen">
       <horizontal-icon-selector stepWidth="55" #iconSelector>
           <profile-selector 
-         
           iconWidth="55PX" 
           [profiles]="profiles" 
           [selected]="selected ? [selected] : []" 
           [multiselect]="false"
           [showNames]="true" 
           [selectedFirst]="true"
-          (selectedChange)="onSelectedProfiles($event)">
+          (selectedChange)="onSelectedProfiles($event)"
+          [color]="storeSelector.isLibraryStore ? 'white' : null"
+          [fullFrame]="storeSelector.isLibraryStore ? true : false">
+
         </profile-selector>
         <div class="d-inline-block">
             <icon-text-button

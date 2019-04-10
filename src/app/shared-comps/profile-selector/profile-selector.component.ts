@@ -20,6 +20,8 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
   @Input() multiselect: boolean = false;
   @Input() showNames: boolean = true;
   @Input() selectedFirst: boolean = false;
+  @Input() fullFrame: boolean = false;
+  @Input() color: string;
   @Output() selectedChange = new EventEmitter<string[]>();
   @HostBinding('@blockInitialAnimations') blockInitialAnimations = blockInitialAnimations;
   selected: string[] = []
@@ -33,6 +35,7 @@ export class ProfileSelectorComponent implements OnInit, OnChanges {
     [profiles]="profileGroup" 
     [(selected)]="selectedProfiles" 
     [multiselect]="true"
+    [fullFrame]="false"
     [showNames]="true">
   </profile-selector>
   */

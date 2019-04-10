@@ -62,7 +62,7 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
             const ra_id = action.payload
             const ra_trips = state.trips.slice()
             ra_trips.map(trip =>{
-                trip.activities = trip.activities.filter(a=>a!=ra_id)
+                trip.collections = trip.collections.filter(a=>a!=ra_id)
                 return trip
             })
             return {

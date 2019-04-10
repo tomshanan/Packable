@@ -1,16 +1,18 @@
 <div class="d-inline-block" *ngFor="let profile of profiles" @horizontalShringAndFade>
-    <profile-icon 
+  <profile-icon 
     *ngIf="profile"
     [profileId]='profile.id' 
     [showName]="showNames"  
     [isInteractive]="true" 
     [isSelected]="isSelected(profile.id)" 
     [width]="iconWidth"
+    [fullFrame]="fullFrame"
+    [color]="color"
     [dim]="!isSelected(profile.id) && selected.length>0"
     (click)="toggle(profile.id)">
   </profile-icon>
 </div>
-<p *ngIf="multiselect">
+<p *ngIf="multiselect && profiles.length > 1">
     <a class="inline-link small p-2" (click)="profileSelect('all')">All</a>
     <span>/</span>
     <a class="inline-link small p-2" (click)="profileSelect('none')">None</a>

@@ -6,7 +6,6 @@ export const ADD_ORIGINAL_PACKABLE = 'ADD_ORIGINAL_PACKABLE';
 export const REMOVE_ORIGINAL_PACKABLES = 'REMOVE_ORIGINAL_PACKABLES';
 export const UPDATE_ORIGINAL_PACKABLE = 'UPDATE_ORIGINAL_PACKABLE';
 export const SET_PACKABLE_STATE = 'SET_PACKABLE_STATE';
-export const ADD_MISSING_PACKABLES_FROM_COLLECTIONS = 'ADD_MISSING_PACKABLES_FROM_COLLECTIONS';
 
 export class setPackableState  implements Action{
     readonly type = SET_PACKABLE_STATE;
@@ -20,9 +19,5 @@ export class removeOriginalPackables  implements Action{
     readonly type = REMOVE_ORIGINAL_PACKABLES;
     constructor(public payload: string[]){};
 }
-export class addMissingPackables  implements Action{
-    readonly type = ADD_MISSING_PACKABLES_FROM_COLLECTIONS;
-    constructor(public payload: PackableOriginal[]){};
-}
 
-export type theActions = updateOriginalPackables | removeOriginalPackables | setPackableState | addMissingPackables;
+export type theActions = updateOriginalPackables | removeOriginalPackables | setPackableState ;

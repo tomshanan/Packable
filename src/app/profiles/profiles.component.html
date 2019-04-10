@@ -4,7 +4,8 @@
   [profiles]="profiles" 
   [(selected)]="selectedProfileId" 
   (selectedChange)="onSelectedProfiles()"
-  (clickSettings)="editProfile()">
+  (clickSettings)="editProfile()"
+  (deleteProfile)="onDeleteProfile($event)">
 </profile-selector-panel>
 
 <ng-container *ngIf="selectedProfileId">

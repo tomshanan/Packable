@@ -152,7 +152,7 @@ export class ListEditorService {
         case 'ACTIVITIES':
           if (memory.trip){
             let trip = memory.trip;
-            trip.activities = (<Activity[]>usedList).map(a=>a.id);
+            trip.collections = (<Activity[]>usedList).map(a=>a.id);
             this.memoryService.set('TRIP',trip);
             if(this.changedList){this.memoryService.set('UNSAVED_TRIP',true)}
           } else {

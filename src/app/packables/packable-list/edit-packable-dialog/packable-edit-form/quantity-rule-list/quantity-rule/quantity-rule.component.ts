@@ -36,6 +36,14 @@ export class QuantityRuleComponent implements OnInit, OnDestroy {
     this.repAmount = this.fb.control(this.rule.repAmount, this.validate_quantity_repAmount.bind(this))
     
   }
+  changeType(string:string){
+    this.type.setValue(string)
+    this.amount.setValue(1)
+    this.repAmount.setValue(1)
+    this.validate()
+    this.emitUpdate()
+  }
+
   ngOnDestroy(){
   }
   validate(){

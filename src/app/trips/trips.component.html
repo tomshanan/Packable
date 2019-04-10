@@ -2,16 +2,23 @@
 <ng-template #modalContent>
   <H5>Trips</H5>
   <p>Here you can set up a trip and generate a packing list!</p>
-  <p>Be sure to set up some Packables, Acitivies and Profiles, and when you're ready, use this tool to create a Trip, indicated
+  <p>Be sure to set up some Packables, Acitivies and Profiles, and when you're ready, use this tool to create a Trip,
+    indicated
     where you are going and when, who's coming and what you plan to do while you are there!</p>
 </ng-template>
-<div class="row trip-container">
-  <a class="trip-sizing ">
-    <div class="list-group-item-action grid-border trip-content d-flex align-items-center justify-content-center" style="min-height: 100%; border-style: dashed;" (click)="newTrip()">
-        <h4 class="text-center text-success p-2 font-weight-light">New Trip</h4>
-    </div>
-  </a>
-  <div class="trip-sizing" *ngFor="let trip of trips">
+<mat-card>
+
+  <div class="trip-form-container">
+    <h5>Where to next?</h5>
+    <trip-details-form (tripChange)="onTripChange($event)">
+    </trip-details-form>
+    <button mat-fab class="mx-1" color="primary" (click)="newTrip()">
+        <mat-icon>check</mat-icon>
+    </button>
+  </div>
+</mat-card>
+
+<!-- <div class="trip-sizing" *ngFor="let trip of trips">
     <div class="grid-border trip-content py-3 py-1 d-flex flex-column justify-content-between align-content-center">
       <span class="text-center">
         <h1 class="m-0 font-weight-light">{{trip.destinationName}}</h1>
@@ -31,8 +38,4 @@
         <a class="inline-link text-center p-2" (click)="editTrip(trip)">Edit Trip</a>
       </span>
     </div>
-  </div>
-
-
-
-</div>
+  </div> -->

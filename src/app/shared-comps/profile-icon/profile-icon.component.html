@@ -6,16 +6,16 @@
   [class.fullFrame]="fullFrame"
   [class.dim]="dim"
   [class.inline]="inline"
-  [title]="inputName" #profile>
+  [title]="name" #profile>
     <div class="icon_sizer">
       <div class="profile_circle" [class.inline]="inline">
         <div class="profile_circle_content">
-            <div class="profile_background" [style.background]="inputColor"></div>
+            <div class="profile_background" [style.background]="color"></div>
             <mat-icon [svgIcon]="icon" [inline]="true" style="height: 100%; line-height: 100%;"></mat-icon>    
         </div>
       </div>
     </div>
         <span class="profile_name" *ngIf="showName && !inline">
-          {{inputName}}
+          {{name}}
         </span>
   </div>

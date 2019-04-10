@@ -1,0 +1,21 @@
+  <mat-form-field class="w-100" floatLabel="never">
+      <input 
+      type="text"
+      [formControl]="destination" 
+      matInput placeholder="Enter city or country"
+      autocomplete="off"
+      [matAutocomplete]="auto" 
+      #inputDestination>
+      <mat-icon matPrefix class="mr-2">place</mat-icon>
+  </mat-form-field>
+  
+<mat-autocomplete 
+    [autoActiveFirstOption]="true" 
+    #auto="matAutocomplete"
+    [displayWith]="displayDestination">
+  <mat-option 
+    *ngFor="let option of filteredDestOptions | async" 
+    [value]="option">
+    {{option.fullName}}
+    </mat-option>
+</mat-autocomplete>

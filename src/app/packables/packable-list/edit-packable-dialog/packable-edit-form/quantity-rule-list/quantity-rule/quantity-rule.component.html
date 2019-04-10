@@ -9,15 +9,15 @@
             <mat-icon *ngIf="type.value == 'trip'" svgIcon="together"></mat-icon>
         </button>
         <mat-menu #typeMenu="matMenu" [hasBackdrop]="true">
-            <button mat-menu-item (click)="type.setValue('period')">
+            <button mat-menu-item (click)="changeType('period')">
                 <mat-icon>date_range</mat-icon>
                 <span>Per Day/s</span>
             </button>
-            <button mat-menu-item (click)="type.setValue('profile')">
+            <button mat-menu-item (click)="changeType('profile')">
                 <mat-icon>person</mat-icon>
                   <span>Per Traveler</span>
             </button>
-            <button mat-menu-item  (click)="type.setValue('trip')">
+            <button mat-menu-item  (click)="changeType('trip')">
                 <mat-icon svgIcon="together"></mat-icon> 
                 <span>To Share</span>
             </button>

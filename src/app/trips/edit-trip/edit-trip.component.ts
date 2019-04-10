@@ -14,7 +14,7 @@ import * as moment from 'moment';
 import { MatAutocompleteTrigger } from '@angular/material';
 import { listEditorParams, ListEditorService } from '../../shared/services/list-editor.service';
 import { MemoryService } from '../../shared/services/memory.service';
-import { Guid } from '../../shared/global-functions';
+import { Guid, timeStamp } from '../../shared/global-functions';
 import * as tripActions from '../store/trip.actions';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
@@ -46,8 +46,8 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     endDate: '',
     destinationId: '',
     profiles: [],
-    activities: [],
-    updated: ''
+    collections: [],
+    dateModified: 0
   }
   routeParams: Params;
 
@@ -147,7 +147,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
       this.editingTrip.profiles.forEach(profileId => {
         this.onToggleProfile(profileId)
       })
-      this.editingTrip.activities.forEach(activityId => {
+      this.editingTrip.collections.forEach(activityId => {
         this.onToggleActivity(activityId)
       })
       this.destinationName = this.destService.cityById(this.editingTrip.destinationId);
@@ -323,7 +323,7 @@ export class EditTripComponent implements OnInit, AfterViewInit {
       trip.destination ? trip.destination.id: '',
       trip.profiles,
       trip.activities,
-      moment().format()
+      timeStamp()
     )
   }
   return() {

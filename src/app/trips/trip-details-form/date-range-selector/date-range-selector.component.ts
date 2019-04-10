@@ -3,6 +3,10 @@ import { NgbDateStruct, NgbCalendar, NgbInputDatepicker, NgbDatepicker } from '@
 import * as moment from 'moment';
 import { WindowService } from '../../../shared/services/window.service';
 
+export interface dateSelectionEvent{ 
+  from: moment.Moment, 
+  to: moment.Moment }
+
 const equals = (one: NgbDateStruct, two: NgbDateStruct) =>
   one && two && two.year === one.year && two.month === one.month && two.day === one.day;
 
@@ -27,7 +31,7 @@ export class DateRangeSelectorComponent implements OnInit {
   //   this.innerWidth = window.innerWidth;
   //   this.datepickerSize = this.innerWidth > 500 ? 2 : 1;
   // }
-  @Output() datesSelected = new EventEmitter<{ from: moment.Moment, to: moment.Moment }>();
+  @Output() datesSelected = new EventEmitter<dateSelectionEvent>();
 
   public innerWidth: any;
   datepickerSize: number;

@@ -9,6 +9,8 @@ import { trigger, transition, style, animate, keyframes } from '@angular/animati
 import { MatDialog } from '@angular/material';
 import { NewProfileDialogComponent } from '../new-profile-dialog/new-profile-dialog.component';
 import { isDefined } from '../../shared/global-functions';
+import { StoreSelectorService } from '@app/core';
+import { ConfirmDialog, ConfirmDialogData } from '@app/shared-comps/dialogs/confirm-dialog/confirm.dialog';
 
 @Component({
   selector: 'profile-selector-panel',
@@ -30,17 +32,19 @@ export class ProfileSelectorPanelComponent implements OnInit,OnChanges {
   @Input('selected') selected: string = ''
   @Output('selectedChange') selectedChange = new EventEmitter<string>()
   @Output('clickSettings') clickSettings = new EventEmitter<void>()
+  @Output('deleteProfile') deleteProfile = new EventEmitter<string>()
   @ViewChild('iconSelector') iconSelector: HorizontalIconSelectorComponent;
   selectorOpen: boolean = true
 
   constructor(
     public windowService: WindowService,
     private dialog: MatDialog,
+    public storeSelector:StoreSelectorService,
   ) { }
 
   toggleProfileSelector(){
     this.selectorOpen =! this.selectorOpen
-    
+
   }
   getSelectedProfileName():string{
     return this.profiles.findId(this.selected).name
@@ -91,5 +95,7 @@ export class ProfileSelectorPanelComponent implements OnInit,OnChanges {
       }
     })
   }
-  
+  onDeleteProfile(id:string){
+    this.deleteProfile.emit(id)
+  }
 }

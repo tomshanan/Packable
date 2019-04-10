@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, ViewChild, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { indexOfId, timeStamp } from '@app/shared/global-functions';
-import { transitionTrigger, evaporateTransitionTrigger } from '../../shared/animations';
+import { transitionTrigger, evaporateTransitionTrigger, horizontalShringAndFade } from '../../shared/animations';
 import { ContextService } from '../../shared/services/context.service';
 import { Profile } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '@app/core';
@@ -25,6 +25,7 @@ import { Subscription } from 'rxjs';
 import { PackableFactory } from '../../shared/factories/packable.factory';
 import { ImportCollectionDialogComponent } from './import-collection-dialog/import-collection-dialog.component';
 import { EditCollectionDialogComponent, editCollectionDialog_data } from './edit-collection-dialog/edit-collection-dialog.component';
+import { appColors } from '@app/shared/app-colors';
 
 interface CollectionViewObject {
   id: string,
@@ -40,7 +41,7 @@ interface CollectionViewObject {
   selector: 'app-collection-list',
   templateUrl: './collection-list.component.html',
   styleUrls: ['./collection-list.component.css'],
-  animations: [transitionTrigger, evaporateTransitionTrigger]
+  animations: [transitionTrigger, evaporateTransitionTrigger,horizontalShringAndFade]
 })
 export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -55,6 +56,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   contextSubscription: Subscription;
   totalProfiles: number = 0;
   subs: Subscription;
+  usedByAmount:number = 5;
   constructor(
     private context: ContextService,
     private storeSelector: StoreSelectorService,
@@ -77,9 +79,23 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.collectionList = this.buildCollectionList(this.getProfileCompleteCollections())
     }
+    this.collectionList.sort((a,b)=>{
+      return a.profileGroup.length > b.profileGroup.length ? -1 : 1;
+    })
     this.subs = this.storeSelector.profiles_obs.subscribe((profileState)=>{
       this.totalProfiles = profileState.profiles.length
     })
+    this.subs.add(this.windowService.change.subscribe(()=>{
+      if(this.windowService.max('xs')){
+        this.usedByAmount = 3
+      } else if (this.windowService.max('sm')){
+        this.usedByAmount = 4
+      } else if (this.windowService.max('md')){
+        this.usedByAmount = 5
+      } else if (this.windowService.min('md')){
+        this.usedByAmount = 6
+      }
+    }))
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -201,17 +217,20 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     col.complete = this.context.getCollection()
   }
 
-  onRemoveCollection(id: string) {
+  onChangeProfileGroup(id: string) {
     let profileGroup = this.storeSelector.getProfilesWithCollectionId(id);
-    console.log(`REMOVING COLLECTIONs`)
-    if (profileGroup.length === 0 || this.contextProvided) {
-      this.updateCollectionList(this.inputCollections)
-    } else {
-      let c = this.collectionList.findId(id)
-      c.selectedProfile = !!profileGroup.findId(c.selectedProfile) ? c.selectedProfile : null;
-      c.expanded = true;
-      c.profileGroup = profileGroup;
-    }
+    let c = this.collectionList.findId(id)
+    c.profileGroup.compare(profileGroup);
+
+    // console.log(`REMOVING COLLECTIONs`)
+    // if (profileGroup.length === 0 || this.contextProvided) {
+    //   this.updateCollectionList(this.inputCollections)
+    // } else {
+    //   let c = this.collectionList.findId(id)
+    //   c.selectedProfile = !!profileGroup.findId(c.selectedProfile) ? c.selectedProfile : null;
+    //   c.expanded = true;
+    //   c.profileGroup = profileGroup;
+    // }
   }
   updateViewObject(newC:CollectionViewObject) {
     console.log(`COLLECTION UPDATING:`, newC)
@@ -257,6 +276,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
           this.bulkActions.removeCollectionsFromProfiles(selectedIds, profiles.map(x => x.id))
         }
         this.toggleListEditing(false)
+        selectedIds.forEach(id=>{
+          this.onChangeProfileGroup(id)
+        })
       }
     })
   }
@@ -279,7 +301,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       data: data
     });
     chooseProfileDialog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
-      if (profileIds.length > 0) {
+      if (profileIds && profileIds.length > 0) {
         let profilesFiltered = profiles.filter(p=>profileIds.includes(p.id))
         let privateCol = this.colFac.completeToPrivate(collection);
         profileIds.forEach(pId => {
@@ -291,6 +313,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
         this.store.dispatch(new profileActions.editProfiles(profilesFiltered))
         this.updateCollectionList(this.inputCollections)
         this.toggleListEditing(false)
+        this.onChangeProfileGroup(collection.id)
       }
     })
   }
@@ -309,6 +332,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
           this.updateCollectionList(this.inputCollections)
         })
         this.toggleListEditing(false)
+        collections.forEach(col=>{
+          this.onChangeProfileGroup(col.id)
+        })
       }
     })
   }
@@ -387,6 +413,8 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       if (profileIds.length > 0) {
         this.bulkActions.pushCollectionsToProfiles([collection.complete],profileIds)
       }
+      this.onChangeProfileGroup(collection.id)
+    
     })
   }
   actionRemoveCollection(collection:CollectionViewObject){
@@ -408,7 +436,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
       if (profileIds.length > 0) {
         this.bulkActions.removeCollectionsFromProfiles([collection.id],profileIds)
-        this.onRemoveCollection(collection.id)
+        this.onChangeProfileGroup(collection.id)
       }
     })
   }
@@ -434,6 +462,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
           this.bulkActions.removeCollectionsFromProfiles(selectedIds,profiles.map(p=>p.id))
           this.store.dispatch(new collectionActions.removeOriginalCollections(selectedIds))
           this.toggleListEditing(false)
+          
         }
       })  
     }

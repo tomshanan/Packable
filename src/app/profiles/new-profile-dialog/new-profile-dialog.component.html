@@ -14,7 +14,7 @@
             Select and import the collections
           </p>
         </card-button>
-        <card-button [disabled]="storeSelector.isLibraryStore" (click)="profileFormValid && onChooseMethod('template')">
+        <card-button [disabled]="storeSelector.isLibraryStore || !profileFormValid" (click)="profileFormValid && onChooseMethod('template')">
           Create from Template
           <p class="small text-muted">
             Templates come with pre-selected collections.
@@ -100,7 +100,7 @@
                 <card-button (click)="onChooseProfile(profile)">
                   <div class="profile-card-flex">
                     <div class="profile-card-icon">
-                      <profile-icon [profile]="profile" [fullFrame]="true" [showName]="false" width="50px">
+                      <profile-icon [profile]="profile" [fullFrame]="true" color="white" [showName]="false" width="50px">
                       </profile-icon>
                     </div>
                     <div class="profile-card-details">

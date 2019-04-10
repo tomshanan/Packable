@@ -148,7 +148,7 @@ export class StoreSelectorService{
                 }
             })
             let activities = [];
-            trip.activities.forEach(aid => {
+            trip.collections.forEach(aid => {
                 let c = this.getCollectionById(aid)
                 if (c){
                     activities.push(c.name) 
@@ -160,8 +160,8 @@ export class StoreSelectorService{
                 temp: 'TBC',
                 destinationName: destination,
                 profileNames: profiles,
-                activityNames: activities,
-                updated: trip.updated
+                collectionNames: activities,
+                dateModified: trip.dateModified
             }
         })
     }

@@ -11,7 +11,7 @@ import { MobileNavComponent } from '../shared-comps/mobile-nav/mobile-nav.compon
 import { DesktopNavComponent } from '../shared-comps/desktop-nav/desktop-nav.component';
 import { NavListComponent } from '../nav/nav-list/nav-list.component';
 import { EditTripComponent } from '../trips/edit-trip/edit-trip.component';
-import { DateRangeSelectorComponent } from '../trips/edit-trip/date-range-selector/date-range-selector.component';
+import { DateRangeSelectorComponent } from '../trips/trip-details-form/date-range-selector/date-range-selector.component';
 import { PackingListComponent } from '../trips/packing-list/packing-list.component';
 import { WeatherConditionsFormComponent } from '../shared-comps/weather-conditions-form/weather-conditions-form.component';
 import { LoginComponent } from '../user/login/login.component';
@@ -80,6 +80,8 @@ import { UsersComponent } from '../admin/users/users.component';
 import { EditCollectionDialogComponent } from '../collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
 import { ImportCollectionDialogComponent } from '../collections/collection-list/import-collection-dialog/import-collection-dialog.component';
 import { SimulateUserComponent } from '../admin/settings/simulate-user/simulate-user.component';
+import { TripDetailsFormComponent } from '../trips/trip-details-form/trip-details-form.component';
+import { TripDestinationSelectorComponent } from '../trips/trip-details-form/trip-destination-selector/trip-destination-selector.component';
 
 let imports = [
     ProfilesComponent,
@@ -161,7 +163,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent],
     exports: [...imports]
 })
 export class SharedModule {

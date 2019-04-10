@@ -14,8 +14,6 @@ import { isDefined } from '../../shared/global-functions';
 export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   
 
-  @Input() icon: string = 'default';
-  @Input('name') inputName: string = 'Traveler'
   @Input() showName: boolean = false;
   @Input() isInteractive: boolean = false;
   @Input() isSelected: boolean = false;
@@ -23,11 +21,19 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   @Input() dim: boolean = false;
   @Input() fullFrame: boolean = false;
   @Input('width') inputWidth: string = "50px";
-  @Input('color') inputColor: string = 'white';
-  @Input() avatar:Avatar;  // will override icon and color
-  @Input() profile:Profile;  // will override avatar
-  @Input() profileId:string; // will override profile with store selector
   @Input() inline:boolean = false;
+
+  @Input() profileId:string; 
+  @Input('profile') profileInput:Profile;   // will override profileId
+  profile:Profile;           
+  @Input('avatar') avatarInput:Avatar;      // will override profile
+  avatar:Avatar;             
+  @Input('name') nameInput: string;         // will override profile
+  name: string;   
+  @Input('icon') iconInput: string;         // will override avatar
+  icon: string;             
+  @Input('color') inputColor: string;        // will override avatar
+  color: string; 
 
   @ViewChild('profile') profileIcon: ElementRef;
   sub: Subscription;
@@ -53,16 +59,10 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   }
   init(){
     this.renderer.setStyle(this.profileIcon.nativeElement, 'width', this.inputWidth)
-    if(isDefined(this.profileId)){
-      this.profile = this.storeSelector.getProfileById(this.profileId)
-    }
-    if(this.profile){
-      this.avatar = this.profile.avatar
-      this.inputName = this.profile.name
-    } 
-    if (this.avatar){
-      this.icon = this.avatar.icon || this.icon;
-      this.inputColor = this.avatar.color || this.inputColor;
-    }
+    this.profile = this.profileInput || (this.profileId ? this.storeSelector.getProfileById(this.profileId) : null);
+    this.avatar = this.avatarInput || (this.profile ? this.profile.avatar : new Avatar())
+    this.name = this.nameInput || (this.profile ? this.profile.name : 'Traveler')
+    this.icon = this.iconInput || this.avatar.icon || 'default';
+    this.color = this.inputColor || this.avatar.color || 'white';
   }
 }

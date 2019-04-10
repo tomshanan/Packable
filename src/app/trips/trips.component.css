@@ -1,19 +1,6 @@
-.trip-sizing{
-    min-width: 250px;
-    flex-grow: 1;
-    max-width: 320px;
-    padding:5px;
-}
-.trip-container{
-    justify-content: center;
-    padding:0 10px;
-}
-
-.trip-content{
-    min-height: 350px;
-    max-height: 80vh;
-}
-.trip-buttons{
-    align-self: center;
-   width: fit-content;
+.trip-form-container{
+    display: block;
+    margin: 0px auto;
+    text-align: center;
+    max-width: 500px;
 }

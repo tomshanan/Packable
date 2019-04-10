@@ -87,7 +87,7 @@ export class NewCollectionDialogComponent implements OnInit {
   }
   confirmProfiles(){
     let originalCollection = this.colFac.completeToOriginal(this.collection)
-    this.store.dispatch(new packableActions.addMissingPackables(this.remotePackables))
+    this.store.dispatch(new packableActions.updateOriginalPackables(this.remotePackables))
     this.store.dispatch(new collectionActions.updateOriginalCollections([originalCollection]))
     this.bulkActions.pushCollectionsToProfiles([this.collection], this.selectedProfiles)
     this.onClose(this.collection);

@@ -16,6 +16,7 @@ import { CollectionComplete, CollectionOriginal } from '../models/collection.mod
 import { isDefined, timeStamp } from '../global-functions';
 import { editProfiles } from '../../profiles/store/profile.actions';
 import { Profile } from '../models/profile.model';
+import { remoteCollection } from '../library/library.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,32 +44,22 @@ export class BulkActionsService {
       this.store.dispatch(new profileActions.editProfiles(profiles))
     }
   }
+  
   public processImportCollections(selectedColIds:string[],profileIds?:string[]){
-    let localCollections = this.colFac.getAllComplete()
+    let localCollections = this.colFac.getAllComplete() // will only return living collections (not deleted)
     let allRemoteCollections = this.storeSelector.getRemoteCollections()
-    let allRemotePackables = this.storeSelector.getRemotePackables()
 
-    let selectedRemoteCollections = allRemoteCollections.filter(c=>selectedColIds.includes(c.id))
-    
+    // select only remote packables that aren't in the local library already
+    let selectedRemoteCollections = allRemoteCollections.filter(c=>{
+      return selectedColIds.includes(c.id) && !localCollections.findId(c.id)
+    })
     let newOriginals = selectedRemoteCollections.map(c=>this.colFac.duplicateOriginalCollection(c))
+    newOriginals.forEach(c=>c.dateModified=timeStamp())
     console.log('BULK ACTION: dispatch updateOriginalCollections',newOriginals)
     this.store.dispatch(new collectionActions.updateOriginalCollections(newOriginals))
     // REVIVE / ADD MISSING PACKABLES TO PACKABLE STORE
-    let packablesInRemote:string[] = []
-    selectedRemoteCollections.forEach(col =>{
-      col.packables.forEach(pac=>{
-        if(!packablesInRemote.includes(pac.id)){
-          packablesInRemote.push(pac.id)
-        }
-      })
-    })
-    let importedPackables = 
-      allRemotePackables
-      .filter(p=>packablesInRemote.includes(p.id))
-      .map(p=>this.pacFac.clonePackableOriginal(p));
-    console.log('BULK ACTION: dispatch addMissingPackables',importedPackables)
-    this.store.dispatch(new packableActions.addMissingPackables(importedPackables))
-    // BULK ACTION- ADD SELECTED COLLECTIONS TO PROFILES
+    this.addPackablesFromRemoteCollections(selectedRemoteCollections)
+    // BULK ACTION- ADD SELECTED COLLECTIONS TO PROFILES, IF PROFILES WERE SELECTED
     if(isDefined(profileIds)){
       let newCompletes = this.colFac.remoteToComplete(selectedRemoteCollections)
       let selectedLocal = localCollections.filter(c=>selectedColIds.includes(c.id))
@@ -76,14 +67,40 @@ export class BulkActionsService {
       this.pushCollectionsToProfiles(allComplete,profileIds)
     }
   }
-  
+
+  public addPackablesFromRemoteCollections(selectedRemoteCollections:remoteCollection[]){
+    if(isDefined(selectedRemoteCollections)){
+      let allRemotePackables = this.storeSelector.getRemotePackables()
+      let allLocalPackables = this.storeSelector.originalPackables.filter(p=>!p.deleted) // only show living packables
+      let packablesInRemote:string[] = []
+      // iterate over collections and push one of each unique packable
+      selectedRemoteCollections.forEach(col =>{
+        col.packables.forEach(pac=>{
+          if(!packablesInRemote.includes(pac.id)){
+            packablesInRemote.push(pac.id)
+      }})})
+      console.log('BULK ACTION: allLocalPackables',allLocalPackables)
+      console.log('BULK ACTION: allRemotePackables',allRemotePackables)
+      let missingPackables = 
+        allRemotePackables
+        .filter(p=>packablesInRemote.includes(p.id)) // filter remotepackables for the ones used in the collections
+        .filter(p=>allLocalPackables.idIndex(p.id)===-1) // filter for the ones not used locally already
+        .map(p=>this.pacFac.clonePackableOriginal(p)); // turn into an original packable for local use
+      missingPackables.forEach(p=>p.dateModified=timeStamp())
+      console.log('BULK ACTION: dispatch addMissingPackables',missingPackables)
+      missingPackables.length > 0 && this.store.dispatch(new packableActions.updateOriginalPackables(missingPackables))
+    }
+  }
   public pushCollectionsToProfiles(collections: CollectionComplete[], profileIds: string[]) {
     if (collections.length > 0 && profileIds.length > 0) {
       let privateCollections = collections.map(c => this.colFac.completeToPrivate(c))
+
       let profiles = this.storeSelector.profiles.filter(p=>profileIds.includes(p.id));
       privateCollections.forEach(privateCol => {
+        privateCol.dateModified = timeStamp()
         profileIds.forEach(pId => {
           let profile = profiles.findId(pId)
+          profile.dateModified = timeStamp()
           let index = profile.collections.idIndex(privateCol.id)
           if (index !== -1) {
             profile.collections.splice(index, 1, privateCol)

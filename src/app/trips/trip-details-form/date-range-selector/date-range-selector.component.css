@@ -54,12 +54,7 @@
       border-bottom-right-radius: 0.5em;
       border-top-right-radius: 0.5em;
   }
-  .custom-append-text {
-      background-color: white;
-      border-left: none;
-      padding-left: 0.1em;
-      transition: border-color .15s;
-  }
+
   .activeInput {
       z-index: 999;
   }

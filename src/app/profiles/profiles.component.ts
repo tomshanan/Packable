@@ -1,6 +1,7 @@
 import { Component, OnInit, TemplateRef, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../shared/app.reducers';
+import * as ProfileActions from './store/profile.actions'
 import { Profile, ProfileComplete } from '../shared/models/profile.model';
 import { Observable, Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,6 +20,7 @@ import { EditProfileDialogComponent } from './edit-profile-dialog/edit-profile-d
 import { MatDialog } from '@angular/material';
 import { blockInitialAnimations } from '../shared/animations';
 import { CollectionFactory } from '../shared/factories/collection.factory';
+import { ConfirmDialogData, ConfirmDialog } from '@app/shared-comps/dialogs/confirm-dialog/confirm.dialog';
 
 @Component({
   selector: 'app-profiles',
@@ -113,10 +115,29 @@ export class ProfilesComponent implements OnInit, OnDestroy {
       ...this.dialogSettings,
       data: data
     })
-    // editProfileDialog.afterClosed().pipe(take(1)).subscribe((profile:Profile)=>{
-    //   if(isDefined(profile)){
-
-    //   }
-    // })
+  }
+  onDeleteProfile(id:string){
+    let profile = this.profiles.findId(id)
+    let data:ConfirmDialogData = {
+      content:'Are you sure you wish to delete this Traveler?<br>All of the customisation you made will be gone forever.',
+      header: `Delete ${profile.name}?`
+    }
+    let confirmDeleteProfileDialog = this.dialog.open(ConfirmDialog,{
+      width:'99vw',
+      maxWidth: '500px',
+      maxHeight: '99vh',
+      autoFocus: false,
+      disableClose: false,
+      data: data
+    })
+    confirmDeleteProfileDialog.afterClosed().pipe(take(1)).subscribe((confirm:boolean)=>{
+      if(confirm){
+        //this.selectedProfileId = null
+        //this.selectedProfile = null
+        this.context.reset()
+        this.onSelectedProfiles()
+        this.store.dispatch(new ProfileActions.removeProfile(id))
+      }
+    })
   }
 }

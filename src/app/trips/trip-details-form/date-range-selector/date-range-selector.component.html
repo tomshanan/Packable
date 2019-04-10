@@ -16,15 +16,11 @@
     (dateSelect)="onDateSelection($event)" 
     (focus)="toggleDatePicker('open')" autocomplete="off">
 
-    <div class="input-group">
-      <input class="form-control custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="toggleDatePicker('open')" [value]="(formattedDate || '')"
+    <mat-form-field class="w-100" floatLabel="never">
+      <input  matInput class="custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="toggleDatePicker('open')" [value]="(formattedDate || '')"
         placeholder="Select travel dates" [ngClass]="{'border-primary': d.isOpen()}" autocomplete="off">
-      <div class="input-group-append">
-        <span class="input-group-text custom-append-text" [ngClass]="{'border-primary': d.isOpen() && (!fromDate || toDate)}">
-          <i class="far fa-calendar-alt"></i>
-        </span>
-      </div>
-    </div>
+        <mat-icon matPrefix class="mr-2">event</mat-icon>
+    </mat-form-field>
   </div>
 </div>
 

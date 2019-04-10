@@ -137,7 +137,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     data.totalNights = dates.length - 1;
     data.destination = this.destService.DestinationById(trip.destinationId);
     data.weatherData = weatherData;
-    let activityIds = trip.activities;
+    let activityIds = trip.collections;
     let profiles = this.profileFactory.getCompleteProfilesByIds(trip.profiles)
 
     let addPackableToList = (newPackable: PackingListPackable): void => {

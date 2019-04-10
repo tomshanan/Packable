@@ -18,7 +18,7 @@ export class TripsComponent implements OnInit {
 
   state_subscription: Subscription;
   trips_obs: Observable<{trips:Trip[]}>;
-  trips: displayTrip[];
+  trips: displayTrip[] = []
   constructor(
     private modalService:NgbModal, 
     private router:Router, 
@@ -31,10 +31,13 @@ export class TripsComponent implements OnInit {
   ngOnInit() {
     this.trips_obs = this.store.select('trips');
     this.state_subscription = this.trips_obs.subscribe((tripState)=>{
-      this.trips = this.storeSelector.getDisplayTrips(tripState.trips)
+      this.trips.compare(this.storeSelector.getDisplayTrips(tripState.trips))
     })
   }
 
+  onTripChange(trip:Trip){
+    console.log(trip)
+  }
   openModal(tempRef: TemplateRef<any> ) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
@@ -43,20 +46,21 @@ export class TripsComponent implements OnInit {
     this.memoryService.resetAll();
     this.router.navigate(['new'], {relativeTo: this.activeRoute})
   }
-  makeTripName(displayTrip: displayTrip, trip: Trip){
-    let reverseDate = (dateString:string):string=>{ return dateString.split('-').reverse().join('')}
-    return `${displayTrip.destinationName.replace(/[^A-Za-z]/g,'')}${reverseDate(trip.startDate)}-${reverseDate(trip.endDate)}`
-  }
-  editTrip(displayTrip: displayTrip){
-    let trip = this.storeSelector.getTripById(displayTrip.id)
-    let TripName = this.makeTripName(displayTrip,trip)
-    this.memoryService.set('TRIP',trip);
-    this.router.navigate([TripName], {relativeTo: this.activeRoute})
-  }
-  viewPackingList(displayTrip: displayTrip){
-    let trip = this.storeSelector.getTripById(displayTrip.id)
-    let TripName = this.makeTripName(displayTrip,trip)
-    this.memoryService.set('TRIP',trip);
-    this.router.navigate([TripName,'packing-list'], {relativeTo: this.activeRoute})
-  }
+  
+  // makeTripName(displayTrip: displayTrip, trip: Trip){
+  //   let reverseDate = (dateString:string):string=>{ return dateString.split('-').reverse().join('')}
+  //   return `${displayTrip.destinationName.replace(/[^A-Za-z]/g,'')}${reverseDate(trip.startDate)}-${reverseDate(trip.endDate)}`
+  // }
+  // editTrip(displayTrip: displayTrip){
+  //   let trip = this.storeSelector.getTripById(displayTrip.id)
+  //   let TripName = this.makeTripName(displayTrip,trip)
+  //   this.memoryService.set('TRIP',trip);
+  //   this.router.navigate([TripName], {relativeTo: this.activeRoute})
+  // }
+  // viewPackingList(displayTrip: displayTrip){
+  //   let trip = this.storeSelector.getTripById(displayTrip.id)
+  //   let TripName = this.makeTripName(displayTrip,trip)
+  //   this.memoryService.set('TRIP',trip);
+  //   this.router.navigate([TripName,'packing-list'], {relativeTo: this.activeRoute})
+  // }
 }

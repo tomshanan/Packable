@@ -1,8 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, Directive, ElementRef, Renderer2, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Directive, ElementRef, Renderer2, ViewChild, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { RippleAnimationConfig } from '@angular/material';
 import { WindowService, screenSize } from '../../shared/services/window.service';
 import { isDefined } from '@app/shared/global-functions';
 import { appColors, color } from '../../shared/app-colors';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -10,7 +11,7 @@ import { appColors, color } from '../../shared/app-colors';
   templateUrl: './icon-text-button.component.html',
   styleUrls: ['./icon-text-button.component.css']
 })
-export class IconTextButtonComponent implements OnInit,OnChanges {
+export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
   @Input('text') text: string = '';
   @Input('svgIcon') svgIcon: string;
   @Input('matIcon') matIcon: string;
@@ -23,7 +24,7 @@ export class IconTextButtonComponent implements OnInit,OnChanges {
   @Input() innerPadding: string = null
   @ViewChild('rippleTrigger') rippleTrigger: ElementRef;
   @Output('onClick') emitClick = new EventEmitter<void>()
-
+  windowSub: Subscription;
   hoverState = false;
   /**
   <icon-text-button
@@ -46,9 +47,15 @@ export class IconTextButtonComponent implements OnInit,OnChanges {
 
   ngOnInit() {
     this.initSizing()
+    this.windowSub = this.windowService.change.subscribe(()=>{
+      this.initSizing()
+    })
   }
   ngOnChanges(changes:SimpleChanges){
     this.initSizing()
+  }
+  ngOnDestroy(){
+    this.windowSub.unsubscribe()
   }
   initSizing(){
     this.color = this.appColors[this.inputColor]
@@ -57,6 +64,7 @@ export class IconTextButtonComponent implements OnInit,OnChanges {
       let width = this.hostElement.nativeElement.clientWidth
       this.rippleRadius = width * 0.6;
     } else {
+      this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', 'inherit')
       this.rippleRadius = 24;
     }
     if(!!this.innerPadding){

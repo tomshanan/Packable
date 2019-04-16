@@ -79,7 +79,7 @@ export class AuthEffects {
                 new profileActions.setProfileState([]),
                 new uesrActions.setUserSettings(defaultUserSettings),
                 new uesrActions.setUserPermissions(defaultVisitorPermissions),
-                new tripActions.setTripState({trips:[],packingLists:[]})
+                new tripActions.setTripState({trips:[],incomplete:[],packingLists:[]})
             ]
         })
     )

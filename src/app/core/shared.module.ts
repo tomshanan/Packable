@@ -6,7 +6,6 @@ import { ProfilesComponent } from '../profiles/profiles.component';
 import { TripsComponent } from '../trips/trips.component';
 import { PackablesComponent } from '../packables/packables.component';
 import { CollectionsComponent } from '../collections/collections.component';
-import { ProfileEditComponent } from '../profiles/profile-edit/profile-edit.component';
 import { MobileNavComponent } from '../shared-comps/mobile-nav/mobile-nav.component';
 import { DesktopNavComponent } from '../shared-comps/desktop-nav/desktop-nav.component';
 import { NavListComponent } from '../nav/nav-list/nav-list.component';
@@ -82,6 +81,9 @@ import { ImportCollectionDialogComponent } from '../collections/collection-list/
 import { SimulateUserComponent } from '../admin/settings/simulate-user/simulate-user.component';
 import { TripDetailsFormComponent } from '../trips/trip-details-form/trip-details-form.component';
 import { TripDestinationSelectorComponent } from '../trips/trip-details-form/trip-destination-selector/trip-destination-selector.component';
+import { NewTripWizardComponent } from '../trips/new-trip-wizard/new-trip-wizard.component';
+import { StepperComponent } from '../shared-comps/stepper/stepper.component';
+import { ProfileSelectionFormComponent } from '../trips/profile-selection-form/profile-selection-form.component';
 
 let imports = [
     ProfilesComponent,
@@ -93,7 +95,6 @@ let imports = [
     AutofocusDirective,
     CollectionsComponent,
     ItemSelectorComponent,
-    ProfileEditComponent,
     joinPipe,
     MobileNavComponent,
     DesktopNavComponent,
@@ -163,7 +164,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent],
     exports: [...imports]
 })
 export class SharedModule {

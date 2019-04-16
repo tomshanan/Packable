@@ -13,12 +13,15 @@ export class Trip {
     }
 }
 
-export interface displayTrip {
-    id: string,
-    displayDate: string,
-    temp: string,
-    destinationName: string,
-    profileNames: string[],
-    collectionNames: string[],
-    dateModified: number
+export class displayTrip {
+    constructor(
+        public id: string,
+        public displayDate: string,
+        public temp: string,
+        public destinationName: string,
+        public profileNames: string[],
+        public collectionNames: string[],
+        public dateModified: number
+    ){
+    }
 }

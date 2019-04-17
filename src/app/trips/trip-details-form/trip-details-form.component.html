@@ -1,11 +1,2 @@
-<trip-destination-selector 
-  [destination]="destination" 
-  (changeDestination)="onDestinationSelected($event)"
-  [disabled]="disabled">
-</trip-destination-selector>
-<app-date-range-selector 
-  (datesSelected)="onDatesSelected($event)" 
-  [setFromDate]="fromDate" 
-  [setToDate]="toDate"
-  [disabled]="disabled">
-</app-date-range-selector>
+<trip-destination-selector [destination]="destination" (changeDestination)="onDestinationSelected($event)"></trip-destination-selector>
+<app-date-range-selector (datesSelected)="onDatesSelected($event)" [setFromDate]="fromDate" [setToDate]="toDate"></app-date-range-selector>

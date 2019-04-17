@@ -12,7 +12,7 @@
     (click)="toggle(profile.id)">
   </profile-icon>
 </div>
-<p *ngIf="multiselect && profiles.length > 1 && showQuickButtons">
+<p *ngIf="multiselect && profiles.length > 1">
     <a class="inline-link small p-2" (click)="profileSelect('all')">All</a>
     <span>/</span>
     <a class="inline-link small p-2" (click)="profileSelect('none')">None</a>

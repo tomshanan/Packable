@@ -1,49 +1,32 @@
-import { trigger, transition, style, animate, keyframes, state, query } from '@angular/animations';
+import { trigger, transition, style, animate, keyframes, state } from '@angular/animations';
 
-export const blockInitialAnimations = trigger('blockInitialAnimations', [
-    transition(':enter', [])
-])
-export const stepperTransition = trigger('stepperAnimation', [
-    transition(':enter', query('.content',[
-        style({ opacity: 0, position:'relative', top:'0'}),
-        animate('300ms 300ms', keyframes([
-            style({ opacity: 0 }),
-            style({ opacity: 1 }),
-        ])),
-    ])),
-    transition(':leave',
-    query('.content',[
-        style({ opacity: 1, position:'absolute', top:'0'}),
-        animate('300ms', keyframes([
-            style({ opacity: 1, display:'block'}),
-            style({ opacity: 0 , display:'none'}),
-        ]))
-    ]))
+export const blockInitialAnimations = trigger('blockInitialAnimations',[
+    transition(':enter',[])
 ])
 
 export const animateSize = trigger('grow', [
     transition('void <=> *', []),
     transition('* <=> *', [
-        style({ height: '{{startHeight}}px' }),
+        style({ height: '{{startHeight}}px'}), 
         animate('.3s ease',
-            style({ height: '{{endHeight}}px' })
+            style({ height: '{{endHeight}}px'})
         ),
     ], {
-            params: { startHeight: 0, endHeight: 0 }
-        })
-]);
-export const fadeInOut =
+      params: { startHeight: 0, endHeight: 0}
+    })
+  ]);
+  export const fadeInOut = 
     trigger('fadeInOut', [
         transition('void <=> *', [
-            animate('.3s ease',
+            animate('.3s ease', 
                 keyframes([
-                    style({ opacity: '0' }),
-                    style({ opacity: '1' })
+                    style({ opacity: '0'}),
+                    style({ opacity: '1'})
                 ])
             )]
         )
     ])
-
+            
 
 export const dropInTrigger =
     trigger('dropInTrigger', [
@@ -148,33 +131,33 @@ export const quickTransitionTrigger = trigger('quickTransitionTrigger', [
 
 export const listItemTrigger = trigger('listItemTrigger', [
     transition(':enter', [
-        style({ opacity: 0, transform: 'scale(0)', width: "0px", height: "0px" }),
+        style({ opacity: 0, transform: 'scale(0)',  width:"0px", height: "0px"}),
         animate('200ms 100ms', keyframes([
-            style({ opacity: 0, transform: 'scale(0)', width: "0px", height: "0px" }),
-            style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*" }),
+            style({ opacity: 0, transform: 'scale(0)', width:"0px", height: "0px"}),
+            style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*"}),
         ])),
     ]),
     transition(':leave', [
         style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*" }),
         animate('200ms', keyframes([
-            style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*" }),
-            style({ opacity: 0, transform: 'scale(0)', width: "0px", height: "0px" }),
+            style({ opacity: 1, transform: 'scale(1)', width: "*", height: "*"}),
+            style({ opacity: 0, transform: 'scale(0)',  width:"0px", height: "0px"}),
         ])),
     ])
 ])
 export const horizontalShringAndFade = trigger('horizontalShringAndFade', [
     transition(':enter', [
-        style({ opacity: 0, transform: 'scale(0)', width: "0px" }),
+        style({ opacity: 0, transform: 'scale(0)',  width:"0px"}),
         animate('200ms 100ms', keyframes([
-            style({ opacity: 0, transform: 'scale(0)', width: "0px" }),
-            style({ opacity: 1, transform: 'scale(1)', width: "*" }),
+            style({ opacity: 0, transform: 'scale(0)', width:"0px"}),
+            style({ opacity: 1, transform: 'scale(1)', width: "*"}),
         ])),
     ]),
     transition(':leave', [
-        style({ opacity: 1, transform: 'scale(1)', width: "*" }),
+        style({ opacity: 1, transform: 'scale(1)', width: "*"}),
         animate('200ms', keyframes([
             style({ opacity: 1, transform: 'scale(1)', width: "*" }),
-            style({ opacity: 0, transform: 'scale(0)', width: "0px" }),
+            style({ opacity: 0, transform: 'scale(0)',  width:"0px"}),
         ])),
     ])
 ])

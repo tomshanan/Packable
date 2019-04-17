@@ -335,9 +335,9 @@ export class EditTripComponent implements OnInit, AfterViewInit {
     if(this.tripForm.valid){
       const trip = this.getTripObject();
       if(this.editMode){
-        // this.store.dispatch(new tripActions.updateIncomplete(trip))
+        this.store.dispatch(new tripActions.editTrip(trip))
       } else {
-        // this.store.dispatch(new tripActions.updateTrips(trip))
+        this.store.dispatch(new tripActions.addTrip(trip))
       }
       this.memoryService.resetAll();
       this.router.navigate(['../'], { relativeTo: this.activatedRoute });

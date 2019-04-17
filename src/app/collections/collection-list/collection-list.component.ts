@@ -158,7 +158,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     this.collectionList.compare(updatedViewObject,(newItem,action)=>{
       console.log('UpdateCollectionList: handeling action: ',action,newItem)
       if(action=="remove"){
-        this.collectionList.removeElements([newItem])
+        this.collectionList.removeIds([newItem])
       } else if (action == 'add'){
         this.collectionList.unshift(newItem)
       } else if (action == 'update'){
@@ -390,7 +390,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   }
   actionAddCollection(collection:CollectionViewObject){
     let usedProfiles = this.storeSelector.getProfilesWithCollectionId(collection.id)
-    let unusedProfiles = this.storeSelector.profiles.removeElements(usedProfiles)
+    let unusedProfiles = this.storeSelector.profiles.removeIds(usedProfiles)
     console.log(
       'profiles using this collection:',usedProfiles,
     '\nprofiles not using this collection:',unusedProfiles)

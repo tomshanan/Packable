@@ -20,7 +20,7 @@ export class StoreSelectorService{
     public packables_obs:Observable<{packables: PackableOriginal[]}>;
     public collections_obs:Observable<{collections: CollectionOriginal[]}>;
     public profiles_obs:Observable<{profiles: Profile[]}>;
-    public trips_obs:Observable<{trips: Trip[], incomplete: Trip[], packingLists:PackingList[]}>;
+    public trips_obs:Observable<{trips: Trip[],packingLists:PackingList[]}>;
     public adminState_obs: Observable<AdminState>
     public libraryState_obs: Observable<libraryState>
 
@@ -28,7 +28,6 @@ export class StoreSelectorService{
     private _originalCollections: CollectionOriginal[];
     private _profiles: Profile[];
     private _trips: Trip[];
-    private _incompleteTrips: Trip[];
     private _packingLists: PackingList[]
     private _adminState: AdminState
     private _libraryState: libraryState
@@ -54,7 +53,6 @@ export class StoreSelectorService{
         })
         this.trips_obs.subscribe(tripState =>{
             this._trips = tripState.trips;
-            this._incompleteTrips = tripState.incomplete;
             this._packingLists = tripState.packingLists
         })
         this.adminState_obs.subscribe(adminState =>{
@@ -70,7 +68,6 @@ export class StoreSelectorService{
     public get originalCollections(): CollectionOriginal[] {return this._originalCollections.slice()}
     public get profiles(): Profile[] {return this._profiles.slice()}
     public get trips(): Trip[]  {return this._trips.slice()}
-    public get incompleteTrips(): Trip[]  {return this._incompleteTrips.slice()}
     public get packingLists(): PackingList[] { return this._packingLists.slice()}
     public get adminState(): AdminState { return this._adminState}
     public get isLibraryStore():boolean {
@@ -131,9 +128,6 @@ export class StoreSelectorService{
 
     getTripById(id:string):Trip{
         return this.trips.find(t=>t.id == id) || null;
-    }
-    getIncompleteTripById(id:string):Trip{
-        return this.incompleteTrips.find(t=>t.id == id) || null;
     }
     getDisplayTrips(trips:Trip[]): displayTrip[]{
         return trips.map(trip =>{

@@ -14,17 +14,15 @@ import { StoreSelectorService } from '../../shared/services/store-selector.servi
 })
 export class ProfileSelectorComponent implements OnInit, OnChanges {
 
-  @Input('profiles') inputProfiles: Profile[] = [] // input profile list
-  @Input('selected') inputSelected: string[] = []; // input initial selected ID
-  @Input() iconWidth: string = '50px'; // set the width of all icons (including padding and margin)
-  @Input() multiselect: boolean = false; // allow selecting multiple profiles
-  @Input() showNames: boolean = true; // show the name below icon
-  @Input() showQuickButtons:boolean = true;
-  @Input() selectedFirst: boolean = false; // move the selected profiles to top of list
-  @Input() fullFrame: boolean = false; // fit icon inside circle
-  @Input() color: string; // override background color for all icons
-  @Output() selectedChange = new EventEmitter<string[]>(); // emits selected ids
-
+  @Input('profiles') inputProfiles: Profile[] = []
+  @Input('selected') inputSelected: string[] = [];
+  @Input() iconWidth: string = '50px';
+  @Input() multiselect: boolean = false;
+  @Input() showNames: boolean = true;
+  @Input() selectedFirst: boolean = false;
+  @Input() fullFrame: boolean = false;
+  @Input() color: string;
+  @Output() selectedChange = new EventEmitter<string[]>();
   @HostBinding('@blockInitialAnimations') blockInitialAnimations = blockInitialAnimations;
   selected: string[] = []
   profiles: Profile[] = []

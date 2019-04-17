@@ -23,7 +23,7 @@ export class weatherFactory{
     weatherDataIsValid(wd:weatherData):boolean{
         return isDefined(wd.minTemp) && isDefined(wd.maxTemp) && isDefined(wd.weatherTypes);
     }
-    getTempRuleString({minTemp,maxTemp,weatherTypes}:WeatherRule):string{
+    getTempString({minTemp,maxTemp,weatherTypes}:WeatherRule):string{
         if(minTemp==absoluteMin && maxTemp == absoluteMax){
             return `Any Temperature`
         } else if (minTemp > absoluteMin && maxTemp == absoluteMax) {
@@ -48,7 +48,7 @@ export class weatherFactory{
                 } else if (wr.minTemp>absoluteMin && wr.maxTemp<absoluteMax) {
                     iconName = 'temp-mid'
                 }
-                returnArray.push({icon: iconName,description: decodeHtml(this.getTempRuleString(wr))})
+                returnArray.push({icon: iconName,description: decodeHtml(this.getTempString(wr))})
             }
             if (wr.weatherTypes.length>0){
                 wr.weatherTypes.forEach(type => returnArray.push({icon: type, description: titleCase(type)}))

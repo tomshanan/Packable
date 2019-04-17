@@ -11,28 +11,14 @@ export class TripEffects {
         private actions$:Actions
     ){}
 
-    @Effect({dispatch:false}) updateTripEffect = this.actions$.pipe(
-        ofType(TripActions.UPDATE_TRIP),
-        tap((action:TripActions.updateTrips)=>{
-            this.storageServices.saveItemsInUser('tripState',action.payload,'trips')
-        })
-    )
-    @Effect({dispatch:false}) updateIncompleteEffect = this.actions$.pipe(
-        ofType(TripActions.UPDATE_INCOMPLETE),
-        tap((action:TripActions.updateIncomplete)=>{
-            this.storageServices.saveItemsInUser('tripState',action.payload,'incomplete')
-        })
-    )
-    @Effect({dispatch:false}) removeTripEffect = this.actions$.pipe(
-        ofType(TripActions.REMOVE_TRIP),
-        tap((action:TripActions.removeTrips)=>{
-            this.storageServices.removeItemsInUser('tripState',action.payload,'trips')
-        })
-    )
-    @Effect({dispatch:false}) removeIncompleteEffect = this.actions$.pipe(
-        ofType(TripActions.REMOVE_INCOMPLETE),
-        tap((action:TripActions.removeIncomplete)=>{
-            this.storageServices.removeItemsInUser('tripState',action.payload,'incomplete')
+    @Effect({dispatch:false}) changeTripEffect = this.actions$.pipe(
+        ofType(TripActions.ADD_TRIP,
+            TripActions.EDIT_TRIP,
+            TripActions.REMOVE_TRIP,
+            TripActions.REMOVE_TRIP_ACTIVITY,
+            TripActions.REMOVE_TRIP_PROFILE),
+        tap(()=>{
+            this.storageServices.setUserItemsNode('tripState')
         })
     )
 }

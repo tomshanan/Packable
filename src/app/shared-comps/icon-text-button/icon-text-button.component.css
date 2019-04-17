@@ -7,12 +7,10 @@ a{
     position: relative;
     padding: 0.1em;
     overflow: visible;
-    transition: color 300ms;
 }
 .text{
     font-size: 0.8em;
     padding: .5em 0em;
-    transition: color 300ms;
 }
 .icon-container {
     position: relative;
@@ -37,9 +35,7 @@ a{
     width: 1em;
     height: 1em;
     font-size: inherit;
-    transition: color 300ms;
 }
-.disabled{
-    pointer-events: none!important;
+.disabled:hover{
     cursor: default!important;
 }

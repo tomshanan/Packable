@@ -1,0 +1,55 @@
+<div id="profileForm" class="full-flex">
+	<app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onNext()"></app-mobile-nav>
+	<div class="ff-row-main">
+		<form [formGroup]="profileForm">
+			<div class="form-border" *ngIf="!editMode">
+				<div class="form-group">
+					<label for="name">Profile Name</label>
+					<input type="text" name="name" class="form-control" formControlName="name">
+					<div class="help-block" *ngIf="!profileForm.get('name').valid">
+						<span class="invalid-feedback" *ngIf="profileForm.get('name').errors['usedName']">
+							Sorry, this Profile name already exists...
+						</span>
+						<span class="invalid-feedback" *ngIf="profileForm.get('name').invalid && !profileForm.get('name').errors['usedName']">
+							Please select a valid name (a-z, A-Z, 0-9)
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="form-border" *ngIf="editMode">
+				<div class="form-border-header pointer" (click)="editCollections()">
+					<h5>Collections</h5>
+					<span class="text-primary">Edit
+						<i class="fas fa-chevron-right"></i>
+					</span>
+				</div>
+				<div class="form-row">
+					<div class="col-12">
+						<a class="collection d-flex flex-row align-items-center justify-content-between" *ngFor="let collection of editingProfile.collections; let i = index"
+						 (click)="onEditCollection(collection,i)">
+							<div>
+								<h6 class="collection-name">{{collection.name}}
+									<small class="badge badge-success small" *ngIf="collection.activity">Activity</small>
+								</h6>
+								<div class="collection-packables">
+									<span class="collection-packable">{{collection.packables | join:', ':'name'}}</span>
+								</div>
+							</div>
+							<span class="text-primary">
+								<i class="fas fa-chevron-right"></i>
+							</span>
+						</a>
+						<div class="small text-center text-muted" *ngIf="editingProfile.collections.length === 0">
+							This Profile has no Collections yet.
+							<br>
+							<a class="inline-link" (click)="editCollections({itemSelector:true})">
+								Add Collections
+							</a>?
+						</div>
+					</div>
+				</div>
+			</div>
+			<app-desktop-nav [nav]="navParams" (leftAction)="return()" (rightAction)="onNext()" (optionAction)="onOption($event)"></app-desktop-nav>
+		</form>
+	</div>
+</div>

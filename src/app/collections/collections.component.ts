@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { Observable ,  Subscription, combineLatest } from 'rxjs';
 import { CollectionPrivate, CollectionOriginal, CollectionComplete } from '../shared/models/collection.model';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MemoryService } from '../shared/services/memory.service';
 import { StoreSelectorService } from '../shared/services/store-selector.service';
 import { ModalComponent } from '../shared-comps/modal/modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -35,6 +36,7 @@ export class CollectionsComponent implements OnInit,OnDestroy {
     private store:Store<fromApp.appState>,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private memoryService: MemoryService,
     private collectionFactory: CollectionFactory,
     private storeSelector: StoreSelectorService,
     private storage:StorageService,
@@ -50,7 +52,15 @@ export class CollectionsComponent implements OnInit,OnDestroy {
       console.log('collections - received new state');
       let profiles = proState.profiles
       this.collections = this.collectionFactory.makeCompleteArray(colState.collections)
-
+      // collections = select only collections which are being used by a profile
+      /*.filter(col=>{
+        return profiles.some(p=>p.collections.idIndex(col.id)!=-1)
+      })
+      // unused collections = select only collections which are NOT being used by a profile
+      this.unusedCollections = this.collectionFactory.makeCompleteArray(colState.collections).filter(col=>{
+        return profiles.every(p=>p.collections.idIndex(col.id)==-1)
+      })
+      */
     })
   }
 

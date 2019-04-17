@@ -57,7 +57,7 @@ declare global {
          * Given a removeArray, the method removes any elemets with matching IDs and returns a new array
          * @param removeArray The array of items you wish to clear from the original array. (all must have ID property)
          */
-        removeElements(removeArray:T[]):T[];
+        removeIds(removeArray:T[]):T[];
     }
 }
 
@@ -124,8 +124,8 @@ if (!Array.prototype.clearUndefined) {
     }
 }
 
-if(!Array.prototype.removeElements){
-    Array.prototype.removeElements = function <T extends comparableItem>(this:T[], removeArray:T[]):T[]{
+if(!Array.prototype.removeIds){
+    Array.prototype.removeIds = function <T extends comparableItem>(this:T[], removeArray:T[]):T[]{
         removeArray.forEach(item => {
             if('id' in item){
                 let i = this.idIndex(item.id)

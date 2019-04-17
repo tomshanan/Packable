@@ -6,40 +6,39 @@ import { isDefined } from '../global-functions';
   selector: '[appColor]',
   host: {
     '[style.transition]': '"all 200ms"',
-    '[style.cursor]': 'disableState() || !responsive ? "initial" : "pointer"',
+    '[style.cursor]': 'disableState() ? "initial" : "pointer"',
   }
 })
 export class AppColorDirective implements OnInit, OnChanges {
   element: any;
   @Input('appColor') inputColor:keyof appColors = 'action';
-  @Input('appColorResponsive') responsive:boolean = true;
   @Input('appColorTarget') targetElement;
   @Input('disabled') disabled: boolean = false;
   color: color;
 
   @HostListener('mouseenter') onMouseEnter() {
-    this.responsive && this.setColor(this.color.hover);
+    this.setColor(this.color.hover);
   }
   @HostListener('mouseleave') onMouseLeave() {
-    this.responsive && this.setColor(this.color.inactive);
+    this.setColor(this.color.inactive);
   }
   @HostListener('mouseup') onMouseUp() {
-    this.responsive && this.setColor(this.color.hover);
+    this.setColor(this.color.hover);
   }
   @HostListener('click') onClick() {
-    this.responsive && this.setColor(this.color.click);
+    this.setColor(this.color.click);
   }
   @HostListener('touchend') onTouchEnd() {
-    this.responsive && this.setColor(this.color.inactive);
+    this.setColor(this.color.inactive);
   }
   @HostListener('touchcancel') onTouchCancel() {
-    this.responsive && this.setColor(this.color.inactive);
+    this.setColor(this.color.inactive);
   }
   @HostListener('blur') onBlur() {
-    this.responsive && this.setColor(this.color.inactive);
+    this.setColor(this.color.inactive);
   }
   @HostListener('touchstart') onTouchStart() {
-    this.responsive && this.setColor(this.color.click);
+    this.setColor(this.color.click);
   }
   
   constructor(

@@ -12,7 +12,7 @@ import { Store } from '@ngrx/store';
 import { PackableComplete } from '../../../shared/models/packable.model';
 import { ContextService } from '../../../shared/services/context.service';
 import { Subscription } from 'rxjs';
-import { updateIncomplete } from '../../../trips/store/trip.actions';
+import { editTrip } from '../../../trips/store/trip.actions';
 import { timeStamp } from '@app/shared/global-functions';
 
 @Component({

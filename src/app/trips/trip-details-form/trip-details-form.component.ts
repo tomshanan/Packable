@@ -13,8 +13,6 @@ import { Guid, timeStamp } from '@app/shared/global-functions';
 export class TripDetailsFormComponent implements OnInit {
   @Input('trip') trip:Trip = new Trip()
   @Output('tripChange') tripChange = new EventEmitter<Trip>()
-  @Input('disabled') disabled: boolean = false;
-
   destination: Destination;
   fromDate: moment.Moment;
   toDate: moment.Moment;

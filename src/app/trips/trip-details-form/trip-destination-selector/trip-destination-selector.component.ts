@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl, AbstractControl } from '@angular/forms';
 import { DestinationDataService, Destination } from '@shared/services/location-data.service';
 import { MatAutocompleteTrigger } from '@angular/material';
@@ -11,11 +11,9 @@ import { isDefined } from '@app/shared/global-functions';
   templateUrl: './trip-destination-selector.component.html',
   styleUrls: ['./trip-destination-selector.component.css']
 })
-export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,OnDestroy,OnChanges {
+export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,OnDestroy {
 
   @Input('destination') setDestination: Destination;
-  @Input('disabled') disabled: boolean = false;
-
   @Output('changeDestination') changeDestinationEvent = new EventEmitter<Destination>()
 
   destination:FormControl
@@ -31,9 +29,8 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
     private fb: FormBuilder,
   ) { 
     this.destination = fb.control('',this.validator_destinationInvalid.bind(this))
-    this.setDisabledState()
   }
-  
+
   ngOnInit() {
     this.destArray = this.destService.destinations;
     if(isDefined(this.setDestination)){
@@ -47,23 +44,6 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
         this.confirmDestination();
       })
     )
-  }
-  ngOnChanges(changes:SimpleChanges){
-    if(changes['setDestination'] && isDefined(this.setDestination) && isDefined(this.destination)){
-      this.destination.setValue(this.setDestination)
-      this.destination.updateValueAndValidity()
-    }
-    if(changes['disabled'] && isDefined(this.disabled) && isDefined(this.destination)){
-      this.setDisabledState()
-      this.destination.updateValueAndValidity()
-    }
-  }
-  setDisabledState(){
-    if(this.disabled === true){
-      this.destination.disable()
-    } else {
-      this.destination.enable()
-    }
   }
   ngOnDestroy(){
     this.subs.unsubscribe()

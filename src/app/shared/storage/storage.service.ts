@@ -226,17 +226,14 @@ export class StorageService {
             }
             if(data['tripState']){
                 let _trips: Trip[] =  data['tripState']['trips'] ? this.unwrapForLocalStore(data['tripState']['trips']).map((t:Trip) => this.tripFactory.duplicateTrip(t)) : [];
-                let _incomplete: Trip[] =  data['tripState']['incomplete'] ? this.unwrapForLocalStore(data['tripState']['incomplete']).map((t:Trip) => this.tripFactory.duplicateTrip(t)) : [];
                 let _packingLists: PackingList[] =  data['tripState']['packingLists'] ? this.unwrapForLocalStore(data['tripState']['packingLists']): [];
                 this.store.dispatch(new tripActions.setTripState({
                     trips: _trips,
-                    incomplete:_incomplete,
                     packingLists: _packingLists
                 }))
             }else if (replace.includes('all') || replace.includes('tripState')){
                 this.store.dispatch(new tripActions.setTripState({
                     trips: [],
-                    incomplete:[],
                     packingLists: []
                 }))
             }
@@ -258,7 +255,6 @@ export class StorageService {
                 case 'tripState':
                     data = {
                         trips: this.wrapForStorage(this.storeSelector.trips),
-                        incomplete: this.wrapForStorage(this.storeSelector.incompleteTrips),
                         packingLists: this.wrapForStorage(this.storeSelector.packingLists)
                     }
                     break;
@@ -271,23 +267,23 @@ export class StorageService {
                 })
         }
     }
-    saveItemsInUser(node: nodeOptions,items:localItem[], subNode: string = ''){
+    saveItemsInUser(node: nodeOptions,items:localItem[]){
         if (this.checkAuth()) {
             let updates: updates = {}
             let wrappedItems = this.wrapForStorage(items)
             for(let item in wrappedItems){
-                let itempath = path(this.pathToUserItems,node,subNode,item)
+                let itempath = path(this.pathToUserItems,node,item)
                 updates[itempath] = wrappedItems[item]
             }
             firebase.database().ref().update(updates).then(()=>{console.log('STORAGE:','Saved items (updateItemsInUser)',updates);
             })
         }
     }
-    removeItemsInUser(node: nodeOptions,ids:string[], subNode: string = ''){
+    removeItemsInUser(node: nodeOptions,ids:string[]){
         if (this.checkAuth()) {
             let updates: updates = {}
             ids.forEach(id=>{
-                let itemPath = path(this.pathToUserItems,node,subNode,id)
+                let itemPath = path(this.pathToUserItems,node,id)
                 updates[itemPath] = null
             })
             firebase.database().ref().update(updates).then(()=>{console.log('STORAGE:','Removed items (removeItemsInUser)',updates);
@@ -305,7 +301,6 @@ export class StorageService {
                 profiles: this.wrapForStorage(this.storeSelector.profiles),
                 tripState: {
                     trips: this.wrapForStorage(this.storeSelector.trips),
-                    incomplete: this.wrapForStorage(this.storeSelector.incompleteTrips),
                     packingLists: this.wrapForStorage(this.storeSelector.packingLists)
                 },
             }
@@ -483,6 +478,12 @@ export class StorageService {
             allProfiles.push(profile);
         })
         this.store.dispatch(new profileActions.setProfileState(allProfiles))
+        let destinationId = destinations[Math.floor(Math.random() * destinations.length)].id
+        let startdate = moment();
+        let endDate = moment().add(5, 'days')
+        let profiles = allProfiles.map(p => p.id);
+        let trip = new Trip(Guid.newGuid(), startdate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'), destinationId, profiles, [], moment().format())
+        this.store.dispatch(new tripActions.setTripState({ trips: [trip], packingLists: [] }))
     }
 
 }

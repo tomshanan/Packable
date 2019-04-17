@@ -1,11 +1,10 @@
   <mat-form-field class="w-100" floatLabel="never">
-      <input matInput
-      [matAutocomplete]="auto" 
+      <input 
       type="text"
       [formControl]="destination" 
-      placeholder="Enter city or country"
+      matInput placeholder="Enter city or country"
       autocomplete="off"
-      [matAutocompleteDisabled]="disabled"
+      [matAutocomplete]="auto" 
       #inputDestination>
       <mat-icon matPrefix class="mr-2">place</mat-icon>
   </mat-form-field>

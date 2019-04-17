@@ -27,7 +27,6 @@ export function randomBetween(min:number,max:number):number {
 }
 
 export function path(...arr:string[]):string{
-  arr = arr.clearUndefined()
   return arr.join('/')
 }
 
@@ -133,10 +132,6 @@ export function decodeHtml(html:string) {
 
 export function comparableName(str:string){
   return str.trim().toLowerCase().split(allowedSpacesRegEx).join()
-}
-type hasDateModified = {dateModified:number}
-export function sortByMostRecent(a:hasDateModified,b:hasDateModified):number{
-  return a.dateModified > b.dateModified ? -1 : 1;
 }
 export const allowedSpacesRegEx = /[\s\-\_\(\)]+/;
 export const allowedNameRegEx = /^[A-Za-z0-9\s\-\_\(\)\']+$/;

@@ -4,70 +4,79 @@ import { PackingList } from '../../shared/models/packing-list.model';
 
 export interface State {
     trips: Trip[];
+    incomplete: Trip[];
     packingLists: PackingList[];
 }
 
 const initialState: State = {
     trips: [],
+    incomplete: [],
     packingLists: []
 }
 export function tripReducers(state = initialState, action: TripActions.tripActions) {
+    let tripState = state.trips.slice()
+    let incompleteState = state.incomplete.slice()
+    let editId: string;
+    let editIndex: number;
+    let editTrip: Trip;
+    console.log('TripReducers received action',action)
     switch (action.type) {
         case TripActions.SET_TRIP_STATE:
-        console.log(action.payload)
             return {
                 ...state,
                 ...action.payload
             }
-        case TripActions.ADD_TRIP:
+        case TripActions.UPDATE_TRIP:
+            action.payload.forEach(trip=>{
+                editId = trip.id;
+                editIndex = tripState.idIndex(editId);
+                if(editIndex !== -1){
+                    tripState[editIndex] = trip
+                } else {
+                    tripState.unshift(trip)
+                }
+            })
             return {
                 ...state,
-                trips: [...state.trips, action.payload]
-            }
-        case TripActions.EDIT_TRIP:
-            const editId = action.payload.id;
-            const editIndex = state.trips.findIndex(p=>p.id === editId);
-            const trip = state.trips[editIndex];
-            const updatedTrip = {
-                ...trip,
-                ...action.payload
-            }
-            const updatedTrips = state.trips.slice();
-            updatedTrips[editIndex] = updatedTrip;
-            return {
-                ...state,
-                trips: [...updatedTrips]
+                trips: [...tripState]
             }
         case TripActions.REMOVE_TRIP:
-            let removeId = action.payload;
-            let removeIndex = state.trips.findIndex(p=>p.id == removeId)
-            const removeTrips = state.trips.slice();
-            removeTrips.splice(removeIndex,1);
+        action.payload.forEach(id=>{
+            let removeId = id;
+            let removeIndex = tripState.idIndex(removeId)
+            if(removeIndex !== -1){
+                tripState.splice(removeIndex,1);
+            }
+        })
             return {
                 ...state,
-                trips: [...removeTrips]
+                trips: [...tripState]
             }
-        case TripActions.REMOVE_TRIP_PROFILE:
-            const rp_id = action.payload
-            const rp_trips = state.trips.slice()
-            rp_trips.map(trip=>{
-                trip.profiles = trip.profiles.filter(p=> p!=rp_id)
-                return trip
+            case TripActions.UPDATE_INCOMPLETE:
+            action.payload.forEach(trip=>{
+                editId = trip.id;
+                editIndex = incompleteState.idIndex(editId);
+                if(editIndex !== -1){
+                    incompleteState[editIndex] = trip
+                } else {
+                    incompleteState.unshift(trip)
+                }
             })
             return {
                 ...state,
-                trips: rp_trips
+                incomplete: [...incompleteState]
             }
-        case TripActions.REMOVE_TRIP_ACTIVITY:
-            const ra_id = action.payload
-            const ra_trips = state.trips.slice()
-            ra_trips.map(trip =>{
-                trip.collections = trip.collections.filter(a=>a!=ra_id)
-                return trip
-            })
+        case TripActions.REMOVE_INCOMPLETE:
+        action.payload.forEach(id=>{
+            let removeId = id;
+            let removeIndex = incompleteState.idIndex(removeId)
+            if(removeIndex !== -1){
+                incompleteState.splice(removeIndex,1);
+            }
+        })
             return {
                 ...state,
-                trips: ra_trips
+                incomplete: [...incompleteState]
             }
         case TripActions.UPDATE_PACKING_LIST:
             const newList = action.payload;

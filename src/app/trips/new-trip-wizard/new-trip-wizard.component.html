@@ -1,0 +1,48 @@
+<div [class.flex-device-height]="windowService.max('md')">
+  <app-nav [header]="'New Trip'" [icon]="'fas fa-plane'"></app-nav>
+  <div class="scrollable">
+    <app-stepper [steps]="steps" [currentStep]="step" (stepClicked)="nextStep($event)"></app-stepper>
+    <div class="step" *ngIf="step===1">
+      <div class="content w-500 text-center">
+          <h5>Where to next?</h5>
+          <trip-details-form [trip]="trip" (tripChange)="setTimeAndPlace($event)">
+          </trip-details-form>
+      </div>
+      <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>
+    </div>
+    <div class="step" *ngIf="step===2">
+        <div class="content w-500 text-center">
+            <h5>Who's going?</h5>
+            <profile-selection-form [selected]="trip.profiles" (selectedChange)="setSelectedProfiles($event)"></profile-selection-form>
+        </div>
+        <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>      
+    </div>
+    <div class="step" *ngIf="step===3">
+      <div class="content">
+        step 3 content
+      </div>
+      <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>
+    </div>
+    <div class="step" *ngIf="step===4">
+      <div class="content">
+        step 4 content
+      </div>
+      <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>
+    </div>
+    <div class="step" *ngIf="step===5">
+      <div class="content">
+        step 5 content
+      </div>
+      <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>
+    </div>
+  </div>
+</div>
+
+
+<ng-template let-step #continueButton>
+  <dialog-confirm-button [absoluteBottom]="windowService.max('md')">
+    <button mat-fab color="primary" (click)="onConfirmStep(step)" [disabled]="!stepIsValid(step)">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</ng-template>

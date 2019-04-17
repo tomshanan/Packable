@@ -8,22 +8,31 @@ import * as fromApp from '../shared/app.reducers'
 import { Trip, displayTrip } from '../shared/models/trip.model';
 import { Observable ,  Subscription } from 'rxjs';
 import { StoreSelectorService } from '../shared/services/store-selector.service';
+import { TripMemoryService } from '../shared/services/trip-memory.service';
+import { State as tripState } from './store/trip.reducers';
+import { sortByMostRecent } from '@app/shared/global-functions';
+import * as tripActions from './store/trip.actions';
+import { evaporateTransitionTrigger } from '../shared/animations';
 
 @Component({
   selector: 'app-trips',
   templateUrl: './trips.component.html',
-  styleUrls: ['./trips.component.css']
+  styleUrls: ['./trips.component.css'],
+  animations: [evaporateTransitionTrigger]
 })
 export class TripsComponent implements OnInit {
 
   state_subscription: Subscription;
-  trips_obs: Observable<{trips:Trip[]}>;
+  trips_obs: Observable<tripState>;
   trips: displayTrip[] = []
+  incomplete: displayTrip[] = []
+  newTrip:Trip;
+
   constructor(
     private modalService:NgbModal, 
     private router:Router, 
     private activeRoute:ActivatedRoute,
-    private memoryService: MemoryService,
+    private tripMemory:TripMemoryService,
     private storeSelector: StoreSelectorService,
     private store: Store<fromApp.appState>
   ) { }
@@ -32,19 +41,31 @@ export class TripsComponent implements OnInit {
     this.trips_obs = this.store.select('trips');
     this.state_subscription = this.trips_obs.subscribe((tripState)=>{
       this.trips.compare(this.storeSelector.getDisplayTrips(tripState.trips))
+      this.incomplete.compare(this.storeSelector.getDisplayTrips(tripState.incomplete))
+      this.incomplete.sort(sortByMostRecent)
+      console.log(this.incomplete)
     })
   }
 
   onTripChange(trip:Trip){
-    console.log(trip)
+    this.newTrip = trip;
   }
   openModal(tempRef: TemplateRef<any> ) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
   }
-  newTrip(){
-    this.memoryService.resetAll();
+  confirmNewTrip(){
+    this.tripMemory.saveTempTrip(this.newTrip)
     this.router.navigate(['new'], {relativeTo: this.activeRoute})
+  }
+  continueIncomplete(id:string){
+    let incTrip = this.storeSelector.getIncompleteTripById(id)
+    this.tripMemory.saveTempTrip(incTrip)
+    this.router.navigate(['new'], {relativeTo: this.activeRoute})
+  }
+  removeIncomplete(trip:displayTrip){
+    this.incomplete.removeElements([trip])
+    this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
   }
   
   // makeTripName(displayTrip: displayTrip, trip: Trip){

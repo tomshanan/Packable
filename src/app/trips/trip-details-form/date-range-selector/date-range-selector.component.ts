@@ -26,18 +26,14 @@ const after = (one: NgbDateStruct, two: NgbDateStruct) =>
 })
 export class DateRangeSelectorComponent implements OnInit {
   @ViewChild('d') d: NgbInputDatepicker;
-  // @HostListener('window:resize', ['$event'])
-  // onResize(event) {
-  //   this.innerWidth = window.innerWidth;
-  //   this.datepickerSize = this.innerWidth > 500 ? 2 : 1;
-  // }
   @Output() datesSelected = new EventEmitter<dateSelectionEvent>();
+  @Input() setFromDate: moment.Moment;
+  @Input() setToDate: moment.Moment;
+  @Input('disabled') disabled: boolean = false;
 
   public innerWidth: any;
   datepickerSize: number;
   hoveredDate: NgbDateStruct;
-  @Input() setFromDate: moment.Moment;
-  @Input() setToDate: moment.Moment;
   fromDate: NgbDateStruct;
   toDate: NgbDateStruct;
   prevDates: { from: NgbDateStruct, to: NgbDateStruct };

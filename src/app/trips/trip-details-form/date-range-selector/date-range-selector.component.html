@@ -1,4 +1,4 @@
-<div class="form-row">
+<div class="form-row position-relative">
   <div class="col" [ngClass]="{'activeInput':d.isOpen()}">
     <input 
     ngbDatepicker 
@@ -14,21 +14,45 @@
     [autoClose]="false"
     #d="ngbDatepicker" 
     (dateSelect)="onDateSelection($event)" 
-    (focus)="toggleDatePicker('open')" autocomplete="off">
+    (focus)="toggleDatePicker('open')" 
+    [disabled]="disabled"
+    autocomplete="off">
 
     <mat-form-field class="w-100" floatLabel="never">
-      <input  matInput class="custom-date-input" type="text" name="fromDate" id="fromDate" (focus)="toggleDatePicker('open')" [value]="(formattedDate || '')"
-        placeholder="Select travel dates" [ngClass]="{'border-primary': d.isOpen()}" autocomplete="off">
+      <input  matInput 
+        class="custom-date-input" 
+        type="text" 
+        name="fromDate" 
+        id="fromDate" 
+        (focus)="toggleDatePicker('open')" 
+        [value]="(formattedDate || '')"
+        placeholder="Select travel dates" 
+        [ngClass]="{'border-primary': d.isOpen()}" 
+        autocomplete="off" 
+        [disabled]="disabled">
         <mat-icon matPrefix class="mr-2">event</mat-icon>
     </mat-form-field>
   </div>
 </div>
 
 <ng-template #t let-date="date" let-focused="focused">
-  <span class="custom-day" [class.focused]="focused" [class.range]="isFrom(date) || isTo(date) || isInside(date) || isHovered(date)"
-    [class.betweenDates]="isInside(date)|| isHovered(date)" [class.selected]="isFrom(date) || isTo(date)" [class.fromDate]="isFrom(date) || (hoveredDate == date && !fromDate)"
-    [class.toDate]="isTo(date) || (hoveredDate == date && !toDate)" [class.disabled]="isBeforeMin(date)" (mouseenter)="hoveredDate = date" (mouseleave)="hoveredDate = null">
+  <span class="custom-day" 
+    [class.focused]="focused" 
+    [class.range]="isFrom(date) || isTo(date) || isInside(date) || isHovered(date)" 
+    [class.betweenDates]="isInside(date)|| isHovered(date)" 
+    [class.selected]="isFrom(date) || isTo(date)" 
+    [class.fromDate]="isFrom(date) || (hoveredDate == date && !fromDate)"
+    [class.toDate]="isTo(date) || (hoveredDate == date && !toDate)" 
+    [class.disabled]="isBeforeMin(date)" 
+    (mouseenter)="hoveredDate = date" 
+    (mouseleave)="hoveredDate = null">
     {{ date.day }}
   </span>
 </ng-template>
-<div class="modal-backdrop quick fade " *ngIf="d.isOpen()" [class.show]="selectorOpen" (click)="toggleDatePicker('close')" style="z-index: 900;"></div>
+<div 
+  class="modal-backdrop quick fade" 
+  *ngIf="d.isOpen()" 
+  [class.show]="selectorOpen" 
+  (click)="toggleDatePicker('close')" 
+  style="z-index: 900;">
+</div>

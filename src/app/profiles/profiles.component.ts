@@ -5,7 +5,6 @@ import * as ProfileActions from './store/profile.actions'
 import { Profile, ProfileComplete } from '../shared/models/profile.model';
 import { Observable, Subscription } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MemoryService } from '../shared/services/memory.service';
 import { StoreSelectorService } from '../shared/services/store-selector.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../shared-comps/modal/modal.component';
@@ -66,20 +65,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
       console.log('profile state emitted', state);
       this.profiles = state.profiles
       this.setProfileAndCollections()
-
-      // console.log('complete profiles to display:',this.completeProfiles)
-      // if(this.selectedProfileId != null && this.profiles.idIndex(this.selectedProfileId) === -1){
-      //   this.context.reset();
-      //   this.selectedProfileId = null;
-      // } else {
-      //   this.setProfileAndCollections()
-      // }
     })
-    // this.subs.add(this.context.changes.subscribe(()=>{
-    //   if(this.context.profileId){
-    //     this.setProfileAndCollections()
-    //   }
-    // }))
   }
   onSelectedProfiles() { // when profile selector emits a new profile
     this.context.setBoth(null, this.selectedProfileId)

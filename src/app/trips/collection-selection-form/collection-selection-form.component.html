@@ -1,0 +1,13 @@
+<div #collectionList *ngIf="collections && collections.length>0">
+  <div *ngFor="let collection of collections">
+    <collection-details-card
+      [collection]="collection"
+      actionType="selection"
+      selectionOnIcon="added"
+      selectionOffIcon="unselected"
+      [selectionState]="list.isSelected(collection.id)"
+      [profileGroup]="collectionProfileGroups[collection.id]"
+      (actionClick)="toggleCollection(collection.id)">
+    </collection-details-card>
+  </div>
+</div>

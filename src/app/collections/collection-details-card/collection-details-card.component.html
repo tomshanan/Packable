@@ -1,5 +1,5 @@
 <div class="collection-card-container">
-  <mat-card class="collection-card">
+  <mat-card class="collection-card" [class.with-profiles]="profileGroup && profileGroup.length >0">
     <div class="flex-container">
       <div class="flex-item actionBox">
         <ng-container *ngIf="actionType=='button'">
@@ -19,11 +19,26 @@
       </div>
       <div class="flex-item detailBox" [class.text-muted]="disabled">
         <p class="detailBox-header" [class.small-screen]="windowService.max('xs')">{{collection.name}}</p>
-        <div class="packable-list-container">
+        <div class="packable-list-container" *ngIf="!profileGroup || profileGroup.length === 0">
           <list-concatinator [list]="packableNameList">
           </list-concatinator>
         </div>
+        <div *ngIf="profileGroup && profileGroup.length >0 && !selectionState && essentialGroup && essentialGroup.length > 0 " class="small text-muted">
+            Essential for {{essentialGroup | join:', ':'name'}}
+          </div>
       </div>
     </div>
+
+    <div class="used-by-container" *ngIf="profileGroup && profileGroup.length >0" @transitionTrigger>
+        <div *ngFor="let profile of profileGroup" style="line-height:0em;" @horizontalShringAndFade>
+          <profile-icon 
+            [profileId]="profile.id" 
+            width="20px" 
+            [inline]="true" 
+            [fullFrame]="true">
+          </profile-icon>
+        </div>
+      </div>
   </mat-card>
+  
 </div>

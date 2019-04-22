@@ -1,7 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, AfterViewInit, ChangeDetectorRef, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { WindowService } from '../../shared/services/window.service';
 import { Subscription } from 'rxjs';
+import { Profile } from '../../shared/models/profile.model';
+import { transitionTrigger, horizontalShringAndFade } from '../../shared/animations';
 
 
 export type actionType = 'button' | 'selection' | 'none'
@@ -12,11 +14,16 @@ export type buttonAction = 'select' | 'deselect' | 'delete' | 'add' | 'remove';
 @Component({
   selector: 'collection-details-card',
   templateUrl: './collection-details-card.component.html',
-  styleUrls: ['./collection-details-card.component.css']
+  styleUrls: ['./collection-details-card.component.css'],
+  animations:[transitionTrigger,horizontalShringAndFade]
 })
-export class CollectionDetailsCardComponent implements OnInit,OnDestroy {
+export class CollectionDetailsCardComponent implements OnInit,OnDestroy,OnChanges {
 
 @Input('collection') collection: CollectionComplete;
+@Input('profileGroup') inputProfileGroup: Profile[] = [];
+profileGroup: Profile[] = [];
+essentialGroup: Profile[] = []
+
 @Input('actionType') actionType: actionType = 'button';
 @Input('selectionState') selectionState: selectionState = false;
 
@@ -49,7 +56,16 @@ packableNameListString: string;
   ngOnDestroy(){
     // this.sub.unsubscribe()
   }
-
+  ngOnChanges(changes:SimpleChanges){
+    if(changes['inputProfileGroup']){
+      this.profileGroup.compare(this.inputProfileGroup)
+      this.essentialGroup = this.profileGroup.filter(p=>p.collections.findId(this.collection.id).essential)
+      if(this.profileGroup.length > 0 && this.profileGroup.length === this.essentialGroup.length && this.actionType === 'selection'){
+        this.selectionState = true
+        this.actionClick.emit('select')
+      }
+    }
+  }
   action(){
     if(!this.disabled && this.actionType !='none'){
       let action:buttonAction;

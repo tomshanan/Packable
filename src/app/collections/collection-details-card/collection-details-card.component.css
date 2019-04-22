@@ -3,6 +3,11 @@
 }
 .collection-card{
     padding: 0;
+    position: relative;
+}
+.collection-card.with-profiles{
+    padding-bottom: 5px;
+    margin-bottom: 5px;
 }
 .flex-container{
     box-sizing: border-box;
@@ -15,13 +20,20 @@
 .flex-item{
     padding:5px;
 }
+.with-profiles .flex-item{
+    padding-bottom: 0;
+}
 .actionBox{
     box-sizing: content-box;
     flex-grow: 0;
 }
 .detailBox{
     flex-grow: 1;
+    align-self: center;
     overflow: hidden;
+}
+.with-profiles .detailBox {
+    padding-bottom: 5px;
 }
 .detailBox-header{
     font-size: 1.5em;
@@ -37,4 +49,13 @@
     text-overflow: ellipsis;
     font-size: 0.8em;
     line-height: 1.2em;
+}
+.used-by-container{
+    position: absolute;
+    bottom: -10px;
+    width:100%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    padding-right: 5px;
 }

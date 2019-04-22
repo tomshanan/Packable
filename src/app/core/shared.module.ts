@@ -84,6 +84,7 @@ import { TripDestinationSelectorComponent } from '../trips/trip-details-form/tri
 import { NewTripWizardComponent } from '../trips/new-trip-wizard/new-trip-wizard.component';
 import { StepperComponent } from '../shared-comps/stepper/stepper.component';
 import { ProfileSelectionFormComponent } from '../trips/profile-selection-form/profile-selection-form.component';
+import { CollectionSelectionFormComponent } from '../trips/collection-selection-form/collection-selection-form.component';
 
 let imports = [
     ProfilesComponent,
@@ -164,7 +165,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent],
     exports: [...imports]
 })
 export class SharedModule {

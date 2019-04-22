@@ -8,6 +8,7 @@ import { WindowService } from '../shared/services/window.service';
 import { CollectionComplete } from '../shared/models/collection.model';
 import { CollectionFactory } from '../shared/factories/collection.factory';
 import { randomBetween } from '@app/shared/global-functions';
+import { ProfileFactory } from '../shared/factories/profile.factory';
 
 @Component({
   selector: 'app-home',
@@ -17,14 +18,16 @@ import { randomBetween } from '@app/shared/global-functions';
 })
 export class HomeComponent implements OnInit {
   collections: CollectionComplete[];
-  selectedCollections = [];
-  selectedIcons:string[] = ['010-boy'];
+
+  selected: string[] = [];
+  profiles: Profile[] = []
 
   testSelected = true;
   
   constructor(
     private store:StoreSelectorService,
     private colFac:CollectionFactory,
+    private proFac: ProfileFactory,
     private iconService:IconService,
     private storage: StorageService,
     public windowService: WindowService,
@@ -36,7 +39,11 @@ export class HomeComponent implements OnInit {
     console.log(e);
   }
   ngOnInit() {
+    this.store.store_obs.subscribe(()=>{
+      this.profiles = this.store.profiles.splice(0,2)
+    })
   }
+
   
   generateData(){
     if(confirm("This Will override your user data, Are you sure?")){

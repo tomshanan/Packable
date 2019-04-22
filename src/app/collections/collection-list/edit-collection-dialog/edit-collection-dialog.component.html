@@ -1,4 +1,4 @@
-<app-dialog-header [super]="collection.name" header="Settings" (close)="onClose()"></app-dialog-header>
+<app-dialog-header [super]="collection.name" header="Settings" (close)="onClose(null)"></app-dialog-header>
 
 <ng-container *ngIf="profileId">
   <slide-toggle-with-text [checked]="collection.essential" (change)="toggleEssential($event)"

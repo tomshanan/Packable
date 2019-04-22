@@ -45,7 +45,7 @@ export class NavListComponent implements OnInit {
   
   constructor(
     private authService: AuthService,
-    private user: UserService,
+    public user: UserService,
     private store: Store<fromApp.appState>,
     private router: Router,
     private activatedRoute: ActivatedRoute

@@ -51,7 +51,6 @@ import { ConfirmDialog } from '@shared-comps/dialogs/confirm-dialog/confirm.dial
 import { ChooseProfileDialogComponent } from '../collections/collection-list/collection-panel/choose-profile-dialog/choose-profile-dialog.component';
 import { DialogHeaderComponent } from '../shared-comps/dialogs/dialog-header/dialog-header.component';
 import { PushPackablesDialogComponent } from '../packables/packable-list/push-packables-dialog/push-packables-dialog.component';
-import { CollectionSettingsComponent } from '../collections/collection-list/collection-panel/collection-settings/collection-settings.component';
 import { SlideToggleWithTextComponent } from '../shared-comps/slide-toggle-with-text/slide-toggle-with-text.component';
 import { PackableCardComponent } from '../packables/packable-list/packable-card/packable-card.component';
 import { AnimateSizeDirective } from '../shared/directives/animate-size.directive';
@@ -128,7 +127,6 @@ let imports = [
     ChooseProfileDialogComponent,
     DialogHeaderComponent, 
     PushPackablesDialogComponent, 
-    CollectionSettingsComponent,
     SlideToggleWithTextComponent, 
     PackableCardComponent, 
     ImportPackablesDialogComponent,

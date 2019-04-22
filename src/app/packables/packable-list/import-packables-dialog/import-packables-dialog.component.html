@@ -29,7 +29,7 @@
 <div class="step-container">
     <div class="dialog-flex-container">
         <div class="dialog-row">
-            <app-dialog-header [super]="collectionName" header="Add Packables" (close)="onClose()"></app-dialog-header>
+            <app-dialog-header [super]="collectionName" header="Add Packables" (close)="onClose(null)"></app-dialog-header>
         </div>
         <div class="dialog-row nested-flex" @transitionTrigger *ngIf="step == 1">
             <import-packables-selector 

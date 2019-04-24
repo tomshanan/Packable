@@ -1,3 +1,6 @@
+:host * {
+    transition:padding 300ms ease;
+}
 .collection-card-container{
     padding:5px 0px;
 }
@@ -31,6 +34,11 @@
     flex-grow: 1;
     align-self: center;
     overflow: hidden;
+    padding-bottom: 0px;
+}
+.boxClickIconContainer{
+    flex-grow: 0;
+    align-self: center;
 }
 .with-profiles .detailBox {
     padding-bottom: 5px;
@@ -58,4 +66,16 @@
     flex-direction: row-reverse;
     align-items: center;
     padding-right: 5px;
+}
+.packable-warning{
+    font-size: 0.7em;
+    font-weight: 400;
+    line-height: 1.3em;
+    transition: height 200ms ease!important;
+    height: 0px;
+    opacity: 0;
+}
+.unfolded{
+    opacity: 0.7;
+    height: 1.3em;
 }

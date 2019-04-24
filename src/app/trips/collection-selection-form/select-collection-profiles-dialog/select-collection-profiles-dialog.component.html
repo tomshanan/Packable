@@ -1,0 +1,28 @@
+<app-dialog-header (close)="onClose()"></app-dialog-header>
+<div class="text-center">
+  <p class="h3">{{header}}</p>
+  <p class="text-muted">{{packablesString}} <br><small>*Packables may vary between Travelers</small></p>
+  <ng-container *ngIf="weatherFac.isSet(wRules)">
+    <p class="form-heading">Weather Rules:</p>
+    <p class="text-muted" innerHtml="{{weatherFac.getTempRuleString(wRules)}}"></p>
+    <p class="text-muted" *ngIf="wRules.weatherTypes.length>0">{{wRules.weatherTypes | join:', ' | titlecase}}</p>
+  </ng-container>
+</div>
+<mat-dialog-content>
+  <p innerHtml="{{content}}" class="text-center mt-4"></p>
+  <div class="text-center mt-1 mb-3">
+    <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
+      [showNames]="true">
+    </profile-selector>
+  </div>
+  <p *ngIf class="text-warning text-center text-small"></p>
+
+    <dialog-confirm-button>
+      <button mat-fab class="mx-1" color="none" (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()">
+        <mat-icon>check</mat-icon>
+      </button>
+    </dialog-confirm-button>
+</mat-dialog-content>

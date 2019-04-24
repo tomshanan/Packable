@@ -3,7 +3,7 @@ import { WindowService } from '../../shared/services/window.service';
 import { Step } from '@app/shared-comps/stepper/stepper.component';
 import { stepperTransition } from '@app/shared/animations';
 import { TripMemoryService } from '../../shared/services/trip-memory.service';
-import { Trip } from '../../shared/models/trip.model';
+import { Trip, tripCollectionGroup } from '../../shared/models/trip.model';
 import { DestinationDataService } from '../../shared/services/location-data.service';
 import * as moment from 'moment'
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
@@ -59,12 +59,17 @@ export class NewTripWizardComponent implements OnInit {
     console.log('updated trip ',this.trip)
   }
 
-
+  // STEP 3 - collections
+  setCollections(cGroups:tripCollectionGroup[]){
+    this.trip.collections = cGroups
+    console.log('updated trip ',this.trip)
+  }
   // STEP MANAGEMENT
   onConfirmStep(step){
     switch(step){
       case 1:
       case 2:
+      case 3:
         this.tripMemory.saveTempTrip(this.trip)
     }
     this.nextStep(step+1)

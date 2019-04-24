@@ -52,7 +52,7 @@ declare global {
         /**
          * Returns a new array without undefined and null objects, and without empty arrays and string
          */
-        clearUndefined(): any[];
+        clearUndefined(): T[];
         /**
          * Given a removeArray, the method removes any elemets with matching IDs and returns a new array
          * @param removeArray The array of items you wish to clear from the original array. (all must have ID property)
@@ -116,9 +116,9 @@ if (!Array.prototype.compare) {
     }
 }
 if (!Array.prototype.clearUndefined) {
-    Array.prototype.clearUndefined = function(this: any[]): any[] {
+    Array.prototype.clearUndefined = function<T extends object|string|number>(this: T[]): T[] {
         let newarray = this.filter(el=>{
-            return el != null && el != undefined && el != "" && el != []
+            return el != null && el != undefined && el !== "" && el !== []
         })
         return newarray
     }

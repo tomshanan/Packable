@@ -3,7 +3,8 @@ import { CollectionComplete } from '../../shared/models/collection.model';
 import { WindowService } from '../../shared/services/window.service';
 import { Subscription } from 'rxjs';
 import { Profile } from '../../shared/models/profile.model';
-import { transitionTrigger, horizontalShringAndFade } from '../../shared/animations';
+import { transitionTrigger, horizontalShringAndFade, addRemoveElementTrigger } from '../../shared/animations';
+import { PackableComplete } from '../../shared/models/packable.model';
 
 
 export type actionType = 'button' | 'selection' | 'none'
@@ -15,7 +16,7 @@ export type buttonAction = 'select' | 'deselect' | 'delete' | 'add' | 'remove';
   selector: 'collection-details-card',
   templateUrl: './collection-details-card.component.html',
   styleUrls: ['./collection-details-card.component.css'],
-  animations:[transitionTrigger,horizontalShringAndFade]
+  animations:[transitionTrigger,horizontalShringAndFade,addRemoveElementTrigger]
 })
 export class CollectionDetailsCardComponent implements OnInit,OnDestroy,OnChanges {
 
@@ -34,6 +35,8 @@ essentialGroup: Profile[] = []
 @Input('buttonState') buttonState: buttonState = 'add';
 @Input('disabled') disabled: boolean = false;
 @Output('actionClick') actionClick = new EventEmitter<buttonAction>()
+@Input('boxClickActive') boxClickActive: boolean = false;
+@Output('boxClick') boxClick = new EventEmitter<void>()
 buttonWidth(): string {
   return this.windowService.max('xs') ? '45' : '55';
 };
@@ -48,23 +51,36 @@ packableNameListString: string;
   ) { }
 
   ngOnInit() {
-    console.log('Details Card recieved collection:', this.collection);
-    this.packableNameList = this.collection.packables.map(p=> p.name)
-    this.packableNameListString = this.packableNameList.join(', ')
-    // this.sub = this.windowService.change.subscribe(()=>this.changeDetection.detectChanges())
+    this.profileGroup = this.inputProfileGroup ? this.inputProfileGroup.slice() : [];
   }
   ngOnDestroy(){
-    // this.sub.unsubscribe()
   }
   ngOnChanges(changes:SimpleChanges){
     if(changes['inputProfileGroup']){
       this.profileGroup.compare(this.inputProfileGroup)
-      this.essentialGroup = this.profileGroup.filter(p=>p.collections.findId(this.collection.id).essential)
-      if(this.profileGroup.length > 0 && this.profileGroup.length === this.essentialGroup.length && this.actionType === 'selection'){
-        this.selectionState = true
-        this.actionClick.emit('select')
-      }
+      this.updatePackableNames(this.collection.packables)
     }
+    if(changes['collection'] && this.collection && this.collection.packables){
+      console.log('Details Card recieved collection:', this.collection);
+      this.updatePackableNames(this.collection.packables)
+    }
+  }
+  updatePackableNames(packables:PackableComplete[]){
+    this.packableNameList = packables.clearUndefined().map(p=> {
+      if(this.profileGroup.length>0){
+        return this.profileGroup.every( profile => {
+            let col = profile.collections.findId(this.collection.id)
+            if(col){
+              return col.packables.idIndex(p.id) > -1
+            } else {
+              return true
+            }
+        }) ? p.name : p.name+"*"
+      } else {
+        return p.name
+      }
+    })
+    this.packableNameListString = this.packableNameList.join(', ')
   }
   action(){
     if(!this.disabled && this.actionType !='none'){
@@ -88,18 +104,26 @@ packableNameListString: string;
         switch(this.selectionState){
           case true:
           action = 'deselect'
-          this.selectionState = false
+          // this.selectionState = false
           break;
           case false:
           action = 'select'
-          this.selectionState = false
+          // this.selectionState = true
           break;
         }
       }
       this.actionClick.emit(action)
     }
   }
-
-
-
+  onBoxClick(){
+    if(this.boxClickActive && !this.disabled){
+      this.boxClick.emit()
+    }
+  }
+  showWarning:boolean = false;
+  toggleWarning(b:boolean){
+    console.log(b);
+    
+    this.showWarning = b;
+  }
 }

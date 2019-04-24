@@ -17,15 +17,18 @@
             </icon-text-button>
           </ng-container>
       </div>
-      <div class="flex-item detailBox" [class.text-muted]="disabled">
+      <div class="flex-item detailBox" 
+      [class.text-muted]="disabled" 
+      [class.pointer]="boxClickActive && !disabled" 
+      (click)="onBoxClick()">
         <p class="detailBox-header" [class.small-screen]="windowService.max('xs')">{{collection.name}}</p>
-        <div class="packable-list-container" *ngIf="!profileGroup || profileGroup.length === 0">
-          <list-concatinator [list]="packableNameList">
+        <div *ngIf="profileGroup && profileGroup.length >0" class="packable-warning" [class.unfolded]="showWarning">
+            <i>*Packables may vary between Travelers</i>
+          </div>
+        <div class="packable-list-container">
+          <list-concatinator [list]="packableNameList" (open)="toggleWarning($event)">
           </list-concatinator>
         </div>
-        <div *ngIf="profileGroup && profileGroup.length >0 && !selectionState && essentialGroup && essentialGroup.length > 0 " class="small text-muted">
-            Essential for {{essentialGroup | join:', ':'name'}}
-          </div>
       </div>
     </div>
 

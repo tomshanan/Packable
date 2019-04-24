@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostBinding, ElementRef, ViewChild, Renderer2, OnChanges, SimpleChanges, AfterViewInit, AfterContentInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, HostBinding, ElementRef, ViewChild, Renderer2, OnChanges, SimpleChanges, AfterViewInit, AfterContentInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { WindowService } from '../../shared/services/window.service';
 import { isDefined } from '../../shared/global-functions';
 import { Subscription } from 'rxjs';
@@ -19,7 +19,7 @@ export class ListConcatinatorComponent implements OnInit, OnChanges,AfterContent
   @Input('list') stringArray: string[] = [];
   @Input('lines') lines: number = 1;
   @Input('showMore') showMore: boolean = true;
-
+  @Output('open') concatinated = new EventEmitter<boolean>()
   @ViewChild('textContainer') textContainer: ElementRef;
   @ViewChild('testArea') testArea: ElementRef;
   @ViewChild('moreEl') moreEl: ElementRef;
@@ -64,7 +64,11 @@ export class ListConcatinatorComponent implements OnInit, OnChanges,AfterContent
     this.renderer.setStyle(this.element.nativeElement,'height',height+'em')
   }
   unsetLines(){
-    this.renderer.setStyle(this.element.nativeElement, 'height','auto')
+    //this.renderer.setStyle(this.element.nativeElement,'height','auto')
+    setTimeout(() => {
+      let h = this.element.nativeElement.scrollHeight
+      this.renderer.setStyle(this.element.nativeElement,'height',h+'px')
+    }, 0);
   }
   assemble() {
     this.viewStrings = [];
@@ -155,6 +159,7 @@ export class ListConcatinatorComponent implements OnInit, OnChanges,AfterContent
     } else {
       this.showAll = !this.showAll
     }
+    this.concatinated.emit(this.showAll)
     if(this.showAll){
       this.unsetLines()
     } else {

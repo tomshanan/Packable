@@ -3,6 +3,7 @@
     width: 100%;
     font-size: 1em;
     line-height: 1.1em;
+    transition: height 200ms ease!important;
 }
 
 .textContainer {

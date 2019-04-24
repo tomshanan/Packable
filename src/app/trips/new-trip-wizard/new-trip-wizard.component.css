@@ -17,18 +17,25 @@
 .step{
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     flex-grow: 1;
 }
-.flex-device-height .content{
-    overflow-y: scroll;
-    position: relative;
-    top: -80px;
+.step.centered {
+    justify-content: center;
 }
 .content{
     max-width: 100%;
     margin-top: 20px;
+    padding-bottom: 70px;
+}
+.flex-device-height .content{
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+.flex-device-height .step.centered .content{
+    margin-top: 60px;
+    top: -40px;
 }
 .w-500{
     max-width: 500px;

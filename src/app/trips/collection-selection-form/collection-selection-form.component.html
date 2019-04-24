@@ -5,9 +5,11 @@
       actionType="selection"
       selectionOnIcon="added"
       selectionOffIcon="unselected"
-      [selectionState]="list.isSelected(collection.id)"
-      [profileGroup]="collectionProfileGroups[collection.id]"
-      (actionClick)="toggleCollection(collection.id)">
+      [boxClickActive]="true"
+      [selectionState]="selectedGroup[collection.id] && selectedGroup[collection.id].length>0"
+      [profileGroup]="selectedGroup[collection.id] || []"
+      (actionClick)="toggleCollection(collection.id)"
+      (boxClick)="setProfiles(collection.id)">
     </collection-details-card>
   </div>
 </div>

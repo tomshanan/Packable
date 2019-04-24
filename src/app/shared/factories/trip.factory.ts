@@ -29,7 +29,7 @@ export class TripFactory {
             .filter(p=>trip.profiles.includes(p.id))
             .map(p=>p.name);
         let collections:string[] = this.storeSelector.originalCollections
-            .filter(c=>trip.collections.includes(c.id))
+            .filter(c=>trip.collections.idIndex(c.id)>-1)
             .map(c=>c.name);
             return new displayTrip(
                 trip.id,

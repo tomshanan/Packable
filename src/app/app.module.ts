@@ -33,6 +33,7 @@ import { adminEffects } from './admin/store/admin.effects';
 import { EditCollectionDialogComponent } from './collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
 import { LibraryEffects } from './shared/library/library.effects';
 import { ImportCollectionDialogComponent } from './collections/collection-list/import-collection-dialog/import-collection-dialog.component';
+import { SelectCollectionProfilesDialogComponent } from './trips/collection-selection-form/select-collection-profiles-dialog/select-collection-profiles-dialog.component';
 
 
 
@@ -63,7 +64,8 @@ import { ImportCollectionDialogComponent } from './collections/collection-list/i
     NewProfileDialogComponent,
     SetPermissionsDialogComponent,
     EditCollectionDialogComponent,
-    ImportCollectionDialogComponent
+    ImportCollectionDialogComponent,
+    SelectCollectionProfilesDialogComponent
   ]
 
 })

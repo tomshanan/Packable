@@ -89,7 +89,7 @@ export class EditCollectionDialogComponent implements OnInit {
         this.store.dispatch(new collectionActions.updateOriginalCollections([originalCollection]))
       } 
       if(this.selectedProfiles.length>0){
-        this.bulkActions.pushCollectionsToProfiles([this.collection],this.selectedProfiles)
+        this.bulkActions.pushCompleteCollectionsToProfiles([this.collection],this.selectedProfiles)
       }
       this.onClose(this.collection)
     } else {

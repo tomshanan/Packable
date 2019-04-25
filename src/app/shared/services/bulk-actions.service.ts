@@ -17,6 +17,9 @@ import { isDefined, timeStamp } from '../global-functions';
 import { editProfiles } from '../../profiles/store/profile.actions';
 import { Profile } from '../models/profile.model';
 import { remoteCollection } from '../library/library.model';
+import { tripCollectionGroup } from '../models/trip.model';
+import * as tripActions  from '../../trips/store/trip.actions';
+import { updateIncomplete } from '../../trips/store/trip.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -34,14 +37,92 @@ export class BulkActionsService {
   ) { }
 
   // ---- [ COLLECTIONS ] - BULK ACTIONS
-  public removeCollectionsFromProfiles(collectionIds: string[], profileIds: string[]) {
+
+  /**
+   * Checks profiles in each collection group to make sure collection exits in it, and adds missing collections.
+   * @param cGroups tripCollectionGroup[] - must use ids already stored in local store
+   */
+  public pushMissingCollectionsToProfiles(cGroups:tripCollectionGroup[]){
+    if(isDefined(cGroups)){
+      let storeProfiles = this.storeSelector.profiles
+      let changes:number = 0;
+      cGroups.forEach(({id,profiles})=>{
+        let cId = id
+        let profileIdsToUpdate = []
+        profiles.forEach(pId=>{
+          if(storeProfiles.findId(pId).collections.hasId(cId) === false){
+            profileIdsToUpdate.push(pId)
+          }
+        })
+        if(profileIdsToUpdate.length>0){
+          let privateCol = this.colFac.makePrivate(this.storeSelector.getCollectionById(cId))
+          privateCol.dateModified = timeStamp()
+          profileIdsToUpdate.forEach(pId=>{
+            let profile = storeProfiles.findId(pId)
+            profile.collections.unshift(privateCol)
+            profile.dateModified = timeStamp()
+            changes++
+          })
+        }
+      })
+      if(changes>0){
+        this.store.dispatch(new profileActions.editProfiles(storeProfiles))
+      }
+    }
+  }
+
+
+
+
+
+  public removeCollectionsFromProfilesAndTrips(collectionIds: string[], profileIds: string[]) {
     if (collectionIds.length > 0 && profileIds.length > 0) {
       let profiles = this.storeSelector.profiles.filter(p=>profileIds.includes(p.id));
       profileIds.forEach(pId => {
         let profile = profiles.findId(pId)
         profile.collections = profile.collections.filter(c => !collectionIds.includes(c.id))
       })
+      let trips = this.storeSelector.trips
+      let tripChanges = 0;
+      // loop thru trips and remove profiles from collectionGroups
+      trips.forEach(trip=>{
+        profileIds.forEach(pId=>{
+          if(trip.profiles.includes(pId)){
+            trip.collections.forEach(col=>{
+              console.log(col);
+              if(collectionIds.includes(col.id) && isDefined(col.profiles)){
+                col.profiles = col.profiles.filter(pId=>!profileIds.includes(pId))
+                tripChanges++
+              }
+            })
+          }
+        })
+      })
+
+      let incompleteTrips = this.storeSelector.incompleteTrips
+      let incompleteTripChanges = 0;
+       // loop thru incompleteTrips and remove profiles from collectionGroups
+      incompleteTrips.forEach(trip=>{
+        profileIds.forEach(pId=>{
+          if(trip.profiles.includes(pId)){
+            trip.collections.forEach(col=>{
+              console.log(col);
+              if(collectionIds.includes(col.id) && isDefined(col.profiles)){
+                col.profiles = col.profiles.filter(pId=>!profileIds.includes(pId))
+                incompleteTripChanges++
+              }
+            })
+          }
+        })
+      })
+
       this.store.dispatch(new profileActions.editProfiles(profiles))
+      if(tripChanges>0){
+        this.store.dispatch(new tripActions.updateTrips(trips))
+      }
+      if(incompleteTripChanges>0){
+        this.store.dispatch(new tripActions.updateIncomplete(incompleteTrips))
+      }
     }
   }
   
@@ -64,7 +145,7 @@ export class BulkActionsService {
       let newCompletes = this.colFac.remoteToComplete(selectedRemoteCollections)
       let selectedLocal = localCollections.filter(c=>selectedColIds.includes(c.id))
       let allComplete = [...selectedLocal,...newCompletes]
-      this.pushCollectionsToProfiles(allComplete,profileIds)
+      this.pushCompleteCollectionsToProfiles(allComplete,profileIds)
     }
   }
 
@@ -91,7 +172,15 @@ export class BulkActionsService {
       missingPackables.length > 0 && this.store.dispatch(new packableActions.updateOriginalPackables(missingPackables))
     }
   }
-  public pushCollectionsToProfiles(collections: CollectionComplete[], profileIds: string[]) {
+  /**
+   * Push collectionComplete to all profile IDs provided, will override exiting, and add missing. 
+   * @param collections CollectionComplete[] - will override any existing collections in selected IDs
+   * @param profileIds  string[] - IDs of all profiles to be affected
+   * 
+   * Updates all timestamps of collections and profiles affected.
+   * Does not add collections to Original Collections store.
+   */
+  public pushCompleteCollectionsToProfiles(collections: CollectionComplete[], profileIds: string[]) {
     if (collections.length > 0 && profileIds.length > 0) {
       let privateCollections = collections.map(c => this.colFac.completeToPrivate(c))
 
@@ -112,6 +201,7 @@ export class BulkActionsService {
       this.store.dispatch(new profileActions.editProfiles(profiles))
     }
   }
+  
   //  --- [ PACKABLES ] - BULK ACTIONS
 
   public removePackablesByCP(packables: string[], CPs?: CollectionProfile[]) {

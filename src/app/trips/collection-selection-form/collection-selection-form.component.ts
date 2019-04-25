@@ -51,6 +51,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
   updateCollections(collections: CollectionOriginal[], first: boolean = true) {
     let completeCols = this.colFac.makeCompleteArray(collections)
     this.collections.compare(completeCols)
+    // if we already selected some cols before, filter for only those currently on the trip
     if (isDefined(this.selected)) {
       this.selected.forEach(col => {
         this.selectedGroup[col.id] = this.profiles.filter(p => col.profiles.includes(p.id))
@@ -61,14 +62,15 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
       let profilesWithColId = this.storeSelector.getProfilesWithCollectionId(c.id)
       // filter for profiles that are in the trip
       this.collectionProfileGroups[c.id] = profilesWithColId.filter(p => this.profiles.idIndex(p.id) > -1);
-    // if selected groups weren't provided, 
-    // filter for profiles where col is essential 
+      // if selected groups weren't provided, 
+      // filter for profiles where col is essential 
       if(!isDefined(this.selected)){
         this.selectedGroup[c.id] = this.collectionProfileGroups[c.id].filter(p => p.collections.findId(c.id).essential);
       } 
     })
+    // on first load
     if (first) {
-      // if not all profiles are present
+      // if not all profiles are present, add their essential collections
       if (isDefined(this.selected) && !this.profiles.every(p => this.profileInSelected(p))) {
         this.profiles.forEach(p => {
           if(!this.profileInSelected(p)){
@@ -80,7 +82,9 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
         })
       }
       this.collections
+        // sort first by most used collection per profile
         .sort((a, b) => this.sortColProGroup(a, b, this.collectionProfileGroups))
+        // sort again by most used on this trip
         .sort((a, b) => this.sortColProGroup(a, b, this.selectedGroup))
     }
   }

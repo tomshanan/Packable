@@ -271,9 +271,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     confirmDialogRef.afterClosed().pipe(take(1)).subscribe((confirm) => {
       if (confirm) {
         if(profile){
-          this.bulkActions.removeCollectionsFromProfiles(selectedIds, [profile.id])
+          this.bulkActions.removeCollectionsFromProfilesAndTrips(selectedIds, [profile.id])
         } else{
-          this.bulkActions.removeCollectionsFromProfiles(selectedIds, profiles.map(x => x.id))
+          this.bulkActions.removeCollectionsFromProfilesAndTrips(selectedIds, profiles.map(x => x.id))
         }
         this.toggleListEditing(false)
         selectedIds.forEach(id=>{
@@ -384,7 +384,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     });
     chooseProfileDialog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
       if (profileIds.length > 0) {
-        this.bulkActions.pushCollectionsToProfiles([collection.complete],profileIds)
+        this.bulkActions.pushCompleteCollectionsToProfiles([collection.complete],profileIds)
       }
     })
   }
@@ -411,7 +411,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     });
     chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
       if (profileIds.length > 0) {
-        this.bulkActions.pushCollectionsToProfiles([collection.complete],profileIds)
+        this.bulkActions.pushCompleteCollectionsToProfiles([collection.complete],profileIds)
       }
       this.onChangeProfileGroup(collection.id)
     
@@ -435,7 +435,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     });
     chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
       if (profileIds.length > 0) {
-        this.bulkActions.removeCollectionsFromProfiles([collection.id],profileIds)
+        this.bulkActions.removeCollectionsFromProfilesAndTrips([collection.id],profileIds)
         this.onChangeProfileGroup(collection.id)
       }
     })
@@ -459,7 +459,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       confirmDialogRef.afterClosed().pipe(take(1)).subscribe((confirm) => {
         if (confirm) {
           let profiles = this.storeSelector.profiles
-          this.bulkActions.removeCollectionsFromProfiles(selectedIds,profiles.map(p=>p.id))
+          this.bulkActions.removeCollectionsFromProfilesAndTrips(selectedIds,profiles.map(p=>p.id))
           this.store.dispatch(new collectionActions.removeOriginalCollections(selectedIds))
           this.toggleListEditing(false)
           

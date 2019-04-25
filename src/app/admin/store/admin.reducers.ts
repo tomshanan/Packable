@@ -3,7 +3,7 @@ import * as adminActions from './admin.actions'
 
 const initialState: State = {
     users: [],
-    simulateUser: false
+    simulateUser: true
 }
 
 export function adminReducers(state = initialState, action: adminActions.adminActions) {

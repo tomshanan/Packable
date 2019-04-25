@@ -49,7 +49,7 @@
           <mat-icon style="align-self: center;" title="Essential Collection">star</mat-icon>
         </ng-container>
       </mat-panel-title>
-      <mat-panel-description class="collection-nav" *ngIf="!listEditing">
+      <mat-panel-description class="collection-nav">
         &nbsp;
         <div class="used-by-container" *ngIf="!context.profileId && collection.profileGroup.length >0" @transitionTrigger>
           
@@ -66,7 +66,7 @@
               +{{collection.profileGroup.length-usedByAmount}}
           </div>
         </div>
-        <button mat-icon-button [matMenuTriggerFor]="menu" InnerLink>
+        <button mat-icon-button [matMenuTriggerFor]="menu" InnerLink  *ngIf="!listEditing" @horizontalShringAndFade>
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #menu="matMenu">

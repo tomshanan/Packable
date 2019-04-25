@@ -4,6 +4,7 @@ import { Trip, displayTrip } from '../models/trip.model';
 import * as moment from 'moment'
 import { DestinationDataService } from '../services/location-data.service';
 import { StoreSelectorService } from '../services/store-selector.service';
+import { isDefined } from '../global-functions';
 
 @Injectable()
 export class TripFactory {
@@ -12,7 +13,7 @@ export class TripFactory {
         private storeSelector: StoreSelectorService,
     ){}
     public duplicateTrip = (trip:Trip): Trip =>{  
-        return new Trip(
+         let newTrip =  new Trip(
             trip.id,
             trip.startDate,
             trip.endDate,
@@ -21,6 +22,12 @@ export class TripFactory {
             trip.collections ? trip.collections.slice() : [],
             trip.dateModified
         )
+        newTrip.collections.forEach(c=>{
+            if(!isDefined(c.profiles)){
+                c['profiles'] = [];
+            }
+        })
+        return newTrip
     }
     public makeDisplayTrip = (trip:Trip): displayTrip =>{  
         let destination = this.destServices.cityById(trip.destinationId)

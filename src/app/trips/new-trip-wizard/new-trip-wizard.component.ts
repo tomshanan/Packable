@@ -8,6 +8,9 @@ import { DestinationDataService } from '../../shared/services/location-data.serv
 import * as moment from 'moment'
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { Profile } from '../../shared/models/profile.model';
+import { BulkActionsService } from '../../shared/services/bulk-actions.service';
+import { isDefined } from '@app/shared/global-functions';
+import { CollectionFactory } from '../../shared/factories/collection.factory';
 @Component({
   selector: 'app-new-trip-wizard',
   templateUrl: './new-trip-wizard.component.html',
@@ -25,6 +28,8 @@ export class NewTripWizardComponent implements OnInit {
     public tripMemory:TripMemoryService,
     public storeSlector:StoreSelectorService,
     private destinationData:DestinationDataService,
+    private bulkActions: BulkActionsService,
+    private colFac: CollectionFactory,
   ) { }
     steps:Step[] =[
       {icon:{type:'mat',name:'place'},text:'Where & When'},
@@ -69,9 +74,16 @@ export class NewTripWizardComponent implements OnInit {
     switch(step){
       case 1:
       case 2:
+        // remove IDs from trip collections groups
+        this.trip.collections.forEach(c=>{
+          c.profiles = c.profiles.filter(pId=>this.trip.profiles.includes(pId))
+        })
       case 3:
-        this.tripMemory.saveTempTrip(this.trip)
+          // check all profiles selected have the collections, if not, push collections
+        this.bulkActions.pushMissingCollectionsToProfiles(this.trip.collections)
+        break;
     }
+    this.tripMemory.saveTempTrip(this.trip)
     this.nextStep(step+1)
   }
   nextStep(nextStep:number){ 

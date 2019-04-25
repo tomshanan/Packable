@@ -40,6 +40,10 @@ declare global {
         * find an element in array by its id property
         */
         findId(id: string): T;
+        /**
+        * check if an array of Objects has an object with matching ID
+        */
+        hasId(id: string): boolean;
         /** 
          * find the index of an element in array by it's id property
         */
@@ -61,6 +65,11 @@ declare global {
     }
 }
 
+if (!Array.prototype.hasId) {
+    Array.prototype.hasId = function <T extends comparableItem>(this: T[], id: string): boolean {
+        return this.idIndex(id) > -1
+    }
+}
 
 if (!Array.prototype.findId) {
     Array.prototype.findId = function <T extends comparableItem>(this: T[], id: string): T {

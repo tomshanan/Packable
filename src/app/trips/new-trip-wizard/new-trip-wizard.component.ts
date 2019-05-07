@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { WindowService } from '../../shared/services/window.service';
 import { Step } from '@app/shared-comps/stepper/stepper.component';
 import { stepperTransition } from '@app/shared/animations';
@@ -11,6 +11,8 @@ import { Profile } from '../../shared/models/profile.model';
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
 import { isDefined } from '@app/shared/global-functions';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
+import { TripDetailsFormComponent } from '../trip-details-form/trip-details-form.component';
+import { TripFactory, tripProperties } from '../../shared/factories/trip.factory';
 @Component({
   selector: 'app-new-trip-wizard',
   templateUrl: './new-trip-wizard.component.html',
@@ -22,7 +24,6 @@ export class NewTripWizardComponent implements OnInit {
   step:number = 1;
   prevStep:number = 0;
   profileGroup: Profile[] = [];
-
   constructor(
     public windowService:WindowService,
     public tripMemory:TripMemoryService,
@@ -30,6 +31,7 @@ export class NewTripWizardComponent implements OnInit {
     private destinationData:DestinationDataService,
     private bulkActions: BulkActionsService,
     private colFac: CollectionFactory,
+    private tripFac: TripFactory
   ) { }
     steps:Step[] =[
       {icon:{type:'mat',name:'place'},text:'Where & When'},
@@ -95,19 +97,17 @@ export class NewTripWizardComponent implements OnInit {
   }
 
   stepIsValid(step:number):boolean{ // VALIDATE EACH STEP
+    let validArray:tripProperties[] = this.tripFac.validateTrip(this.trip)
+    let propsValid = (props:tripProperties[])=>{
+      return props.every(prop=>validArray.includes(prop))
+    }
     switch(step){
       case 1:
-        let id = this.trip.destinationId
-        let destisValid = this.destinationData.DestinationById(id)
-        let now = moment()
-        let startDate = moment(this.trip.startDate)
-        let startDateIsFuture = startDate.year() >= now.year() && startDate.dayOfYear() >= now.dayOfYear()
-        let endDateIsAfterStart = moment(this.trip.endDate).isAfter(startDate)
-        return !!destisValid && startDateIsFuture && endDateIsAfterStart
+        return propsValid(['startDate','endDate','destinationId'])
       case 2:
-        return this.trip.profiles.length > 0
+        return propsValid(['profiles'])
       case 3:
-        return this.trip.collections.length > 0
+        return propsValid(['collections'])
       case 4: 
       case 5:
       default:

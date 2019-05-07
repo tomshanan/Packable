@@ -1,5 +1,4 @@
 export * from '@services/icon.service'
-export * from '@services/list-editor.service'
 export * from '../user/auth.service';
 export * from '../user/auth-guard.service';
 export * from '@services/location-data.service';
@@ -7,6 +6,5 @@ export * from '@services/memory.service';
 export * from '@services/store-selector.service';
 export * from '@services/window.service';
 export * from '@services/weather.service';
-export * from '@services/list-editor.service';
 export * from '@shared/storage/storage.service';
 export * from '@services/color-gen.service';

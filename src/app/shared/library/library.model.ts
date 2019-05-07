@@ -6,17 +6,17 @@ import { timeStamp } from '../global-functions';
 export type libraryItem = PackableOriginal | CollectionOriginal | Profile;
 
 export class remoteCollection extends CollectionOriginal {
-    metaData: ItemMetaData = new ItemMetaData()
+    metaData: ItemMetaData
     constructor(c:CollectionOriginal, metaData:ItemMetaData){
         super(c.id,c.name,c.packables,c.weatherRules,false,c.dateModified, c.locations)
-        this.metaData = {...this.metaData,...metaData}
+        this.metaData = { ...new ItemMetaData(c.id),...metaData}
     }
 }
 export class remoteProfile extends Profile {
-    metaData: ItemMetaData = new ItemMetaData()
+    metaData: ItemMetaData
     constructor(p:Profile, metaData: ItemMetaData){
         super(p.id,p.name,p.collections,p.avatar,p.dateModified)
-        this.metaData = {...this.metaData,...metaData}
+        this.metaData = {...new ItemMetaData(p.id),...metaData}
     }
 }
 export interface ItemLibrary{
@@ -24,17 +24,27 @@ export interface ItemLibrary{
     collections: CollectionOriginal[],
     profiles:Profile[]
 }
+export interface idCounter {id:string, used:number}
+export class destMetaData {
+    tripCount: number;
+    collections: idCounter[];
+    constructor(tripCount?:number,collections?:idCounter[]){
+        this.tripCount = tripCount || 0;
+        this.collections = collections || [];
+    }
+}
+export interface destMetaDataNode {[id:string]:destMetaData}
 
 export class ItemMetaData {
-    metascore: number = 0
-    downloaded: number= 0
-    deleted: number = 0
-    usedOnTrip: number = 0
-    timesModified: number = 0
-    updated: number = 0
+    id: string
+    metascore: number = 0 // a popularity score
+    downloaded: number= 0 // How many users have imported this item (includes deleted items)
+    deleted: number = 0 // how many users have deleted this item (does not include revived items)
+    usedOnTrip: number = 0 // how many users have used this on a trip (does not include deleted trips or incomplete trips)
+    modified: number = 0 // how many times users modified the item (does not include deleting the item)
     description: string = ''
-    constructor(){
-        this.updated = timeStamp()
+    constructor(id:string){
+        this.id = id
     }
 }
 export interface MetaDataNode {[id:string]:ItemMetaData}
@@ -42,8 +52,9 @@ export interface MetaDataNode {[id:string]:ItemMetaData}
 export interface State {
     library: ItemLibrary,
     metaData: MetaDataNode,
-    loading: boolean
-    error: string;
+    destMetaData: destMetaDataNode,
+    loading: boolean,
+    error: string
 }
 
 export const initialLibrary: ItemLibrary = {
@@ -55,5 +66,6 @@ export const initialLibraryState:State = {
     loading: false,
     error: null,
     library: initialLibrary,
-    metaData: {}
+    metaData: {},
+    destMetaData: {}
 }

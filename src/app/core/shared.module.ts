@@ -9,7 +9,6 @@ import { CollectionsComponent } from '../collections/collections.component';
 import { MobileNavComponent } from '../shared-comps/mobile-nav/mobile-nav.component';
 import { DesktopNavComponent } from '../shared-comps/desktop-nav/desktop-nav.component';
 import { NavListComponent } from '../nav/nav-list/nav-list.component';
-import { EditTripComponent } from '../trips/edit-trip/edit-trip.component';
 import { DateRangeSelectorComponent } from '../trips/trip-details-form/date-range-selector/date-range-selector.component';
 import { PackingListComponent } from '../trips/packing-list/packing-list.component';
 import { WeatherConditionsFormComponent } from '../shared-comps/weather-conditions-form/weather-conditions-form.component';
@@ -24,7 +23,6 @@ import { InnerLinkDirective } from '../shared/directives/inner-link.directive';
 import { AutofocusDirective } from "@app/shared/directives/autofocus.directive";
 
 import { joinPipe } from '@shared/pipes/join.pipe';
-import { FullPlaceNamePipe } from '@shared/pipes/full-place-name.pipe';
 
 import { ModalComponent } from '@shared-comps/modal/modal.component';
 import { Ng5SliderModule } from 'ng5-slider';
@@ -85,6 +83,7 @@ import { StepperComponent } from '../shared-comps/stepper/stepper.component';
 import { ProfileSelectionFormComponent } from '../trips/profile-selection-form/profile-selection-form.component';
 import { CollectionSelectionFormComponent } from '../trips/collection-selection-form/collection-selection-form.component';
 import { SelectCollectionProfilesDialogComponent } from '../trips/collection-selection-form/select-collection-profiles-dialog/select-collection-profiles-dialog.component';
+import { CollectionDestinationSelectorComponent } from '../collections/collection-list/edit-collection-dialog/collection-destination-selector/collection-destination-selector.component';
 
 let imports = [
     ProfilesComponent,
@@ -101,9 +100,7 @@ let imports = [
     DesktopNavComponent,
     ModalComponent,
     NavListComponent,
-    EditTripComponent,
     DateRangeSelectorComponent,
-    FullPlaceNamePipe,
     PackingListComponent,
     WeatherConditionsFormComponent,
     LoginComponent,
@@ -164,7 +161,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent],
     exports: [...imports]
 })
 export class SharedModule {

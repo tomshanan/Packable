@@ -7,6 +7,7 @@ export function libarayReducers(state = initialLibraryState, action: libraryActi
             return {
                 library: action.payload.library,
                 metaData: action.payload.metaData,
+                destMetaData: action.payload.destMetaData,
                 loading: false,
                 error: null
             }

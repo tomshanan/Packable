@@ -108,7 +108,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
   navSetup() {
     this.navParams = {
-      header: this.destService.DestinationById(this.trip.destinationId).fullName,
+      header: this.destService.DestinationByCityId(this.trip.destinationId).fullName,
       left: { enabled: true, text: 'Trips', iconClass: 'fas fa-chevron-left' },
       right: { enabled: true, text: '', iconClass: 'fas fa-ellipsis-h' },
       options: []
@@ -135,7 +135,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     let dates = this.getAllDates(trip.startDate, trip.endDate);
     data.totalDays = dates.length;
     data.totalNights = dates.length - 1;
-    data.destination = this.destService.DestinationById(trip.destinationId);
+    data.destination = this.destService.DestinationByCityId(trip.destinationId);
     data.weatherData = weatherData;
     let activityIds = trip.collections;
     let profiles = this.profileFactory.getCompleteProfilesByIds(trip.profiles)
@@ -229,7 +229,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
       return conditionsMet
     }
     let checkActivityId = (id: string): boolean => {
-      return activityIds.indexOf(id) != -1
+      return activityIds.idIndex(id) != -1
     }
     // let checkActivityRules = (object: { activityRules: ActivityRule[] }): boolean => {
     //   if (object.activityRules.length > 0) {

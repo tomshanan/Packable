@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { State, ItemLibrary, ItemMetaData, MetaDataNode } from './library.model';
+import { State, ItemLibrary, MetaDataNode, destMetaDataNode } from './library.model';
 export const SET_LIBRARY_STATE = "SET_LIBRARY_STATE"
 export const UPDATE_META_DATA = "UPDATE_META_DATA"
 export const LOAD_LIBRARY = "LOAD_LIBRARY"
@@ -7,7 +7,7 @@ export const LOAD_LIBRARY_ERROR = "LOAD_LIBRARY_ERROR"
 
 export class SetLibraryState implements Action{
     readonly type = SET_LIBRARY_STATE;
-    constructor(public payload: {library:ItemLibrary, metaData:MetaDataNode}){};
+    constructor(public payload: {library:ItemLibrary, metaData:MetaDataNode,destMetaData:destMetaDataNode}){};
 }
 export class UpdateMetaData implements Action{
     readonly type = UPDATE_META_DATA;

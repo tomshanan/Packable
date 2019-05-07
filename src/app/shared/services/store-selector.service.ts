@@ -137,7 +137,7 @@ export class StoreSelectorService{
     }
     getDisplayTrips(trips:Trip[]): displayTrip[]{
         return trips.map(trip =>{
-            let destination = this.destServices.cityById(trip.destinationId)
+            let destination = this.destServices.DestinationByCityId(trip.destinationId)
             let startDate = moment(trip.startDate)
             let endDate = moment(trip.endDate)
             let dates:string;
@@ -153,20 +153,20 @@ export class StoreSelectorService{
                     profiles.push(p.name) 
                 }
             })
-            let activities = [];
+            let collections = [];
             trip.collections.forEach(aid => {
-                let c = this.getCollectionById(aid)
+                let c = this.getCollectionById(aid.id)
                 if (c){
-                    activities.push(c.name) 
+                    collections.push(c.name) 
                 }
             })
             return {
                 id: trip.id,
                 displayDate: dates,
                 temp: 'TBC',
-                destinationName: destination,
+                destinationName: destination.fullName,
                 profileNames: profiles,
-                collectionNames: activities,
+                collectionNames: collections,
                 dateModified: trip.dateModified
             }
         })

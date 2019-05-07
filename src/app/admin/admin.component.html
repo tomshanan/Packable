@@ -1,6 +1,9 @@
 <app-nav [header]="'Admin Settings'" [icon]="'fas fa-user-shield'"></app-nav>
 <ng-container *ngIf="user.permissions.creator; else noPermissions">
   <settings-simulate-user></settings-simulate-user>
+  
+
+
 </ng-container>
 <ng-template #noPermissions>
   <p class="text-muted small">

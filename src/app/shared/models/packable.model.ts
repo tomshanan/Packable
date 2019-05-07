@@ -53,10 +53,10 @@ export class PackablePrivate {
     ) { }
 }
 export class remotePackable extends PackableOriginal {
-    metaData: ItemMetaData = new ItemMetaData()
+    metaData: ItemMetaData
     constructor(p:PackableOriginal, metaData:ItemMetaData){
         super(p.id,p.name,p.quantityRules,p.weatherRules,false,p.dateModified, p.deleted)
-        this.metaData = {...this.metaData,...metaData}
+        this.metaData = {...new ItemMetaData(p.id),...metaData}
         this.type = 'remote'
     }
 }

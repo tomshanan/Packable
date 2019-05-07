@@ -90,8 +90,8 @@ export class BulkActionsService {
           if(trip.profiles.includes(pId)){
             trip.collections.forEach(col=>{
               console.log(col);
-              if(collectionIds.includes(col.id) && isDefined(col.profiles)){
-                col.profiles = col.profiles.filter(pId=>!profileIds.includes(pId))
+              if(collectionIds.includes(col.id)){
+                col.profiles = isDefined(col.profiles) ? col.profiles.filter(pId=>!profileIds.includes(pId)) : []
                 tripChanges++
               }
             })
@@ -107,8 +107,8 @@ export class BulkActionsService {
           if(trip.profiles.includes(pId)){
             trip.collections.forEach(col=>{
               console.log(col);
-              if(collectionIds.includes(col.id) && isDefined(col.profiles)){
-                col.profiles = col.profiles.filter(pId=>!profileIds.includes(pId))
+              if(collectionIds.includes(col.id)){
+                col.profiles = isDefined(col.profiles) ? col.profiles.filter(pId=>!profileIds.includes(pId)) : [];
                 incompleteTripChanges++
               }
             })

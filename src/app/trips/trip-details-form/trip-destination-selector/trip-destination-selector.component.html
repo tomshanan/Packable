@@ -6,6 +6,7 @@
       placeholder="Enter city or country"
       autocomplete="off"
       [matAutocompleteDisabled]="disabled"
+      (click)="$event.target.select()"
       #inputDestination>
       <mat-icon matPrefix class="mr-2">place</mat-icon>
   </mat-form-field>

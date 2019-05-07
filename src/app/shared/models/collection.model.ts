@@ -54,7 +54,7 @@ export class CollectionPrivate {
     }
 }
 
-export interface Activity {
+export interface CollectionRef {
     id: string,
     name: string
 }

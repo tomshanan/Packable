@@ -79,9 +79,11 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this.collectionList = this.buildCollectionList(this.getProfileCompleteCollections())
     }
-    this.collectionList.sort((a,b)=>{
-      return a.profileGroup.length > b.profileGroup.length ? -1 : 1;
-    })
+
+    // SORT
+    this.initialSort()
+    console.log('SORTED! =)');
+    
     this.subs = this.storeSelector.profiles_obs.subscribe((profileState)=>{
       this.totalProfiles = profileState.profiles.length
     })
@@ -106,6 +108,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     if (this.collectionList && changes['profileId']) {
       console.log(`profile id updated: ${changes['profileId'].previousValue} => ${changes['profileId'].currentValue}`)
       this.collectionList = this.buildCollectionList(this.getProfileCompleteCollections())
+      this.initialSort()
     }
   }
   ngOnDestroy(){
@@ -114,7 +117,20 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   getProfileCompleteCollections(): CollectionComplete[]{
     return this.proFac.getCompleteProfilesByIds([this.profileId])[0].collections
   }
-
+  initialSort(){
+    this.collectionList.sort((a,b)=>{
+      return a.name > b.name ? -1 : 1;
+    })
+    if(this.contextProvided){
+      this.collectionList.sort((a,b)=>{
+        return a.essential ? (b.essential ? 0 : -1) : (b.essential ? 1 : 0)
+      })
+    } else {
+      this.collectionList.sort((a,b)=>{
+        return a.profileGroup.length > b.profileGroup.length ? -1 : 1;
+      })
+    }
+  }
   checkboxChange(e: MatCheckboxChange, id: string) {
     if (e.checked) {
       this.selected.add(id)

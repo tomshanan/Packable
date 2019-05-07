@@ -5,7 +5,6 @@ import { ProfilesComponent } from '../profiles/profiles.component';
 import { PackablesComponent } from '../packables/packables.component';
 import { CollectionsComponent } from '../collections/collections.component';
 import { ItemSelectorComponent } from '../shared-comps/item-selector/item-selector.component';
-import { EditTripComponent } from '../trips/edit-trip/edit-trip.component';
 import { PackingListComponent } from '../trips/packing-list/packing-list.component';
 import { UserComponent } from '../user/user.component';
 import { AuthGuard } from '../user/auth-guard.service';

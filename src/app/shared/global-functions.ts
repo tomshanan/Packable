@@ -1,6 +1,8 @@
-import { item } from './services/list-editor.service';
 import { filterItem } from '@app/shared-comps/item-selector/item-selector.component';
 
+export type item = {
+  id: string
+}
 export function timeStamp():number{
   let newStamp = new Date().valueOf()
   return newStamp
@@ -31,6 +33,9 @@ export function path(...arr:string[]):string{
   return arr.join('/')
 }
 
+export function round(number:number,decimals:number=0):number{
+  return Math.floor(number*10**decimals)/10**decimals
+}
 export class FilteredArray {
   private _original: filterItem[];
   public filtered: filterItem[];

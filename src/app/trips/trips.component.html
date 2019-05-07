@@ -19,32 +19,10 @@
 <mat-card>
   <div class="trip-form-container">
     <h5>Where to next?</h5>
-    <trip-details-form (tripChange)="onTripChange($event)">
+    <trip-details-form (tripChange)="onTripChange($event)" #tripDetailsForm>
     </trip-details-form>
-    <button mat-fab class="mx-1" color="primary" (click)="confirmNewTrip()">
+    <button mat-fab class="mx-1" color="primary" (click)="confirmNewTrip()" [disabled]="!tripDetailsForm.valid">
         <mat-icon>check</mat-icon>
     </button>
   </div>
 </mat-card>
-
-<!-- <div class="trip-sizing" *ngFor="let trip of trips">
-    <div class="grid-border trip-content py-3 py-1 d-flex flex-column justify-content-between align-content-center">
-      <span class="text-center">
-        <h1 class="m-0 font-weight-light">{{trip.destinationName}}</h1>
-        <h5 class="m-0 font-weight-light">
-          {{trip.displayDate}}
-          <br> {{trip.temp}}
-        </h5>
-      </span>
-      <span class="text-center">
-        <h6 class="">{{trip.profileNames | join:', '}}
-          <br>
-          <span class="font-weight-normal">{{trip.activityNames | join:', '}}</span>
-        </h6>
-      </span>
-      <span class="d-flex flex-column align-content-stretch trip-buttons">
-        <button class="btn btn-outline-primary" type="button" (click)="viewPackingList(trip)">See Packing List</button>
-        <a class="inline-link text-center p-2" (click)="editTrip(trip)">Edit Trip</a>
-      </span>
-    </div>
-  </div> -->

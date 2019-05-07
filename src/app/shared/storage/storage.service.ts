@@ -26,7 +26,6 @@ import { randomBetween, Guid, path, timeStamp } from '../global-functions';
 import { absoluteMax, absoluteMin } from '../services/weather.service';
 import { IconService } from '../services/icon.service';
 import { ColorGeneratorService } from '../services/color-gen.service';
-import { destinations } from '../location-data-object';
 import * as moment from 'moment';
 import { Trip } from '../models/trip.model';
 import * as profileActions from '@app/profiles/store/profile.actions';
@@ -181,6 +180,9 @@ export class StorageService {
                 }
                 if(data['metaData']){
                     newLibraryState.metaData = data['metaData']
+                }
+                if(data['destMetaData']){
+                    newLibraryState.destMetaData = data['destMetaData']
                 }
                 this.store.dispatch(new libraryActions.SetLibraryState(newLibraryState))
             }).catch(e=>{

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableFactory } from './packable.factory';
-import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplete, Activity, isCollectionOriginal } from '../models/collection.model';
+import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplete, CollectionRef, isCollectionOriginal } from '../models/collection.model';
 import { PackableComplete, PackablePrivate } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
 import { indexOfId, isDefined } from '../global-functions';

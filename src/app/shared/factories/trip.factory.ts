@@ -5,7 +5,7 @@ import * as moment from 'moment'
 import { DestinationDataService } from '../services/location-data.service';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { isDefined } from '../global-functions';
-
+export type tripProperties = keyof Trip
 @Injectable()
 export class TripFactory {
     constructor( 
@@ -30,7 +30,7 @@ export class TripFactory {
         return newTrip
     }
     public makeDisplayTrip = (trip:Trip): displayTrip =>{  
-        let destination = this.destServices.cityById(trip.destinationId)
+        let destination = this.destServices.destinations.findId(trip.destinationId)
         let dates:string = this.tripDatesToDateString(trip)
         let profiles:string[] = this.storeSelector.profiles
             .filter(p=>trip.profiles.includes(p.id))
@@ -42,7 +42,7 @@ export class TripFactory {
                 trip.id,
                 dates,
                 'tbc', // convert temperature to string
-                destination,
+                destination.fullName,
                 profiles,
                 collections,
                 trip.dateModified
@@ -57,5 +57,21 @@ export class TripFactory {
         } else {
             return `${startDate.date()} - ${endDate.format('D MMMM')}`
         }
+    }
+    
+    public validateTrip = (trip:Trip):tripProperties[]=>{
+        let validArray: tripProperties[] = []
+        let id = trip.destinationId
+        let destisValid = !!this.destServices.DestinationByCityId(id)
+        destisValid && validArray.push('destinationId')
+        let now = moment()
+        let startDate = moment(trip.startDate)
+        let startDateIsFuture = startDate.year() >= now.year() && startDate.dayOfYear() >= now.dayOfYear()
+        startDateIsFuture && validArray.push('startDate')
+        let endDateIsAfterStart = moment(trip.endDate).isAfter(startDate)
+        endDateIsAfterStart && validArray.push('endDate')
+        trip.profiles.length > 0 && validArray.push('profiles')
+        trip.collections.length > 0 && trip.collections.some(c=>c.profiles.length>0) && validArray.push('collections')
+        return validArray
     }
 }

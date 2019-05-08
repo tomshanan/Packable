@@ -17,6 +17,7 @@ import { transitionTrigger } from '../../../shared/animations';
 import { PackableComplete,remotePackable} from '../../../shared/models/packable.model';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import * as packableActions from '@app/packables/store/packables.actions';
+import { takeUntil, single } from 'rxjs/operators';
 
 export interface importCollections_data {
   profileName:string
@@ -73,6 +74,7 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
     })
     this.store.dispatch(new libraryActions.loadLibrary())
   }
+  
   ngOnDestroy(){
     this.subs.unsubscribe()
   }

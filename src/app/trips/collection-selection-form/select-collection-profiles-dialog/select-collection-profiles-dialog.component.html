@@ -1,7 +1,9 @@
 <app-dialog-header (close)="onClose()"></app-dialog-header>
 <div class="text-center">
   <p class="h3">{{header}}</p>
-  <p class="text-muted">{{packablesString}} <br><small>*Packables may vary between Travelers</small></p>
+  <p class="text-muted">{{packablesString}} 
+    <ng-container *ngIf="packablesVary"> <br><small>*Packables may vary between Travelers</small></ng-container>
+  </p>
   <ng-container *ngIf="weatherFac.isSet(wRules)">
     <p class="form-heading">Weather Rules:</p>
     <p class="text-muted" innerHtml="{{weatherFac.getTempRuleString(wRules)}}"></p>

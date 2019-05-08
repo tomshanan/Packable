@@ -8,7 +8,7 @@
         </ng-container>
         <ng-container *ngIf="actionType=='selection'">
           <icon-text-button [svgIcon]="selectionState ? selectionOnIcon : selectionOffIcon" [disabled]="disabled" (onClick)="action()"
-            [buttonWidth]="buttonWidth()+'px'">
+            [buttonWidth]="buttonWidth()+'px'" [color]="selectionState ? 'accent' : 'action'">
           </icon-text-button>
         </ng-container>
         <ng-container *ngIf="actionType=='none'">

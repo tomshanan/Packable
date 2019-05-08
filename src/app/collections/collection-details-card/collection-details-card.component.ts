@@ -71,7 +71,7 @@ packableNameListString: string;
         return this.profileGroup.every( profile => {
             let col = profile.collections.findId(this.collection.id)
             if(col){
-              return col.packables.idIndex(p.id) > -1
+              return col.packables.hasId(p.id)
             } else {
               return true
             }

@@ -20,10 +20,20 @@
     <div class="step" *ngIf="step===3">
       <div class="content w-500">
           <h5 class="text-center">What do we need?</h5>
+          <remote-collection-selection-form
+            [remoteCollections]="remoteCollections"
+            [localCollections]="localCollections"
+            [selected]="trip.collections"
+            [profiles]="trip.profiles"
+            [loadingLibrary]="loadingLibrary"
+            [destMetaData]="destMetaData"
+            (localCollectionGroupsChange)="setCollections($event)">
+          </remote-collection-selection-form>
           <collection-selection-form
+              [localCollections]="localCollections"
               [selected]="trip.collections"
-              (selectedChange)="setCollections($event)"
-              [profiles]="trip.profiles">
+              [profiles]="trip.profiles"
+              (selectedChange)="setCollections($event)">
           </collection-selection-form>
       </div>
       <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>

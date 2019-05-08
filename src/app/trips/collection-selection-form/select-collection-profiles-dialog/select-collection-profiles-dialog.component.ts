@@ -26,6 +26,8 @@ export class SelectCollectionProfilesDialogComponent implements OnInit {
   content:string;
   packablesString: string;
   wRules: WeatherRule;
+  packablesVary:boolean = false;
+  
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: CollectionProfilesDialog_data,
     public dialogRef: MatDialogRef<SelectCollectionProfilesDialogComponent>,
@@ -33,11 +35,16 @@ export class SelectCollectionProfilesDialogComponent implements OnInit {
   ) {
     this.collection = data.collection;
     this.profileGroup = data.profileGroup.slice()
-    this.selectedProfiles = data.selectedProfiles.map(p=>p.id)
+    this.selectedProfiles = data.selectedProfiles.ids()
     this.header = this.collection.name
     this.content = data.content || '<b>Who should pack this collection?</b>'
     this.packablesString = this.collection.packables.map(p=>p.name).join(', ')
     this.wRules = this.collection.weatherRules
+    if(this.profileGroup.some(p =>{
+      return p.collections.hasId(this.collection.id)
+    })) {
+      this.packablesVary = true;
+    }
   }
 
   ngOnInit() {

@@ -1,0 +1,22 @@
+<ng-container *ngIf="!loadingLibrary; else loading">
+  <div #collectionList *ngIf="sortedCollections && sortedCollections.length>0" @dropInTrigger>
+    <h6 class="text-center">Recommended</h6>
+    <div *ngFor="let collection of sortedCollections" @dropInTrigger>
+      <collection-details-card
+        [collection]="collection"
+        actionType="button"
+        buttonState="add"
+        [boxClickActive]="true"
+        (actionClick)="onClickCollection(collection)"
+        (boxClick)="onClickCollection(collection)">
+      </collection-details-card>
+    </div>
+  </div>
+</ng-container>
+<ng-template #loading>
+  <p class="text-center">
+    <span class="mat-spinner-wrapper ml-1" *ngIf="loading">
+        <mat-spinner [diameter]='36'></mat-spinner>
+      </span>
+  </p>
+</ng-template>

@@ -41,6 +41,10 @@ declare global {
         */
         findId(id: string): T;
         /**
+        * get an array of all the element's ids
+        */
+       ids(): string[];
+        /**
         * check if an array of Objects has an object with matching ID
         */
         hasId(id: string): boolean;
@@ -102,7 +106,7 @@ if (!Array.prototype.compare) {
             if('id' in item){
                 if (!this.findId(item.id)) {
                     callback != null ? callback(item,'add') : this.unshift(item)
-                    //console.log('Added new item:'+item['name']);
+                    console.log('Added new item:'+item['name']);
                 }
             } 
             else {
@@ -115,8 +119,9 @@ if (!Array.prototype.compare) {
                 let newItem = updatedArray.findId(oldItem.id)
                 if (!newItem) {
                     callback != null ? callback(oldItem,'remove') : this.splice(i, 1);
+                    console.log('Removed an item:'+oldItem['name']);
                 } else if (('dateModified' in newItem && 'dateModified' in oldItem)&&(newItem.dateModified !== oldItem.dateModified)){
-                    //console.log('Replacing old item:',oldItem,'\nwith new item:',newItem);
+                    console.log('Replacing old item:',oldItem,'\nwith new item:',newItem);
                     callback != null ? callback(newItem,'update') : this.splice(i,1,newItem)
                 }
             }
@@ -144,5 +149,16 @@ if(!Array.prototype.removeElements){
             }
         })
         return this
+    }
+}
+if(!Array.prototype.ids){
+    Array.prototype.ids = function <T extends {id:string}>(this:T[]):string[]{
+        let returnArray:string[] = []
+        this.forEach(item => {
+            if('id' in item){
+                returnArray.push(item.id)
+            }
+        })
+        return returnArray
     }
 }

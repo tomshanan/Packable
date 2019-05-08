@@ -11,17 +11,21 @@ import { MatDialog } from '@angular/material';
 import { SelectCollectionProfilesDialogComponent, CollectionProfilesDialog_data } from './select-collection-profiles-dialog/select-collection-profiles-dialog.component';
 import { take } from 'rxjs/operators';
 import { tripCollectionGroup } from '@app/shared/models/trip.model';
+import { blockInitialAnimations, dropInTrigger } from '../../shared/animations';
 
 export interface collectionProfileGroups { [id: string]: Profile[] }
 
 @Component({
   selector: 'collection-selection-form',
   templateUrl: './collection-selection-form.component.html',
-  styleUrls: ['./collection-selection-form.component.css']
+  styleUrls: ['./collection-selection-form.component.css'],
+  animations:[blockInitialAnimations,dropInTrigger]
+
 })
 export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDestroy, AfterViewChecked {
 
   @Input() selected: tripCollectionGroup[] = []
+  @Input() localCollections: CollectionComplete[] = []
   @Input('profiles') inputProfiles: string[] = []
   profiles: Profile[] = []
   @Output() selectedChange = new EventEmitter<tripCollectionGroup[]>()
@@ -29,6 +33,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
   collections: CollectionComplete[] = [];
   selectedGroup: collectionProfileGroups = {};
   collectionProfileGroups: collectionProfileGroups = {};
+  debounceTimer = setTimeout(()=>{},0)
 
   subs = new Subscription()
   viewLoaded: boolean;
@@ -41,20 +46,26 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
 
   ngOnInit() {
     this.profiles = this.storeSelector.profiles.filter(p => this.inputProfiles.includes(p.id))
-    this.updateCollections(this.storeSelector.originalCollections)
-    // this.subs.add(
-    //   this.storeSelector.store_obs.subscribe(([pacState, colSatet, proState, tripState]) => {
-    //     this.updateCollections(colSatet.collections)
-    //   })
-    // )
+    this.collections = this.localCollections
+    this.updateCollections(this.localCollections, true)
   }
-  updateCollections(collections: CollectionOriginal[], first: boolean = true) {
-    let completeCols = this.colFac.makeCompleteArray(collections)
-    this.collections.compare(completeCols)
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.viewLoaded && (changes['selected'] || changes['localCollections'])) {
+      clearTimeout(this.debounceTimer)
+      this.debounceTimer = setTimeout(()=>{
+        this.updateCollections(this.localCollections, false)
+      }, 150)
+    }
+  }
+  ngAfterViewChecked() {
+    this.viewLoaded = true;
+  }
+  updateCollections(collections: CollectionComplete[], first: boolean = true) {
+    this.collections.compare(collections)
     // if we already selected some cols before, filter for only those currently on the trip
     if (isDefined(this.selected)) {
-      this.selected.forEach(col => {
-        this.selectedGroup[col.id] = this.profiles.filter(p => col.profiles.includes(p.id))
+      this.selected.forEach(colGroup => {
+        this.selectedGroup[colGroup.id] = this.profiles.filter(p => colGroup.profiles.includes(p.id))
       })
     }
     this.collections.forEach(c => {
@@ -102,14 +113,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
   }
 
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['selected'] && this.viewLoaded) {
-      this.updateCollections(this.storeSelector.originalCollections, false)
-    }
-  }
-  ngAfterViewChecked() {
-    this.viewLoaded = true;
-  }
+
   ngOnDestroy() {
 
   }
@@ -152,7 +156,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
     let selected: tripCollectionGroup[] = []
     for (let col in this.selectedGroup) {
       if (this.selectedGroup[col].length > 0) {
-        selected.push({ id: col, profiles: this.selectedGroup[col].map(p => p.id) })
+        selected.push({ id: col, profiles: this.selectedGroup[col].ids() })
       }
     }
     this.selectedChange.emit(selected)

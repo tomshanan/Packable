@@ -114,7 +114,15 @@ export class FilteredArray {
     }
   }
 }
-
+export function debounceTimer(func:Function, delay:number){ 
+  let debounceTimer = setTimeout(()=>{},0)
+  return function() { 
+      const context = this
+      const args = arguments 
+      clearTimeout(debounceTimer) 
+      debounceTimer = setTimeout(() => func.apply(context, args), delay) 
+  } 
+}  
 export class Guid {
   static newGuid() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

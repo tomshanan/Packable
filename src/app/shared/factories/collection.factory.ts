@@ -188,7 +188,7 @@ export class CollectionFactory {
         let allRemoteCollections = this.storeSelector.getRemoteCollections()
     
         let filteredRemoteCollections = allRemoteCollections.filter(c=>!idsImported.includes(c.id)).sort((a,b)=>{
-          return a.metaData.metascore - b.metaData.metascore
+          return a.metaData.metaScore - b.metaData.metaScore
         })
         console.log('getImportCollectionList: filteredRemoteCollections:', filteredRemoteCollections);
 

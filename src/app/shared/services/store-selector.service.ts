@@ -111,8 +111,8 @@ export class StoreSelectorService{
         } 
     }
     getRemoteCollections(ids?:string[]):remoteCollection[]{
-        let collections = this.libraryState.library.collections
-        let remoteCollections = collections.map(c=>new remoteCollection(c,this.getMetaDataForId(c.id)))
+        let libCollections:CollectionOriginal[] = this.libraryState.library.collections
+        let remoteCollections:remoteCollection[] = libCollections.map(c=>new remoteCollection(c,this.getMetaDataForId(c.id)))
         if(isDefined(ids)){
             return remoteCollections.filter(c=>ids.includes(c.id))
         } else {

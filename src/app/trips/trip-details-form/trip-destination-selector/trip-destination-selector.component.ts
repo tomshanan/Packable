@@ -114,6 +114,7 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
             .slice(0, 10)
             .sort((a, b) => { // sort by ranking
               if (round(a.score) == round(b.score)){
+                // prioritise city rank over country rank
                 let aRank = a.cityRank ? a.cityRank : (a.countryRank ? 1000 + a.countryRank : null)
                 let bRank = b.cityRank ? b.cityRank : (b.countryRank ? 1000 + b.countryRank : null)
                 return aRank ? (bRank ? aRank-bRank : -1) : (bRank ? 1 : 0)

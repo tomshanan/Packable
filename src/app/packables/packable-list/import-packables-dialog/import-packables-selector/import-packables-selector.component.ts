@@ -75,7 +75,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
   createFilterObject(inputObjects:{id:string,name:string}[],locality:filterItemLocality):filterItem[]{
     if(locality === 'remote'){
       (<remotePackable[]>inputObjects).sort((a,b)=>{
-        return a.metaData.metascore - b.metaData.metascore
+        return a.metaData.metaScore - b.metaData.metaScore
       })
     } else {
       (<PackableOriginal[]>inputObjects).sort((a,b)=>{

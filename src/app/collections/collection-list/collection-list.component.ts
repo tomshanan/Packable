@@ -210,8 +210,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   }
   updateViewObject(newC:CollectionViewObject) {
     delete newC.expanded
-    let cIndex = this.collectionList.findId(newC.id)
-    Object.assign(cIndex,newC)
+    let oldC = this.collectionList.findId(newC.id)
+    Object.assign(oldC,newC)
+    console.log('updateCollectionList, updated',oldC)
   }
   getProfileGroup(id:string):Profile[]{
     return this.storeSelector.getProfilesWithCollectionId(id)

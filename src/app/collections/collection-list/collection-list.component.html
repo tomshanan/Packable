@@ -45,7 +45,7 @@
               <mat-checkbox [checked]="isSelected(collection.id)" (change)="checkboxChange($event, collection.id)"></mat-checkbox>
           </div>
         {{collection.name}}
-        <ng-container *ngIf="contextProvided && collection.essential">
+        <ng-container *ngIf="profileId && collection.essential">
           <mat-icon style="align-self: center;" title="Essential Collection">star</mat-icon>
         </ng-container>
       </mat-panel-title>

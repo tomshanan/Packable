@@ -10,10 +10,20 @@
     font-size: 16px;
 }
 .line{
-    border-top-width: 2px;
-    border-top-style: solid;
     flex: 1 1 0px;
-    height: 0;
+    position: relative;
+    height: 2px;
+    background-color: currentColor;
     transition: border-color 300ms;
-
+}
+.inner-line{
+    background-color: currentColor;
+    flex: 1 1 0px;
+    position: relative;
+    height: 2px;
+    width: 0%;
+    transition: width 500ms;
+}
+.inner-line.complete{
+    width:100%;
 }

@@ -26,7 +26,8 @@ export class CollectionFactory {
             packable.packables ? packable.packables.map(p => this.pacFac.clonePackablePrivate(p)) : [],
             packable.essential,
             this.weatherFactory.deepCopy(packable.weatherRules),
-            packable.dateModified
+            packable.dateModified,
+            packable.weatherOverride,
         )
 
     }
@@ -39,7 +40,8 @@ export class CollectionFactory {
             original.userCreated,
             original.dateModified,
             original.locations,
-            original.deleted
+            original.deleted,
+            original.weatherOverride,
         )
     }
     public remoteToComplete = (complete:remoteCollection[]):CollectionComplete[] => {
@@ -54,7 +56,8 @@ export class CollectionFactory {
                 c.userCreated,
                 c.dateModified,
                 c.locations,
-                c.deleted
+                c.deleted,
+                c.weatherOverride,
             )
         })
     }
@@ -65,7 +68,8 @@ export class CollectionFactory {
             privatePackables,
             false,
             this.weatherFactory.deepCopy(original.weatherRules),
-            original.dateModified
+            original.dateModified,
+            original.weatherOverride,
         );
         if (patchValue) {
             for (var property in patchValue) {
@@ -95,7 +99,8 @@ export class CollectionFactory {
             complete.packables.map(p=>this.pacFac.completeToPrivate(p)),
             complete.essential,
             this.weatherFactory.deepCopy(complete.weatherRules),
-            complete.dateModified
+            complete.dateModified,
+            complete.weatherOverride,
         )
     }
     public completeToOriginal = (complete:CollectionComplete):CollectionOriginal => {
@@ -107,7 +112,8 @@ export class CollectionFactory {
             complete.userCreated,
             complete.dateModified,
             complete.locations,
-            complete.deleted
+            complete.deleted,
+            complete.weatherOverride,
         )
     }
     public makeComplete = (collection: CollectionAny): CollectionComplete => {
@@ -122,7 +128,8 @@ export class CollectionFactory {
                     collection.userCreated,
                     collection.dateModified,
                     collection.locations,
-                    collection.deleted
+                    collection.deleted,
+                    collection.weatherOverride,
                 )
             } else {
                 let original = this.storeSelector.getCollectionById(collection.id) || this.storeSelector.getRemoteCollections([collection.id])[0]
@@ -136,7 +143,8 @@ export class CollectionFactory {
                     original.userCreated,
                     collection.dateModified,
                     original.locations,
-                    original.deleted
+                    original.deleted,
+                    original.weatherOverride,
                 )
             }
         } else {

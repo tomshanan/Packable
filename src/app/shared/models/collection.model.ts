@@ -21,8 +21,8 @@ export class CollectionComplete {
         public userCreated: boolean = false,
         public dateModified: number = timeStamp(),
         public locations: string[] = [],
-        public deleted: boolean  = false
-
+        public deleted: boolean  = false,
+        public weatherOverride: boolean = false,
     ) {
     }
 }
@@ -37,7 +37,8 @@ export class CollectionOriginal {
         public userCreated: boolean = false,
         public dateModified: number =  timeStamp(),
         public locations: string[] = [],
-        public deleted: boolean  = false
+        public deleted: boolean  = false,
+        public weatherOverride: boolean = false,
     ) {
     }
 }
@@ -50,6 +51,7 @@ export class CollectionPrivate {
         public essential: boolean = false,
         public weatherRules: WeatherRule = new WeatherRule(),
         public dateModified: number =  timeStamp(),
+        public weatherOverride: boolean = false,
     ){
     }
 }

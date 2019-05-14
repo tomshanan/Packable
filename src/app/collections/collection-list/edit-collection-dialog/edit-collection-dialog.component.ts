@@ -13,6 +13,7 @@ import * as fromApp from '@shared/app.reducers';
 import { Store } from '@ngrx/store';
 import { timeStamp } from '@app/shared/global-functions';
 import { isDefined } from '../../../shared/global-functions';
+import { expandAndFadeTrigger } from '../../../shared/animations';
 
 export interface editCollectionDialog_data {
   collection: CollectionComplete,
@@ -22,7 +23,8 @@ export interface editCollectionDialog_data {
 @Component({
   selector: 'edit-collection-dialog',
   templateUrl: './edit-collection-dialog.component.html',
-  styleUrls: ['./edit-collection-dialog.component.css']
+  styleUrls: ['./edit-collection-dialog.component.css'],
+  animations:[expandAndFadeTrigger]
 })
 export class EditCollectionDialogComponent implements OnInit {
   profileId: string;
@@ -76,6 +78,9 @@ export class EditCollectionDialogComponent implements OnInit {
   toggleEssential(e:MatSlideToggleChange){
     this.collection.essential = e.checked
   }
+  toggleweatherOverride(e:MatSlideToggleChange){
+    this.collection.weatherOverride = e.checked
+  }
   onConfirm(){
     if(this.formValid){
       this.collection.dateModified = timeStamp()
@@ -89,6 +94,7 @@ export class EditCollectionDialogComponent implements OnInit {
           originalCollection.locations = this.collection.locations
         }
         originalCollection.dateModified = this.collection.dateModified
+        originalCollection.weatherOverride = this.collection.weatherOverride
         this.store.dispatch(new collectionActions.updateOriginalCollections([originalCollection]))
       } 
       if(this.selectedProfiles.length>0){

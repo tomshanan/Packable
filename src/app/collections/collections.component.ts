@@ -50,7 +50,6 @@ export class CollectionsComponent implements OnInit,OnDestroy {
       console.log('collections - received new state');
       let profiles = proState.profiles
       this.collections = this.collectionFactory.makeCompleteArray(colState.collections)
-
     })
   }
 

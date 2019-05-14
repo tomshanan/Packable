@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, OnDestroy } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from '../shared-comps/modal/modal.component';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -20,7 +20,7 @@ import { evaporateTransitionTrigger } from '../shared/animations';
   styleUrls: ['./trips.component.css'],
   animations: [evaporateTransitionTrigger]
 })
-export class TripsComponent implements OnInit {
+export class TripsComponent implements OnInit, OnDestroy {
 
   state_subscription: Subscription;
   trips_obs: Observable<tripState>;
@@ -46,7 +46,9 @@ export class TripsComponent implements OnInit {
       console.log(this.incomplete)
     })
   }
-
+  ngOnDestroy(){
+    this.state_subscription.unsubscribe()
+  }
   onTripChange(trip:Trip){
     this.newTrip = trip;
   }

@@ -1,4 +1,4 @@
-<div class="toolbar" [class.listEditing]="listEditing" [class.small-dispay-toolbar]="windowService.max('xs')">
+<div class="toolbar" [class.listEditing]="listEditing" [class.small-dispay-toolbar]="windowService.max('xs')" *ngIf="optionsEnabled">
     <ng-container *ngIf="listEditing === false">
       <icon-text-button text="Select" svgIcon="list" (onClick)="toggleListEditing(true)"></icon-text-button>
     </ng-container>
@@ -74,22 +74,24 @@
               <mat-icon>settings</mat-icon>
               <span>Edit Settings</span>
             </button>
-            <button mat-menu-item (click)="actionAddCollection(collection)" *ngIf="totalProfiles > collection.profileGroup.length">
-              <mat-icon svgIcon="add_to_travelers" ></mat-icon>
-              <span>Add to Travelers...</span>
-            </button>
-            <button mat-menu-item (click)="actionApplyCollection(collection)" *ngIf="collection.profileGroup.length > 0">
-              <mat-icon svgIcon="push_to_travelers" ></mat-icon>
-              <span>Apply settings to Travelers...</span>
-            </button>
-            <button mat-menu-item appColor="danger" (click)="actionRemoveCollection(collection)" *ngIf="collection.profileGroup.length != 0">
-                <mat-icon svgIcon="remove_from_travelers"></mat-icon>
-                <span>Remove from Travelers...</span>
-            </button>
-            <button mat-menu-item appColor="danger" (click)="bulkActionDeleteSelectedCollections(collection.id)" *ngIf="!context.profileId">
-                <mat-icon>delete</mat-icon>
-                <span>Delete forever...</span>
-            </button>
+            <ng-container *ngIf="optionsEnabled">
+              <button mat-menu-item (click)="actionAddCollection(collection)" *ngIf="totalProfiles > collection.profileGroup.length">
+                <mat-icon svgIcon="add_to_travelers" ></mat-icon>
+                <span>Add to Travelers...</span>
+              </button>
+              <button mat-menu-item (click)="actionApplyCollection(collection)" *ngIf="collection.profileGroup.length > 0">
+                <mat-icon svgIcon="push_to_travelers" ></mat-icon>
+                <span>Apply settings to Travelers...</span>
+              </button>
+              <button mat-menu-item appColor="danger" (click)="actionRemoveCollection(collection)" *ngIf="collection.profileGroup.length != 0">
+                  <mat-icon svgIcon="remove_from_travelers"></mat-icon>
+                  <span>Remove from Travelers...</span>
+              </button>
+              <button mat-menu-item appColor="danger" (click)="bulkActionDeleteSelectedCollections(collection.id)" *ngIf="!context.profileId">
+                  <mat-icon>delete</mat-icon>
+                  <span>Delete forever...</span>
+              </button>
+            </ng-container>
           </mat-menu>
 
 
@@ -98,7 +100,7 @@
     <div *ngIf="collection.expanded" @transitionTrigger>
           <app-collection-panel 
           [collection]="collection.complete" 
-          [profileId]="collection.selectedProfile"
+          [profileId]="profileId"
           (removeCollection)="onRemoveCollection(collection.id)"
           (change)="updateViewObject(collection.id)">
         </app-collection-panel>

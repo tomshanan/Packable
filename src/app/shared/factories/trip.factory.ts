@@ -74,4 +74,8 @@ export class TripFactory {
         trip.collections.length > 0 && trip.collections.some(c=>c.profiles.length>0) && validArray.push('collections')
         return validArray
     }
+    public validateTripProperties = (trip:Trip,required:tripProperties[])=>{
+        const tripValidArray = this.validateTrip(trip)
+        return required.every(v=>tripValidArray.includes(v))
+    }
 }

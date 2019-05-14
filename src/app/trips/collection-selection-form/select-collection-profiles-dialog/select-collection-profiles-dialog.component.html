@@ -8,6 +8,11 @@
     <p class="form-heading">Weather Rules:</p>
     <p class="text-muted" innerHtml="{{weatherFac.getTempRuleString(wRules)}}"></p>
     <p class="text-muted" *ngIf="wRules.weatherTypes.length>0">{{wRules.weatherTypes | join:', ' | titlecase}}</p>
+    <p class="small text-success" *ngIf="weatherCheck.conditionsMet; else notMet"><mat-icon [inline]="true">check</mat-icon> Conditions have been met for this trip</p>
+    <ng-template #notMet>
+      <p class="small text-danger" *ngFor="let reason of weatherCheck.response" [innerHtml]="reason"></p>
+    </ng-template>
+
   </ng-container>
 </div>
 <mat-dialog-content>

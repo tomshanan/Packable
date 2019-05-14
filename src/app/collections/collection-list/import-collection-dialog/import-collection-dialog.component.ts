@@ -20,9 +20,14 @@ import * as packableActions from '@app/packables/store/packables.actions';
 import { takeUntil, single } from 'rxjs/operators';
 
 export interface importCollections_data {
-  profileName:string
+  profileName?:string,
+  profileGroup?: Profile[],
+  selectedProfiles?: string[],
 }
-
+export interface importCollections_result {
+  collections: CollectionComplete[],
+  profiles:string[],
+}
 @Component({
   selector: 'app-import-collection-dialog',
   templateUrl: './import-collection-dialog.component.html',
@@ -58,8 +63,8 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
 
   ) { 
     this.profileName = data.profileName || ''
-    this.profileGroup = this.storeSelector.profiles
-    this.selectedProfiles = this.context.profileId ? [this.context.profileId] : []
+    this.profileGroup = data.profileGroup || this.storeSelector.profiles
+    this.selectedProfiles = data.selectedProfiles || (this.context.profileId ? [this.context.profileId] : [])
     this.dialogRef.addPanelClass('dialog-full-height')
   }
 
@@ -74,7 +79,7 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
     })
     this.store.dispatch(new libraryActions.loadLibrary())
   }
-  
+
   ngOnDestroy(){
     this.subs.unsubscribe()
   }
@@ -90,9 +95,7 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
       this.usedCollections = this.localCollections
     }
   }
-  onClose(collections:CollectionComplete[] = []){
-    this.dialogRef.close(collections)
-  }
+
   onSelectCollections(){
     this.dialogRef.removePanelClass('dialog-full-height')
     this.dialogRef.addPanelClass('dialog-form')
@@ -106,11 +109,13 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
     this.step--
     this.dialogRef.addPanelClass('dialog-full-height')
     this.dialogRef.removePanelClass('dialog-form')
-
   }
   onSelectProfiles(){
   this.bulkActions.processImportCollections(this.selectedCollections,this.selectedProfiles)    
-  let allComplete = this.colFac.getImportCollectionList().filter(c=>this.selectedCollections.includes(c.id))
-  this.onClose(allComplete)
+  let allComplete = this.collections.filter(c=>this.selectedCollections.includes(c.id))
+  this.onClose(allComplete,this.selectedProfiles)
+  }
+  onClose(collections:CollectionComplete[] = [],profiles:string[] = []){
+    this.dialogRef.close(<importCollections_result>{collections:collections,profiles:profiles})
   }
 }

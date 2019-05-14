@@ -19,7 +19,6 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
     let editId: string;
     let editIndex: number;
     let editTrip: Trip;
-    console.log('TripReducers received action',action)
     switch (action.type) {
         case TripActions.SET_TRIP_STATE:
             return {

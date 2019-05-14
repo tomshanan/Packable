@@ -1,7 +1,7 @@
 <div class="pofileSelectorContainer"
   #container>
   <div class="selectedProfile d-flex flex-row align-items-center"  [class.hide]="selectorOpen" *ngIf="selected">
-    <button mat-icon-button appColor="action" (click)="toggleProfileSelector()" *ngIf="!selectorOpen">
+    <button mat-icon-button appColor="action" (click)="toggleProfileSelector()" *ngIf="!selectorOpen" @horizontalShringAndFade>
       <mat-icon>arrow_back_ios</mat-icon>
     </button>
     <div class="selectorTrigger">

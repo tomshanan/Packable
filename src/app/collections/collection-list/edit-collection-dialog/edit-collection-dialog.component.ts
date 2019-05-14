@@ -12,6 +12,7 @@ import * as profileActions from '@app/profiles/store/profile.actions'
 import * as fromApp from '@shared/app.reducers';
 import { Store } from '@ngrx/store';
 import { timeStamp } from '@app/shared/global-functions';
+import { isDefined } from '../../../shared/global-functions';
 
 export interface editCollectionDialog_data {
   collection: CollectionComplete,
@@ -51,6 +52,8 @@ export class EditCollectionDialogComponent implements OnInit {
     this.profileGroup = this.data.profileGroup
     if(this.profileId){
       this.selectedProfiles = [this.profileId]
+    } else if (isDefined(this.profileGroup)){
+      this.selectedProfiles = this.data.profileGroup.ids()
     }
     console.log(`EDIT COL DIALOG:`,'data',data);
     this.dialogRef.addPanelClass('dialog-form')

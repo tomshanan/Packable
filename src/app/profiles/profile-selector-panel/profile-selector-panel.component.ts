@@ -11,6 +11,7 @@ import { NewProfileDialogComponent } from '../new-profile-dialog/new-profile-dia
 import { isDefined } from '../../shared/global-functions';
 import { StoreSelectorService } from '@app/core';
 import { ConfirmDialog, ConfirmDialogData } from '@app/shared-comps/dialogs/confirm-dialog/confirm.dialog';
+import { horizontalShringAndFade } from '../../shared/animations';
 
 @Component({
   selector: 'profile-selector-panel',
@@ -24,7 +25,8 @@ import { ConfirmDialog, ConfirmDialogData } from '@app/shared-comps/dialogs/conf
           style({opacity:1, transform:'translateX(0px)', zIndex:-1})
         ]))
       ])
-    ])
+    ]),
+    horizontalShringAndFade
   ]
 })
 export class ProfileSelectorPanelComponent implements OnInit,OnChanges {

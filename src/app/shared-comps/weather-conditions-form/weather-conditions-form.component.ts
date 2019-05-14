@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
 import { WindowService } from '@shared/services/window.service';
-import { weatherOptions, WeatherRule, weatherType } from '@shared/models/weather.model';
+import { weatherOptions, WeatherRule, weatherType, tempOptions, absoluteMax, absoluteMin  } from '@shared/models/weather.model';
 import { MatSelectChange, MatCheckboxChange, MatSlideToggleChange } from '@angular/material';
-import { tempOptions, absoluteMax, absoluteMin } from '@shared/services/weather.service';
 import { Options, LabelType} from 'ng5-slider';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { quickTransitionTrigger } from '@app/shared/animations';

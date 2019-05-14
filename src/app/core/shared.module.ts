@@ -85,6 +85,7 @@ import { CollectionSelectionFormComponent } from '../trips/collection-selection-
 import { SelectCollectionProfilesDialogComponent } from '../trips/collection-selection-form/select-collection-profiles-dialog/select-collection-profiles-dialog.component';
 import { CollectionDestinationSelectorComponent } from '../collections/collection-list/edit-collection-dialog/collection-destination-selector/collection-destination-selector.component';
 import { RemoteCollectionSelectionFormComponent } from '../trips/remote-collection-selection-form/remote-collection-selection-form.component';
+import { CustomiseTripProfilesFormComponent } from '../trips/customise-trip-profiles-form/customise-trip-profiles-form.component';
 
 let imports = [
     ProfilesComponent,
@@ -162,7 +163,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent],
     exports: [...imports]
 })
 export class SharedModule {

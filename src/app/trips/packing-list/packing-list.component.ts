@@ -14,8 +14,8 @@ import { DestinationDataService } from '../../shared/services/location-data.serv
 import { PackableComplete, ActivityRule } from '../../shared/models/packable.model';
 import { WindowService } from '../../shared/services/window.service';
 import { navParams } from '../../shared-comps/mobile-nav/mobile-nav.component';
-import { WeatherService, tempOptions, weatherData, absoluteMax, absoluteMin } from '../../shared/services/weather.service';
-import { WeatherRule, weatherType, weatherOptions } from '../../shared/models/weather.model';
+import { WeatherService, weatherData } from '../../shared/services/weather.service';
+import { WeatherRule, weatherType, weatherOptions,tempOptions, absoluteMax, absoluteMin  } from '../../shared/models/weather.model';
 import { take } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { isDefined } from '../../shared/global-functions';

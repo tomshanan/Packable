@@ -12,6 +12,8 @@ import { SelectCollectionProfilesDialogComponent, CollectionProfilesDialog_data 
 import { take } from 'rxjs/operators';
 import { tripCollectionGroup } from '@app/shared/models/trip.model';
 import { blockInitialAnimations, dropInTrigger } from '../../shared/animations';
+import { weatherData } from '../../shared/services/weather.service';
+import { NewCollectionDialogComponent, newCollectionDialog_result, newCollectionDialog_data } from '../../collections/collection-list/new-collection-dialog/new-collection-dialog.component';
 
 export interface collectionProfileGroups { [id: string]: Profile[] }
 
@@ -27,6 +29,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
   @Input() selected: tripCollectionGroup[] = []
   @Input() localCollections: CollectionComplete[] = []
   @Input('profiles') inputProfiles: string[] = []
+  @Input('destWeatherData') weatherData: weatherData = new weatherData()
   profiles: Profile[] = []
   @Output() selectedChange = new EventEmitter<tripCollectionGroup[]>()
 
@@ -41,7 +44,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
     private storeSelector: StoreSelectorService,
     private colFac: CollectionFactory,
     private proFac: ProfileFactory,
-    private dialogRef: MatDialog
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -89,6 +92,9 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
             essentials.forEach(c=>{
               this.selectedGroup[c.id] = this.selectedGroup[c.id] ? [...this.selectedGroup[c.id], p] : [p];
             })
+            setTimeout(()=>{
+              this.emitSelected()
+            },100) 
           }
         })
       }
@@ -97,6 +103,8 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
         .sort((a, b) => this.sortColProGroup(a, b, this.collectionProfileGroups))
         // sort again by most used on this trip
         .sort((a, b) => this.sortColProGroup(a, b, this.selectedGroup))
+      
+      
     }
   }
   profileInSelected(p: Profile): boolean {
@@ -126,17 +134,18 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
       this.setProfiles(id)
     }
   }
-  setProfiles(id: string) {
+  setProfiles(colId: string) {
     if (this.profiles.length === 1) {
-      this.selectedGroup[id] = this.profiles.slice()
+      this.selectedGroup[colId] = this.profiles.slice()
       this.emitSelected()
     } else {
       let data: CollectionProfilesDialog_data = {
-        collection: this.collections.findId(id),
+        collection: this.collections.findId(colId),
         profileGroup: this.profiles,
-        selectedProfiles: this.selectedGroup[id] && this.selectedGroup[id].length > 0 ? this.selectedGroup[id] : this.profiles
+        weatherData: this.weatherData,
+        selectedProfiles: this.selectedGroup[colId] && this.selectedGroup[colId].length > 0 ? this.selectedGroup[colId] : this.profiles
       }
-      let dialog = this.dialogRef.open(SelectCollectionProfilesDialogComponent, {
+      let dialog = this.dialog.open(SelectCollectionProfilesDialogComponent, {
         data: data,
         maxHeight: '99vh',
         maxWidth: '99vw',
@@ -144,14 +153,33 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
       })
       dialog.afterClosed().pipe(take(1)).subscribe((profiles: Profile[]) => {
         if (isDefined(profiles)) {
-          this.selectedGroup[id] = profiles.slice()
+          this.selectedGroup[colId] = profiles.slice()
           this.emitSelected()
         }
       })
     }
 
   }
-
+  newCollection(){
+    const data:newCollectionDialog_data = {
+      profileGroup: this.profiles
+    }
+    let newCollectionDialog = this.dialog.open(NewCollectionDialogComponent, {
+      maxHeight: '99vh',
+      maxWidth: '99vw',
+      disableClose: true,
+      autoFocus: false,
+      data:data
+    });
+    newCollectionDialog.afterClosed().pipe(take(1)).subscribe((result: newCollectionDialog_result) => {
+      if (result.collection && isDefined(result.profiles)) {
+        const profiles = result.profiles
+        const colId = result.collection.id
+        this.selectedGroup[colId] = profiles
+        this.emitSelected()
+      }
+    })
+  }
   emitSelected() {
     let selected: tripCollectionGroup[] = []
     for (let col in this.selectedGroup) {

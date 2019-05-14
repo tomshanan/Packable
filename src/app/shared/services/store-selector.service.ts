@@ -194,10 +194,12 @@ export class StoreSelectorService{
     getProfileById(id:string):Profile{
         return this.profiles.find(x => x.id === id) || (console.log(`could not find id ${id} in profile state:`,this.profiles), null);
     }
-    
+    getProfilesById(ids:string[]):Profile[]{
+        return ids.map(id=>this.getProfileById(id))
+    }
     getProfilesWithPackableId(id:string):Profile[] {
-        return this.profiles.filter(pr=>{
-            return pr.collections.some(c=>{
+        return this.profiles.filter(profile=>{
+            return profile.collections.some(c=>{
                 return c.packables.some(p=>p.id==id)
             })
         })
@@ -207,15 +209,15 @@ export class StoreSelectorService{
      * @param id the packable id to look up
      */
     getProfilesWithCollectionId(cId:string):Profile[] {
-        return this.profiles.filter(pr=>{
-            return pr.collections.some(c=>{
+        return this.profiles.filter(p=>{
+            return p.collections.some(c=>{
                 return c.id == cId
             })
         })
     }
     getProfilesWithCollectionAndPackable(cId:string, pId:string):Profile[] {
-        return this.profiles.filter(pr=>{
-            return pr.collections.some(c=>{
+        return this.profiles.filter(profile=>{
+            return profile.collections.some(c=>{
                 return c.id == cId && c.packables.some(p=>p.id == pId)
             })
         })

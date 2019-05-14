@@ -18,7 +18,7 @@
         <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>      
     </div>
     <div class="step" *ngIf="step===3">
-      <div class="content w-500">
+      <div class="content w-500 px-1">
           <h5 class="text-center">What do we need?</h5>
           <remote-collection-selection-form
             [remoteCollections]="remoteCollections"
@@ -27,20 +27,25 @@
             [profiles]="trip.profiles"
             [loadingLibrary]="loadingLibrary"
             [destMetaData]="destMetaData"
-            (localCollectionGroupsChange)="setCollections($event)">
+            [destWeatherData]="destWeatherData"
+            [limit]="getLimit()"
+            (localCollectionGroupsChange)="setCollections($event)" #remoteColSelector>
           </remote-collection-selection-form>
           <collection-selection-form
               [localCollections]="localCollections"
               [selected]="trip.collections"
               [profiles]="trip.profiles"
+              [destWeatherData]="destWeatherData"
               (selectedChange)="setCollections($event)">
           </collection-selection-form>
       </div>
       <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>
     </div>
     <div class="step" *ngIf="step===4">
-      <div class="content">
-        step 4 content
+      <div class="content w-100">
+        <h5 class="text-center">Customise Profiles</h5>
+          <customise-trip-profiles-form [trip]="trip">
+          </customise-trip-profiles-form>
       </div>
       <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>
     </div>

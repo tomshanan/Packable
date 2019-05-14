@@ -1,4 +1,5 @@
 import { filterItem } from '@app/shared-comps/item-selector/item-selector.component';
+import * as moment from 'moment'
 
 export type item = {
   id: string
@@ -32,7 +33,10 @@ export function path(...arr:string[]):string{
   arr = arr.clearUndefined()
   return arr.join('/')
 }
-
+export function joinSpecial(arr:string[], del:string,lastDel:string):string{
+  let last = arr.pop()
+  return arr.join(del)+(arr.length>0 ? lastDel: '')+last
+}
 export function round(number:number,decimals:number=0):number{
   return Math.floor(number*10**decimals)/10**decimals
 }
@@ -114,15 +118,7 @@ export class FilteredArray {
     }
   }
 }
-export function debounceTimer(func:Function, delay:number){ 
-  let debounceTimer = setTimeout(()=>{},0)
-  return function() { 
-      const context = this
-      const args = arguments 
-      clearTimeout(debounceTimer) 
-      debounceTimer = setTimeout(() => func.apply(context, args), delay) 
-  } 
-}  
+
 export class Guid {
   static newGuid() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -153,3 +149,25 @@ export function sortByMostRecent(a:hasDateModified,b:hasDateModified):number{
 }
 export const allowedSpacesRegEx = /[\s\-\_\(\)]+/;
 export const allowedNameRegEx = /^[A-Za-z0-9\s\-\_\(\)\']+$/;
+
+export function getAllDates(startDate: string, EndDate: string,incl:{first?:boolean,last?:boolean}={first:true,last:true}): moment.Moment[] {
+  let startMoment = moment(startDate, 'YYYY-MM-DD');
+  let endMoment = moment(EndDate, 'YYYY-MM-DD');
+  let daysTotal = endMoment.diff(startMoment, 'days');
+  let allDates: moment.Moment[] = [];
+  for (let i = (incl.first?0:1); (incl.last?i:i+1) <= daysTotal; i++) { // INCLUDES FIRST DAY - change i = 1 to exclude first day
+    allDates.push(moment(startMoment).add(i, 'd'))
+  }
+  return allDates
+}
+
+export function stringArraysAreSame(a:Array<string>,b:Array<string>):boolean{
+  let match = true
+  a.forEach(str=>{
+    !b.includes(str) && (match = false)
+  })
+  b.forEach(str=>{
+    !a.includes(str) && (match = false)
+  })
+  return match
+}

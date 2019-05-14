@@ -68,14 +68,14 @@ export class ProfilesComponent implements OnInit, OnDestroy {
     })
   }
   onSelectedProfiles() { // when profile selector emits a new profile
-    this.context.setBoth(null, this.selectedProfileId)
+    this.context.setProfile(this.selectedProfileId)
     this.setProfileAndCollections()
   }
   setProfileAndCollections() { 
     // set components loaded profile
     this.selectedProfile = this.context.getProfile();
     this.selectedProfileId = this.context.profileId
-    console.log("PROFILES: selected profile contexts:",this.selectedProfile, this.selectedProfileId)
+    console.log("PROFILES: selected profile contexts\nselectedProfile:",this.selectedProfile,'\nselectedProfileId', this.selectedProfileId)
     if(!isDefined(this.selectedProfile)){
       this.context.reset();
       this.profileCollections = []

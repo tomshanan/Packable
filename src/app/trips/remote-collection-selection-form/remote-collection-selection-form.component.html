@@ -1,15 +1,22 @@
 <ng-container *ngIf="!loadingLibrary; else loading">
-  <div #collectionList *ngIf="sortedCollections && sortedCollections.length>0" @dropInTrigger>
+  <div #collectionList class="mb-2" *ngIf="sortedCollections && sortedCollections.length>0" @dropInTrigger>
     <h6 class="text-center">Recommended</h6>
-    <div *ngFor="let collection of sortedCollections" @dropInTrigger>
-      <collection-details-card
-        [collection]="collection"
-        actionType="button"
-        buttonState="add"
-        [boxClickActive]="true"
-        (actionClick)="onClickCollection(collection)"
-        (boxClick)="onClickCollection(collection)">
-      </collection-details-card>
+    <div *ngFor="let collection of sortedCollections; let i = index" @dropInTrigger>
+      <div *ngIf="limit ? limit > i : true" @expandAndFadeTrigger>
+        <collection-details-card
+          [collection]="collection"
+          actionType="button"
+          buttonState="add"
+          [boxClickActive]="true"
+          (actionClick)="onClickCollection(collection)"
+          (boxClick)="onClickCollection(collection)">
+        </collection-details-card>
+      </div>
+    </div>
+    <div class="text-center mb-2" 
+      *ngIf="limit != null && sortedCollections.length > limit"
+      @expandAndFadeTrigger>
+      <a class="inline-link" (click)="bulkActionImportCollections()">More</a>
     </div>
   </div>
 </ng-container>

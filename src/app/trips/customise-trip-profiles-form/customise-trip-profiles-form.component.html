@@ -1,0 +1,16 @@
+
+<div class="px-1">
+    <horizontal-icon-selector stepWidth="55" #iconSelector>
+        <profile-selector 
+        iconWidth="55px" 
+        [profiles]="profileGroup" 
+        [selected]="selectedProfileId ? [selectedProfileId] : []" 
+        [multiselect]="false"
+        [showNames]="true" 
+        (selectedChange)="onSelectedProfiles($event)">
+      </profile-selector>
+    </horizontal-icon-selector> 
+    <ng-container *ngIf="trip && selectedProfileId">
+      <app-collection-list [profileId]="selectedProfileId" [collections]="profileCollections" [optionsEnabled]="false"></app-collection-list>
+    </ng-container>
+</div>

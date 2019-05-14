@@ -11,85 +11,106 @@ import { MatDialog } from '@angular/material';
 import { take } from 'rxjs/operators';
 import { isDefined } from '../../shared/global-functions';
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
-import { blockInitialAnimations, dropInTrigger } from '../../shared/animations';
+import { blockInitialAnimations, dropInTrigger, expandAndFadeTrigger } from '../../shared/animations';
+import { WeatherService, weatherData } from '../../shared/services/weather.service';
+import { importCollections_data, ImportCollectionDialogComponent, importCollections_result } from '../../collections/collection-list/import-collection-dialog/import-collection-dialog.component';
 
+type weatherMet = { weatherMet: boolean }
+type completeAndWeatherMet = CollectionComplete & weatherMet
 @Component({
   selector: 'remote-collection-selection-form',
   templateUrl: './remote-collection-selection-form.component.html',
   styleUrls: ['./remote-collection-selection-form.component.css'],
-  animations:[blockInitialAnimations,dropInTrigger]
+  animations: [blockInitialAnimations, dropInTrigger,expandAndFadeTrigger]
 })
-export class RemoteCollectionSelectionFormComponent implements OnInit,OnChanges {
-@Input('remoteCollections') remoteCollections: remoteCollection[] = []
-@Input('localCollections') localCollections: CollectionComplete[] = []
-@Input('selected') selected: tripCollectionGroup[] = []
-@Input('loadingLibrary') loadingLibrary:boolean;
-@Input('profiles') inputTripProfiles: string[] = []
-@Input('destMetaData') destMetaData: destMetaData;
-@Output() selectedChange = new EventEmitter<tripCollectionGroup[]>()
-/*
-<remote-collection-selection-form
-  [remoteCollections]="remoteCollection[]"
-  [localCollectionGroups]="tripCollectionGroup[]"
-  [profiles]="string[]"
-  (localCollectionGroupsChange)="onchange($event:tripCollectionGroup[])">
-</remote-collection-selection-form>
-*/
-sortedCollections: CollectionComplete[];
-tripProfiles:Profile[] = []
-storeProfiles: Profile[];
-debounceTimer = setTimeout(()=>{},0)
+export class RemoteCollectionSelectionFormComponent implements OnInit, OnChanges {
+  @Input('remoteCollections') remoteCollections: remoteCollection[] = []
+  @Input('localCollections') localCollections: CollectionComplete[] = []
+  @Input('selected') selected: tripCollectionGroup[] = []
+  @Input('loadingLibrary') loadingLibrary: boolean;
+  @Input('profiles') inputTripProfiles: string[] = []
+  @Input('destMetaData') destMetaData: destMetaData;
+  @Input('destWeatherData') destWeatherData: weatherData;
+  @Input('limit') limit: number = null;
+  @Output() selectedChange = new EventEmitter<tripCollectionGroup[]>()
+  /*
+  <remote-collection-selection-form
+    [remoteCollections]="remoteCollection[]"
+    [localCollectionGroups]="tripCollectionGroup[]"
+    [profiles]="string[]"
+    (localCollectionGroupsChange)="onchange($event:tripCollectionGroup[])">
+  </remote-collection-selection-form>
+  */
+  sortedCollections: completeAndWeatherMet[];
+  tripProfiles: Profile[] = []
+ 
+  debounceTimer = setTimeout(() => { }, 0)
   constructor(
-    private colFac:CollectionFactory,
+    private colFac: CollectionFactory,
     private storeSelector: StoreSelectorService,
     private dialogRef: MatDialog,
-    private bulkActions:BulkActionsService,
+    private bulkActions: BulkActionsService,
+    private weatherService: WeatherService,
+    private dialog: MatDialog,
+
   ) { }
 
   ngOnInit() {
     this.updateCollectionList(true)
   }
-  ngOnChanges(changes:SimpleChanges) {
-    if(this.sortedCollections && (changes['remoteCollections'] || changes['localCollections'])){
-      console.log('RemoteCollectionForm Updating\nLocal:',this.localCollections,'\nRemote:',this.remoteCollections)
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.sortedCollections && (changes['remoteCollections'] || changes['localCollections'])) {
+      console.log('RemoteCollectionForm Updating\nLocal:', this.localCollections, '\nRemote:', this.remoteCollections)
       clearTimeout(this.debounceTimer)
-      this.debounceTimer = setTimeout(()=>{
+      this.debounceTimer = setTimeout(() => {
         this.updateCollectionList()
       }, 150)
     }
-    if(changes['inputTripProfiles'] && this.inputTripProfiles){
+    if (changes['inputTripProfiles'] && this.inputTripProfiles) {
       this.tripProfiles = this.storeSelector.profiles.filter(p => this.inputTripProfiles.includes(p.id))
     }
   }
-  updateCollectionList(initial:boolean = false){
+  updateCollectionList(initial: boolean = false) {
     let localIds = this.localCollections.ids()
     let filtered = this.remoteCollections
-    .filter(c=>!localIds.includes(c.id))
+      .filter(c => !localIds.includes(c.id))
     initial && filtered
-      .sort((a,b)=>{
+      .sort((a, b) => {
         return b.metaData.metaScore - a.metaData.metaScore
       })
-      .sort((a,b)=>{
+      .sort((a, b) => {
         const aCount = this.destMetaData.collections[a.id] || 0
         const bCount = this.destMetaData.collections[b.id] || 0
         return bCount - aCount
       })
     let updatedComplete = this.colFac.remoteToComplete(filtered)
-      if(this.sortedCollections){
-        console.log('RemoteCollectionForm used COMPARE')
-        this.sortedCollections.compare(updatedComplete)
-      } else {
-        this.sortedCollections = updatedComplete
-      }
-  }
+      .map(c => this.attachWeahter(c))
+      .sort((a, b) => {
+        let aWeather = a.weatherMet
+        let bWeather = b.weatherMet
+        return aWeather ? (bWeather ? 0 : -1) : (bWeather ? 1 : 0)
+      })
 
-  onClickCollection(col:CollectionComplete) {
+    if (this.sortedCollections) {
+      console.log('RemoteCollectionForm used COMPARE')
+        this.sortedCollections.compare(updatedComplete)
+    } else {
+      this.sortedCollections = updatedComplete
+    }
+    console.log('RemoteCollectionForm Updated to:',this.sortedCollections)
+  }
+  attachWeahter(col: CollectionComplete): completeAndWeatherMet {
+    let weatherMet = this.weatherService.checkWeatherRules(col.weatherRules, this.destWeatherData).conditionsMet
+    return Object.assign({ ...col }, { weatherMet: weatherMet })
+  }
+  onClickCollection(col: CollectionComplete) {
     if (this.inputTripProfiles.length === 1) {
-      this.bulkActions.processImportCollections([col.id],this.inputTripProfiles)
-      this.emitChange(col,this.tripProfiles)
+      this.bulkActions.processImportCollections([col.id], this.inputTripProfiles)
+      this.emitChange(col, this.tripProfiles)
     } else {
       let data: CollectionProfilesDialog_data = {
         collection: col,
+        weatherData: this.destWeatherData,
         profileGroup: this.tripProfiles,
         selectedProfiles: this.tripProfiles
       }
@@ -100,19 +121,39 @@ debounceTimer = setTimeout(()=>{},0)
         width: '400px',
       })
       dialog.afterClosed().pipe(take(1)).subscribe((profiles: Profile[]) => {
-        console.log('select profile dialog returned',profiles)
+        console.log('select profile dialog returned', profiles)
         if (isDefined(profiles)) {
-          this.bulkActions.processImportCollections([col.id],profiles.ids())
-          this.emitChange(col,profiles)
+          this.bulkActions.processImportCollections([col.id], profiles.ids())
+          this.emitChange(col, profiles)
         } else {
           console.log('select profile returned null')
         }
       })
     }
   }
+  bulkActionImportCollections(){
+    let data: importCollections_data = {
+      profileGroup: this.tripProfiles,
+      selectedProfiles: this.tripProfiles.ids()
+    }
+    let importCollectionDialog = this.dialog.open(ImportCollectionDialogComponent, {
+      maxWidth:'99vw',
+      maxHeight: '99vh',
+      disableClose: true,
+      data: data
+    });
+    importCollectionDialog.afterClosed().pipe(take(1)).subscribe((r:importCollections_result)=>{
+      if(isDefined(r.collections) && isDefined(r.collections)){
+        r.collections.forEach(col=>{
+          this.selected.push({ id: col.id, profiles: r.profiles})
+        })
+        this.selectedChange.emit(this.selected)
+      }
+    })
+  }
 
-  emitChange(col:CollectionComplete,profiles:Profile[]) {
-    this.selected.push({id: col.id,profiles:profiles.ids()})
+  emitChange(col: CollectionComplete, profiles: Profile[]) {
+    this.selected.push({ id: col.id, profiles: profiles.ids() })
     //this.updateCollectionList()
     this.selectedChange.emit(this.selected)
   }

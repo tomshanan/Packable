@@ -106,7 +106,7 @@ if (!Array.prototype.compare) {
             if('id' in item){
                 if (!this.findId(item.id)) {
                     callback != null ? callback(item,'add') : this.unshift(item)
-                    console.log('Added new item:'+item['name']);
+                    // console.log('Added new item:'+item['name']);
                 }
             } 
             else {
@@ -119,9 +119,9 @@ if (!Array.prototype.compare) {
                 let newItem = updatedArray.findId(oldItem.id)
                 if (!newItem) {
                     callback != null ? callback(oldItem,'remove') : this.splice(i, 1);
-                    console.log('Removed an item:'+oldItem['name']);
+                    // console.log('Removed an item:'+oldItem['name']);
                 } else if (('dateModified' in newItem && 'dateModified' in oldItem)&&(newItem.dateModified !== oldItem.dateModified)){
-                    console.log('Replacing old item:',oldItem,'\nwith new item:',newItem);
+                    // console.log('Replacing old item:',oldItem,'\nwith new item:',newItem);
                     callback != null ? callback(newItem,'update') : this.splice(i,1,newItem)
                 }
             }

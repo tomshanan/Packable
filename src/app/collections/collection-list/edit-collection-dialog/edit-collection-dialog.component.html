@@ -1,19 +1,19 @@
 <app-dialog-header [super]="collection.name" header="Settings" (close)="onClose(null)"></app-dialog-header>
 
-<ng-container *ngIf="profileId">
-  <slide-toggle-with-text [checked]="collection.essential" (change)="toggleEssential($event)"
-    text="Essential Collection" (textClick)="nameToggle.toggle()" #nameToggle>
-  </slide-toggle-with-text>
-  <p class="small text-muted" *ngIf="collection.essential">This Collection will be automatically added to this Traveler
-    on every trip.</p>
-</ng-container>
+
 <ng-container *ngIf="!profileId && collection.userCreated">
   <name-input title="Collection" [value]='collection.name' [usedNames]='usedNames' (changeEvent)='changeNameEvent($event)'>
   </name-input>
   <p class="small text-muted" *ngIf="collection.essential">This will change the name of the collection for all
     Travelers.</p>
-
 </ng-container>
+<ng-container *ngIf="profileId">
+    <slide-toggle-with-text [checked]="collection.essential" (change)="toggleEssential($event)"
+      text="Essential Collection" (textClick)="nameToggle.toggle()" #nameToggle>
+    </slide-toggle-with-text>
+    <p class="small text-muted" *ngIf="collection.essential">This Collection will be automatically added to this Traveler
+      on every trip.</p>
+  </ng-container>
 <app-weather-conditions-form [(weather)]="collection.weatherRules"></app-weather-conditions-form>
 
 <div *ngIf="showProfileSelector" class="text-center">

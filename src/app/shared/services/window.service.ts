@@ -36,7 +36,6 @@ export class WindowService {
                 this._height = window.innerHeight
                 this.timeout= setTimeout(()=>{
                     this.change.next(this._width)
-                    console.log('Window Service - change Size emitted: '+this._width);
                 }, 300)
             }
         })

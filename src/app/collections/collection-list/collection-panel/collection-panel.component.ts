@@ -23,9 +23,9 @@ import { timeStamp } from '@app/shared/global-functions';
 })
 export class CollectionPanelComponent implements OnInit, OnDestroy, OnChanges {
   @Input('collection') inputCollection: CollectionComplete;
+  @Input() profileId: string;  // will default to context profile
   @Output() change = new EventEmitter<void>();
   @Output() removeCollection = new EventEmitter<void>();
-  @Input() profileId: string;  // will default to context profile
 
   collection: CollectionComplete;
   subscription: Subscription;

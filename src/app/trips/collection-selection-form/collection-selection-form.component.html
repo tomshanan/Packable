@@ -1,6 +1,10 @@
 
 <div #collectionList *ngIf="collections" @blockInitialAnimations>
-  <h6 class="text-center">My Collections</h6>
+  <div class="text-center w-100 position-relative" *ngIf="collections.length>0">
+    <h6 >My Collections</h6>
+    <a class="small inline-link newColLink" (click)="newCollection()">Create New</a>
+  </div>
+  
   <div *ngFor="let collection of collections" @dropInTrigger>
     <collection-details-card
       [collection]="collection"

@@ -20,6 +20,15 @@ import { CollectionFactory } from '@app/shared/factories/collection.factory';
 import { transitionTrigger } from '@shared/animations';
 import * as packableActions from '@app/packables/store/packables.actions';
 import { NameInputChangeEvent } from '@app/shared-comps/name-input/name-input.component';
+import { filter } from 'rxjs/operators';
+
+export interface newCollectionDialog_data {
+  profileGroup?: Profile[];
+}
+export interface newCollectionDialog_result {
+  collection: CollectionComplete,
+  profiles: Profile[]
+}
 
 @Component({
   selector: 'app-new-collection-dialog',
@@ -40,7 +49,7 @@ export class NewCollectionDialogComponent implements OnInit {
 
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {},
+    @Inject(MAT_DIALOG_DATA) public data: newCollectionDialog_data,
     public dialogRef: MatDialogRef<NewCollectionDialogComponent>,
     private store: Store<fromApp.appState>,
     private bulkActions: BulkActionsService,
@@ -49,16 +58,20 @@ export class NewCollectionDialogComponent implements OnInit {
     private proFac:ProfileFactory,
     private colFac:CollectionFactory,
     private context: ContextService,
-  ) { }
+  ) { 
+    this.profileGroup = data.profileGroup || this.storeSelector.profiles
+
+  }
 
   ngOnInit() {
     this.usedCollectionNames = this.storeSelector.getUsedCollectionNames()
     this.collectionName = ''
     this.collection = new CollectionComplete(Guid.newGuid());
     this.collection.userCreated = true;
-    this.profileGroup = this.storeSelector.profiles
     if(this.context.profileId){
       this.selectedProfiles=[this.context.profileId]
+    } else {
+      this.selectedProfiles = this.profileGroup.ids()
     }
     this.stepSettings()
   }
@@ -69,8 +82,12 @@ export class NewCollectionDialogComponent implements OnInit {
       this.collectionName = e.value
     }
   }
-  onClose(collection: CollectionComplete = null) {
-    this.dialogRef.close(collection)
+  onClose(collection: CollectionComplete = null,profiles:Profile[] = []) {
+    let result:newCollectionDialog_result ={
+      collection: collection,
+      profiles: profiles
+    }
+    this.dialogRef.close(result)
   }
   confirmName(){
     if(this.collectionNameValid){
@@ -90,7 +107,8 @@ export class NewCollectionDialogComponent implements OnInit {
     this.store.dispatch(new packableActions.updateOriginalPackables(this.remotePackables))
     this.store.dispatch(new collectionActions.updateOriginalCollections([originalCollection]))
     this.bulkActions.pushCompleteCollectionsToProfiles([this.collection], this.selectedProfiles)
-    this.onClose(this.collection);
+    const profiles = this.profileGroup.filter(p=>this.selectedProfiles.includes(p.id))
+    this.onClose(this.collection,profiles);
   }
   nextStep(){
     this.step++

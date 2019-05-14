@@ -61,7 +61,6 @@ packableNameListString: string;
       this.updatePackableNames(this.collection.packables)
     }
     if(changes['collection'] && this.collection && this.collection.packables){
-      console.log('Details Card recieved collection:', this.collection);
       this.updatePackableNames(this.collection.packables)
     }
   }
@@ -121,9 +120,7 @@ packableNameListString: string;
     }
   }
   showWarning:boolean = false;
-  toggleWarning(b:boolean){
-    console.log(b);
-    
+  toggleWarning(b:boolean){    
     this.showWarning = b;
   }
 }

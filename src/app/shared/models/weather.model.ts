@@ -1,4 +1,3 @@
-import { absoluteMin, absoluteMax } from '../services/weather.service';
 export type weatherType = 'rain'|'snow'|'sunny'|'hail'|'windy';
 export const weatherOptions:weatherType[] = ['rain','snow','sunny','hail','windy'];
 
@@ -6,6 +5,16 @@ export const hotWeather = 28;
 export const warmWeather = 22;
 export const coolWeather = 21;
 export const coldWeather = 14;
+export var absoluteMin = -15 // SET MIN AND MAX TEMPERATURE OPTIONS
+export var absoluteMax = 45 // SET MIN AND MAX TEMPERATURE OPTIONS
+export var tempOptions: number[] = ((min,max):number[]=>{
+    let tempOptions = [];
+    for (let t = min; t <= max; t++) { 
+        tempOptions.push(t)
+      }
+    return tempOptions
+})(absoluteMin,absoluteMax) 
+
 
 export class WeatherRule {
     minTemp: number = absoluteMin
@@ -21,4 +30,13 @@ export class WeatherRule {
         this.weatherTypes = weatherTypes
     }
 
+}
+
+export const degC = `&#176;C`
+export function temp(n:number):string{
+    return n+degC
+}
+export interface weatherIconData {
+    icon: string,
+    description: string
 }

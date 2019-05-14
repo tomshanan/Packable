@@ -2,12 +2,14 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take, switchMap, mapTo } from 'rxjs/operators';
 import * as moment from 'moment';
-import { weatherType } from '../models/weather.model';
-import { isDefined } from '../global-functions';
+import { weatherType, WeatherRule, temp } from '../models/weather.model';
+import { isDefined, getAllDates, timeStamp, stringArraysAreSame, joinSpecial } from '../global-functions';
+import { Trip } from '../models/trip.model';
+import { DestinationDataService } from './location-data.service';
 
-export interface WeatherForecast {
+interface WeatherForecast {
     forecastDate: string,
     maxTemp: string,
     maxTempF: string,
@@ -16,7 +18,7 @@ export interface WeatherForecast {
     weather: string,
     weatherIcon: number
 }
-export interface ClimateForecast {
+interface ClimateForecast {
     climateFromMemDate: string,
     maxTemp: string,
     maxTempF: string,
@@ -34,20 +36,12 @@ export class weatherData {
     maxTemp: number= null
     rain: boolean = null
     weatherTypes: weatherType[] = []
+    dateModified:number = timeStamp()
     constructor(){}
-    get isValid(){
+    get isValid():boolean{
         return isDefined(this.minTemp) && isDefined(this.maxTemp) && isDefined(this.weatherTypes);
     } 
 }
-export var absoluteMin = -15 // SET MIN AND MAX TEMPERATURE OPTIONS
-export var absoluteMax = 45 // SET MIN AND MAX TEMPERATURE OPTIONS
-export var tempOptions: number[] = ((min,max):number[]=>{
-    let tempOptions = [];
-    for (let t = min; t <= max; t++) { 
-        tempOptions.push(t)
-      }
-    return tempOptions
-})(absoluteMin,absoluteMax) 
 
 export class WeatherObject {
     minTemp: number;
@@ -108,13 +102,14 @@ export class WeatherObject {
 
 @Injectable()
 export class WeatherService {
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private destService:DestinationDataService) {
     }
     getCityWeather(destId: string | number): Observable<{}> {
         return this.http.get('api/weather/' + destId)
     }
-    getDailyWeatherForCity(destId: string | number, dates: moment.Moment[]): Observable<WeatherObject[]> {
-        return this.getCityWeather(destId).pipe(
+    getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Observable<WeatherObject[]> {
+        let weatherId = this.destService.DestinationByCityId(destId).weatherId
+        return this.getCityWeather(weatherId).pipe(
             map(data => {
                 console.log(data);
 
@@ -156,5 +151,61 @@ export class WeatherService {
             return null;
         }
     }
-
+    createWeatherData(trip: Trip):Observable<weatherData> {
+            let dates = getAllDates(trip.startDate, trip.endDate);
+            let dailyWeatherArray = this.getDailyWeatherForCity(trip.destinationId, dates)
+            return dailyWeatherArray.pipe(
+                take(1),
+                map((weatherArray:WeatherObject[]):weatherData=>{
+                    let weatherDataObj = new weatherData();
+                    this.willItRain(weatherArray) && weatherDataObj.weatherTypes.push('rain');
+                    weatherDataObj.weatherArray = weatherArray;
+                    weatherDataObj.minTemp = this.getMinTemp(weatherArray)
+                    weatherDataObj.maxTemp = this.getMaxTemp(weatherArray)
+                    weatherDataObj.weatherTypes.push(
+                      ...weatherArray.map(wObj => wObj.weatherType).filter((x, pos, arr) => (x != 'rain' && x != null && arr.indexOf(x) == pos))
+                    )
+                    return weatherDataObj
+                })
+            )
+    }
+    isWeatherTheSame(a:weatherData,b:weatherData):boolean{
+        if(
+            a.isValid && b.isValid
+            && a.maxTemp == b.maxTemp
+            && a.minTemp == b.minTemp
+            && a.rain == b.rain
+            && stringArraysAreSame(a.weatherTypes,b.weatherTypes)
+        ){
+            return true
+        }
+        return false
+    }
+    checkWeatherRules = (weatherRules:WeatherRule,weatherData:weatherData): {conditionsMet:boolean,response:string[]} => {
+        let rule = weatherRules;
+        let wData = weatherData;
+        let conditionsMet:boolean = true;
+        let response:string[] = []
+        if(wData.isValid){
+          if(isDefined(rule.minTemp)){
+            const test = wData.maxTemp >= rule.minTemp
+            conditionsMet = test ? conditionsMet : false;
+            !test && response.push(`The temperature won't be over ${temp(rule.minTemp)}`)
+        }
+        if(isDefined(rule.maxTemp)){
+            const test = wData.minTemp < rule.maxTemp
+            conditionsMet = test ? conditionsMet : false;
+            !test && response.push(`The temperature won't be below ${temp(rule.maxTemp)}`)
+          }
+          if(isDefined(rule.weatherTypes) && rule.weatherTypes.length>0){
+            const test = rule.weatherTypes.some(w=>wData.weatherTypes.includes(w))
+            conditionsMet =  test ? conditionsMet :false;
+            !test && response.push(joinSpecial(rule.weatherTypes,', ',' or ')+` will not be expected during this trip`)
+          }
+        } else {
+            response.push('Weather Data was not accurate, try again in a future date')
+        }
+        return {conditionsMet:conditionsMet,response:response}
+      }
+    
 }

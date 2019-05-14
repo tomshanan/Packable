@@ -1,13 +1,8 @@
-import { absoluteMin, absoluteMax, weatherData } from '../services/weather.service';
-import { WeatherRule, hotWeather, warmWeather, coolWeather, coldWeather, weatherType } from '../models/weather.model';
+import {  weatherData } from '../services/weather.service';
+import { absoluteMin, absoluteMax, WeatherRule, hotWeather, warmWeather, coolWeather, coldWeather, weatherType, temp, weatherIconData } from '../models/weather.model';
 import { isDefined, titleCase, decodeHtml } from '../global-functions';
 
-export const degC = `&#176;C`
 
-export interface weatherIconData {
-    icon: string,
-    description: string
-}
 
 export class weatherFactory{
     isSet(wr:WeatherRule):boolean{
@@ -27,11 +22,11 @@ export class weatherFactory{
         if(minTemp==absoluteMin && maxTemp == absoluteMax){
             return `Any Temperature`
         } else if (minTemp > absoluteMin && maxTemp == absoluteMax) {
-            return `Above ${minTemp + degC}`
+            return `Above ${temp(minTemp)}`
         } else if (minTemp == absoluteMin && maxTemp < absoluteMax) {
-            return `Below ${maxTemp + degC}`
+            return `Below ${temp(maxTemp)}`
         } else if (minTemp > absoluteMin && maxTemp < absoluteMax) {
-            return `${minTemp} &minus; ${maxTemp + degC}`
+            return `${minTemp} &minus; ${temp(maxTemp)}`
         } else {
             'Temperature invalid'
         }

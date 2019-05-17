@@ -20,12 +20,13 @@ import { Store } from '@ngrx/store';
 import * as fromApp from '@shared/app.reducers';
 import * as libraryActions from '@shared/library/library.actions';
 import * as tripActions from '../store/trip.actions';
-import { weatherData } from '@app/core';
+import { TripWeatherData } from '@app/core';
 import { WeatherService } from '../../shared/services/weather.service';
 import { MatDialog } from '@angular/material';
 import { ImportCollectionDialogComponent, importCollections_result, importCollections_data } from '../../collections/collection-list/import-collection-dialog/import-collection-dialog.component';
 import { take, takeWhile } from 'rxjs/operators';
 import { expandAndFadeTrigger } from '../../shared/animations';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-trip-wizard',
@@ -43,7 +44,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   loadingLibrary: boolean = true;
   subs = new Subscription();
   destMetaData:destMetaData;
-  destWeatherData:weatherData;
+  destWeatherData:TripWeatherData;
 
   constructor(
     public windowService:WindowService,
@@ -55,7 +56,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     private tripFac: TripFactory,
     private store: Store<fromApp.appState>,
     private weatherService: WeatherService,
-    private dialog: MatDialog,
+    private router: Router,
   ) { }
     steps:Step[] =[
       {icon:{type:'mat',name:'place'},text:'Where & When'},
@@ -149,12 +150,12 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   }
 
   // STEP MANAGEMENT
-  stepActions(step:number){
+  stepActions(step:number):boolean{
     switch(step){
       case 1:
         // subscribe to library to fetch items, and get destination weather data
         this.fetchLibraryData()
-        break
+        return true
       case 2:
         // remove missing IDs from trip collections groups
         let profileIds = this.trip.profiles
@@ -162,17 +163,25 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
           c.profiles = c.profiles.filter(pId=>profileIds.includes(pId))
         })
         this.profileGroup = this.storeSelector.profiles.filter(p=>profileIds.includes(p.id))
-        break
+        return true
       case 3:
           // check all profiles selected have the collections, if not, push collections
         this.bulkActions.pushMissingCollectionsToProfiles(this.trip.collections)
-        break;
+        return true
+      case 4:
+        return true
+      case 5:
+        this.tripMemory.saveTripAndDeleteTemp(this.trip)
+        this.router.navigate(['trips/packing-list'])
+        return false
     }
   }
   onConfirmStep(step:number){
-    this.stepActions(step)
-    this.tripMemory.saveTempTrip(this.trip)
-    this.nextStep(step+1)
+    let cont = this.stepActions(step)
+    if(cont){
+      this.tripMemory.saveTempTrip(this.trip)
+      this.nextStep(step+1)
+    }
   }
   nextStep(nextStep:number){ 
     if(nextStep <= this.steps.length){

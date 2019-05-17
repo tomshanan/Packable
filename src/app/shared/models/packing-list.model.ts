@@ -1,13 +1,16 @@
 import { Destination } from '../services/location-data.service';
-import { WeatherObject, weatherData } from '../services/weather.service';
+import { DayWeatherData, TripWeatherData } from '../services/weather.service';
 import * as moment from 'moment';
 
 export class packingListData {
     destination:Destination = null;
     totalDays:number = null;
     totalNights:number = null;
-    weatherData: weatherData = new weatherData();
-    constructor(){
+    weatherData: TripWeatherData = new TripWeatherData();
+    constructor(data?:Partial<packingListData>){
+        if(data){
+            Object.assign(this,data)
+        }
     }
 }
 
@@ -22,14 +25,20 @@ export interface PackingListPackable {
     profileID: string,
     collectionID: string,
     packableID: string,
+    name: string,
     quantity: number,
     quantityReasons: Reason[],
     checked: boolean,
     changedAfterChecked: boolean,
-    weatherNotChecked?: boolean,
-    recentlyAdded?:boolean
+    passChecks: boolean,
+    weatherReasons: Reason[],
+    weatherNotChecked: boolean,
+    forcePass: boolean,
+    recentlyAdded?:boolean,
 }
-
+export function pass(p:PackingListPackable):boolean{
+    return p.passChecks || p.forcePass
+}
 export class PackingList {
     constructor(
         public id: string,

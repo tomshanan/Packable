@@ -18,6 +18,7 @@ const appRoutes:Routes = [
     {path: 'user', pathMatch: 'full', component:UserComponent},
     {path: 'trips', pathMatch: 'full', component:TripsComponent, canActivate: [AuthGuard]},
     {path: 'trips/new', pathMatch: 'full', component:NewTripWizardComponent, canActivate: [AuthGuard]},
+    {path: 'trips/packing-list', pathMatch: 'full', component:PackingListComponent, canActivate: [AuthGuard]},
     {path: 'travelers', pathMatch: 'full', component:ProfilesComponent, canActivate: [AuthGuard]},
     {path: 'packables', pathMatch: 'full', component:PackablesComponent, canActivate: [AuthGuard]},
     {path: 'collections', pathMatch: 'full', component:CollectionsComponent, canActivate: [AuthGuard]},

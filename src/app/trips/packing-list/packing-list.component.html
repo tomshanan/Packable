@@ -24,7 +24,7 @@
                    (Manual Input)
                 </span>
                 <span class="setting_header ml-auto">
-                  <i>Updated: {{ moment(packingList.updated).format('MMM Do, hh:mm')}}</i>
+                  <i>Updated: {{ lastSave }}</i>
                 </span>
               </mat-panel-description>
               <mat-panel-title *ngIf="settingsOpen">
@@ -34,15 +34,14 @@
             <form [formGroup]="customWeatherForm">
               <mat-form-field style="width:110px;">
                 <mat-label>Min Temp</mat-label>
-                <mat-select [value]="packingList.data.weatherData.minTemp || absoluteMinTemp" formControlName="min">
-                  
-                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t!=absoluteMinTemp ? t+'&#176;C' : 'Any'}}</mat-option>
+                <mat-select [value]="packingList.data.weatherData.minTemp || absoluteMinTemp" formControlName="min" #minTempSelect>
+                  <mat-option *ngFor="let t of tempOptions" [value]="t" [disabled]="t>maxTempSelect.value">{{t!=absoluteMinTemp ? t+'&#176;C' : 'Any'}}</mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field style="width:110px;">
                 <mat-label>Max Temp</mat-label>
-                <mat-select [value]="packingList.data.weatherData.maxTemp || absoluteMaxTemp" formControlName="max">
-                  <mat-option *ngFor="let t of tempOptions" [value]="t">{{t!=absoluteMaxTemp ? t+'&#176;C' : 'Any'}}</mat-option>
+                <mat-select [value]="packingList.data.weatherData.maxTemp || absoluteMaxTemp" formControlName="max" #maxTempSelect>
+                  <mat-option *ngFor="let t of tempOptions" [value]="t" [disabled]="minTempSelect.value>t">{{t!=absoluteMaxTemp ? t+'&#176;C' : 'Any'}}</mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field style="width:200px;">
@@ -66,11 +65,14 @@
       <div class="row pb-2" *ngIf="windowService.min('sm')">
         <div class="col-12">
           <div class="row">
-            <div *ngFor="let profile of sortedList; let i = index" class="col-sm-6 col-lg-4">
-
-              <h1>{{profile.header}}
-                <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
-              </h1>
+            <div *ngFor="let profile of sortedList; let i = index" class="col-sm-6 col-xl-4">
+              <div class="profileHeader">
+                <profile-icon [avatar]="profile.avatar" width="50px" [fullFrame]="!profile.id"></profile-icon> 
+                <h2 class="m-0">{{profile.header}}
+                    <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
+                </h2>
+              </div>
+              
               <div *ngFor="let collection of profile.collections">
                 <h5>{{collection.header}}</h5>
                 <ng-content *ngTemplateOutlet="packingListTemplate,context:{$implicit:collection}">
@@ -80,15 +82,18 @@
           </div>
         </div>
       </div>
-      <div class="row py-2" *ngIf="windowService.max('xs')">
+      <div class="row py-2" *ngIf="windowService.max('sm')">
         <div class="col-12">
           <mat-accordion multi="true">
             <mat-expansion-panel *ngFor="let profile of sortedList; let i = index">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  <h5 class="m-0">{{profile.header}}
-                    <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
-                  </h5>
+                  <div class="profileHeader">
+                      <profile-icon [avatar]="profile.avatar" width="40px"  [fullFrame]="!profile.id"></profile-icon> 
+                      <h5 class="m-0">{{profile.header}}
+                          <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
+                      </h5>
+                    </div>
                 </mat-panel-title>
                 <mat-panel-description>
                   {{countCompleted(profile)}} / {{countPackables(profile)}}
@@ -111,40 +116,8 @@
 
 <ng-template #packingListTemplate let-collection let-i>
   <ul class="packingList">
-    <li *ngFor="let packable of collection.packables">
-      <mat-checkbox [checked]="packable.checked" (change)="toggleCheck(packable)" [class.changedAfterChecked]="packable.changedAfterChecked">
-        <span class="packableText" [class.completed]="packable.checked" [class.text-success]="packable.recentlyAdded">
-          {{packable.quantity}} x
-          <span style="text-transform: capitalize">
-            {{getPackableName(packable)}}
-          </span>
-        </span>
-      </mat-checkbox>
-      <span [ngbPopover]="weatherNotChecked" placement="{{windowService.max('xs') ? 'bottom' : 'right'}}" triggers="click:mouseleave"
-        container="body" class="pointer" *ngIf="packable.weatherNotChecked">
-        <i class="fas fa-umbrella text-orange"></i>
-      </span>
-      <ng-template #weatherNotChecked>
-        <p class="p-0 m-0 small text-orange">
-          The weather conditions could not be checked. Please enter the weather information manually and update the packing list.
-        </p>
-      </ng-template>
-      <span [ngbPopover]="changedAfterChecked" placement="{{windowService.max('xs') ? 'bottom' : 'right'}}" triggers="click:mouseleave"
-        container="body" class="pointer" *ngIf="packable.changedAfterChecked">
-        <i class="fas fa-sync-alt text-orange"></i>
-      </span>
-      <ng-template #changedAfterChecked>
-        <p class="p-0 m-0 small text-orange">
-          The quantity of this Packable changed after it has been ticked. Please check if you packed the updated quantity.
-        </p>
-      </ng-template>
-      <span [ngbPopover]="quantityReasons" placement="{{windowService.max('xs') ? 'bottom' : 'right'}}" triggers="click:mouseleave"
-        container="body" class="pointer">
-        <i class="far fa-question-circle calculation-popover-trigger"></i>
-      </span>
-      <ng-template #quantityReasons>
-        <p class="p-0 m-0 small" *ngFor="let reason of packable.quantityReasons" [class.strikeThrough]="!reason.active">{{reason.text}}</p>
-      </ng-template>
-    </li>
+    <ng-container *ngFor="let packable of collection.packables"> 
+        <list-packable [packable]="packable" (toggleCheck)="toggleCheck(packable)" [showInvalid]="showInvalidPackables" (addInvalid)="addInvalid(packable)"></list-packable>
+  </ng-container>
   </ul>
 </ng-template>

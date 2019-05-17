@@ -4,14 +4,14 @@ import { Profile } from '../../../shared/models/profile.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { WeatherRule } from '../../../shared/models/weather.model';
 import { weatherFactory } from '../../../shared/factories/weather.factory';
-import { WeatherService, weatherData } from '../../../shared/services/weather.service';
+import { WeatherService, TripWeatherData } from '../../../shared/services/weather.service';
 
 
 export interface CollectionProfilesDialog_data {
   collection: CollectionComplete,
   profileGroup: Profile[],
   selectedProfiles: Profile[],
-  weatherData: weatherData,
+  weatherData: TripWeatherData,
   content?: string
 }
 @Component({

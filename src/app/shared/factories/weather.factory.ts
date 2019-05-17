@@ -1,4 +1,4 @@
-import {  weatherData } from '../services/weather.service';
+import {  TripWeatherData } from '../services/weather.service';
 import { absoluteMin, absoluteMax, WeatherRule, hotWeather, warmWeather, coolWeather, coldWeather, weatherType, temp, weatherIconData } from '../models/weather.model';
 import { isDefined, titleCase, decodeHtml } from '../global-functions';
 
@@ -15,7 +15,7 @@ export class weatherFactory{
             isDefined(wr.weatherTypes) ? wr.weatherTypes.slice(): []
             )
     }
-    weatherDataIsValid(wd:weatherData):boolean{
+    weatherDataIsValid(wd:TripWeatherData):boolean{
         return isDefined(wd.minTemp) && isDefined(wd.maxTemp) && isDefined(wd.weatherTypes);
     }
     getTempRuleString({minTemp,maxTemp,weatherTypes}:WeatherRule):string{

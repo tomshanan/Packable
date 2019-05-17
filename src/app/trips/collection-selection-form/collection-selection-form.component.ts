@@ -12,7 +12,7 @@ import { SelectCollectionProfilesDialogComponent, CollectionProfilesDialog_data 
 import { take } from 'rxjs/operators';
 import { tripCollectionGroup } from '@app/shared/models/trip.model';
 import { blockInitialAnimations, dropInTrigger } from '../../shared/animations';
-import { weatherData } from '../../shared/services/weather.service';
+import { TripWeatherData } from '../../shared/services/weather.service';
 import { NewCollectionDialogComponent, newCollectionDialog_result, newCollectionDialog_data } from '../../collections/collection-list/new-collection-dialog/new-collection-dialog.component';
 
 export interface collectionProfileGroups { [id: string]: Profile[] }
@@ -29,7 +29,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
   @Input() selected: tripCollectionGroup[] = []
   @Input() localCollections: CollectionComplete[] = []
   @Input('profiles') inputProfiles: string[] = []
-  @Input('destWeatherData') weatherData: weatherData = new weatherData()
+  @Input('destWeatherData') weatherData: TripWeatherData = new TripWeatherData()
   profiles: Profile[] = []
   @Output() selectedChange = new EventEmitter<tripCollectionGroup[]>()
 

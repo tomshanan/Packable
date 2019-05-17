@@ -51,7 +51,8 @@
     </div>
     <div class="step" *ngIf="step===5">
       <div class="content">
-        step 5 content
+          <h5 class="text-center">Done!</h5>
+          <p class="text-center">Save Trip and Pack</p>
       </div>
       <ng-container *ngTemplateOutlet="continueButton; context:{$implicit: step}"></ng-container>
     </div>
@@ -62,7 +63,8 @@
 <ng-template let-step #continueButton>
   <dialog-confirm-button [absoluteBottom]="windowService.max('md')">
     <button mat-fab color="primary" (click)="onConfirmStep(step)" [disabled]="!stepIsValid(step)">
-      <mat-icon>check</mat-icon>
+      <mat-icon *ngIf="step!=5">check</mat-icon>
+      <mat-icon svgIcon="send" *ngIf="step===5"></mat-icon>
     </button>
   </dialog-confirm-button>
 </ng-template>

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, HostBinding, ElementRef, ViewChild, Renderer2
 import { WindowService } from '../../shared/services/window.service';
 import { isDefined } from '../../shared/global-functions';
 import { Subscription } from 'rxjs';
+import { color } from '../../shared/app-colors';
 
 interface viewObject {
   text: string,
@@ -13,17 +14,20 @@ interface viewObject {
   selector: 'list-concatinator',
   templateUrl: './list-concatinator.component.html',
   styleUrls: ['./list-concatinator.component.css'],
+   
 })
 export class ListConcatinatorComponent implements OnInit, OnChanges,AfterContentInit,OnDestroy {
 
   @Input('list') stringArray: string[] = [];
   @Input('lines') lines: number = 1;
+  @Input('color') color: color;
   @Input('showMore') showMore: boolean = true;
   @Output('open') concatinated = new EventEmitter<boolean>()
   @ViewChild('textContainer') textContainer: ElementRef;
   @ViewChild('testArea') testArea: ElementRef;
   @ViewChild('moreEl') moreEl: ElementRef;
-
+  
+  @HostBinding('style.lineHeight') lineHeight:string = '1.5'  // SET LINE HEIGHT FOR THE TEXT
   output: string = '';
   allStrings: string[] = [];
   viewStrings: viewObject[] = [];
@@ -59,7 +63,7 @@ export class ListConcatinatorComponent implements OnInit, OnChanges,AfterContent
     this.sub.unsubscribe();
   }
   setLines(){
-    let lineHeight = 1.1
+    let lineHeight = +this.lineHeight
     let height = lineHeight * this.lines
     this.renderer.setStyle(this.element.nativeElement,'height',height+'em')
   }

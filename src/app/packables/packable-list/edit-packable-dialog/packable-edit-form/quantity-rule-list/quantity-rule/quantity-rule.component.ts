@@ -56,8 +56,8 @@ export class QuantityRuleComponent implements OnInit, OnDestroy {
       this.ruleChange.emit({
         rule:{
           type: this.type.value,
-          amount: this.amount.value,
-          repAmount: this.repAmount.value || this.rule.repAmount
+          amount: +this.amount.value,
+          repAmount: +this.repAmount.value || +this.rule.repAmount
         },
         valid: this.valid
       })

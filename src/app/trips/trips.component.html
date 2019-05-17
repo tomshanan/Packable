@@ -7,22 +7,26 @@
     where you are going and when, who's coming and what you plan to do while you are there!</p>
 </ng-template>
 <div *ngFor="let trip of incomplete; let i = index" @evaporateTransitionTrigger>
-    <card-button *ngIf="i===0" (click)="continueIncomplete(trip.id)" @evaporateTransitionTrigger>
-      <div class="d-flex flex-row align-items-center">
-          <button mat-icon-button class="mr-1" color="primary" (click)="removeIncomplete(trip)" InnerLink>
-              <mat-icon>close</mat-icon>
-          </button>
-        <p class="small" appColor="accent">Finish setting up your trip to <b>{{trip.destinationName}}</b> ({{trip.displayDate}}?)</p>
-      </div>
-      </card-button>
+  <card-button *ngIf="i===0" (click)="continueIncomplete(trip.id)" @evaporateTransitionTrigger>
+    <div class="d-flex flex-row align-items-center">
+      <button mat-icon-button class="mr-1" color="primary" (click)="removeIncomplete(trip)" InnerLink>
+        <mat-icon>close</mat-icon>
+      </button>
+      <p class="small" appColor="accent">Finish setting up your trip to <b>{{trip.destinationName}}</b>
+        ({{trip.displayDate}}?)</p>
     </div>
+  </card-button>
+</div>
 <mat-card>
   <div class="trip-form-container">
     <h5>Where to next?</h5>
     <trip-details-form (tripChange)="onTripChange($event)" #tripDetailsForm>
     </trip-details-form>
     <button mat-fab class="mx-1" color="primary" (click)="confirmNewTrip()" [disabled]="!tripDetailsForm.valid">
-        <mat-icon>check</mat-icon>
+      <mat-icon>check</mat-icon>
     </button>
   </div>
+</mat-card>
+<mat-card *ngFor="let trip of trips" class="my-1">
+  {{trip.destinationName}} <a class="inline-link" (click)="loadPackingList(trip.id)">view packing list</a>
 </mat-card>

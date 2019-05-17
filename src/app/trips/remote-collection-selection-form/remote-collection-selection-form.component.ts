@@ -12,7 +12,7 @@ import { take } from 'rxjs/operators';
 import { isDefined } from '../../shared/global-functions';
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
 import { blockInitialAnimations, dropInTrigger, expandAndFadeTrigger } from '../../shared/animations';
-import { WeatherService, weatherData } from '../../shared/services/weather.service';
+import { WeatherService, TripWeatherData } from '../../shared/services/weather.service';
 import { importCollections_data, ImportCollectionDialogComponent, importCollections_result } from '../../collections/collection-list/import-collection-dialog/import-collection-dialog.component';
 
 type weatherMet = { weatherMet: boolean }
@@ -30,7 +30,7 @@ export class RemoteCollectionSelectionFormComponent implements OnInit, OnChanges
   @Input('loadingLibrary') loadingLibrary: boolean;
   @Input('profiles') inputTripProfiles: string[] = []
   @Input('destMetaData') destMetaData: destMetaData;
-  @Input('destWeatherData') destWeatherData: weatherData;
+  @Input('destWeatherData') destWeatherData: TripWeatherData;
   @Input('limit') limit: number = null;
   @Output() selectedChange = new EventEmitter<tripCollectionGroup[]>()
   /*

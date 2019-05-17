@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { Profile } from '../../shared/models/profile.model';
 import { transitionTrigger, horizontalShringAndFade, addRemoveElementTrigger } from '../../shared/animations';
 import { PackableComplete } from '../../shared/models/packable.model';
+import { appColors } from '@app/shared/app-colors';
 
 
 export type actionType = 'button' | 'selection' | 'none'
@@ -47,7 +48,8 @@ packableNameList: string[] = []
 packableNameListString: string;
   constructor(
     public windowService: WindowService, // used in template
-    private changeDetection: ChangeDetectorRef
+    public colors: appColors, // in tempalte
+    private changeDetection: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {

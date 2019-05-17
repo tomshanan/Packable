@@ -30,8 +30,8 @@ interface ClimateForecast {
     raindays: string,
     rainfall: string,
 }
-export class weatherData {
-    weatherArray: WeatherObject[] = []
+export class TripWeatherData {
+    weatherArray: DayWeatherData[] = []
     minTemp: number = null
     maxTemp: number= null
     rain: boolean = null
@@ -43,7 +43,9 @@ export class weatherData {
     } 
 }
 
-export class WeatherObject {
+
+
+export class DayWeatherData {
     minTemp: number;
     maxTemp: number;
     date: string;
@@ -100,6 +102,8 @@ export class WeatherObject {
     }
 }
 
+export type weatherCheckResponse = {conditionsMet:boolean,response:string[]}
+
 @Injectable()
 export class WeatherService {
     constructor(private http: HttpClient, private destService:DestinationDataService) {
@@ -107,7 +111,7 @@ export class WeatherService {
     getCityWeather(destId: string | number): Observable<{}> {
         return this.http.get('api/weather/' + destId)
     }
-    getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Observable<WeatherObject[]> {
+    getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Observable<DayWeatherData[]> {
         let weatherId = this.destService.DestinationByCityId(destId).weatherId
         return this.getCityWeather(weatherId).pipe(
             map(data => {
@@ -117,13 +121,13 @@ export class WeatherService {
                 dates.forEach((date, i) => {
                     let forecastObject = data['city']['forecast']['forecastDay'].find(obj => obj.forecastDate == date.format('YYYY-MM-DD'))
                     let climateObject = data['city']['climate']['climateMonth'].find(m => m.month == date.month() + 1)
-                    weatherArray.push(new WeatherObject(forecastObject,climateObject,date,dates))
+                    weatherArray.push(new DayWeatherData(forecastObject,climateObject,date,dates))
                 })
                 return weatherArray
             }))
 
     }
-    willItRain(weatherObject:WeatherObject[]):boolean{
+    willItRain(weatherObject:DayWeatherData[]):boolean{
         if(
             weatherObject.some(wObj=> wObj.chanceOfRain==1) ||
             weatherObject.reduce((total,current)=>{
@@ -136,7 +140,7 @@ export class WeatherService {
             return false
         }
     }
-    getMinTemp(weatherObject:WeatherObject[]):number{
+    getMinTemp(weatherObject:DayWeatherData[]):number{
         if (weatherObject.every(wObj => typeof wObj.minTemp == 'number')){
             return Math.min(...weatherObject.map(wObj=> wObj.minTemp))
         } else {
@@ -144,20 +148,20 @@ export class WeatherService {
         }
         
     }
-    getMaxTemp(weatherObject:WeatherObject[]):number{
+    getMaxTemp(weatherObject:DayWeatherData[]):number{
         if (weatherObject.every(wObj => typeof wObj.maxTemp == 'number')){
             return Math.max(...weatherObject.map(wObj=> wObj.maxTemp))
         } else {
             return null;
         }
     }
-    createWeatherData(trip: Trip):Observable<weatherData> {
+    createWeatherData(trip: Trip):Observable<TripWeatherData> {
             let dates = getAllDates(trip.startDate, trip.endDate);
             let dailyWeatherArray = this.getDailyWeatherForCity(trip.destinationId, dates)
             return dailyWeatherArray.pipe(
                 take(1),
-                map((weatherArray:WeatherObject[]):weatherData=>{
-                    let weatherDataObj = new weatherData();
+                map((weatherArray:DayWeatherData[]):TripWeatherData=>{
+                    let weatherDataObj = new TripWeatherData();
                     this.willItRain(weatherArray) && weatherDataObj.weatherTypes.push('rain');
                     weatherDataObj.weatherArray = weatherArray;
                     weatherDataObj.minTemp = this.getMinTemp(weatherArray)
@@ -169,7 +173,7 @@ export class WeatherService {
                 })
             )
     }
-    isWeatherTheSame(a:weatherData,b:weatherData):boolean{
+    isWeatherTheSame(a:TripWeatherData,b:TripWeatherData):boolean{
         if(
             a.isValid && b.isValid
             && a.maxTemp == b.maxTemp
@@ -181,7 +185,8 @@ export class WeatherService {
         }
         return false
     }
-    checkWeatherRules = (weatherRules:WeatherRule,weatherData:weatherData): {conditionsMet:boolean,response:string[]} => {
+
+    checkWeatherRules = (weatherRules:WeatherRule,weatherData:TripWeatherData): weatherCheckResponse => {
         let rule = weatherRules;
         let wData = weatherData;
         let conditionsMet:boolean = true;
@@ -203,9 +208,10 @@ export class WeatherService {
             !test && response.push(joinSpecial(rule.weatherTypes,', ',' or ')+` will not be expected during this trip`)
           }
         } else {
-            response.push('Weather Data was not accurate, try again in a future date')
+            response.push('This Trip\'s weather settings are invalid')
         }
         return {conditionsMet:conditionsMet,response:response}
       }
     
 }
+

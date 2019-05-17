@@ -69,7 +69,11 @@ export class TripsComponent implements OnInit, OnDestroy {
     this.incomplete.removeElements([trip])
     this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
   }
-  
+  loadPackingList(tripId:string){
+    const trip = this.storeSelector.getTripById(tripId)
+    this.tripMemory.setTrip(trip)
+    this.router.navigate(['packing-list'], {relativeTo: this.activeRoute})
+  }
   // makeTripName(displayTrip: displayTrip, trip: Trip){
   //   let reverseDate = (dateString:string):string=>{ return dateString.split('-').reverse().join('')}
   //   return `${displayTrip.destinationName.replace(/[^A-Za-z]/g,'')}${reverseDate(trip.startDate)}-${reverseDate(trip.endDate)}`

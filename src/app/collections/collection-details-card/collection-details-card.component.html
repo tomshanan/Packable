@@ -26,7 +26,7 @@
             <i>*Packables may vary between Travelers</i>
           </div>
         <div class="packable-list-container">
-          <list-concatinator [list]="packableNameList" (open)="toggleWarning($event)">
+          <list-concatinator [list]="packableNameList" [color]="colors.muted" (open)="toggleWarning($event)">
           </list-concatinator>
         </div>
       </div>

@@ -61,6 +61,7 @@ export class IconService {
             'add_to_travelers',
             'push_to_travelers',
             'remove_from_travelers',
+            'send',
         ]
     }
     weatherIcons:iconGroup = {

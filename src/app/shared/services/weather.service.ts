@@ -1,8 +1,8 @@
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, take, switchMap, mapTo } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { map, take, switchMap, mapTo, catchError } from 'rxjs/operators';
 import * as moment from 'moment';
 import { weatherType, WeatherRule, temp } from '../models/weather.model';
 import { isDefined, getAllDates, timeStamp, stringArraysAreSame, joinSpecial } from '../global-functions';
@@ -108,23 +108,29 @@ export type weatherCheckResponse = {conditionsMet:boolean,response:string[]}
 export class WeatherService {
     constructor(private http: HttpClient, private destService:DestinationDataService) {
     }
-    getCityWeather(destId: string | number): Observable<{}> {
-        return this.http.get('api/weather/' + destId)
+    getCityWeather(destId: string | number): Promise<{}> {
+        return this.http.get('api/weather/' + destId).toPromise()
     }
-    getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Observable<DayWeatherData[]> {
+    getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Promise<DayWeatherData[]> {
         let weatherId = this.destService.DestinationByCityId(destId).weatherId
-        return this.getCityWeather(weatherId).pipe(
-            map(data => {
-                console.log(data);
+        return this.getCityWeather(weatherId).then(data=>{
+            console.log(data);
 
-                let weatherArray = [];
-                dates.forEach((date, i) => {
-                    let forecastObject = data['city']['forecast']['forecastDay'].find(obj => obj.forecastDate == date.format('YYYY-MM-DD'))
-                    let climateObject = data['city']['climate']['climateMonth'].find(m => m.month == date.month() + 1)
-                    weatherArray.push(new DayWeatherData(forecastObject,climateObject,date,dates))
-                })
-                return weatherArray
-            }))
+            let weatherArray = [];
+            dates.forEach((date, i) => {
+                let forecastObject = data['city']['forecast']['forecastDay'].find(obj => obj.forecastDate == date.format('YYYY-MM-DD'))
+                let climateObject = data['city']['climate']['climateMonth'].find(m => m.month == date.month() + 1)
+                weatherArray.push(new DayWeatherData(forecastObject,climateObject,date,dates))
+            })
+            return weatherArray
+        }).catch(e =>{
+            console.warn(`🌩️ Could Not Get Weather Data - Please Check Server ⚠️`)
+            let weatherArray = [];
+            dates.forEach((date, i) => {
+                weatherArray.push(new DayWeatherData(null,null,date,dates))
+            })
+            return weatherArray
+        })
 
     }
     willItRain(weatherObject:DayWeatherData[]):boolean{
@@ -155,23 +161,20 @@ export class WeatherService {
             return null;
         }
     }
-    createWeatherData(trip: Trip):Observable<TripWeatherData> {
+    createWeatherData(trip: Trip):Promise<TripWeatherData> {
             let dates = getAllDates(trip.startDate, trip.endDate);
-            let dailyWeatherArray = this.getDailyWeatherForCity(trip.destinationId, dates)
-            return dailyWeatherArray.pipe(
-                take(1),
-                map((weatherArray:DayWeatherData[]):TripWeatherData=>{
+            return this.getDailyWeatherForCity(trip.destinationId, dates)
+                .then((weatherArray:DayWeatherData[]):TripWeatherData=>{
                     let weatherDataObj = new TripWeatherData();
                     this.willItRain(weatherArray) && weatherDataObj.weatherTypes.push('rain');
                     weatherDataObj.weatherArray = weatherArray;
                     weatherDataObj.minTemp = this.getMinTemp(weatherArray)
                     weatherDataObj.maxTemp = this.getMaxTemp(weatherArray)
                     weatherDataObj.weatherTypes.push(
-                      ...weatherArray.map(wObj => wObj.weatherType).filter((x, pos, arr) => (x != 'rain' && x != null && arr.indexOf(x) == pos))
+                    ...weatherArray.map(wObj => wObj.weatherType).filter((x, pos, arr) => (x != 'rain' && x != null && arr.indexOf(x) == pos))
                     )
                     return weatherDataObj
-                })
-            )
+            })
     }
     isWeatherTheSame(a:TripWeatherData,b:TripWeatherData):boolean{
         if(
@@ -208,7 +211,7 @@ export class WeatherService {
             !test && response.push(joinSpecial(rule.weatherTypes,', ',' or ')+` will not be expected during this trip`)
           }
         } else {
-            response.push('This Trip\'s weather settings are invalid')
+            response.push('This Trip\'s weather data is invalid')
         }
         return {conditionsMet:conditionsMet,response:response}
       }

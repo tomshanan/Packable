@@ -29,6 +29,7 @@ export class SelectCollectionProfilesDialogComponent implements OnInit {
   packablesString: string;
   wRules: WeatherRule;
   packablesVary:boolean = false;
+  wData:TripWeatherData;
   weatherCheck: {conditionsMet:boolean,response:string[]};
 
   constructor(
@@ -43,8 +44,9 @@ export class SelectCollectionProfilesDialogComponent implements OnInit {
     this.header = this.collection.name
     this.content = data.content || '<b>Who should pack this collection?</b>'
     this.packablesString = this.collection.packables.map(p=>p.name).join(', ')
+    this.wData = data.weatherData
     this.wRules = this.collection.weatherRules
-    this.weatherCheck = this.WeatherService.checkWeatherRules(this.wRules,data.weatherData)
+    this.weatherCheck = this.WeatherService.checkWeatherRules(this.wRules,this.wData)
     if(this.profileGroup.some(p =>{
       return p.collections.hasId(this.collection.id)
     })) {

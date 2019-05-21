@@ -329,7 +329,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     let dates = getAllDates(trip.startDate, trip.endDate, { first: true, last: true });
     let dailyWeatherArray = this.weatherService.getDailyWeatherForCity(trip.destinationId, dates)
     let tripWeather = new TripWeatherData();
-    dailyWeatherArray.pipe(take(1)).subscribe(weatherArray => {
+    dailyWeatherArray.then(weatherArray => {
       tripWeather.weatherArray = weatherArray;
       tripWeather.minTemp = this.weatherService.getMinTemp(weatherArray)
       tripWeather.maxTemp = this.weatherService.getMaxTemp(weatherArray)

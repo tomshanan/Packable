@@ -13,6 +13,11 @@ export class ListPackableComponent implements OnInit {
   @Input('showInvalid') showInvalid: boolean = false;
   @Output('toggleCheck') ToggleCheckEmitter = new EventEmitter<PackingListPackable>()
   @Output('addInvalid') addInvalidEmitter = new EventEmitter<PackingListPackable>()
+  @Output('updateQuantity') updateQuantityEmitter = new EventEmitter<PackingListPackable>()
+  @Output('onRemove') removeEmitter = new EventEmitter<void>()
+
+  editMode = false;
+
   constructor(
     public windowService: WindowService, // used by template
     public appColors:appColors,
@@ -30,5 +35,21 @@ export class ListPackableComponent implements OnInit {
     this.packable.forcePass = true;
     this.addInvalidEmitter.emit(this.packable)
   }
+  toggleEditMode(state?:boolean){
+    this.editMode = state !== null ? state : !this.editMode;
+  }
 
+  onSetQuantity(quantity:number){
+    if(this.packable.quantity != quantity && quantity > 0){
+      this.packable.forceQuantity = true;
+      this.packable.quantity = quantity
+      this.updateQuantityEmitter.emit(this.packable)
+    } else if (quantity === 0){
+      this.removeEmitter.emit()
+    }
+  }
+  editRules(){
+    // OPEN MODAL
+    // 
+  }
 }

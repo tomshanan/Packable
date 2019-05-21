@@ -103,7 +103,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     // check that all the trips properties that are required for weather data are present
     if(this.tripFac.validateTripProperties(this.trip,['startDate','startDate','destinationId'])){
       const libState =this.storeSelector.libraryState_obs
-      const weatherDataObs = this.weatherService.createWeatherData(this.trip)
+      const weatherDataObs = from(this.weatherService.createWeatherData(this.trip))
       console.log('TRIP WIZARD',`subscribing to lib/weatherAPI`)
       this.subs.add(
         combineLatest(libState,weatherDataObs)

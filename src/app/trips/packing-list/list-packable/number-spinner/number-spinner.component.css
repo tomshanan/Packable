@@ -2,7 +2,7 @@
     border: 1px solid currentColor;
     display: inline-flex;
     flex-direction: row;
-    box-sizing: content-box;
+    box-sizing: border-box;
     align-items: stretch;
     height: 40px;
     border-radius: 0.25em;
@@ -25,7 +25,6 @@ input.spinner_input {
     text-align: center;
     width: 40px;
     border: none;
-    height: 40px;
     outline: none;
     color:black;
     font-size: 16px;

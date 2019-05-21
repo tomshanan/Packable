@@ -28,6 +28,7 @@ export interface PackingListPackable {
     name: string,
     quantity: number,
     quantityReasons: Reason[],
+    forceQuantity: boolean,
     checked: boolean,
     changedAfterChecked: boolean,
     passChecks: boolean,

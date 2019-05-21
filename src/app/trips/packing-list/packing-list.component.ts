@@ -18,7 +18,7 @@ import { WeatherService, TripWeatherData, weatherCheckResponse } from '../../sha
 import { WeatherRule, weatherType, weatherOptions, tempOptions, absoluteMax, absoluteMin } from '../../shared/models/weather.model';
 import { take } from 'rxjs/operators';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { isDefined, getAllDates } from '../../shared/global-functions';
+import { isDefined, getAllDates, copyProperties } from '../../shared/global-functions';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { weatherFactory } from '../../shared/factories/weather.factory';
 import { TripMemoryService } from '@app/shared/services/trip-memory.service';
@@ -171,8 +171,6 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
   applyChecksOnPackable(data: packingListData, packable: PackableComplete, collection: CollectionComplete, profile: ProfileComplete): PackingListPackable[] {
     let collectionName = collection.name
-    let profileName = profile.name;
-    let packableName = packable.name
     let weatherCheck = this.checkWeatherRules(packable)
     let accQuantity = 0;
     let quantitiyReasons: Reason[] = [];
@@ -197,7 +195,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
       packableID: packable.id,
       profileID: profile.id,
       collectionID: collection.id,
-      name:packableName,
+      name:packable.name,
       quantity: accQuantity,
       quantityReasons: [],
       checked: false,
@@ -206,6 +204,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
       passChecks: passChecks,
       weatherReasons: weatherReasons,
       forcePass: false,
+      forceQuantity: false,
     }
     // CHECK QUANTITY RULES
     packable.quantityRules.forEach(rule => {
@@ -218,12 +217,12 @@ export class PackingListComponent implements OnInit, OnDestroy {
           quantitiyReasons.push(new Reason(reasonText))
           break;
         case 'profile':
-          accQuantity += rule.amount;
+          accQuantity += +rule.amount;
           reasonText = `[${collectionName}] ${rule.amount} per Traveler `
           quantitiyReasons.push(new Reason(reasonText))
           break;
         case 'trip':
-          reasonText = `[${profileName}>${collectionName}] ${rule.amount} to Share `
+          reasonText = `[${profile.name}>${collectionName}] ${rule.amount} to Share `
           returnListPackable.push(
             {
               ...basePackable,
@@ -237,43 +236,57 @@ export class PackingListComponent implements OnInit, OnDestroy {
           break;
       }
     })
-    passChecks = (passChecks && accQuantity > 0) ? true : false;
     if (quantitiyReasons.length > 0) {
+      if(accQuantity === 0){
+        quantitiyReasons.push(new Reason(`[${collectionName}] Minimum 1`))
+      }
       returnListPackable.push({
         ...basePackable,
-        quantity: accQuantity,
+        passChecks: passChecks,
+        quantity: accQuantity > 0 ? accQuantity : 1,
         quantityReasons: [...quantitiyReasons],
       })
     }
     return returnListPackable
   }
 
-  addPackableToList(newPackable: PackingListPackable, packingList: PackingList): void {
+  addPackableToList(newP: PackingListPackable, packingList: PackingList): void {
     let oldPackableIndex = packingList.packables.findIndex(p => {
-      return p.packableID == newPackable.packableID && p.profileID == newPackable.profileID
+      return p.packableID == newP.packableID && p.profileID == newP.profileID
     })
+    // COMPARE OLD PACKABLE'S QUANTITIES AND WEATHER CHECKS
     if (oldPackableIndex != -1) {
-      let oldPackable = packingList.packables[oldPackableIndex]
-      let prevQuantity = oldPackable.quantity;
-      let voidReasons = (p: PackingListPackable) => {
-        p.quantityReasons.forEach(r => r.active = false)
+      let oldP = packingList.packables[oldPackableIndex]
+      let voidWeather = (p: PackingListPackable) => {
         p.weatherReasons.forEach(r => r.active = false)
       }
-      // IF BOTH PACKABLES PASSED OR FAILED AND NEW HAS HEIGHER Q or NEW PASSES BUT OLD DOESNT
-      if ((newPackable.quantity > prevQuantity && newPackable.passChecks === oldPackable.passChecks) || (newPackable.passChecks && !oldPackable.passChecks)) {
-        oldPackable.quantity = newPackable.quantity;
-        oldPackable.weatherNotChecked = newPackable.weatherNotChecked
-        voidReasons(oldPackable)
+      let voidQuantity = (p: PackingListPackable) => {
+        p.quantityReasons.forEach(r => r.active = false)
+      }
+
+      if(newP.passChecks || newP.passChecks == oldP.passChecks){
+        voidWeather(oldP)
+        copyProperties(oldP,newP,['weatherNotChecked','passChecks'])
+        if(newP.forceQuantity || (!oldP.forceQuantity && newP.quantity>oldP.quantity)){
+            voidQuantity(oldP)
+            copyProperties(oldP,newP,['quantity', 'forceQuantity'])
+        } else { 
+          voidQuantity(newP)
+        }
       } else {
-        voidReasons(newPackable)
+        voidWeather(newP)
+        // if(newP.forceQuantity){
+        //   voidQuantity(oldP)
+        //   copyProperties(oldP,newP,['quantity','forceQuantity'])
+        // } else {
+        voidQuantity(newP)
+        // }
       }
-      if (newPackable.passChecks) {
-        oldPackable.passChecks = newPackable.passChecks
-      }
-      oldPackable.quantityReasons.push(...newPackable.quantityReasons)
-      oldPackable.weatherReasons.push(...newPackable.weatherReasons)
+
+      oldP.quantityReasons.push(...newP.quantityReasons)
+      oldP.weatherReasons.push(...newP.weatherReasons)
     } else {
-      packingList.packables.push(newPackable)
+      packingList.packables.push(newP)
     }
   }
 

@@ -23,7 +23,8 @@ export class HomeComponent implements OnInit {
   profiles: Profile[] = []
 
   testSelected = true;
-  
+  number = 20;
+
   constructor(
     private store:StoreSelectorService,
     private colFac:CollectionFactory,

@@ -1,0 +1,17 @@
+<div class="spinner_container" [style.borderColor]="appColors.accent.inactive">
+  <div class="spinner_button" (click)="subtract()" [appColor]="!isValid(number-1) ? 'muted' : 'accent'"
+    matRipple
+    [matRippleAnimation]="rippleAnimationConfig"
+    [matRippleDisabled]="!isValid(number-1)"
+    [matRippleColor]="appColors.accent.ripple">
+    <span>-</span>
+  </div>
+  <input type="tel" class="spinner_input" [(ngModel)]="number" (keyup)="manualInput()" (click)="$event.target.select()" autocomplete="off">
+  <div class="spinner_button" (click)="add()" [appColor]="!isValid(number+1) ? 'muted' : 'accent'"
+    matRipple
+    [matRippleAnimation]="rippleAnimationConfig"
+    [matRippleDisabled]="!isValid(number+1)"
+    [matRippleColor]="appColors.accent.ripple">
+    <span>+</span>
+  </div>
+</div>

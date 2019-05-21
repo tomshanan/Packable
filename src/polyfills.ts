@@ -67,6 +67,7 @@ declare global {
          */
         removeElements(removeArray:T[]):T[];
     }
+
 }
 
 if (!Array.prototype.hasId) {

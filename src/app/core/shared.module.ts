@@ -87,6 +87,7 @@ import { CollectionDestinationSelectorComponent } from '../collections/collectio
 import { RemoteCollectionSelectionFormComponent } from '../trips/remote-collection-selection-form/remote-collection-selection-form.component';
 import { CustomiseTripProfilesFormComponent } from '../trips/customise-trip-profiles-form/customise-trip-profiles-form.component';
 import { ListPackableComponent } from '../trips/packing-list/list-packable/list-packable.component';
+import { NumberSpinnerComponent } from '../trips/packing-list/list-packable/number-spinner/number-spinner.component';
 
 let imports = [
     ProfilesComponent,
@@ -164,7 +165,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent],
     exports: [...imports]
 })
 export class SharedModule {

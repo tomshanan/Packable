@@ -1,0 +1,32 @@
+.spinner_container{
+    border: 1px solid currentColor;
+    display: inline-flex;
+    flex-direction: row;
+    box-sizing: content-box;
+    align-items: stretch;
+    height: 40px;
+    border-radius: 0.25em;
+}
+.spinner_button {
+    cursor: pointer;
+    text-align: center;
+    width: 40px;
+    flex-shrink: 0;
+    user-select: none;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+input.spinner_input {
+    cursor: pointer;
+    text-align: center;
+    width: 40px;
+    border: none;
+    height: 40px;
+    outline: none;
+    color:black;
+    font-size: 16px;
+}

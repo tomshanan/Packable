@@ -1,4 +1,9 @@
 
+<number-spinner [(number)]="number" (numberChange)="log($event)" min="2" max="4">
+</number-spinner>
+
+{{number}}
+<!-- 
 
 <button (click)="generateData()">Generate Dummy Data</button>
 <button (click)="saveDummyDate()">Save Dummy Data</button>
@@ -7,4 +12,4 @@
             [selected]="selected"
             [profiles]="profiles">
         </collection-selection-form>
-</div>
+</div> -->

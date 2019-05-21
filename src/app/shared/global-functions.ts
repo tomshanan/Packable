@@ -171,3 +171,12 @@ export function stringArraysAreSame(a:Array<string>,b:Array<string>):boolean{
   })
   return match
 }
+
+
+export function copyProperties<T extends Object>(to:T, from:T, props:Array<keyof T>){
+  props.forEach(prop=>{
+    if(prop in from){
+        Object.assign(to,from[prop])
+    }
+  })
+}

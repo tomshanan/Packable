@@ -191,7 +191,7 @@ export class WeatherService {
         let wData = weatherData;
         let conditionsMet:boolean = true;
         let response:string[] = []
-        if(wData.isValid){
+        if(wData && wData.isValid){
           if(isDefined(rule.minTemp)){
             const test = wData.maxTemp >= rule.minTemp
             conditionsMet = test ? conditionsMet : false;

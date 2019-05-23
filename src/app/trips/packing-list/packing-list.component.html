@@ -5,7 +5,7 @@
   <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="null" *ngIf="navParams"></app-mobile-nav>
   <div class="ff-row-main">
     <ng-template #loading><i class="fas fa-sync-alt fa-spin"></i>Loading List...</ng-template>
-    <div *ngIf="sortedList; else loading" class="mt-1">
+    <div *ngIf="packingList && sortedList; else loading" class="mt-1">
       <div class="row">
         <mat-accordion class="w-100">
           <mat-expansion-panel (opened)="settingsOpen = true" (closed)="settingsOpen = false" [expanded]="settingsOpen">
@@ -69,7 +69,7 @@
               <div class="profileHeader">
                 <profile-icon [avatar]="profile.avatar" width="50px" [fullFrame]="!profile.id"></profile-icon> 
                 <h2 class="m-0">{{profile.header}}
-                    <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
+                    <i class="fas fa-check completedTick" *ngIf="isProfileChecked(profile)"></i>
                 </h2>
               </div>
               
@@ -91,12 +91,12 @@
                   <div class="profileHeader">
                       <profile-icon [avatar]="profile.avatar" width="40px"  [fullFrame]="!profile.id"></profile-icon> 
                       <h5 class="m-0">{{profile.header}}
-                          <i class="fas fa-check completedTick" *ngIf="checkCompleted(profile)"></i>
+                          <i class="fas fa-check completedTick" *ngIf="isProfileChecked(profile)"></i>
                       </h5>
                     </div>
                 </mat-panel-title>
                 <mat-panel-description>
-                  {{countCompleted(profile)}} / {{countPackables(profile)}}
+                  {{countCompletedInProfile(profile)}} / {{countPackablesInProfile(profile)}}
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <div *ngFor="let collection of profile.collections">
@@ -117,7 +117,16 @@
 <ng-template #packingListTemplate let-collection let-i>
   <ul class="packingList">
     <ng-container *ngFor="let packable of collection.packables"> 
-        <list-packable [packable]="packable" (toggleCheck)="toggleCheck(packable)" [showInvalid]="showInvalidPackables" (addInvalid)="addInvalid(packable)"></list-packable>
+        <list-packable 
+        #edititingP
+        [packable]="packable" 
+        (toggleCheck)="toggleCheck(packable)" 
+        [showInvalid]="showInvalidPackables" 
+        (addInvalid)="addInvalid(packable)"
+        (editRules)="editPackableRules(packable)"
+        (updateQuantity)="onUpdateQuantity($event)"
+        (toggleEdit)="onToggleEditPackable($event,edititingP)">
+      </list-packable>
   </ng-container>
   </ul>
 </ng-template>

@@ -3,12 +3,19 @@
 }
 li{
     list-style: none;
+    padding-bottom: 1px;
 }
 .list-packable-flex{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+}
+.edit-box{
+    flex-shrink: 0;
+    height: 40px;
+    line-height: 40px;
+    text-align: left;
 }
 .action-box{
     flex-grow: 0;
@@ -21,11 +28,21 @@ li{
 
 .text-box{
     flex-grow: 1;
-    flex-shrink: 1
+    flex-shrink: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.mod-box{
+.alert-box{
     flex-grow: 0;
     flex-shrink: 0;
+}
+.button-box{
+    flex-grow: 0;
+    flex-shrink: 0;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: baseline;
 }
 
 .packableText{

@@ -37,6 +37,7 @@ export class TripWeatherData {
     rain: boolean = null
     weatherTypes: weatherType[] = []
     dateModified:number = timeStamp()
+    dataInput: 'auto' | 'manual' = 'auto'
     constructor(){}
     get isValid():boolean{
         return isDefined(this.minTemp) && isDefined(this.maxTemp) && isDefined(this.weatherTypes);

@@ -2,19 +2,20 @@
     border: 1px solid currentColor;
     display: inline-flex;
     flex-direction: row;
-    box-sizing: border-box;
+    box-sizing: content-box;
     align-items: stretch;
-    height: 40px;
+    height: 35px;
     border-radius: 0.25em;
+    margin-right: .5em;
 }
 .spinner_button {
     cursor: pointer;
     text-align: center;
-    width: 40px;
+    width: 35px;
     flex-shrink: 0;
     user-select: none;
     font-size: 20px;
-    line-height: 20px;
+    line-height: 35px;
     font-weight: 100;
     display: flex;
     align-items: center;
@@ -23,9 +24,11 @@
 input.spinner_input {
     cursor: pointer;
     text-align: center;
-    width: 40px;
+    width: 35px;
     border: none;
     outline: none;
     color:black;
+    height: inherit;
+    align-self: baseline;
     font-size: 16px;
 }

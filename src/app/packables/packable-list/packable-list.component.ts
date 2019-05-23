@@ -215,8 +215,8 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       ...this.dialogSettings,
       data: data,
     });
-    dialogRef.afterClosed().pipe(take(1)).subscribe((packables:PackableComplete[]) => {
-      console.log(`Received from modal:`, packables);
+    dialogRef.afterClosed().pipe(take(1)).subscribe((packable:PackableComplete) => {
+      console.log(`Received from modal:`, packable);
       //this.updateViewObject(packables, 'update')
     })
   }

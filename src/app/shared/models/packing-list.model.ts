@@ -24,7 +24,7 @@ export class Reason {
 export interface PackingListPackable {
     profileID: string,
     collectionID: string,
-    packableID: string,
+    id: string,
     name: string,
     quantity: number,
     quantityReasons: Reason[],
@@ -38,7 +38,7 @@ export interface PackingListPackable {
     recentlyAdded?:boolean,
 }
 export function pass(p:PackingListPackable):boolean{
-    return p.passChecks || p.forcePass
+    return (p.passChecks || p.forcePass) && p.quantity > 0
 }
 export class PackingList {
     constructor(
@@ -46,7 +46,6 @@ export class PackingList {
         public updated: string = moment().format(),
         public data: packingListData = new packingListData(),
         public packables: PackingListPackable[] =[],
-        public dataInput: 'auto' | 'manual' = 'auto'
     ){}
 
 }

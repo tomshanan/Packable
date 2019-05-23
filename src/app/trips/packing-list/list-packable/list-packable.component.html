@@ -1,60 +1,95 @@
 <li *ngIf="packable && (pass() || showInvalid)">
   <div class="list-packable-flex">
-    <div class="action-box">
-        <mat-checkbox 
-          [checked]="packable.checked" 
-          (change)="toggleCheck()" 
-          [class.changedAfterChecked]="packable.changedAfterChecked" 
-          *ngIf="pass()">
-        </mat-checkbox>
-        <button mat-icon-button 
-        *ngIf="!pass()"
-        (click)="addInvalid()"
-        [style.color]="appColors.muted.inactive">
-          <mat-icon>playlist_add</mat-icon>
-        </button>
-    </div>
-    <div class="text-box">
-      <span class="packableText" 
-        [class.pointer]="pass()"
-        [class.completed]="packable.checked" 
-        [class.text-success]="packable.recentlyAdded" 
-        [style.color]="pass() ? 'black' : appColors.muted.inactive"
-        (click)="pass() && toggleCheck()">
-        {{packable.quantity}} x
-        <span style="text-transform: capitalize">
-          {{packable.name}}
-        </span>
-      </span>
-    </div>
-    <div class="mod-box">
-        <span class="ml-2">
-            <span [ngbPopover]="weatherNotChecked" placement="left" triggers="click:mouseleave"
-               class="pointer" *ngIf="packable.weatherNotChecked || (!packable.passChecks && packable.weatherReasons.length>0)">
-              <i class="fas fa-umbrella text-orange"></i>
-            </span>
-            <ng-template #weatherNotChecked>
-                <p class="p-0 m-0 small" *ngFor="let reason of packable.weatherReasons" [class.strikeThrough]="!reason.active" [innerHtml]="reason.text"></p>
-            </ng-template>
-      
-            <span [ngbPopover]="changedAfterChecked" placement="left" triggers="click:mouseleave"
-               class="pointer" *ngIf="packable.changedAfterChecked">
-              <i class="fas fa-sync-alt text-orange"></i>
-            </span>
-            <ng-template #changedAfterChecked>
-              <p class="p-0 m-0 small text-orange">
-                The quantity of this Packable changed after it has been ticked. Please check if you packed the updated quantity.
-              </p>
-            </ng-template>
-
-            <span [ngbPopover]="quantityReasons" placement="left" triggers="click:mouseleave"
-               class="pointer">
-              <i class="far fa-question-circle calculation-popover-trigger"></i>
-            </span>
-            <ng-template #quantityReasons>
-              <p class="p-0 m-0 small" *ngFor="let reason of packable.quantityReasons" [class.strikeThrough]="!reason.active" [innerHtml]="reason.text"></p>
-            </ng-template>
+    <ng-container *ngIf="!editMode">
+      <div class="action-box">
+          <mat-checkbox 
+            [checked]="packable.checked" 
+            (change)="toggleCheck()" 
+            [class.changedAfterChecked]="packable.changedAfterChecked" 
+            *ngIf="pass()">
+          </mat-checkbox>
+          <button mat-icon-button 
+          *ngIf="!pass()"
+          (click)="addInvalid()"
+          [style.color]="appColors.muted.inactive">
+            <mat-icon>playlist_add</mat-icon>
+          </button>
+      </div>
+      <div class="text-box">
+        <span class="packableText" 
+          [class.pointer]="pass()"
+          [class.completed]="packable.checked" 
+          [class.text-success]="packable.recentlyAdded" 
+          [style.color]="pass() ? 'black' : appColors.muted.inactive"
+          (click)="pass() && toggleCheck()">
+          <span [class.text-primary]="packable.forceQuantity && !packable.checked">
+            {{packable.quantity}} 
           </span>
+          <span style="vertical-align:bottom; font-size:0.8em">
+            x
+          </span>
+          <span style="text-transform: capitalize">
+            {{packable.name}}
+          </span>
+        </span>
+      </div>
+      <div class="alert-box">
+          <span class="ml-2">
+              <span [ngbPopover]="weatherNotChecked" placement="left" triggers="click:mouseleave"
+                class="pointer" *ngIf="packable.weatherNotChecked || (!packable.passChecks && packable.weatherReasons.length>0)">
+                <i class="fas fa-umbrella text-orange"></i>
+              </span>
+              <ng-template #weatherNotChecked>
+                  <p class="p-0 m-0 small" *ngFor="let reason of packable.weatherReasons" [class.strikeThrough]="!reason.active" [innerHtml]="reason.text"></p>
+              </ng-template>
+        
+              <span [ngbPopover]="changedAfterChecked" placement="left" triggers="click:mouseleave"
+                class="pointer" *ngIf="packable.changedAfterChecked">
+                <i class="fas fa-sync-alt text-orange"></i>
+              </span>
+              <ng-template #changedAfterChecked>
+                <p class="p-0 m-0 small text-orange">
+                  The quantity of this Packable changed after it has been ticked. Please check if you packed the updated quantity.
+                </p>
+              </ng-template>
+
+              <span [ngbPopover]="quantityReasons" placement="left" triggers="click:mouseleave"
+                class="pointer">
+                <i class="far fa-question-circle calculation-popover-trigger"></i>
+              </span>
+              <ng-template #quantityReasons>
+                <p class="p-0 m-0 small" *ngIf="packable.forceQuantity">Manually set quantity</p>
+                <p class="p-0 m-0 small" *ngFor="let reason of packable.quantityReasons" [class.strikeThrough]="!reason.active || packable.forceQuantity" [innerHtml]="reason.text"></p>
+              </ng-template>
+            </span>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="editMode">
+      <div class="edit-box">
+          <number-spinner [(number)]="spinnerQuantity" min="0" max="99">
+          </number-spinner>
+      </div>
+      <div class="text-box">
+          <span class="packableText">
+            <span style="text-transform: capitalize">
+              {{packable.name}}
+            </span>
+          </span>
+        </div>
+    </ng-container>
+    <div class="button-box">
+
+      <button mat-icon-button (click)="toggleEditMode()" *ngIf="!editMode" appColor="muted">
+        <mat-icon>add_circle_outline</mat-icon>
+      </button>
+      <ng-container *ngIf="editMode">
+          <a class="inline-link m-2" (click)="editRules()">
+              Edit Rules
+          </a>
+        <button mat-icon-button (click)="onSetQuantity(spinnerQuantity)" [appColor]="spinnerQuantity > 0 ? 'action' : 'danger'">
+          <mat-icon>{{spinnerQuantity > 0 ? 'check_circle_outline' : 'remove_circle_outline'}}</mat-icon>
+        </button>
+      </ng-container>
     </div>
   </div>
 </li>

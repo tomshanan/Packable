@@ -78,6 +78,7 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
                 incomplete: [...incompleteState]
             }
         case TripActions.UPDATE_PACKING_LIST:
+            console.log(`Action received in tripActions:`,action)
             const newList = action.payload;
             const updateListIndex = state.packingLists.findIndex(p=>p.id === newList.id);
             if(updateListIndex > -1){

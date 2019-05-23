@@ -93,9 +93,7 @@ export class EditPackableDialogComponent implements OnInit {
   updateWidth() {
     this.dialogRef.updateSize(this.windowService.max('xs') ? '99vw' : '500px')
   }
-  onClose(packable?:PackableComplete) {
-    this.dialogRef.close(packable ? [packable] : null);
-  }
+
   onConfirmPackable(data: {
     packable: PackableComplete,
     selectedProfiles: string[]
@@ -141,5 +139,8 @@ export class EditPackableDialogComponent implements OnInit {
   onConfirmCollections(confirm: CollectionSelectorConfirmEvent) {
     this.bulkActions.pushOriginalPackablesByCP([this.newPackable],confirm.selectedIds)
     this.onClose(this.packable);
+  }
+  onClose(packable:PackableComplete) {
+    this.dialogRef.close(packable ? packable : null);
   }
 }

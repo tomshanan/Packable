@@ -72,12 +72,13 @@
                     <i class="fas fa-check completedTick" *ngIf="isProfileChecked(profile)"></i>
                 </h2>
               </div>
-              
-              <div *ngFor="let collection of profile.collections">
-                <h5>{{collection.header}}</h5>
-                <ng-content *ngTemplateOutlet="packingListTemplate,context:{$implicit:collection}">
-                </ng-content>
-              </div>
+              <ng-container *ngFor="let collection of profile.collections">
+                <div *ngIf="collection.validPackables > 0 || showInvalidPackables">
+                  <h5>{{collection.header}}</h5>
+                  <ng-content *ngTemplateOutlet="packingListTemplate,context:{$implicit:collection}">
+                  </ng-content>
+                </div>
+              </ng-container>
             </div>
           </div>
         </div>

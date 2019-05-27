@@ -19,7 +19,7 @@
         <span class="packableText" 
           [class.pointer]="pass()"
           [class.completed]="packable.checked" 
-          [class.text-success]="packable.recentlyAdded" 
+          [class.text-success]="packable.recentlyAdded && pass()" 
           [style.color]="pass() ? 'black' : appColors.muted.inactive"
           (click)="pass() && toggleCheck()">
           <span [class.text-primary]="packable.forceQuantity && !packable.checked">

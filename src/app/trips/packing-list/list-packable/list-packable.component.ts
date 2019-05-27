@@ -28,13 +28,11 @@ export class ListPackableComponent implements OnInit,OnChanges {
   ) { }
 
   ngOnInit() {
-    console.log('loaded',(this.inputPackable && this.inputPackable.name))
     this.packable = this.inputPackable
     this.spinnerQuantity = this.packable.quantity
   }
   ngOnChanges(changes:SimpleChanges){
     if(this.packable && changes['inputPackable']){
-      console.log('reloaded',(this.inputPackable && this.inputPackable.name))
       Object.assign(this.packable, this.inputPackable)
     }
   }

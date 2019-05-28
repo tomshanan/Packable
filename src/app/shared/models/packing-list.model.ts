@@ -1,6 +1,7 @@
 import { Destination } from '../services/location-data.service';
 import { DayWeatherData, TripWeatherData } from '../services/weather.service';
 import * as moment from 'moment';
+import { timeStamp } from '../global-functions';
 
 export class packingListData {
     destination:Destination = null;
@@ -43,9 +44,9 @@ export function pass(p:PackingListPackable):boolean{
 export class PackingList {
     constructor(
         public id: string,
-        public updated: string = moment().format(),
         public data: packingListData = new packingListData(),
         public packables: PackingListPackable[] =[],
+        public dateModified: number = timeStamp(),
     ){}
 
 }

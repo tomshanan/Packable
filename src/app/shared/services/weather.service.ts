@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { map, take, switchMap, mapTo, catchError } from 'rxjs/operators';
 import * as moment from 'moment';
-import { weatherType, WeatherRule, temp } from '../models/weather.model';
+import { weatherType, WeatherRule, tempC, temp } from '../models/weather.model';
 import { isDefined, getAllDates, timeStamp, stringArraysAreSame, joinSpecial } from '../global-functions';
 import { Trip } from '../models/trip.model';
 import { DestinationDataService } from './location-data.service';
@@ -38,10 +38,17 @@ export class TripWeatherData {
     weatherTypes: weatherType[] = []
     dateModified:number = timeStamp()
     dataInput: 'auto' | 'manual' = 'auto'
-    constructor(){}
+    constructor(data?:Partial<TripWeatherData>){
+        if(data){
+            Object.assign(this,data)
+        }
+    }
     get isValid():boolean{
         return isDefined(this.minTemp) && isDefined(this.maxTemp) && isDefined(this.weatherTypes);
     } 
+    forecastString():string{
+        return `${temp(this.minTemp)}-${tempC(this.maxTemp)} ${joinSpecial(this.weatherTypes,', ',' and ') }`
+    }
 }
 
 
@@ -199,12 +206,12 @@ export class WeatherService {
           if(isDefined(rule.minTemp)){
             const test = wData.maxTemp >= rule.minTemp
             conditionsMet = test ? conditionsMet : false;
-            !test && response.push(`The temperature won't be over ${temp(rule.minTemp)}`)
+            !test && response.push(`The temperature won't be over ${tempC(rule.minTemp)}`)
         }
         if(isDefined(rule.maxTemp)){
             const test = wData.minTemp < rule.maxTemp
             conditionsMet = test ? conditionsMet : false;
-            !test && response.push(`The temperature won't be below ${temp(rule.maxTemp)}`)
+            !test && response.push(`The temperature won't be below ${tempC(rule.maxTemp)}`)
           }
           if(isDefined(rule.weatherTypes) && rule.weatherTypes.length>0){
             const test = rule.weatherTypes.some(w=>wData.weatherTypes.includes(w))

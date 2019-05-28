@@ -33,8 +33,12 @@ export class WeatherRule {
 }
 
 export const degC = `&#176;C`
+export const deg = `&#176;`
+export function tempC(n:number):string{
+    return Number.isInteger(n) ?  n+degC : '?'
+}
 export function temp(n:number):string{
-    return n+degC
+    return Number.isInteger(n) ?  n+deg : '?'
 }
 export interface weatherIconData {
     icon: string,

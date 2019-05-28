@@ -11,19 +11,12 @@
           <mat-expansion-panel (opened)="settingsOpen = true" (closed)="settingsOpen = false" [expanded]="settingsOpen">
             <mat-expansion-panel-header>
               <mat-panel-description class="d-flex w-100" *ngIf="!settingsOpen">
-                <span class="setting_header">
-                  Min: {{packingList.data.weatherData.minTemp || '? '}}&#176;C
-                </span>
-                <span class="setting_header">
-                  Max: {{packingList.data.weatherData.maxTemp || '? '}}&#176;C
-                </span>
-                <span class="setting_header">
-                  Type: {{packingList.data.weatherData.weatherTypes.length>0 ? (packingList.data.weatherData.weatherTypes | join:', ') : 'None'}}
+                <span class="setting_header" [innerHtml]="forecastString">
                 </span>
                 <span class="setting_header" *ngIf="packingList.dataInput == 'manual'">
                    (Manual Input)
                 </span>
-                <span class="setting_header ml-auto">
+                <span class="setting_header ml-auto small">
                   <i>Updated: {{ lastSave }}</i>
                 </span>
               </mat-panel-description>
@@ -62,7 +55,7 @@
           </mat-expansion-panel>
         </mat-accordion>
       </div>
-      <div class="row pb-2" *ngIf="windowService.min('sm')">
+      <!-- <div class="row pb-2" *ngIf="windowService.min('sm')">
         <div class="col-12">
           <div class="row">
             <div *ngFor="let profile of sortedList; let i = index" class="col-sm-6 col-xl-4">
@@ -74,19 +67,21 @@
               </div>
               <ng-container *ngFor="let collection of profile.collections">
                 <div *ngIf="collection.validPackables > 0 || showInvalidPackables">
-                  <h5>{{collection.header}}</h5>
-                  <ng-content *ngTemplateOutlet="packingListTemplate,context:{$implicit:collection}">
-                  </ng-content>
+                  <packing-list-collection 
+                    [(collection)]="collection" 
+                    [trip]="trip" 
+                    [(editingPackable)]="editingPackable">
+                  </packing-list-collection>
                 </div>
               </ng-container>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row py-2" *ngIf="windowService.max('sm')">
+      </div> -->
+      <div class="row py-2">
         <div class="col-12">
           <mat-accordion multi="true">
-            <mat-expansion-panel *ngFor="let profile of sortedList; let i = index">
+            <mat-expansion-panel *ngFor="let profile of sortedList; let i = index" [expanded]="windowService.min('sm')" [disabled]="windowService.min('sm')">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   <div class="profileHeader">
@@ -101,9 +96,11 @@
                 </mat-panel-description>
               </mat-expansion-panel-header>
               <div *ngFor="let collection of profile.collections">
-                <h6>{{collection.header}}</h6>
-                <ng-content *ngTemplateOutlet="packingListTemplate,context:{$implicit:collection}">
-                </ng-content>
+                <packing-list-collection 
+                  [(collection)]="collection" 
+                  [trip]="trip" 
+                  [(editingPackable)]="editingPackable">
+                </packing-list-collection>
               </div>
             </mat-expansion-panel>
           </mat-accordion>
@@ -114,20 +111,3 @@
 </div>
 
 
-
-<ng-template #packingListTemplate let-collection let-i>
-  <ul class="packingList">
-    <ng-container *ngFor="let packable of collection.packables"> 
-        <list-packable 
-        #edititingP
-        [packable]="packable" 
-        (toggleCheck)="toggleCheck(packable)" 
-        [showInvalid]="showInvalidPackables" 
-        (addInvalid)="addInvalid(packable)"
-        (editRules)="editPackableRules(packable)"
-        (updateQuantity)="onUpdateQuantity($event)"
-        (toggleEdit)="onToggleEditPackable($event,edititingP)">
-      </list-packable>
-  </ng-container>
-  </ul>
-</ng-template>

@@ -33,9 +33,10 @@ export function path(...arr:string[]):string{
   arr = arr.clearUndefined()
   return arr.join('/')
 }
-export function joinSpecial(arr:string[], del:string,lastDel:string):string{
-  let last = arr.pop()
-  return arr.join(del)+(arr.length>0 ? lastDel: '')+last
+export function joinSpecial(arr:string[] = [], del:string,lastDel:string):string{
+  let newArray = arr.slice()
+  let last = newArray.pop()
+  return newArray.join(del)+(newArray.length>0 ? lastDel: '')+(last?last:'')
 }
 export function round(number:number,decimals:number=0):number{
   return Math.floor(number*10**decimals)/10**decimals

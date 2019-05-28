@@ -43,6 +43,7 @@ li{
     display: inline-flex;
     flex-direction: row;
     align-items: baseline;
+    height: 40px;
 }
 
 .packableText{

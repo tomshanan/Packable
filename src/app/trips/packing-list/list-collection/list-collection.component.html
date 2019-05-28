@@ -1,0 +1,15 @@
+<h6>{{collection.header}}</h6>
+<ul class="packingList">
+  <ng-container *ngFor="let packable of collection.packables"> 
+      <list-packable 
+      #edititingP
+      [packable]="packable" 
+      (toggleCheck)="toggleCheck(packable)" 
+      [showInvalid]="showInvalidPackables" 
+      (addInvalid)="addInvalid(packable)"
+      (editRules)="editPackableRules(packable)"
+      (updateQuantity)="onUpdatePackable($event)"
+      (toggleEdit)="onToggleEditPackable($event,edititingP)">
+    </list-packable>
+</ng-container>
+</ul>

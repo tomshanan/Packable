@@ -33,7 +33,6 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 type comparableItem = { id: string, dateModified: number }
-
 declare global {
     interface Array<T> {
         /**
@@ -66,6 +65,18 @@ declare global {
          * @param removeArray The array of items you wish to clear from the original array. (all must have ID property)
          */
         removeElements(removeArray:T[]):T[];
+        /**
+         * Find an element that matches another element by specifing an array of properties for comparison.
+         * @param findObject the object for comparison
+         * @param propArray array of properties to compare
+         */
+        findBy(findObject:T,propArray:Array<keyof T>):T;
+        /**
+         * Find an element's index that matches another element by specifing an array of properties for comparison.
+         * @param findObject the object for comparison
+         * @param propArray array of properties to compare
+         */
+        findIndexBy(findObject:T,propArray:Array<keyof T>):number;
     }
 
 }
@@ -161,5 +172,15 @@ if(!Array.prototype.ids){
             }
         })
         return returnArray
+    }
+}
+if(!Array.prototype.findBy){
+    Array.prototype.findBy = function <T>(this: T[], findObject:T,propArray:Array<keyof T>):T{
+        return this.find(obj=>propArray.every(prop=>findObject[prop]===obj[prop]))
+    }
+}
+if(!Array.prototype.findIndexBy){
+    Array.prototype.findIndexBy = function <T>(this: T[], findObject:T,propArray:Array<keyof T>):number{
+        return this.findIndex(obj=>propArray.every(prop=>findObject[prop]===obj[prop]))
     }
 }

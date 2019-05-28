@@ -1,5 +1,5 @@
-import {  TripWeatherData } from '../services/weather.service';
-import { absoluteMin, absoluteMax, WeatherRule, hotWeather, warmWeather, coolWeather, coldWeather, weatherType, temp, weatherIconData } from '../models/weather.model';
+import { TripWeatherData } from '../services/weather.service';
+import { absoluteMin, absoluteMax, WeatherRule, hotWeather, warmWeather, coolWeather, coldWeather, weatherType, tempC, weatherIconData } from '../models/weather.model';
 import { isDefined, titleCase, decodeHtml } from '../global-functions';
 
 
@@ -22,14 +22,18 @@ export class weatherFactory{
         if(minTemp==absoluteMin && maxTemp == absoluteMax){
             return `Any Temperature`
         } else if (minTemp > absoluteMin && maxTemp == absoluteMax) {
-            return `Above ${temp(minTemp)}`
+            return `Above ${tempC(minTemp)}`
         } else if (minTemp == absoluteMin && maxTemp < absoluteMax) {
-            return `Below ${temp(maxTemp)}`
+            return `Below ${tempC(maxTemp)}`
         } else if (minTemp > absoluteMin && maxTemp < absoluteMax) {
-            return `${minTemp} &minus; ${temp(maxTemp)}`
+            return `${minTemp} &minus; ${tempC(maxTemp)}`
         } else {
             'Temperature invalid'
         }
+    }
+
+    getWeatherString(wData:TripWeatherData){
+        
     }
     getWeatherIcons(wr:WeatherRule): weatherIconData[]{
         let returnArray:weatherIconData[] = []

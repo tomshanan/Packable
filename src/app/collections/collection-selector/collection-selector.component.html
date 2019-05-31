@@ -3,8 +3,8 @@
         <collection-details-card
         [collection]="collection"
         [actionType]="isUsed(collection) ? 'none' : 'selection'"
-        [selectionOnIcon]="starIcons ? 'star' : 'added'"
-        [selectionOffIcon]="starIcons ? 'star_border' : 'unselected'"
+        [selectionOnIcon]="starIcons ? 'star' : 'circle-added'"
+        [selectionOffIcon]="starIcons ? 'star-border' : 'circle'"
         [disabled]="isUsed(collection)"
         staticIcon="check"
         [selectionState]="list.isSelected(collection.id)"

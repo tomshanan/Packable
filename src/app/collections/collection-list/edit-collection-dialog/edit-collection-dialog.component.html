@@ -25,7 +25,7 @@
         <div *ngIf="weatherForm.limitTemp || weatherForm.limitWeather; else noRules" @expandAndFadeTrigger>
           <p class="small text-muted" *ngIf="collection.weatherOverride; else notOverride">The weather rules set here will override all weather rules set for the contained Packables.</p>
           <ng-template #notOverride>
-            <p class="small text-muted">Both the Collection's and the Packable's weather rules will be checked.</p>
+            <p class="small text-muted">While switched off, both the Collection's and the Packable's weather rules will be checked.</p>
           </ng-template> 
         </div>
         <ng-template #noRules>

@@ -18,6 +18,8 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
   @Input() disabled: boolean = false;
   @Input() showTextFromSize: screenSize;
   @Input('color') inputColor: keyof appColors = 'action'
+  @Input('reverse') reverse: boolean = false
+
   color: color;
   rippleRadius: number;
   @Input() buttonWidth: string = null
@@ -62,10 +64,8 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
     if (this.setSize()){
       this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', this.buttonWidth)
       let width = this.hostElement.nativeElement.clientWidth
-      this.rippleRadius = width * 0.6;
     } else {
       this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', 'inherit')
-      this.rippleRadius = 24;
     }
     if(!!this.innerPadding){
       this.renderer.setStyle(this.rippleTrigger.nativeElement,'padding',this.innerPadding)

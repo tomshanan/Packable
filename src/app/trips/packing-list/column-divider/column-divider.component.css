@@ -1,0 +1,15 @@
+:host{
+    display: block;
+}
+.colContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+}
+.column{
+    flex-grow: 1;
+    flex-shrink: 0;
+}
+.column:not(:first-of-type){
+    margin-left: 10px
+}

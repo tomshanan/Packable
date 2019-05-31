@@ -1,113 +1,195 @@
 <div class="full-flex">
-  <div class="ff-row" *ngIf="windowService.min('sm') && windowService.max('sm')">
-    <a class="inline-link" (click)="return()"><i class="fas fa-chevron-left"></i> Trips</a>
+  <div
+    class="ff-row"
+    *ngIf="windowService.min('sm') && windowService.max('sm')">
+    <a
+      class="inline-link"
+      (click)="return()">
+      <i class="fas fa-chevron-left"></i>
+      Trips
+    </a>
   </div>
-  <app-mobile-nav [nav]="navParams" (leftAction)="return()" (rightAction)="null" *ngIf="navParams"></app-mobile-nav>
+  <app-mobile-nav
+    [nav]="navParams"
+    (leftAction)="return()"
+    (rightAction)="null"
+    *ngIf="navParams"></app-mobile-nav>
   <div class="ff-row-main">
-    <ng-template #loading><i class="fas fa-sync-alt fa-spin"></i>Loading List...</ng-template>
-    <div *ngIf="packingList && sortedList; else loading" class="mt-1">
+    <ng-template #loading>
+      <i class="fas fa-sync-alt fa-spin"></i>
+      Loading List...
+    </ng-template>
+    <div
+      *ngIf="packingList && sortedList; else loading"
+      class="mt-1">
       <div class="row">
         <mat-accordion class="w-100">
-          <mat-expansion-panel (opened)="settingsOpen = true" (closed)="settingsOpen = false" [expanded]="settingsOpen">
+          <mat-expansion-panel
+            (opened)="settingsOpen = true"
+            (closed)="settingsOpen = false"
+            [expanded]="settingsOpen">
             <mat-expansion-panel-header>
-              <mat-panel-description class="d-flex w-100" *ngIf="!settingsOpen">
-                <span class="setting_header" [innerHtml]="forecastString">
+              <mat-panel-description
+                class="d-flex w-100"
+                *ngIf="!settingsOpen">
+                <span
+                  class="setting_header"
+                  [innerHtml]="forecastString">
                 </span>
-                <span class="setting_header" *ngIf="packingList.dataInput == 'manual'">
-                   (Manual Input)
+                <span
+                  class="setting_header"
+                  *ngIf="packingList.dataInput == 'manual'">
+                  (Manual Input)
                 </span>
                 <span class="setting_header ml-auto small">
                   <i>Updated: {{ lastSave }}</i>
                 </span>
               </mat-panel-description>
-              <mat-panel-title *ngIf="settingsOpen">
-                Manually enter weather settings
-              </mat-panel-title>
+              <mat-panel-title *ngIf="settingsOpen">Manually enter weather settings</mat-panel-title>
             </mat-expansion-panel-header>
             <form [formGroup]="customWeatherForm">
               <mat-form-field style="width:110px;">
                 <mat-label>Min Temp</mat-label>
-                <mat-select [value]="packingList.data.weatherData.minTemp || absoluteMinTemp" formControlName="min" #minTempSelect>
-                  <mat-option *ngFor="let t of tempOptions" [value]="t" [disabled]="t>maxTempSelect.value">{{t!=absoluteMinTemp ? t+'&#176;C' : 'Any'}}</mat-option>
+                <mat-select
+                  [value]="packingList.data.weatherData.minTemp || absoluteMinTemp"
+                  formControlName="min"
+                  #minTempSelect>
+                  <mat-option
+                    *ngFor="let t of tempOptions"
+                    [value]="t"
+                    [disabled]="t>maxTempSelect.value">
+                    {{t!=absoluteMinTemp ? t+'&#176;C' : 'Any'}}
+                  </mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field style="width:110px;">
                 <mat-label>Max Temp</mat-label>
-                <mat-select [value]="packingList.data.weatherData.maxTemp || absoluteMaxTemp" formControlName="max" #maxTempSelect>
-                  <mat-option *ngFor="let t of tempOptions" [value]="t" [disabled]="minTempSelect.value>t">{{t!=absoluteMaxTemp ? t+'&#176;C' : 'Any'}}</mat-option>
+                <mat-select
+                  [value]="packingList.data.weatherData.maxTemp || absoluteMaxTemp"
+                  formControlName="max"
+                  #maxTempSelect>
+                  <mat-option
+                    *ngFor="let t of tempOptions"
+                    [value]="t"
+                    [disabled]="minTempSelect.value>t">
+                    {{t!=absoluteMaxTemp ? t+'&#176;C' : 'Any'}}
+                  </mat-option>
                 </mat-select>
               </mat-form-field>
               <mat-form-field style="width:200px;">
                 <mat-label>Weather Types</mat-label>
-                <mat-select [value]="packingList.data.weatherData.weatherTypes || null" multiple formControlName="types">
-                  <mat-option *ngFor="let w of weatherTypeOptions" [value]="w">{{w | titlecase}}</mat-option>
+                <mat-select
+                  [value]="packingList.data.weatherData.weatherTypes || null"
+                  multiple
+                  formControlName="types">
+                  <mat-option
+                    *ngFor="let w of weatherTypeOptions"
+                    [value]="w">
+                    {{w | titlecase}}
+                  </mat-option>
                 </mat-select>
               </mat-form-field>
             </form>
             <mat-action-row>
-              <span class="p-2 align-self-center"><b>Update Using:</b></span>
-              <button type="button" class="btn btn-primary" (click)="updatePackingListWithCustomWeather(trip)" (click)="settingsOpen = false">Manual Input</button>
-              <button type="button" class="btn btn-outline-primary ml-1" (click)="updatePackingListWithWeatherAPI(trip)" (click)="settingsOpen = false">Forecast</button>
+              <span class="p-2 align-self-center">
+                <b>Update Using:</b>
+              </span>
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="updatePackingListWithCustomWeather(trip)"
+                (click)="settingsOpen = false">
+                Manual Input
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary ml-1"
+                (click)="updatePackingListWithWeatherAPI(trip)"
+                (click)="settingsOpen = false">
+                Forecast
+              </button>
             </mat-action-row>
-
-
-
           </mat-expansion-panel>
         </mat-accordion>
       </div>
-      <!-- <div class="row pb-2" *ngIf="windowService.min('sm')">
-        <div class="col-12">
-          <div class="row">
-            <div *ngFor="let profile of sortedList; let i = index" class="col-sm-6 col-xl-4">
-              <div class="profileHeader">
-                <profile-icon [avatar]="profile.avatar" width="50px" [fullFrame]="!profile.id"></profile-icon> 
-                <h2 class="m-0">{{profile.header}}
-                    <i class="fas fa-check completedTick" *ngIf="isProfileChecked(profile)"></i>
-                </h2>
-              </div>
-              <ng-container *ngFor="let collection of profile.collections">
-                <div *ngIf="collection.validPackables > 0 || showInvalidPackables">
-                  <packing-list-collection 
-                    [(collection)]="collection" 
-                    [trip]="trip" 
-                    [(editingPackable)]="editingPackable">
-                  </packing-list-collection>
-                </div>
-              </ng-container>
-            </div>
-          </div>
-        </div>
-      </div> -->
+
       <div class="row py-2">
-        <div class="col-12">
-          <mat-accordion multi="true">
-            <mat-expansion-panel *ngFor="let profile of sortedList; let i = index" [expanded]="windowService.min('sm')" [disabled]="windowService.min('sm')">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <div class="profileHeader">
-                      <profile-icon [avatar]="profile.avatar" width="40px"  [fullFrame]="!profile.id"></profile-icon> 
-                      <h5 class="m-0">{{profile.header}}
-                          <i class="fas fa-check completedTick" *ngIf="isProfileChecked(profile)"></i>
-                      </h5>
-                    </div>
-                </mat-panel-title>
-                <mat-panel-description>
-                  {{countCompletedInProfile(profile)}} / {{countPackablesInProfile(profile)}}
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              <div *ngFor="let collection of profile.collections">
-                <packing-list-collection 
-                  [(collection)]="collection" 
-                  [trip]="trip" 
+        <mat-accordion
+          multi="true"
+          class="w-100">
+          <mat-expansion-panel
+            *ngFor="let profile of sortedList; let i = index"
+            [hideToggle]="true"
+            [class.mat-elevation-z0]="windowService.max('sm')"
+            [expanded]="windowService.min('sm')"
+            [disabled]="windowService.min('sm')"
+            #panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <span
+                  class="mat-expansion-indicator"
+                  [class.expanded]="panel.expanded"
+                  *ngIf="!panel.disabled"></span>
+                <div class="profileHeader">
+                  <profile-icon
+                    [avatar]="profile.avatar"
+                    [width]="windowService.max('sm') ? '40px' : '50px'"
+                    [fullFrame]="!profile.id"></profile-icon>
+                  <h4 class="m-0 text-capitalize">{{profile.header}}</h4>
+                  <h4 class="m-1">
+                    <mat-icon
+                      [inline]="true"
+                      class="completedTick"
+                      *ngIf="isProfileChecked(profile)"
+                      appColor="accent"
+                      [appColorResponsive]="false">
+                      done_outline
+                    </mat-icon>
+                  </h4>
+                </div>
+              </mat-panel-title>
+              <mat-panel-description>
+                {{countCompletedInProfile(profile)}} / {{countPackablesInProfile(profile)}}
+              </mat-panel-description>
+              <div
+                class="profile-options"
+                InnerLink>
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="profileDropDown"
+                  title="Traveler List Options"
+                  appColor="muted">
+                  <i class="material-icons">more_vert</i>
+                </button>
+                <mat-menu #profileDropDown="matMenu">
+                  <button mat-menu-item>
+                    <mat-icon outlined>share</mat-icon>
+                    <span>Share</span>
+                  </button>
+                  <button mat-menu-item (click)="tickAllProfile(profile)">
+                    <mat-icon>done_all</mat-icon>
+                    <span>Check All</span>
+                  </button>
+                  <button mat-menu-item (click)="resetAllProfile(profile)">
+                    <mat-icon>replay</mat-icon>
+                    <span>Reset List</span>
+                  </button>
+                </mat-menu>
+              </div>
+            </mat-expansion-panel-header>
+            <app-column-divider [cols]="windowService.max('sm') ? 1 : (windowService.max('xxl') ? 2 : 3)">
+              <ng-container *ngFor="let collection of profile.collections">
+                <packing-list-collection
+                  *ngIf="collection.validPackables() > 0 || packingListSettings.showInvalid"
+                  [(collection)]="collection"
+                  [trip]="trip"
                   [(editingPackable)]="editingPackable">
                 </packing-list-collection>
-              </div>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
+              </ng-container>
+            </app-column-divider>
+          </mat-expansion-panel>
+        </mat-accordion>
       </div>
     </div>
   </div>
 </div>
-
-

@@ -59,8 +59,7 @@ export class NewCollectionDialogComponent implements OnInit {
     private colFac:CollectionFactory,
     private context: ContextService,
   ) { 
-    this.profileGroup = data.profileGroup || this.storeSelector.profiles
-
+    this.profileGroup = (data && data.profileGroup) || this.storeSelector.profiles
   }
 
   ngOnInit() {

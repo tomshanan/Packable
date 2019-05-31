@@ -89,6 +89,8 @@ import { CustomiseTripProfilesFormComponent } from '../trips/customise-trip-prof
 import { ListPackableComponent } from '../trips/packing-list/list-packable/list-packable.component';
 import { NumberSpinnerComponent } from '../trips/packing-list/list-packable/number-spinner/number-spinner.component';
 import { ListCollectionComponent } from '../trips/packing-list/list-collection/list-collection.component';
+import { ColumnDividerComponent } from '../trips/packing-list/column-divider/column-divider.component';
+import { OutlinedDirective } from '../shared/directives/outlined.directive';
 
 let imports = [
     ProfilesComponent,
@@ -166,7 +168,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective],
     exports: [...imports]
 })
 export class SharedModule {

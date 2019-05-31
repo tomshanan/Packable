@@ -1,47 +1,106 @@
 <div class="collection-card-container">
-  <mat-card class="collection-card" [class.with-profiles]="profileGroup && profileGroup.length >0">
+  <mat-card
+    class="collection-card"
+    [class.with-profiles]="profileGroup && profileGroup.length >0">
     <div class="flex-container">
       <div class="flex-item actionBox">
         <ng-container *ngIf="actionType=='button'">
-          <icon-text-button [svgIcon]="buttonState" [disabled]="disabled" (onClick)="action()" [buttonWidth]="buttonWidth()+'px'">
+          <icon-text-button
+            [svgIcon]="buttonState"
+            [disabled]="disabled"
+            (onClick)="action()"
+            [buttonWidth]="buttonWidth()+'px'">
           </icon-text-button>
         </ng-container>
         <ng-container *ngIf="actionType=='selection'">
-          <icon-text-button [svgIcon]="selectionState ? selectionOnIcon : selectionOffIcon" [disabled]="disabled" (onClick)="action()"
-            [buttonWidth]="buttonWidth()+'px'" [color]="selectionState ? 'accent' : 'action'">
+          <icon-text-button
+            [svgIcon]="selectionState ? selectionOnIcon : selectionOffIcon"
+            [disabled]="disabled"
+            (onClick)="action()"
+            [buttonWidth]="buttonWidth()+'px'"
+            [color]="selectionState ? 'accent' : 'action'">
           </icon-text-button>
         </ng-container>
         <ng-container *ngIf="actionType=='none'">
-            <icon-text-button [svgIcon]="staticIcon" [disabled]="true"
-              [buttonWidth]="buttonWidth()+'px'" color="muted">
-            </icon-text-button>
-          </ng-container>
+          <icon-text-button
+            [svgIcon]="staticIcon"
+            [disabled]="true"
+            [buttonWidth]="buttonWidth()+'px'"
+            color="muted">
+          </icon-text-button>
+        </ng-container>
       </div>
-      <div class="flex-item detailBox" 
-      [class.text-muted]="disabled" 
-      [class.pointer]="boxClickActive && !disabled" 
-      (click)="onBoxClick()">
-        <p class="detailBox-header" [class.small-screen]="windowService.max('xs')">{{collection.name}}</p>
-        <div *ngIf="profileGroup && profileGroup.length >0" class="packable-warning" [class.unfolded]="showWarning">
-            <i>*Packables may vary between Travelers</i>
+      <div
+        class="flex-item detailBox"
+        [class.text-muted]="disabled"
+        [class.pointer]="boxClickActive && !disabled"
+        (click)="onBoxClick()">
+        <div class="detailBox-header">
+          <p
+            class="detailBox-title"
+            [class.small-screen]="windowService.max('xs')">
+            {{collection.name}}
+          </p>
+          <div
+            class="detailBox-weather"
+            *ngIf="weatherFac.isSet(collection.weatherRules)"
+            [style.color]="weatherCheck ? (weatherCheck.conditionsMet && weatherData.isValid ? colors.active.inactive : colors.danger.inactive ): colors.muted.inactive">
+            <span [innerHtml]="weatherFac.getWeatherRulesToString(collection.weatherRules)"></span>
+            <ng-container *ngIf="weatherCheck">
+              <mat-icon
+                *ngIf="!weatherCheck.conditionsMet || !weatherData.isValid"
+                class="pl-1"
+                svgIcon="weather_error"
+                [ngbPopover]="weatherError"
+                placement="left"
+                triggers="click:mouseleave"
+                InnerLink></mat-icon>
+              <mat-icon
+                *ngIf="weatherCheck.conditionsMet && weatherData.isValid"
+                class="pl-1">
+                done
+              </mat-icon>
+              <ng-template #weatherError>
+                <p
+                  class="p-0 m-0 small"
+                  *ngFor="let text of weatherCheck.response"
+                  [innerHtml]="text"></p>
+              </ng-template>
+            </ng-container>
           </div>
+        </div>
+        <div
+          *ngIf="profileGroup && profileGroup.length >0"
+          class="packable-warning"
+          [class.unfolded]="showWarning">
+          <i>*Packables may vary between Travelers</i>
+        </div>
         <div class="packable-list-container">
-          <list-concatinator [list]="packableNameList" [color]="colors.muted" (open)="toggleWarning($event)">
+          <list-concatinator
+            [list]="packableNameList"
+            [color]="colors.muted"
+            (open)="toggleWarning($event)">
           </list-concatinator>
         </div>
       </div>
     </div>
 
-    <div class="used-by-container" *ngIf="profileGroup && profileGroup.length >0" @transitionTrigger>
-        <div *ngFor="let profile of profileGroup" style="line-height:0em;" @horizontalShringAndFade>
-          <profile-icon 
-            [profileId]="profile.id" 
-            width="20px" 
-            [inline]="true" 
-            [fullFrame]="true">
-          </profile-icon>
-        </div>
+    <div
+      class="used-by-container"
+      *ngIf="profileGroup && profileGroup.length >0"
+      @transitionTrigger>
+      <div
+        *ngFor="let profile of profileGroup"
+        style="line-height:0em;"
+        @horizontalShringAndFade>
+        <profile-icon
+          [profileId]="profile.id"
+          width="20px"
+          [inline]="true"
+          [fullFrame]="true">
+        </profile-icon>
       </div>
+    </div>
   </mat-card>
-  
+
 </div>

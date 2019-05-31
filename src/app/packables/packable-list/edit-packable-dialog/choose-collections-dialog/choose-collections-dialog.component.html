@@ -1,4 +1,4 @@
-<p class="text-center">
+<p class="text-center my-1">
     <span *ngIf="action == 'add'">Add Packable to Travelers and Collections:</span>
     <span *ngIf="action == 'update'">Apply Packable changes to Travelers and Collections:</span>
 </p>
@@ -12,7 +12,7 @@
   *ngFor="let collection of ColProTree; let i = index">
   
       <div class="selectable-dropdown-header" (click)="toggleCollection(i, true)">
-        <div>{{collection.name}}</div>
+        <div class="h5 m-0">{{collection.name}}</div>
         <div *ngIf="collection.branchOpen" class="close-button" InnerLink>
           <button class="mini" mat-icon-button (click)="toggleCollection(i,false)" InnerLink>
             <mat-icon>close</mat-icon>

@@ -8,8 +8,8 @@ export function timeStamp():number{
   let newStamp = new Date().valueOf()
   return newStamp
 }
-export function isDefined(property:any, object:any = {}){
-  return object && property!==null && property !==undefined && property!=='' && property != []
+export function isDefined(obj:any){
+  return obj!==null && obj !==undefined && obj!=='' && (!Array.isArray(obj) || obj.length > 0)
 }
 export function indexOfId(obj:Array<{id:string}>, id:string):number{
   return obj.findIndex(x=>x.id == id)

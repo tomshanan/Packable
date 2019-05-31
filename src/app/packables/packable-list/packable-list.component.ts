@@ -54,7 +54,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   subscription: Subscription;
   packableList: PackableComplete[] = [];
   dialogSettings = {
-    width:'auto',
+    width:'500px',
     maxWidth: "99vw",
     maxHeight: "99vh",
     disableClose: true,
@@ -83,18 +83,18 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     this.initView()
   }
   ngOnChanges(changes:SimpleChanges){
-    if(changes['inputPackables']){
-      console.log(`packableList recieved new packables`, this.inputPackables);
+    if(changes['inputPackables'] || changes['inputCollectionId'] || changes['inputProfileId']){
+      // console.log(`packableList recieved new packables`, this.inputPackables);
       this.initView()
     }
-    if(changes['inputCollectionId']){
-      console.log(`packableList recieved new collection Id`, this.inputCollectionId);
-      this.initView()
-    }
-    if(changes['inputProfileId']){
-      console.log(`packableList recieved new profile id`, this.inputProfileId);
-      this.initView()
-    }
+    // if(changes['inputCollectionId']){
+    //   // console.log(`packableList recieved new collection Id`, this.inputCollectionId);
+    //   this.initView()
+    // }
+    // if(changes['inputProfileId']){
+    //   // console.log(`packableList recieved new profile id`, this.inputProfileId);
+    //   this.initView()
+    // }
   }
   ngOnDestroy(){
   }
@@ -103,7 +103,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     let newPackables = this.inputPackables ? this.inputPackables.filter(p=>!p.deleted) : []
     if(this.editingProfileId == this.inputProfileId && this.editingCollectionId == this.inputCollectionId){
       // if context stays the same, update the list using compare function
-      console.log('PACKABLE LIST:','updating packableList with compare()',this.packableList.slice(),newPackables.slice());
+      // console.log('PACKABLE LIST:','updating packableList with compare()',this.packableList.slice(),newPackables.slice());
       this.packableList.compare(newPackables,(changeItem,action)=>{
         this.updateViewObject([changeItem],action)
       });
@@ -205,10 +205,11 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     let editingPackable: PackableComplete,
       data: DialogData_EditPackable
     this.context.setBoth(this.editingCollectionId, this.editingProfileId)
-    
+    let selected = this.editingProfileId ? [this.editingProfileId] : [];
     editingPackable = this.inputPackables.findId(packableId)
     data = {
       pakable: editingPackable,
+      selected: selected,
       isNew: false
     }
     let dialogRef = this.dialog.open(EditPackableDialogComponent, {

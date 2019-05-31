@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { PackableComplete, PackableOriginal } from '@shared/models/packable.model';
-import { Profile } from '@app/shared/models/profile.model';
+import { Profile, ProfileComplete } from '@app/shared/models/profile.model';
 import { CollectionComplete, CollectionOriginal } from '../../../shared/models/collection.model';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
@@ -17,12 +17,15 @@ import * as fromApp from '@shared/app.reducers';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import { WindowService } from '../../../shared/services/window.service';
 import { expandAndFadeTrigger, transitionTrigger } from '../../../shared/animations';
-import { indexOfId, timeStamp } from '../../../shared/global-functions';
+import { indexOfId, timeStamp, isDefined } from '../../../shared/global-functions';
 import { ContextService } from '../../../shared/services/context.service';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
 
 export interface DialogData_EditPackable {
   pakable?: PackableComplete,
+  limitProfileGroup?: Array<string>,
+  limitCollectionGroup?: Array<string>,
+  selected?:string[],
   isNew?: boolean
 }
 @Component({
@@ -43,15 +46,12 @@ export class EditPackableDialogComponent implements OnInit {
   newPackable: PackableOriginal;
   profileGroup: Profile[];
   selectedProfiles: string[];
-  CollectionProfileGroup: CollectionProfile[];
-  collectionAction: 'ADD' | 'UPDATE';
-  selectedCollections: CollectionProfile[] = [];
   collectionId: string;
   collectionName: string;
   isNew: boolean;
   editName: boolean;
   step: number = 1;
-
+  msg:string;
   constructor(
     private storeSelector: StoreSelectorService,
     private proFac: ProfileFactory,
@@ -72,11 +72,7 @@ export class EditPackableDialogComponent implements OnInit {
 
 
   ngOnInit() {
-    this.updateWidth()
-    this.windowService.change.subscribe(width => {
-      this.updateWidth()
-    })
-    this.selectedProfiles = !!this.context.profileId ? [this.context.profileId] : [];
+
     this.collectionId = this.context.collectionId || null;
     if(this.collectionId){
       if(this.isNew){
@@ -87,12 +83,19 @@ export class EditPackableDialogComponent implements OnInit {
     } else {
       this.profileGroup = this.storeSelector.getProfilesWithPackableId(this.packable.id)
     }
+    if(isDefined(this.data.limitProfileGroup)){
+      this.profileGroup = this.profileGroup.filter(p=>this.data.limitProfileGroup.includes(p.id))
+    }
+    this.selectedProfiles = 
+    isDefined(this.data.selected) ? this.data.selected 
+    : (isDefined(this.context.profileId) ? [this.context.profileId] 
+    : (isDefined(this.context.collectionId) ? this.profileGroup.ids() 
+    : [] ) );
+
     this.collectionName = this.collectionId ? this.storeSelector.getCollectionById(this.collectionId).name : null;
   }
 
-  updateWidth() {
-    this.dialogRef.updateSize(this.windowService.max('xs') ? '99vw' : '500px')
-  }
+
 
   onConfirmPackable(data: {
     packable: PackableComplete,
@@ -113,17 +116,15 @@ export class EditPackableDialogComponent implements OnInit {
     )
     if(this.isNew || !this.collectionId){
       // update original packable if no collection id is set
-      console.log('EDIT PACKABLE: updating original packable / registering new packable');
+      this.msg ="The default Packable settings have been changed succesfully."
       this.store.dispatch(new packableActions.updateOriginalPackables([this.newPackable]))
     }
     if(this.collectionId && !this.context.profileId){
       // update original collection if no profile id is set
-      console.log('EDIT PACKABLE: updating original collection');
       this.bulkActions.pushOriginalPackablesByCP([this.newPackable],[{pId:null,cId:this.collectionId}])
     }
     if (this.collectionId && this.selectedProfiles.length > 0) {
       // UPDATE SELECTED PROFILES WITH NEW PRIVATE PACKABLE
-      console.log('EDIT PACKABLE: updating selected profiles');
       let CPs: CollectionProfile[] = []
       this.selectedProfiles.forEach((pId) => {
         CPs.push({pId: pId,cId: this.collectionId})

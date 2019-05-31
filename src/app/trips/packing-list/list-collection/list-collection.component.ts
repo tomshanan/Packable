@@ -11,6 +11,8 @@ import { ProfileComplete } from '../../../shared/models/profile.model';
 import { Trip } from '../../../shared/models/trip.model';
 import { take } from 'rxjs/operators';
 import { PackingListService } from '../packing-list.service';
+import { StoreSelectorService } from '../../../shared/services/store-selector.service';
+import { PackableFactory } from '../../../shared/factories/packable.factory';
 
 @Component({
   selector: 'packing-list-collection',
@@ -30,7 +32,8 @@ export class ListCollectionComponent implements OnInit {
     private dialog: MatDialog,
     private context: ContextService,
     private profileFactory: ProfileFactory,
-    private packingListService: PackingListService
+    private packingListService: PackingListService,
+    private pacFac:PackableFactory,
   ) { }
 
   ngOnInit() {
@@ -54,17 +57,31 @@ export class ListCollectionComponent implements OnInit {
   editPackableRules(packable: PackingListPackable) {
     let editingPackable: PackableComplete
     let data: DialogData_EditPackable
-    this.context.setBoth(packable.collectionID, packable.profileID)
-    let editingProfile = this.profiles.findId(packable.profileID)
-    let eiditingCollection = editingProfile.collections.findId(packable.collectionID)
-    editingPackable = eiditingCollection.packables.findId(packable.id)
+    
+    let selected:string[];
+    if(packable.profileID){
+      let editingProfile = this.profiles.findId(packable.profileID)
+      let eiditingCollection =  editingProfile.collections.findId(packable.collectionID)
+      editingPackable = eiditingCollection.packables.findId(packable.id);
+      this.context.setBoth(packable.collectionID, packable.profileID)
+      selected = [packable.profileID]
+    } else {
+      // in case dealing with a shared packable, treat it like a packable original
+      editingPackable = this.pacFac.makeCompleteFromIds([packable.id])[0]
+      this.context.setBoth(null, null)
+      selected = this.profiles.ids();
+    }
     data = {
       pakable: editingPackable,
+      limitProfileGroup: this.profiles.ids(),
+      limitCollectionGroup: this.trip.collections.ids(),
+      selected: selected,
       isNew: false
     }
     let dialogRef = this.dialog.open(EditPackableDialogComponent, {
       maxWidth: "99vw",
       maxHeight: "99vh",
+      width: "500px",
       disableClose: true,
       autoFocus: false,
       data: data,

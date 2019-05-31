@@ -1,8 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
-import { PackingListPackable, pass } from '@shared/models/packing-list.model';
+import { PackingListPackable, PackingListSettings } from '@shared/models/packing-list.model';
 import { WindowService } from '@shared/services/window.service';
 import { appColors } from '../../../shared/app-colors';
 import { isDefined } from '../../../shared/global-functions';
+import { pass, PackingListService } from '../packing-list.service';
 
 @Component({
   selector: 'list-packable',
@@ -13,23 +14,28 @@ export class ListPackableComponent implements OnInit,OnChanges {
   @Input('packable') inputPackable: PackingListPackable;
   packable: PackingListPackable;
   @Input('showInvalid') showInvalid: boolean = false;
-  @Output('toggleCheck') ToggleCheckEmitter = new EventEmitter<PackingListPackable>()
-  @Output('addInvalid') addInvalidEmitter = new EventEmitter<PackingListPackable>()
-  @Output('updateQuantity') updateQuantityEmitter = new EventEmitter<PackingListPackable>()
-  @Output('editRules') editRulesEmitter = new EventEmitter<void>()
-  @Output('toggleEdit') toggleEditEmitter = new EventEmitter<boolean>()
+  @Output('toggleCheck') ToggleCheckEmitter = new EventEmitter<PackingListPackable>();
+  @Output('addInvalid') addInvalidEmitter = new EventEmitter<PackingListPackable>();
+  @Output('updateQuantity') updateQuantityEmitter = new EventEmitter<PackingListPackable>();
+  @Output('editRules') editRulesEmitter = new EventEmitter<void>();
+  @Output('toggleEdit') toggleEditEmitter = new EventEmitter<boolean>();
+  listSettings: PackingListSettings
 
   editMode = false;
   spinnerQuantity: number;
+  
   constructor(
     public windowService: WindowService, // used by template
     public appColors:appColors,
+    private packingListService: PackingListService,
     private eRef: ElementRef
   ) { }
 
   ngOnInit() {
     this.packable = this.inputPackable
     this.spinnerQuantity = this.packable.quantity
+    this.listSettings = this.packingListService.packingListSettings
+    //this.listSettings = this.packingListService.packingListSettings
   }
   ngOnChanges(changes:SimpleChanges){
     if(this.packable && changes['inputPackable']){

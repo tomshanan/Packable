@@ -78,7 +78,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
       this.collectionProfileGroups[c.id] = profilesWithColId.filter(p => this.profiles.idIndex(p.id) > -1);
       // if selected groups weren't provided, 
       // filter for profiles where col is essential 
-      if(!isDefined(this.selected)){
+      if(!isDefined(this.selected) && first){
         this.selectedGroup[c.id] = this.collectionProfileGroups[c.id].filter(p => p.collections.findId(c.id).essential);
       } 
     })

@@ -8,6 +8,7 @@
   [ngStyle]="!disabled && hoverState ? 
     {'color': color.hover} :
     {'color': color.inactive}"
+  [style.flexDirection]="reverse ? 'row-reverse' : 'row'"
   #rippleTrigger>
     <div class="icon-container" 
     [class.full-padding]="!showText()" 
@@ -16,12 +17,11 @@
     matRippleCentered="true"
     [matRippleDisabled]="disabled"
     [matRippleUnbounded]="true"
-    [matRippleRadius]="rippleRadius"
     [matRippleColor]="color.ripple"
     [matRippleTrigger]="rippleTrigger"
     [matRippleAnimation]="configRipple">
       <mat-icon [svgIcon]="svgIcon" *ngIf="svgIcon && !matIcon"></mat-icon>
-      <mat-icon *ngIf="!svgIcon && matIcon">{{matIcon}}</mat-icon>
+      <mat-icon *ngIf="!svgIcon && matIcon" outlined>{{matIcon}}</mat-icon>
     </div>
     <span *ngIf="showText()" class="text">{{text}}</span>
 </a>

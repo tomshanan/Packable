@@ -93,9 +93,9 @@ mat-card.cardless:hover:not(.selectable) {
     flex-direction: row;
     align-items: center;
 }
-.options .option {
+/* .options .option {
     padding: 0.4em;
-}
+} */
 .options .option-close {
     margin-right:-0.4em;
 }
@@ -103,9 +103,9 @@ mat-card.cardless:hover:not(.selectable) {
     padding-left: 0.4em;
 }
 
-.options > a > .icon-container, .options > a > mat-icon {
+.options > .option {
     display: inline-block;
-    font-size: 1.7em;
+    font-size: 1.2em;
 }
 
 .options.editing{

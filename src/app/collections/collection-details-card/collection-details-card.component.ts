@@ -6,6 +6,9 @@ import { Profile } from '../../shared/models/profile.model';
 import { transitionTrigger, horizontalShringAndFade, addRemoveElementTrigger } from '../../shared/animations';
 import { PackableComplete } from '../../shared/models/packable.model';
 import { appColors } from '@app/shared/app-colors';
+import { weatherFactory } from '../../shared/factories/weather.factory';
+import { Trip } from '../../shared/models/trip.model';
+import { WeatherService, TripWeatherData, weatherCheckResponse } from '../../shared/services/weather.service';
 
 
 export type actionType = 'button' | 'selection' | 'none'
@@ -23,14 +26,15 @@ export class CollectionDetailsCardComponent implements OnInit,OnDestroy,OnChange
 
 @Input('collection') collection: CollectionComplete;
 @Input('profileGroup') inputProfileGroup: Profile[] = [];
+@Input('weatherData') weatherData: TripWeatherData;
 profileGroup: Profile[] = [];
 essentialGroup: Profile[] = []
 
 @Input('actionType') actionType: actionType = 'button';
 @Input('selectionState') selectionState: selectionState = false;
 
-@Input('selectionOnIcon') selectionOnIcon: string = 'added';
-@Input('selectionOffIcon') selectionOffIcon: string = 'unselected';
+@Input('selectionOnIcon') selectionOnIcon: string = 'circle-added';
+@Input('selectionOffIcon') selectionOffIcon: string = 'circle';
 @Input('staticIcon') staticIcon: string = 'check';
 
 @Input('buttonState') buttonState: buttonState = 'add';
@@ -46,14 +50,19 @@ sub: Subscription;
 buttonStates = ['added' , 'delete' , 'add' , 'remove']
 packableNameList: string[] = []
 packableNameListString: string;
+weatherCheck: weatherCheckResponse;
+
   constructor(
     public windowService: WindowService, // used in template
     public colors: appColors, // in tempalte
     private changeDetection: ChangeDetectorRef,
+    public weatherFac:weatherFactory,
+    public weatherService:WeatherService,
   ) { }
 
   ngOnInit() {
     this.profileGroup = this.inputProfileGroup ? this.inputProfileGroup.slice() : [];
+    console.log('WEATHER DATA',this.weatherData)
   }
   ngOnDestroy(){
   }
@@ -65,7 +74,12 @@ packableNameListString: string;
     if(changes['collection'] && this.collection && this.collection.packables){
       this.updatePackableNames(this.collection.packables)
     }
+    if(this.weatherData){
+      this.weatherCheck = this.weatherService.checkWeatherRules(this.collection.weatherRules,this.weatherData)
+      console.log('WEATHER CHECK',this.weatherCheck)
+    }
   }
+  
   updatePackableNames(packables:PackableComplete[]){
     this.packableNameList = packables.clearUndefined().map(p=> {
       if(this.profileGroup.length>0){
@@ -121,6 +135,7 @@ packableNameListString: string;
       this.boxClick.emit()
     }
   }
+
   showWarning:boolean = false;
   toggleWarning(b:boolean){    
     this.showWarning = b;

@@ -7,6 +7,7 @@ import { ProfileFactory } from '@factories/profile.factory';
 import { StoreSelectorService } from '@shared/services/store-selector.service';
 import { CollectionFactory } from '@shared/factories/collection.factory';
 import { dropInTrigger, expandAndFadeTrigger, quickTransitionTrigger } from '@shared/animations';
+import { isDefined } from '../../../../shared/global-functions';
 
 export interface CollectionProfile {
   pId: string,
@@ -43,6 +44,8 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
 
   @Input() PackableId: string = null;
   @Input() selectedIds: CollectionProfile[] = [];
+  @Input() limitProfiles: string[] = [];
+  @Input() limitCollections: string[] = [];
 
   @Output() selectedIdsChange = new EventEmitter<CollectionProfile[]>();
   @Output() confirm = new EventEmitter<CollectionSelectorConfirmEvent>();
@@ -60,28 +63,35 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    let filteredProfileGroup = this.PackableId != null ? this.storeSelector.getProfilesWithPackableId(this.PackableId) : [];
-    console.log('CHOOSE COLLECTION DIALOG: filteredProfileGroup',filteredProfileGroup)
+    let profilesWithPackableId = this.PackableId != null ? this.storeSelector.getProfilesWithPackableId(this.PackableId) : [];
+    console.log('CHOOSE COLLECTION DIALOG: filteredProfileGroup',profilesWithPackableId)
 
-    if (filteredProfileGroup.length > 0) {
-      this.CollectionProfileGroup = this.createCollectionProfileGroupByPackable(filteredProfileGroup, this.PackableId)
+    if (profilesWithPackableId.length > 0) {
+      this.CollectionProfileGroup = this.createCollectionProfileGroupByPackable(profilesWithPackableId, this.PackableId)
       this.action = 'update'
     } else {
       this.CollectionProfileGroup = this.createCollectionProfileGroupByPackable(this.storeSelector.profiles)
       this.action = 'add'
     }
-      this.ColProTree = this.buildTree();
+    this.ColProTree = this.buildTree();
+    if(isDefined(this.limitCollections) &&isDefined(this.limitProfiles)){
+      this.addAll()
+    }
   }
 
   createCollectionProfileGroupByPackable(profiles: Profile[], packableId: string = null): CollectionProfile[] {
     let collectionProfileGroup: CollectionProfile[] = []
     console.log('CHOOSE COLLECTION DIALOG: createCollectionProfileGroupByPackable received Profiles:',profiles)
     profiles.forEach(p => {
-      p.collections.forEach(c => {
-        if (packableId == null || c.packables.some(Packable => Packable.id == packableId)) {
-          collectionProfileGroup.push({ cId: c.id, pId: p.id })
-        }
-      })
+      if(!isDefined(this.limitProfiles) || this.limitProfiles.includes(p.id)){
+          p.collections.forEach(c => {
+          if(!isDefined(this.limitCollections) || this.limitCollections.includes(c.id)){
+            if (packableId == null || c.packables.some(Packable => Packable.id == packableId)) {
+              collectionProfileGroup.push({ cId: c.id, pId: p.id })
+            }
+          }
+        })
+      }
     })
     return collectionProfileGroup
   }

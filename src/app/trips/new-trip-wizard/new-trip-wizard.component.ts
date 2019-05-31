@@ -61,7 +61,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     steps:Step[] =[
       {icon:{type:'mat',name:'place'},text:'Where & When'},
       {icon:{type:'svg',name:'together'},text:'Who'},
-      {icon:{type:'svg',name:'collection3'},text:'What'},
+      {icon:{type:'svg',name:'collection-alt'},text:'What'},
       {icon:{type:'mat',name:'tune'},text:'Customise'},
       {icon:{type:'svg',name:'minimalist'},text:'Pack'},
     ]

@@ -20,7 +20,6 @@
           </div>
         </div>
       </div>
-
       <div class="quantity">
         <span *ngFor="let rule of packable.rules; let i=index" [class.text-success]="packable.new">
           {{rule}}{{ i == packable.rules.length-1 ? "" : ", " }}

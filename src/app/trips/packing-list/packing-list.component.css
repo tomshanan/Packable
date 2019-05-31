@@ -23,7 +23,7 @@ h1{
 
 }
 .completedTick{
-    color:#ff4081;
+    vertical-align: middle;
     animation-name: popin;
     animation-duration: 800ms;
     animation-timing-function: cubic-bezier(.33,1.26,.39,1.02);
@@ -43,4 +43,17 @@ ul.packingList {
 .setting_header{
     padding: 0 4px;
     font-size: 80%;
+}
+
+.profile-options{
+
+}
+
+.mat-expansion-indicator{
+    align-self: center;
+    padding: 0.2em;
+    transition: all 100ms;
+}
+.mat-expansion-indicator.expanded{
+    transform: rotate(180deg);
 }

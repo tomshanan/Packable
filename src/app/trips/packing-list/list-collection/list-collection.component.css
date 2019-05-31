@@ -1,3 +1,6 @@
+:host{
+    display: block;
+}
 ul.packingList {
     padding: 0;
 }

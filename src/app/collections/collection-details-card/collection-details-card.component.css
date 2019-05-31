@@ -43,11 +43,23 @@
 .with-profiles .detailBox {
     padding-bottom: 5px;
 }
+
 .detailBox-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.detailBox-title{
     font-size: 1.5em;
 }
-.detailBox-header.small-screen{
+.detailBox-title.small-screen{
     font-size: 1.2em;
+}
+.detailBox-weather{
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
 }
 .packable-list-container{
     box-sizing: border-box;

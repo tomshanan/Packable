@@ -1,35 +1,25 @@
 import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../shared/app.reducers'
-import * as tripActions from '../store/trip.actions';
-import { Observable, Subscription, Subject } from 'rxjs';
-import { PackingList, PackingListPackable, Reason, packingListData, pass } from '../../shared/models/packing-list.model';
-import { State as tripState } from '../store/trip.reducers';
-import { MemoryService } from '../../shared/services/memory.service';
+import { Subscription } from 'rxjs';
+import { PackingList, PackingListPackable, Reason, packingListData, PackingListSettings } from '../../shared/models/packing-list.model';
 import { Trip } from '../../shared/models/trip.model';
 import * as moment from 'moment';
 import { Router, ActivatedRoute } from '@angular/router';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { DestinationDataService } from '../../shared/services/location-data.service';
-import { PackableComplete, ActivityRule } from '../../shared/models/packable.model';
 import { WindowService } from '../../shared/services/window.service';
 import { navParams } from '../../shared-comps/mobile-nav/mobile-nav.component';
 import { WeatherService, TripWeatherData, weatherCheckResponse } from '../../shared/services/weather.service';
-import { WeatherRule, weatherType, weatherOptions, tempOptions, absoluteMax, absoluteMin } from '../../shared/models/weather.model';
-import { take } from 'rxjs/operators';
+import { weatherOptions, tempOptions, absoluteMax, absoluteMin } from '../../shared/models/weather.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { isDefined, getAllDates, copyProperties } from '../../shared/global-functions';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { weatherFactory } from '../../shared/factories/weather.factory';
 import { TripMemoryService } from '@app/shared/services/trip-memory.service';
-import { CollectionComplete } from '../../shared/models/collection.model';
-import { ProfileComplete, Avatar } from '../../shared/models/profile.model';
-import { colors, ColorGeneratorService } from '../../shared/services/color-gen.service';
+import { ColorGeneratorService } from '../../shared/services/color-gen.service';
 import { ListPackableComponent } from './list-packable/list-packable.component';
-import { MatDialog } from '@angular/material';
-import { DialogData_EditPackable, EditPackableDialogComponent } from '../../packables/packable-list/edit-packable-dialog/edit-packable-dialog.component';
-import { ContextService } from '../../shared/services/context.service';
-import { PackingListService } from './packing-list.service';
+import { PackingListService , pass} from './packing-list.service';
+import { Avatar } from '../../shared/models/profile.model';
 
 
 export class listCollection {
@@ -39,7 +29,7 @@ export class listCollection {
   constructor(list: Partial<listCollection> = {}) {
     Object.assign(this, list)
   }
-  get validPackables(): number {
+  validPackables(): number {
     return this.packables.reduce((count, p) => {
       return pass(p) ? count + 1 : count
     }, 0)
@@ -80,26 +70,22 @@ export class PackingListComponent implements OnInit, OnDestroy {
   trip: Trip;
   packingList: PackingList;
   sortedList: listProfile[] = [];
+  packingListSettings: PackingListSettings;
 
   constructor(
-    private store: Store<fromApp.appState>,
-    private tripMemory: TripMemoryService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private storeSelector: StoreSelectorService,
     private destService: DestinationDataService,
     public windowService: WindowService, // used by template
-    private weatherService: WeatherService,
     private fb: FormBuilder,
-    private profileFactory: ProfileFactory,
-    private weatherFactory: weatherFactory,
     private colorGen: ColorGeneratorService,
     private packingListService: PackingListService,
   ) {
     /*
       MOVE CUSTOM WEATHER FORM TO COMPONENT 
     */
-    this.customWeatherForm = fb.group({
+    this.customWeatherForm = this.fb.group({
       min: [null],
       max: [null],
       types: [[]]
@@ -108,19 +94,20 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // if (this.packingListService.trip && this.packingListService.packingList) {
-    //   this.updateView(this.packingListService.packingList)
-    // }
+    if(!this.packingList && this.packingListService.packingList){
+      this.updateView(this.packingListService.packingList)
+    }
     this.navSetup();
     this.state_subscription.add(this.packingListService.serviceSubscription)
     this.state_subscription.add(
       this.packingListService.packingListEmitter.subscribe(newPackinglist => {
+        console.log(`PackingListComponent received newPackinglist`,newPackinglist)
         if (newPackinglist) {
           this.updateView(newPackinglist)
-          
         }
       })
     )
+    this.packingListSettings = this.packingListService.packingListSettings
   }
 
   updateView(newPackinglist: PackingList) {
@@ -146,12 +133,18 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   updatePackingListWithCustomWeather() {
+    this.packingList = null;
     let formWeather = this.getWeatherDataFromForm();
-    this.packingListService.updateUsingCustomWeather(formWeather)
+    setTimeout(()=>{
+      this.packingListService.updateUsingCustomWeather({weatherData:formWeather,save:true})
+    },0)
   }
   updatePackingListWithWeatherAPI(){
+    this.packingList = null;
     this.forecastString = 'Loading Weather...'
-    this.packingListService.updateUsingWeatherAPI()
+    setTimeout(()=>{
+      this.packingListService.updateUsingWeatherAPI({save:true})
+    },0)
   }
 
   getWeatherDataFromForm(): TripWeatherData {
@@ -252,7 +245,34 @@ export class PackingListComponent implements OnInit, OnDestroy {
     console.log(`removing ${$p.name} -  found at ${sortedListIndex}`, packables.slice())
     packables.splice(sortedListIndex, 1)
   }
+  // -- bulk actions 
 
+  tickAll(){
+
+  }
+  resetAll(){
+
+  }
+  tickAllProfile(profile:listProfile){
+    profile.collections.forEach(c=>{
+      c.packables.forEach(p => {
+        p.checked = true
+        this.packingListService.onUpdatePackable(p,false)
+      });
+    })
+    this.packingListService.delayedSave()
+  }
+  resetAllProfile(profile:listProfile){
+    profile.collections.forEach(c=>{
+      c.packables.forEach(p => {
+        p.forceQuantity = false
+        p.forcePass = false
+        p.checked = false
+        this.packingListService.onUpdatePackable(p,false)
+      });
+    })
+    this.packingListService.generateAndStorePackingList()
+  }
 
 
   // ---- PACKABLE ACTIONS
@@ -274,7 +294,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
 
   countPackablesInProfile(profile: listProfile): number {
     return profile.collections.reduce((total, col, i, arr) => {
-      return total + col.validPackables
+      return total + col.validPackables()
     }, 0);
   }
   isProfileChecked(profile: listProfile): boolean {

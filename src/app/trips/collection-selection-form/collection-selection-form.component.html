@@ -9,8 +9,9 @@
     <collection-details-card
       [collection]="collection"
       actionType="selection"
-      selectionOnIcon="added"
-      selectionOffIcon="unselected"
+      selectionOnIcon="circle-added"
+      selectionOffIcon="circle"
+      [weatherData]="weatherData"
       [boxClickActive]="true"
       [selectionState]="selectedGroup[collection.id] && selectedGroup[collection.id].length>0"
       [profileGroup]="selectedGroup[collection.id] || []"

@@ -5,7 +5,7 @@ export var disabledColor = "#c6c6c6"
     providedIn: 'root'
 })
 export class appColors {
-    public danger = new color('#dc3545','#bd2130')
+    public danger = new color('#ff4400','#e23b00')
     public action = new color('#007bff','#0056b3')
     public accent = new color('#ff4081','#bb1950')
     public active = new color('#31d441','#26a532')

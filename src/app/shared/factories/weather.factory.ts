@@ -1,6 +1,6 @@
 import { TripWeatherData } from '../services/weather.service';
 import { absoluteMin, absoluteMax, WeatherRule, hotWeather, warmWeather, coolWeather, coldWeather, weatherType, tempC, weatherIconData } from '../models/weather.model';
-import { isDefined, titleCase, decodeHtml } from '../global-functions';
+import { isDefined, titleCase, decodeHtml, joinSpecial } from '../global-functions';
 
 
 
@@ -31,9 +31,11 @@ export class weatherFactory{
             'Temperature invalid'
         }
     }
-
-    getWeatherString(wData:TripWeatherData){
-        
+    getWeatherTypesToString(wRule:WeatherRule):string{
+        return joinSpecial(wRule.weatherTypes,', ',' or ')
+    }
+    getWeatherRulesToString(wRule:WeatherRule):string{
+        return this.getTempRuleString(wRule)+(wRule.weatherTypes.length>0 ? ', '+this.getWeatherTypesToString(wRule):"")
     }
     getWeatherIcons(wr:WeatherRule): weatherIconData[]{
         let returnArray:weatherIconData[] = []

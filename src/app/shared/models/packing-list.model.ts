@@ -38,9 +38,19 @@ export interface PackingListPackable {
     forcePass: boolean,
     recentlyAdded?:boolean,
 }
-export function pass(p:PackingListPackable):boolean{
-    return (p.passChecks || p.forcePass) && p.quantity > 0
+
+export class PackingListSettings {
+    showInvalid: boolean = false;
+    showWarnings: boolean  = true;
+    showCalculations: boolean  = false;
+    constructor(settings?:Partial<PackingListSettings>){
+        if(settings){
+            Object.assign(this,settings)
+        }
+    }
 }
+
+
 export class PackingList {
     constructor(
         public id: string,

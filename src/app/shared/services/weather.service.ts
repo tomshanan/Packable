@@ -44,7 +44,7 @@ export class TripWeatherData {
         }
     }
     get isValid():boolean{
-        return isDefined(this.minTemp) && isDefined(this.maxTemp) && isDefined(this.weatherTypes);
+        return isDefined(this.minTemp) && isDefined(this.maxTemp) && !!this.weatherTypes;
     } 
     forecastString():string{
         return `${temp(this.minTemp)}-${tempC(this.maxTemp)} ${joinSpecial(this.weatherTypes,', ',' and ') }`

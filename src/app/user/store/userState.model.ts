@@ -1,3 +1,4 @@
+import { PackingListSettings } from '../../shared/models/packing-list.model';
 export interface userPermissions {
     setPermissions: boolean,
     userManagement: boolean,
@@ -7,16 +8,17 @@ export interface userPermissions {
 export type permissionTypes = keyof userPermissions;
 
 export interface UserSettings {
-    alias:string
+    alias:string,
+    packinglistSettings:PackingListSettings,
 }
 export interface State {
     permissions: userPermissions,
     settings: UserSettings
 }
 
-
 export const defaultUserSettings: UserSettings = {
-    alias: 'Visitor'
+    alias: 'Visitor',
+    packinglistSettings: new PackingListSettings(),
 }
 
 export const defaultUserPermissions:userPermissions = {
@@ -32,7 +34,7 @@ export const defaultVisitorPermissions:userPermissions = {
     user: false
 }
 
-export const defaultUserConfigState: State = {
+export const defaultUserState: State = {
     permissions:defaultUserPermissions,
     settings:defaultUserSettings
 }

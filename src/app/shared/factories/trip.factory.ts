@@ -71,10 +71,13 @@ export class TripFactory {
         let endDateIsAfterStart = moment(trip.endDate).isAfter(startDate)
         endDateIsAfterStart && validArray.push('endDate')
         trip.profiles.length > 0 && validArray.push('profiles')
-        trip.collections.length > 0 && trip.collections.some(c=>c.profiles.length>0) && validArray.push('collections')
+        if(trip.collections.length > 0 && trip.profiles.every(pid=>trip.collections.some(c=>c.profiles.includes(pid)))){
+            validArray.push('collections')
+        }
+        console.log('TRIP VALIDATION:',validArray.join(' ,'))
         return validArray
     }
-    public validateTripProperties = (trip:Trip,required:tripProperties[])=>{
+    public validateTripProperties = (trip:Trip,required:tripProperties[]):boolean=>{
         const tripValidArray = this.validateTrip(trip)
         return required.every(v=>tripValidArray.includes(v))
     }

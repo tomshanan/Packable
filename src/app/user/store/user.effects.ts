@@ -15,6 +15,7 @@ export class userEffects{
     user_updateSettingsEffect = this.actions$.pipe(
         ofType(
             userActions.SET_USER_SETTINGS,
+            userActions.SET_PACKING_LIST_SETTINGS
             ),
         tap(()=>{
             this.storageService.saveUserSettings()

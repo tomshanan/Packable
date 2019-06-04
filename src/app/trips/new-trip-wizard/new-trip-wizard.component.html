@@ -1,5 +1,5 @@
 <div [class.flex-device-height]="windowService.max('md')">
-  <app-nav [header]="'New Trip'" [icon]="'fas fa-plane'"></app-nav>
+  <app-nav [header]="'New Trip'" [rightIcon]="windowService.max('md') ? (step < 4 ? nextIcon : packIcon) : null" (rightClick)="onConfirmStep(step)" [rightDisabled]="!stepValid"></app-nav>
   <div class="scrollable">
     <app-stepper [steps]="steps" [currentStep]="step" (stepClicked)="nextStep($event)"></app-stepper>
     <div class="step centered" *ngIf="step===1">
@@ -29,7 +29,7 @@
             [destMetaData]="destMetaData"
             [destWeatherData]="destWeatherData"
             [limit]="getLimit()"
-            (localCollectionGroupsChange)="setCollections($event)" #remoteColSelector>
+            (selectedChange)="setCollections($event)" #remoteColSelector>
           </remote-collection-selection-form>
           <collection-selection-form
               [localCollections]="localCollections"
@@ -43,7 +43,7 @@
     </div>
     <div class="step" *ngIf="step===4">
       <div class="content w-100">
-        <h5 class="text-center">Customise Profiles</h5>
+        <h5 class="text-center">Customise Collections</h5>
           <customise-trip-profiles-form [trip]="trip">
           </customise-trip-profiles-form>
       </div>
@@ -62,9 +62,9 @@
 
 <ng-template let-step #continueButton>
   <dialog-confirm-button [absoluteBottom]="windowService.max('md')">
-    <button mat-fab color="primary" (click)="onConfirmStep(step)" [disabled]="!stepIsValid(step)">
-      <mat-icon *ngIf="step!=5">check</mat-icon>
-      <mat-icon svgIcon="send" *ngIf="step===5"></mat-icon>
+    <button mat-fab color="primary" (click)="onConfirmStep(step)" [disabled]="!stepValid">
+      <mat-icon *ngIf="4>step">check</mat-icon>
+      <mat-icon svgIcon="send" *ngIf="step===4"></mat-icon>
     </button>
   </dialog-confirm-button>
 </ng-template>

@@ -1,4 +1,4 @@
-<app-nav [header]="'Users'" [icon]="'fas fa-users'"></app-nav>
+<app-nav [header]="'Users'" [rightIcon]="null"></app-nav>
 
 <admin-user-table  *ngIf="user.permissions.userManagement; else noPermissions"></admin-user-table>
 <ng-template #noPermissions>

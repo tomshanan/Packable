@@ -29,4 +29,5 @@ export class UserService {
             this._permissions = userState.permissions;
         })
     }
+
 }

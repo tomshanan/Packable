@@ -20,6 +20,7 @@ import { ColorGeneratorService } from '../../shared/services/color-gen.service';
 import { ListPackableComponent } from './list-packable/list-packable.component';
 import { PackingListService , pass} from './packing-list.service';
 import { Avatar } from '../../shared/models/profile.model';
+import { Icon } from '../../shared-comps/stepper/stepper.component';
 
 
 export class listCollection {
@@ -63,6 +64,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   weatherTypeOptions = weatherOptions; // for template
   settingsOpen = false; // for template
   showInvalidPackables = true // for template
+  menuIcon:Icon = {icon:{type:'mat',name:'settings'},text:'Options'}
   editingPackable: ListPackableComponent; // for list-collection-component
   forecastString:string = 'Loading Weather';
   customWeatherForm: FormGroup;
@@ -97,6 +99,8 @@ export class PackingListComponent implements OnInit, OnDestroy {
     if(!this.packingList && this.packingListService.packingList){
       this.updateView(this.packingListService.packingList)
     }
+    this.packingListSettings = this.packingListService.packingListSettings
+    console.log('loaded list with settings:',this.packingListSettings)
     this.navSetup();
     this.state_subscription.add(this.packingListService.serviceSubscription)
     this.state_subscription.add(
@@ -107,7 +111,11 @@ export class PackingListComponent implements OnInit, OnDestroy {
         }
       })
     )
-    this.packingListSettings = this.packingListService.packingListSettings
+    this.state_subscription.add(
+      this.packingListService.settingsEmitter.subscribe(settings=>{
+        this.packingListSettings = new PackingListSettings(settings)
+      })
+    )
   }
 
   updateView(newPackinglist: PackingList) {

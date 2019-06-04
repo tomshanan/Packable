@@ -6,7 +6,7 @@
       <div class="flex-item actionBox">
         <ng-container *ngIf="actionType=='button'">
           <icon-text-button
-            [svgIcon]="buttonState"
+            [svgIcon]="'circle-'+buttonState"
             [disabled]="disabled"
             (onClick)="action()"
             [buttonWidth]="buttonWidth()+'px'">

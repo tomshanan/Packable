@@ -50,6 +50,7 @@ export class IconService {
             't-shirt-import',
             't-shirt-copy',
             't-shirt-push',
+            't-shirt-remove',
             'collection-add',
             'collection-import',
             'collection-alt',
@@ -64,6 +65,9 @@ export class IconService {
             'users-remove',
             'send',
             'plus-minus',
+            'place',
+            'place-edit',
+            'weather-edit',
         ]
     }
     weatherIcons:iconGroup = {

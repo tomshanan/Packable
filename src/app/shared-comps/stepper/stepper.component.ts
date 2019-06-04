@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-export interface Step {
+export interface Icon {
   icon:{type:'svg'|'mat',name:string}
   text: string,
 }
@@ -11,7 +11,7 @@ export interface Step {
   styleUrls: ['./stepper.component.css']
 })
 export class StepperComponent implements OnInit {
-  @Input('steps') steps:Step[] = [];
+  @Input('steps') steps:Icon[] = [];
   @Input('currentStep') currentStep:number = 1;
   @Output('stepClicked') clickEvent = new EventEmitter<number>()
 

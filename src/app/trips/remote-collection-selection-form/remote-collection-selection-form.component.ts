@@ -88,7 +88,7 @@ export class RemoteCollectionSelectionFormComponent implements OnInit, OnChanges
       .sort((a, b) => {
         let aWeather = a.weatherMet
         let bWeather = b.weatherMet
-        return aWeather ? (bWeather ? 0 : -1) : (bWeather ? 1 : 0)
+        return aWeather ? (bWeather ? 0 : 1) : (bWeather ? -1 : 0)
       })
 
     if (this.sortedCollections) {

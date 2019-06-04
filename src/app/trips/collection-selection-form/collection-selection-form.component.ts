@@ -92,19 +92,18 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
             essentials.forEach(c=>{
               this.selectedGroup[c.id] = this.selectedGroup[c.id] ? [...this.selectedGroup[c.id], p] : [p];
             })
-            setTimeout(()=>{
-              this.emitSelected()
-            },100) 
           }
         })
       }
+      setTimeout(()=>{
+        this.emitSelected()
+      },100) 
+
       this.collections
         // sort first by most used collection per profile
         .sort((a, b) => this.sortColProGroup(a, b, this.collectionProfileGroups))
         // sort again by most used on this trip
         .sort((a, b) => this.sortColProGroup(a, b, this.selectedGroup))
-      
-      
     }
   }
   profileInSelected(p: Profile): boolean {
@@ -187,6 +186,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
         selected.push({ id: col, profiles: this.selectedGroup[col].ids() })
       }
     }
+    console.log('Trip Collections emitted:',selected)
     this.selectedChange.emit(selected)
   }
 }

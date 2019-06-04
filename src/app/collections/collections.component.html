@@ -1,4 +1,4 @@
-<app-nav [header]="'Collections'" [icon]="'fas fa-cubes'" (info)="openModal(collectionModal)"></app-nav>
+<app-nav [header]="'Collections'" (rightClick)="openModal(collectionModal)"></app-nav>
 <div class="row">
   <div class="col-12">
     <app-collection-list [collections]="collections" @blockInitialAnimations #usedCollectionsComponent></app-collection-list>

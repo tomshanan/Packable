@@ -1,4 +1,4 @@
-<app-nav [header]="'Travelers'" [icon]="'fas fa-users'" (info)="openModal(profileModal)"></app-nav>
+<app-nav [header]="'Travelers'" (rightClick)="openModal(profileModal)"></app-nav>
 
 <profile-selector-panel @blockInitialAnimations 
   [profiles]="profiles" 

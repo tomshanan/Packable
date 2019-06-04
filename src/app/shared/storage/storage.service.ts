@@ -29,7 +29,7 @@ import * as moment from 'moment';
 import { Trip } from '../models/trip.model';
 import * as profileActions from '@app/profiles/store/profile.actions';
 import { setPackableState } from '../../packables/store/packables.actions';
-import { defaultUserSettings, userPermissions, defaultUserConfigState } from '@app/user/store/userState.model';
+import { defaultUserSettings, userPermissions, defaultUserSettingsState } from '@app/user/store/userState.model';
 import { setUserPermissions, setUserSettings } from '../../user/store/user.actions';
 import { State as userConfig } from '../../user/store/userState.model';
 import * as AdminActions from '@app/admin/store/admin.actions'
@@ -331,7 +331,7 @@ export class StorageService {
     setInitialUserConfig() {
         this.log(`setting initial user data`);
         if (this.checkAuth()) {
-            let initialConfig = defaultUserConfigState
+            let initialConfig = defaultUserSettingsState
             initialConfig.settings.alias = firebase.auth().currentUser.email.split('@')[0]
             this.log(`saving initial data to firebase`);
             firebase.database().ref(path(USER_CONFIG,this.userId)).set(initialConfig)

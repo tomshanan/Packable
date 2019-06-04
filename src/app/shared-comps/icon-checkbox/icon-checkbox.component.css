@@ -3,13 +3,11 @@
     position: relative;
     align-items: center;
     cursor: pointer;    
-    color: black;
     transition: color 150ms;
     margin-right: 8px;
 }
 
 .checkbox-container.selected {
-    color: #e91e63;
 }
 .checkbox-container.small-screen {
     flex-direction: column;

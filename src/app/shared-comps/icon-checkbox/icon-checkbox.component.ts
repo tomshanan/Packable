@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, Renderer2, ElementRef, 
 import { IconService } from '@app/core';
 import { RippleAnimationConfig } from '@angular/material';
 import { WindowService } from '../../shared/services/window.service';
+import { appColors } from '@app/shared/app-colors';
 
 @Component({
   selector: 'app-icon-checkbox',
@@ -27,6 +28,7 @@ export class IconCheckboxComponent implements OnInit {
     private iconService: IconService,
     public wService: WindowService,
     private renderer: Renderer2,
+    public colors:appColors,
     private elRef: ElementRef
   ) { }
 

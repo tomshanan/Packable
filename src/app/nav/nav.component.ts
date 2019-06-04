@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, Renderer2, OnDestroy } from '@angular/core';
+import { Icon } from '@app/shared-comps/stepper/stepper.component';
+import { WindowService } from '../shared/services/window.service';
 
 
 @Component({
@@ -8,11 +10,13 @@ import { Component, OnInit, Input, Output, EventEmitter, Renderer2, OnDestroy } 
 })
 export class NavComponent implements OnInit, OnDestroy {
   @Input() header: string;
-  @Input() icon: string;
-  @Output() info= new EventEmitter<void>();
+  @Input() rightIcon: Icon = {icon:{type:'mat',name:'help_outline'},text:'Help'}
+  @Input() rightDisabled: boolean = false;
+  @Input() useNgContent: boolean = false;
+  @Output() rightClick= new EventEmitter<void>();
   navOpen:boolean = false;
 
-  constructor(private renderer: Renderer2) {
+  constructor(private renderer: Renderer2, public windowService: WindowService) {
     
    }
 
@@ -36,6 +40,6 @@ export class NavComponent implements OnInit, OnDestroy {
     }
   }
   onRight(){
-    this.info.emit();
+    this.rightClick.emit();
   }
 }

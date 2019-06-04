@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { listCollection } from '../packing-list.component';
 import { ListPackableComponent } from '../list-packable/list-packable.component';
-import { PackingListPackable } from '../../../shared/models/packing-list.model';
+import { PackingListPackable, PackingListSettings } from '../../../shared/models/packing-list.model';
 import { PackableComplete } from '../../../shared/models/packable.model';
 import { DialogData_EditPackable, EditPackableDialogComponent } from '../../../packables/packable-list/edit-packable-dialog/edit-packable-dialog.component';
 import { MatDialog } from '@angular/material';
@@ -23,6 +23,7 @@ export class ListCollectionComponent implements OnInit {
   @Input() collection:listCollection;
   @Input() trip:Trip;
   @Input() editingPackable: ListPackableComponent;
+  @Input() listSettings: PackingListSettings = new PackingListSettings();
   @Output() collectionChange = new EventEmitter<listCollection>()
   @Output() editingPackableChange = new EventEmitter<ListPackableComponent>()
   

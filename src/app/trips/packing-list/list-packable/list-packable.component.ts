@@ -13,13 +13,12 @@ import { pass, PackingListService } from '../packing-list.service';
 export class ListPackableComponent implements OnInit,OnChanges {
   @Input('packable') inputPackable: PackingListPackable;
   packable: PackingListPackable;
-  @Input('showInvalid') showInvalid: boolean = false;
   @Output('toggleCheck') ToggleCheckEmitter = new EventEmitter<PackingListPackable>();
   @Output('addInvalid') addInvalidEmitter = new EventEmitter<PackingListPackable>();
   @Output('updateQuantity') updateQuantityEmitter = new EventEmitter<PackingListPackable>();
   @Output('editRules') editRulesEmitter = new EventEmitter<void>();
   @Output('toggleEdit') toggleEditEmitter = new EventEmitter<boolean>();
-  listSettings: PackingListSettings
+  @Input() listSettings: PackingListSettings = new PackingListSettings();
 
   editMode = false;
   spinnerQuantity: number;
@@ -34,8 +33,6 @@ export class ListPackableComponent implements OnInit,OnChanges {
   ngOnInit() {
     this.packable = this.inputPackable
     this.spinnerQuantity = this.packable.quantity
-    this.listSettings = this.packingListService.packingListSettings
-    //this.listSettings = this.packingListService.packingListSettings
   }
   ngOnChanges(changes:SimpleChanges){
     if(this.packable && changes['inputPackable']){

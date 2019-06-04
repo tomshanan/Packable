@@ -1,10 +1,9 @@
-<app-nav [header]="'Trips'" [icon]="'fab fa-telegram-plane'" (info)="openModal(modalContent)"></app-nav>
+<app-nav [header]="'Trips'" (rightClick)="openModal(modalContent)"></app-nav>
 <ng-template #modalContent>
   <H5>Trips</H5>
   <p>Here you can set up a trip and generate a packing list!</p>
-  <p>Be sure to set up some Packables, Acitivies and Profiles, and when you're ready, use this tool to create a Trip,
-    indicated
-    where you are going and when, who's coming and what you plan to do while you are there!</p>
+  <p>Be sure to set up some Packables, Collections and Travelers, and when you're ready, use this tool to create a Trip,
+    indicating where you are going and when, who's coming and what you might do while you're there!</p>
 </ng-template>
 <div *ngFor="let trip of incomplete; let i = index" @evaporateTransitionTrigger>
   <card-button *ngIf="i===0" (click)="continueIncomplete(trip.id)" @evaporateTransitionTrigger>

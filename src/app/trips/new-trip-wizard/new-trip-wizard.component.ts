@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { WindowService } from '../../shared/services/window.service';
-import { Step } from '@app/shared-comps/stepper/stepper.component';
+import { Icon } from '@app/shared-comps/stepper/stepper.component';
 import { stepperTransition } from '@app/shared/animations';
 import { TripMemoryService } from '../../shared/services/trip-memory.service';
 import { Trip, tripCollectionGroup } from '../../shared/models/trip.model';
@@ -37,7 +37,10 @@ import { Router } from '@angular/router';
 export class NewTripWizardComponent implements OnInit, OnDestroy {
   trip: Trip;
   step:number = 1;
+  stepValid: boolean = false;
   prevStep:number = 0;
+  nextIcon:Icon = {icon:null,text:'Next'}
+  packIcon:Icon = {icon:null,text:'Pack'}
   profileGroup: Profile[] = [];
   remoteCollections:remoteCollection[] = [];
   localCollections:CollectionComplete[] = [];
@@ -58,8 +61,8 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     private weatherService: WeatherService,
     private router: Router,
   ) { }
-    steps:Step[] =[
-      {icon:{type:'mat',name:'place'},text:'Where & When'},
+    steps:Icon[] =[
+      {icon:{type:'svg',name:'place-edit'},text:'Where & When'},
       {icon:{type:'svg',name:'together'},text:'Who'},
       {icon:{type:'svg',name:'collection-alt'},text:'What'},
       {icon:{type:'mat',name:'tune'},text:'Customise'},
@@ -68,7 +71,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.trip = this.tripMemory.trip || new Trip();
     for(let i = 1; i < this.steps.length; i++){
-      if(this.stepIsValid(i) && i < 3){
+      if(this.checkStep(i) && i < 3){
         this.stepActions(i)
         continue;
       } else {
@@ -96,6 +99,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     this.trip.destinationId = trip.destinationId
     this.trip.startDate = trip.startDate
     this.trip.endDate = trip.endDate
+    this.stepValid = this.checkStep(1)
     console.log('updated trip ',this.trip)
   }
   fetchLibraryData(){
@@ -131,6 +135,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   // STEP 2 - Who is going
   setSelectedProfiles(ids:string[]){
     this.trip.profiles = ids;
+    this.stepValid = this.checkStep(2)
     console.log('updated trip ',this.trip)
   }
 
@@ -146,6 +151,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   }
   setCollections(cGroups:tripCollectionGroup[]){
     this.trip.collections = cGroups
+    this.stepValid = this.checkStep(3)
     console.log('updated trip ',this.trip)
   }
 
@@ -169,29 +175,30 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
         this.bulkActions.pushMissingCollectionsToProfiles(this.trip.collections)
         return true
       case 4:
-        return true
-      case 5:
         this.tripMemory.saveTripAndDeleteTemp(this.trip)
         this.router.navigate(['trips/packing-list'])
         return false
     }
   }
   onConfirmStep(step:number){
-    let cont = this.stepActions(step)
-    if(cont){
-      this.tripMemory.saveTempTrip(this.trip)
-      this.nextStep(step+1)
+    if(this.checkStep(step)){
+      let cont = this.stepActions(step)
+      if(cont){
+        this.tripMemory.saveTempTrip(this.trip)
+        this.nextStep(step+1)
+      }
     }
   }
   nextStep(nextStep:number){ 
     if(nextStep <= this.steps.length){
       this.prevStep = this.step;
       this.step = nextStep
+      this.stepValid = this.checkStep(this.step)
       console.log(`stepping from ${this.prevStep} to ${this.step}`)
     }
   }
 
-  stepIsValid(step:number):boolean{ // VALIDATE EACH STEP
+  checkStep(step:number):boolean{ // VALIDATE EACH STEP
     let validArray:tripProperties[] = this.tripFac.validateTrip(this.trip)
     let propsValid = (props:tripProperties[])=>{
       return props.every(prop=>validArray.includes(prop))

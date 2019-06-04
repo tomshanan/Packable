@@ -1,16 +1,17 @@
 <div class="checkbox-container" #checkboxContainer
-[class.selected]="checked" 
+[appColor]="checked ? 'accent' : 'muted'" 
+[appColorResponsive]="!disabled"
 [class.disabled]="disabled" 
 [class.small-screen]="smallScreen && wService.max('xs')" 
 (click)="toggle()">
 
 <div class="icon-container"[class.matIcon]="!svg">
-  <div matRipple class="d-flex"
+  <div matRipple
         [matRippleCentered]="true"
         [matRippleDisabled]="disabled"
         [matRippleUnbounded]="true"
         [matRippleRadius]="25"
-        [matRippleColor]="rippleColor"
+        [matRippleColor]="checked ? colors.accent.ripple : colors.muted.ripple" 
         [matRippleTrigger]="checkboxContainer"
         [matRippleAnimation]="animationConfig">
     <ng-container *ngIf="svg; else matIcon">
@@ -18,8 +19,8 @@
       <mat-icon [svgIcon]="iconOn" [inline]="true" style="height: 100%" *ngIf="!!iconOn && checked"></mat-icon>
     </ng-container>
     <ng-template #matIcon>
-      <mat-icon  class="mat-icon-sizer" *ngIf="!checked || !iconOn">{{icon}}</mat-icon>
-      <mat-icon  class="mat-icon-sizer" *ngIf="!!iconOn && checked">{{iconOn}}</mat-icon>
+      <mat-icon  class="mat-icon-sizer" *ngIf="!checked || !iconOn" outlined>{{icon}}</mat-icon>
+      <mat-icon  class="mat-icon-sizer" *ngIf="!!iconOn && checked" outlined>{{iconOn}}</mat-icon>
     </ng-template>
   </div>
   

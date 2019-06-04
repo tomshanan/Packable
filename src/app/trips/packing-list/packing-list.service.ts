@@ -17,6 +17,10 @@ import { CollectionComplete } from '../../shared/models/collection.model';
 import { ProfileComplete } from '../../shared/models/profile.model';
 import { WeatherRule } from '../../shared/models/weather.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../shared/services/user.service';
+import * as userActions  from '@app/user/store/user.actions';
+import { UserSettings } from '../../user/store/userState.model';
+
 
 export function pass(p:PackingListPackable):boolean{
     return (p.passChecks || p.forcePass) && p.quantity > 0
@@ -35,6 +39,7 @@ export class PackingListService {
   packingListData: packingListData;
   serviceSubscription: Subscription = new Subscription();
   packingListSettings:PackingListSettings = new PackingListSettings();
+
   saveTimeout = setTimeout(() => { }, 0);
 
   packingListEmitter = new Subject<PackingList>();
@@ -49,6 +54,13 @@ export class PackingListService {
     this.weatherDataEmitter.next(this.tripWeather)
   }
 
+  settingsEmitter = new Subject<PackingListSettings>();
+  setSettings(newSettings: PackingListSettings) {
+    log('set settings', newSettings)
+    this.packingListSettings = newSettings
+    this.settingsEmitter.next(this.packingListSettings)
+  }
+
   constructor(
     private store: Store<fromApp.appState>,
     private tripMemory: TripMemoryService,
@@ -58,6 +70,7 @@ export class PackingListService {
     private profileFactory: ProfileFactory,
     private weatherFactory: weatherFactory,
     private router:Router,
+    private userService:UserService,
     private currentRount:ActivatedRoute,
   ) {
     log('PackingListService inititated')
@@ -69,18 +82,26 @@ export class PackingListService {
         ADD ALTERNATIVE HERE: 
         get trip from router params, disable editing unless user logged in 
     */
+   
     if (!!memoryTrip) {
-      this.serviceSubscription = this.storeSelector.trips_obs.subscribe(tripState => {
-        log('📥 received new tripstate')
-        let newTrip = tripState.trips.find(trip => trip.id == memoryTrip.id);
-        if (newTrip) {
-          let loadedPackingList = tripState.packingLists.findId(memoryTrip.id);
-          log('Received packinglist from tripState',loadedPackingList)
-          this.autoUpdatePackingList(newTrip,loadedPackingList)
-        } else {
-          log(`This trip was not saved in the Store.`);
-        }
-      })
+      this.serviceSubscription.add(
+        this.storeSelector.trips_obs.subscribe(tripState => {
+          log('📥 received new tripstate')
+          let newTrip = tripState.trips.find(trip => trip.id == memoryTrip.id);
+          if (newTrip) {
+            let loadedPackingList = tripState.packingLists.findId(memoryTrip.id);
+            log('Received packinglist from tripState',loadedPackingList)
+            this.autoUpdatePackingList(newTrip,loadedPackingList)
+          } else {
+            log(`This trip was not saved in the Store.`);
+          }
+        }))
+        this.serviceSubscription.add(
+          this.userService.userState_obs.subscribe(userState=>{
+            log('Received UserState',userState)
+            this.setSettings(userState.settings.packinglistSettings)
+          })
+        )
     } else {
       this.router.navigate(['trips'])
     }
@@ -357,4 +378,7 @@ export class PackingListService {
     return newPackable
   }
 
+  storeSettings(listSettings:PackingListSettings){
+    this.store.dispatch(new userActions.setPackingListSettings(listSettings))
+  }
 }

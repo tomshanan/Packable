@@ -1,0 +1,61 @@
+<button
+  mat-menu-item
+  [matMenuTriggerFor]="displaySettings">
+  Show/Hide
+</button>
+<mat-menu #displaySettings="matMenu">
+  <button
+    mat-menu-item
+    (click)="toggleSettings('showWarnings')"
+    InnerLink>
+    <mat-icon
+      svgIcon="weather_error"
+      [appColor]="settings.showWarnings ? 'accent' : 'muted'"></mat-icon>
+    <span>Warnings</span>
+  </button>
+  <button
+    mat-menu-item
+    (click)="toggleSettings('showCalculations')"
+    InnerLink>
+    <mat-icon
+      outlined
+      [appColor]="settings.showCalculations ? 'accent' : 'muted'">
+      live_help
+    </mat-icon>
+    <span>Calculations</span>
+  </button>
+  <button
+    mat-menu-item
+    InnerLink
+    (click)="toggleSettings('showInvalid')">
+    <mat-icon
+      svgIcon="t-shirt-remove"
+      [appColor]="settings.showInvalid ? 'accent' : 'muted'"></mat-icon>
+    <span>Removed Packables</span>
+  </button>
+</mat-menu>
+
+<button mat-menu-item>
+  <mat-icon svgIcon="place-edit"></mat-icon>
+  <span>Edit Trip</span>
+</button>
+<button mat-menu-item>
+  <mat-icon outlined>share</mat-icon>
+  <span>Share List</span>
+</button>
+<button mat-menu-item>
+  <mat-icon svgIcon="weather-edit"></mat-icon>
+  <span>Weather Settings</span>
+</button>
+<button mat-menu-item>
+  <mat-icon>done_all</mat-icon>
+  <span>Cehck All</span>
+</button>
+<button mat-menu-item>
+  <mat-icon>replay</mat-icon>
+  <span>Reset List</span>
+</button>
+<button mat-menu-item>
+  <mat-icon outlined>delete</mat-icon>
+  <span>Delete Trip</span>
+</button>

@@ -1,47 +1,80 @@
-<div class="row  d-flex d-md-none">
+<div class="row d-flex" *ngIf="windowService.max('md')">
   <div class="ff-header w-100">
-    <button type="button" class="ff-header-action" (click)="toggleNav()">
-      <i class="fas fa-bars"></i>
+    <button
+      mat-icon-button
+      type="button"
+      class="ff-header-action"
+      (click)="toggleNav()"
+      mat-icon-button
+      appColor="action">
+      <mat-icon>menu</mat-icon>
     </button>
-    <div class="ff-header-title h5 m-0">
-      <i class="{{icon}}"></i> {{header}}
+    <div class="ff-header-title h5 m-0">{{header}}</div>
+    <div class="ff-header-action">
+      <ng-container *ngTemplateOutlet="rightIcon !== null && useNgContent === false ? rightButton : injected"></ng-container>
     </div>
-    <button type="submit" class="ff-header-action" (click)="onRight()">
-      <i class="far fa-question-circle text-info"></i>
-    </button>
   </div>
 </div>
 
-
-<div class="row d-none d-md-flex">
+<div class="row d-flex" *ngIf="windowService.min('md')">
   <div class="col-12 mt-2 mb-2">
     <div class="d-flex justify-content-between">
-      <h2>
-        <i class="{{icon}}"></i> {{header}}</h2>
-      <a (click)="onRight()" class="mr-auto ml-2">
-        <i class="far fa-question-circle small text-info"></i>
-      </a>
+      <h2>{{header}}</h2>
+        <ng-container *ngTemplateOutlet="rightIcon !== null && useNgContent === false ? rightButton : injected"></ng-container>
     </div>
-
   </div>
 </div>
 
+<div
+  class="nav-container d-md-none"
+  [class.active]="navOpen"
+  (click)="toggleNav(false)"></div>
 
-<div class="nav-container d-md-none" [class.active]="navOpen" (click)="toggleNav(false)"></div>
-
-<div class="d-block d-md-none sideNav bg-dark text-white justify-content-end" style="z-index: 101;" [class.active]="navOpen">
-    <div class="d-flex flex-column w-100">
-        <div class="row">
-            <div class="col-12">
-              <a class="pointer navLink" (click)="toggleNav()">
-                <i class="fas fa-times p-2"></i>
-              </a>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <app-nav-list (navigate)="toggleNav()"></app-nav-list>
-            </div>
-          </div>
+<div
+  class="d-block d-md-none sideNav bg-dark text-white justify-content-end"
+  style="z-index: 101;"
+  [class.active]="navOpen">
+  <div class="d-flex flex-column w-100">
+    <div class="row">
+      <div class="col-12">
+        <a
+          class="pointer navLink"
+          (click)="toggleNav()">
+          <i class="fas fa-times p-2"></i>
+        </a>
+      </div>
     </div>
+    <div class="row">
+      <div class="col">
+        <app-nav-list (navigate)="toggleNav()"></app-nav-list>
+      </div>
+    </div>
+  </div>
 </div>
+
+<ng-template #rightButton>
+    <button
+      [disabled]="rightDisabled"
+      mat-icon-button
+      type="button"
+      (click)="onRight()"
+      mat-icon-button
+      [appColor]="rightDisabled ? 'muted' : 'action'">
+      <ng-container *ngIf="rightIcon.icon !== null; else justText">
+        <mat-icon
+          *ngIf="rightIcon.icon.type === 'mat'"
+          outlined>
+          {{rightIcon.icon.name}}
+        </mat-icon>
+        <mat-icon
+          *ngIf="rightIcon.icon.type === 'svg'"
+          [svgIcon]="rightIcon.icon.name"></mat-icon>
+      </ng-container>
+      <ng-template #justText>
+          {{rightIcon.text}}
+      </ng-template>
+    </button>
+</ng-template>
+<ng-template #injected>
+    <ng-content></ng-content>
+</ng-template>

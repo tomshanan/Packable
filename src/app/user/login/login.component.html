@@ -13,6 +13,6 @@
       <mat-spinner [diameter]='36'></mat-spinner>
     </span>
     <span class="text-danger pl-1 small" *ngIf="error">{{error}}</span>
-    <button type="submit" mat-raised-button color="primary" [disabled]="!loginForm.valid || !loginForm.enabled" class="ml-auto">Login</button>
+    <button type="submit" mat-raised-button [disabled]="!loginForm.valid || !loginForm.enabled" class="ml-auto mr-1 mb-1">Login</button>
   </div>
 </form>

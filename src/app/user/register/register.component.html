@@ -12,6 +12,6 @@
   <div class="d-flex mt-2 align-items-start">
     <span class="text-danger pl-1" *ngIf="error">{{error}}</span>
     <span  class="mat-spinner-wrapper ml-1" *ngIf="loading"><mat-spinner [diameter]='36'></mat-spinner></span>
-    <button type="submit" mat-raised-button color="primary" [disabled]="!registerForm.valid || !registerForm.enabled" class="ml-auto">Register</button>
+    <button type="submit" mat-raised-button [disabled]="!registerForm.valid || !registerForm.enabled" class="ml-auto mr-1 mb-1">Register</button>
   </div>
 </form> 

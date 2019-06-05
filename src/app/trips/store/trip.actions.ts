@@ -37,7 +37,7 @@ export class removeIncomplete  implements Action{
 
 export class updatePackingList  implements Action{
     readonly type = UPDATE_PACKING_LIST;
-    constructor(public payload: PackingList){};
+    constructor(public payload: PackingList[]){};
 }
 
 export type tripActions = setTripState | updateTrips | updateIncomplete | removeTrips | removeIncomplete | updatePackingList;

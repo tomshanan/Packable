@@ -16,6 +16,7 @@ const initialState: State = {
 export function tripReducers(state = initialState, action: TripActions.tripActions) {
     let tripState = state.trips.slice()
     let incompleteState = state.incomplete.slice()
+    let packingListState = state.packingLists.slice()
     let editId: string;
     let editIndex: number;
     let editTrip: Trip;
@@ -42,14 +43,19 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
         case TripActions.REMOVE_TRIP:
         action.payload.forEach(id=>{
             let removeId = id;
-            let removeIndex = tripState.idIndex(removeId)
-            if(removeIndex !== -1){
-                tripState.splice(removeIndex,1);
+            let tripIndex = tripState.idIndex(removeId)
+            if(tripIndex !== -1){
+                tripState.splice(tripIndex,1);
+            }
+            let packinglistIndex = tripState.idIndex(removeId)
+            if(packinglistIndex !== -1){
+                packingListState.splice(packinglistIndex,1);
             }
         })
             return {
                 ...state,
-                trips: [...tripState]
+                trips: [...tripState],
+                packingLists: [...packingListState]
             }
             case TripActions.UPDATE_INCOMPLETE:
             action.payload.forEach(trip=>{
@@ -78,22 +84,19 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
                 incomplete: [...incompleteState]
             }
         case TripActions.UPDATE_PACKING_LIST:
-            console.log(`Action received in tripActions:`,action)
-            const newList = action.payload;
-            const updateListIndex = state.packingLists.findIndex(p=>p.id === newList.id);
-            if(updateListIndex > -1){
-                let newListState = state.packingLists.slice();
-                newListState[updateListIndex] = newList;
-                return{
-                    ...state,
-                    packingLists: newListState
-                }
-            } else {
+                action.payload.forEach(packinglist=>{
+                    editId = packinglist.id;
+                    editIndex = packingListState.idIndex(editId);
+                    if(editIndex !== -1){
+                        packingListState[editIndex] = packinglist
+                    } else {
+                        packingListState.unshift(packinglist)
+                    }
+                })
                 return {
                     ...state,
-                    packingLists: [...state.packingLists, newList]
+                    incomplete: [...incompleteState]
                 }
-            }
         default:
             return state;
         }

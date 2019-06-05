@@ -12,13 +12,14 @@ import * as collectionActions from '../../collections/store/collections.actions'
 import * as packableActions from '../../packables/store/packables.actions'
 import * as uesrActions from '../../user/store/user.actions'
 import { defaultUserSettings, defaultVisitorPermissions } from './userState.model';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthEffects {
     constructor(
         private actions$: Actions,
-        private storageService: StorageService
-
+        private storageService: StorageService,
+        private router: Router,
     ){}
 
     @Effect() authTryRegister = this.actions$.pipe(

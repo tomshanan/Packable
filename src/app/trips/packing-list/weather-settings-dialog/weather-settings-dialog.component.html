@@ -1,0 +1,26 @@
+
+
+<app-dialog-header [super]="destinationName" header="Weather Settings" (close)="onClose()"></app-dialog-header>
+<mat-dialog-content style="margin-bottom:-24px;">
+    <div class="text-center">
+      <p class="temp" [innerHtml]="weatherData.tempToHtmlString()"></p>
+      <p class="types" [innerHtml]="weatherData.typesToString()"></p>
+      <p class="my-2" *ngIf="weatherData.dataInput === 'auto'">
+          The weather settings have been automatically set based on the forecast for your planned dates and destination.
+      </p>
+      <p class="my-2" *ngIf="weatherData.dataInput === 'manual'">
+          The weather settings have been set manually.
+      </p>
+    </div>
+    <div>
+      <trip-weather-settings-form [(weather)]="weatherData"></trip-weather-settings-form>
+    </div>
+    <dialog-confirm-button>
+        <button mat-raised-button (click)="onSetManual()" class="mx-1">
+            Set Manually
+        </button>
+        <button mat-raised-button (click)="onReloadForecast()"  class="mx-1">
+           Reload Forecast
+        </button>
+    </dialog-confirm-button>
+</mat-dialog-content>

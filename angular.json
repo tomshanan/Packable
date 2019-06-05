@@ -23,6 +23,7 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/app/shared/css/all.css",
+              "src/app/shared/css/material-icon.css",
               "src/styles.css"
             ],
             "scripts": []

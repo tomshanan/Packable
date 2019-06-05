@@ -32,7 +32,14 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
-type comparableItem = { id: string, dateModified: number }
+
+ const el = document.createElement("link")
+  el.href = "https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+  el.rel = "stylesheet"
+  document.body.appendChild(el)
+
+
+ type comparableItem = { id: string, dateModified: number }
 declare global {
     interface Array<T> {
         /**

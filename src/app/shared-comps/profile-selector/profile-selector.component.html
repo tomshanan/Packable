@@ -1,4 +1,4 @@
-<div class="d-inline-block" *ngFor="let profile of profiles" @horizontalShringAndFade>
+<div class="d-inline-block" *ngFor="let profile of profiles" @horizontalShringAndFade (click)="toggle(profile.id)">
   <profile-icon 
     *ngIf="profile"
     [profileId]='profile.id' 
@@ -8,8 +8,7 @@
     [width]="iconWidth"
     [fullFrame]="fullFrame"
     [color]="color"
-    [dim]="!isSelected(profile.id) && selected.length>0"
-    (click)="toggle(profile.id)">
+    [dim]="!isSelected(profile.id) && selected.length>0">
   </profile-icon>
 </div>
 <p *ngIf="multiselect && profiles.length > 1 && showQuickButtons">

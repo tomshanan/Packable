@@ -96,9 +96,9 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if(!this.packingList && this.packingListService.packingList){
-      this.updateView(this.packingListService.packingList)
-    }
+    // if(!this.packingList && this.packingListService.packingList){
+    //   this.updateView(this.packingListService.packingList)
+    // }
     this.packingListSettings = this.packingListService.packingListSettings
     console.log('loaded list with settings:',this.packingListSettings)
     this.navSetup();
@@ -108,6 +108,8 @@ export class PackingListComponent implements OnInit, OnDestroy {
         console.log(`PackingListComponent received newPackinglist`,newPackinglist)
         if (newPackinglist) {
           this.updateView(newPackinglist)
+        } else {
+          this.packingList = null;
         }
       })
     )

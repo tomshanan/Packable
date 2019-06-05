@@ -49,7 +49,7 @@ export class UserComponent implements OnInit {
         if (fragment == 'logout'){
           setTimeout(()=>{
             this.authService.logout()
-            this.router.navigate(['./'])
+            this.router.navigate([],{fragment:'login'})
           },1000)
         } else if (fragment == 'settings') {
           
@@ -62,9 +62,9 @@ export class UserComponent implements OnInit {
   }
 
   onRegister(){
-    console.log('Registered!');
+    this.router.navigate([''])
   }
   onLogin(){
-    console.log('Logged in!');
+    this.router.navigate([''])
   }
 }

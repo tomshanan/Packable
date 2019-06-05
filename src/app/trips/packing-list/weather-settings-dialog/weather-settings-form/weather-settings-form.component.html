@@ -1,0 +1,28 @@
+<div class="form-row">
+  <div class="col-12">
+    <ng5-slider
+      [(value)]="inputWeather.minTemp"
+      [(highValue)]="inputWeather.maxTemp"
+      [options]="options"
+      (userChangeEnd)="emitUpdate()"></ng5-slider>
+  </div>
+</div>
+<div class="form-row">
+  <div class="col-12 py-2">
+    <div class="spread">
+      <button mat-button (click)="onNoneTypes()" [appColor]="getNumberOfChecked()===0 ? 'accent' : 'muted'">
+        None
+      </button>
+      <ng-container *ngFor="let weather of weatherOptions">
+        <app-icon-checkbox
+          [checked]="isChecked(weather)"
+          [icon]="weather"
+          spacer="0px"
+          [smallScreen]="true"
+          (change)="toggleCheckbox(weather)">
+          {{weather | titlecase}}
+        </app-icon-checkbox>
+      </ng-container>
+    </div>
+  </div>
+</div>

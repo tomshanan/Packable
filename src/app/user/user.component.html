@@ -1,3 +1,6 @@
+<app-nav
+  [header]="authService.isAuthenticated ? 'User Settings' : 'Sign In'"></app-nav>
+
 <div class="col-12 col-lg-10 offset-lg-1">
   <mat-card *ngIf="!authService.isAuthenticated; else userAuthenticated">
     <mat-tab-group #tabGroup [(selectedIndex)]="selectedIndex" (selectedTabChange)="changeFragment($event)">

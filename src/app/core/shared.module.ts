@@ -93,6 +93,7 @@ import { ColumnDividerComponent } from '../trips/packing-list/column-divider/col
 import { OutlinedDirective } from '../shared/directives/outlined.directive';
 import { SettingsComponent } from '../trips/packing-list/settings/settings.component';
 import { WeatherSettingsDialogComponent } from '../trips/packing-list/weather-settings-dialog/weather-settings-dialog.component';
+import { WeatherSettingsFormComponent } from '../trips/packing-list/weather-settings-dialog/weather-settings-form/weather-settings-form.component';
 
 let imports = [
     ProfilesComponent,
@@ -170,7 +171,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent],
     exports: [...imports]
 })
 export class SharedModule {

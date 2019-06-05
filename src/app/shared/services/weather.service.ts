@@ -41,13 +41,20 @@ export class TripWeatherData {
     constructor(data?:Partial<TripWeatherData>){
         if(data){
             Object.assign(this,data)
+            console.log('[TripWeatherData assigned new data]',this)
         }
     }
     get isValid():boolean{
         return isDefined(this.minTemp) && isDefined(this.maxTemp) && !!this.weatherTypes;
     } 
     forecastString():string{
-        return `${temp(this.minTemp)}-${tempC(this.maxTemp)} ${joinSpecial(this.weatherTypes,', ',' and ') }`
+        return `${temp(this.minTemp)}-${tempC(this.maxTemp)} ${this.typesToString() }`
+    }
+    tempToHtmlString():string{
+        return `<b>${tempC(this.maxTemp)}</b>&nbsp&nbsp<span class="low-temp">${tempC(this.minTemp)}</span>`
+    }
+    typesToString():string{
+        return joinSpecial(this.weatherTypes,', ',' and ')
     }
 }
 
@@ -117,12 +124,12 @@ export class WeatherService {
     constructor(private http: HttpClient, private destService:DestinationDataService) {
     }
     getCityWeather(destId: string | number): Promise<{}> {
-        return this.http.get('api/weather/' + destId).toPromise()
+        return this.http.get('http://packable.stevenhuang.co.uk/weather.php?cityId=' + destId).toPromise()
     }
     getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Promise<DayWeatherData[]> {
         let weatherId = this.destService.DestinationByCityId(destId).weatherId
         return this.getCityWeather(weatherId).then(data=>{
-            console.log(data);
+            console.warn('WEATHER RECIEVED FROM API',data);
 
             let weatherArray = [];
             dates.forEach((date, i) => {

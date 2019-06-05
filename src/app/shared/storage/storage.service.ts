@@ -29,7 +29,7 @@ import * as moment from 'moment';
 import { Trip } from '../models/trip.model';
 import * as profileActions from '@app/profiles/store/profile.actions';
 import { setPackableState } from '../../packables/store/packables.actions';
-import { defaultUserSettings, userPermissions, defaultUserSettingsState } from '@app/user/store/userState.model';
+import { defaultUserSettings, userPermissions, defaultUserState } from '@app/user/store/userState.model';
 import { setUserPermissions, setUserSettings } from '../../user/store/user.actions';
 import { State as userConfig } from '../../user/store/userState.model';
 import * as AdminActions from '@app/admin/store/admin.actions'
@@ -52,6 +52,13 @@ const USERS = 'users'
 const SETTINGS = 'settings'
 const PERMISSIONS = 'permissions'
 const LIBRARY = 'library'
+
+function log(...arg){
+    console.log('📡 ',...arg)
+}
+function warn(...arg){
+    console.warn('📡~⚠️ ',...arg)
+}
 
 @Injectable()
 export class StorageService {
@@ -77,7 +84,7 @@ export class StorageService {
     }
     private get pathToUserItems():string{
         if(this.storeSelector.isLibraryStore){
-            this.log('<<  Accessing items in Library >>');
+            log('<<  Accessing items in Library >>');
             return LIBRARY
         } else {
             return path(USERS,this.userId)
@@ -87,32 +94,27 @@ export class StorageService {
         if (this.authService.isAuthenticated) {
             return true
         } else {
-            this.log('Could Not Authenticate.\n', logmessage);
+            log('Could Not Authenticate.\n', logmessage);
             return false
         }
     }
-    private log(...arg){
-        console.log('📡 ',...arg)
-    }
-    private warn(...arg){
-        console.warn('📡~⚠️ ',...arg)
-    }
+    
     
     getUserConfig() {
         if (this.checkAuth()) {
-            this.log('requesting config')
+            log('requesting config')
             firebase.database().ref(path(USER_CONFIG,this.userId)).once('value', snapshot => {
                 let data = snapshot.val();
-                this.log('receiving config data') // , JSON.stringify(data)
+                log('receiving config data') // , JSON.stringify(data)
                 if (data) {
-                    this.log(`saving user state`);
+                    log(`saving user state`);
                     this.store.dispatch(new userActions.setUserState(data))
                 } else {
-                    this.log(`data was empty`);
+                    log(`data was empty`);
                     this.setInitialUserConfig()
                 }
             }).catch(e=>{
-                this.log(e.message)
+                log(e.message)
                 this.setInitialUserConfig()
             })
         }
@@ -120,26 +122,26 @@ export class StorageService {
     listenToUserItems(){
         if (this.checkAuth()) {
             let target:'user'|'library' = this.storeSelector.isLibraryStore ? 'library' : 'user';
-            this.log('Current listening target: '+target)
+            log('Current listening target: '+target)
             let callBack = ()=> {
-                this.log(`~~-> listening to: ${this.pathToUserItems}`)
+                log(`~~-> listening to: ${this.pathToUserItems}`)
                 firebase.database().ref(this.pathToUserItems).on('child_changed', (snapshot)=>{
                     let data: {[x:string]:any} = {}
                     let node = <nodeOptions>snapshot.key
                     data[node] = snapshot.val()
-                    this.log(`received CHANGED data from ${node} library `)//+JSON.stringify(data)
+                    log(`received CHANGED data from ${node} library `)//+JSON.stringify(data)
                     this.tidayAndStoreUserItems(data,[node])
                 })
                 firebase.database().ref(this.pathToUserItems).on('child_added', (snapshot)=>{
                     let data: {[x:string]:any} = {}
                     let node = <nodeOptions>snapshot.key
                     data[node] = snapshot.val()
-                    this.log(`received ADDED data from ${node} library `)//+JSON.stringify(data)
+                    log(`received ADDED data from ${node} library `)//+JSON.stringify(data)
                     this.tidayAndStoreUserItems(data,[node])
                 })
                 firebase.database().ref(this.pathToUserItems).on('child_removed', (snapshot)=>{
                     let node = <nodeOptions>snapshot.key
-                    this.log(`received REMOVED data from ${node} library `)//+JSON.stringify(data)
+                    log(`received REMOVED data from ${node} library `)//+JSON.stringify(data)
                     this.tidayAndStoreUserItems({},[node])
                 })
             } 
@@ -156,7 +158,7 @@ export class StorageService {
     getLibrary(){
         if(this.checkAuth()){
             firebase.database().ref(LIBRARY).once('value', snapshot => {
-                this.log(`received library items`)
+                log(`received library items`)
                 let data = snapshot.val()
                 let newLibraryState: LibraryState = initialLibraryState
                 if(data['packables']){
@@ -200,17 +202,17 @@ export class StorageService {
     initialGetAllItems() {
         if (this.checkAuth()) {
             let path = this.pathToUserItems
-            this.log(`getting all items with path ${path}`);
+            log(`getting all items with path ${path}`);
             firebase.database().ref(path).once('value', snapshot => {
-                this.log('received initial items')
+                log('received initial items')
                 let data = snapshot.val();
                 this.tidayAndStoreUserItems(data,['all'])
-            }).catch(e=>this.log(e.message))
+            }).catch(e=>log(e.message))
         }
     }
     private tidayAndStoreUserItems(data:{},replace:nodeOrAll[]=[]):void{
         if(data!==null){
-            this.log(`tidayAndStoreUserItems received data`,data,'\nReplace:',replace); //JSON.stringify(data)
+            log(`tidayAndStoreUserItems received data`,data,'\nReplace:',replace); //JSON.stringify(data)
 
             if(data['packables']){
                 let packables:PackableOriginal[] = this.unwrapForLocalStore(data['packables']).map((p: PackableOriginal) => this.packableFactory.clonePackableOriginal(p))
@@ -271,9 +273,9 @@ export class StorageService {
             }
             firebase.database().ref(path(this.pathToUserItems,node)).set(data)
                 .then(() => {
-                    this.log(`<-~-> saved ${node} successfully`);
+                    log(`<-~-> saved ${node} successfully`);
                 }, (e) => {
-                    this.warn(`<-~-> FAILED to save ${node}`, e);
+                    warn(`<-~-> FAILED to save ${node}`, e);
                 })
         }
     }
@@ -285,7 +287,7 @@ export class StorageService {
                 let itempath = path(this.pathToUserItems,node,subNode,item)
                 updates[itempath] = wrappedItems[item]
             }
-            firebase.database().ref().update(updates).then(()=>{this.log('Saved items (updateItemsInUser)',updates);
+            firebase.database().ref().update(updates).then(()=>{log(`Saved ${subNode} items`,updates);
             })
         }
     }
@@ -296,14 +298,14 @@ export class StorageService {
                 let itemPath = path(this.pathToUserItems,node,subNode,id)
                 updates[itemPath] = null
             })
-            firebase.database().ref().update(updates).then(()=>{this.log('Removed items (removeItemsInUser)',updates);
+            firebase.database().ref().update(updates).then(()=>{log(`Removed ${subNode} items`,updates);
             })
         }
     }
 
     setAllUserItemsAndSettings() {
         if (this.checkAuth()) {
-            this.log(`Setting all user items and settings to FireBase (setAllUserItemsAndSettings)`);
+            log(`Setting all user items and settings to FireBase (setAllUserItemsAndSettings)`);
             let updates: updates = {}
             let userData = {
                 packables: this.wrapForStorage(this.storeSelector.originalPackables),
@@ -317,29 +319,29 @@ export class StorageService {
             }
             updates[this.pathToUserItems] = userData
             updates[path(USER_CONFIG,this.userId,SETTINGS)] = this.user.settings
-            firebase.database().ref().update(updates).then(()=>{this.log('Saved (setAllUserItemsAndSettings)');
+            firebase.database().ref().update(updates).then(()=>{log('Saved (setAllUserItemsAndSettings)');
             })
         }
     }
     saveUserSettings(){
         if (this.checkAuth()) {
             let data = this.user.settings
-            firebase.database().ref(path(USER_CONFIG,this.userId,SETTINGS)).set(data).then(()=>{this.log('Saved (saveUserSettings)');
+            firebase.database().ref(path(USER_CONFIG,this.userId,SETTINGS)).set(data).then(()=>{log('Saved (saveUserSettings)');
             })
         }
     }
     setInitialUserConfig() {
-        this.log(`setting initial user data`);
+        log(`setting initial user data`);
         if (this.checkAuth()) {
-            let initialConfig = defaultUserSettingsState
+            let initialConfig = defaultUserState
             initialConfig.settings.alias = firebase.auth().currentUser.email.split('@')[0]
-            this.log(`saving initial data to firebase`);
+            log(`saving initial data to firebase`);
             firebase.database().ref(path(USER_CONFIG,this.userId)).set(initialConfig)
                 .then(() => {
-                    this.log('set userState in store:', initialConfig)
+                    log('set userState in store:', initialConfig)
                     this.store.dispatch(new userActions.setUserState(initialConfig))
                 }, (e) => {
-                    this.log('failed to set userConfig:', e)
+                    log('failed to set userConfig:', e)
                 })
         }
     }
@@ -348,39 +350,39 @@ export class StorageService {
     adminDeleteUsers(ids:string[]){
         if (this.checkAuth()) {
             if (this.user.permissions.userManagement) {
-                this.log('attempting to delete users')
+                log('attempting to delete users')
                 let updates: updates = {}
                 ids.forEach(id => {
                     updates[path(USER_CONFIG,id)] = null
                     updates[path(USERS,id)] = null
                 }) 
                 firebase.database().ref().update(updates).then(()=>{
-                    this.log('users deleted', updates);
+                    log('users deleted', updates);
                 }).catch(e=>{
-                    this.log('unable to delete users', updates, e['message']);
+                    log('unable to delete users', updates, e['message']);
                 });
             } else {
-                this.warn('You are unable to delete users.')
+                warn('You are unable to delete users.')
             }
         }
     }
 
     adminSetUserData(action) {
-        this.log('attempting to change permissions', action)
+        log('attempting to change permissions', action)
         if (this.checkAuth()) {
             if (action.type == AdminActions.ADMIN_SET_PERMISSIONS
                 && this.user.permissions.setPermissions) {
-                this.log('attempting to change permissions')
+                log('attempting to change permissions')
                 let changes = (<AdminActions.adminSetPermissions>action).payload
                 let updates: updates = {}
                 changes.forEach(change => {
                     updates[path(USER_CONFIG,change.id,PERMISSIONS)] = change.permissions
                 }) 
                 firebase.database().ref().update(updates).then(()=>{
-                    this.log('permissions updated');
+                    log('permissions updated');
                 });
             } else {
-                this.warn('You are unable to change permissions.')
+                warn('You are unable to change permissions.')
             }
         }
     }

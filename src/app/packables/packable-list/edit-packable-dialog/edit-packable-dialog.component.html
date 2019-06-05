@@ -1,4 +1,4 @@
-<app-dialog-header [super]="collectionName" [header]="packable.name || 'New Packable'" (close)="onClose()"></app-dialog-header>
+<app-dialog-header [super]="collectionName" [header]="packable.name || 'New Packable'" (close)="onClose(null)"></app-dialog-header>
 <mat-dialog-content style="margin-bottom:-24px;">
     <div @transitionTrigger *ngIf="step == 1">
         <app-packable-edit-form 

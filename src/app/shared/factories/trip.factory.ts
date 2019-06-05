@@ -5,6 +5,9 @@ import * as moment from 'moment'
 import { DestinationDataService } from '../services/location-data.service';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { isDefined } from '../global-functions';
+import { TripWeatherData } from '../services/weather.service';
+import { tempC } from '../models/weather.model';
+
 export type tripProperties = keyof Trip
 @Injectable()
 export class TripFactory {

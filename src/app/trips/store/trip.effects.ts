@@ -10,7 +10,12 @@ export class TripEffects {
         private storageServices: StorageService,
         private actions$:Actions
     ){}
-
+    @Effect({dispatch:false}) updatePackingList = this.actions$.pipe(
+        ofType(TripActions.UPDATE_PACKING_LIST),
+        tap((action:TripActions.updatePackingList)=>{
+            this.storageServices.saveItemsInUser('tripState',action.payload,'packingLists')
+        })
+    )
     @Effect({dispatch:false}) updateTripEffect = this.actions$.pipe(
         ofType(TripActions.UPDATE_TRIP),
         tap((action:TripActions.updateTrips)=>{

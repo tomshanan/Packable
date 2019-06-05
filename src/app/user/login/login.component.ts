@@ -46,8 +46,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.loading = authState.loading
       if(this.loading){
         this.loginForm.disable();
-      } else {
+      } else if(this.error){
         this.loginForm.enable();
+      } 
+      if(authState.authenticated){
+        this.onSuccess.emit()
       }
     })
    }

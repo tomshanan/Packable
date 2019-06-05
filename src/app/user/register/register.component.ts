@@ -44,8 +44,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.loading = authState.loading
       if(this.loading){
         this.registerForm.disable();
-      } else {
+      } else if(this.error){
         this.registerForm.enable();
+      } 
+      if(authState.authenticated){
+        this.onSuccess.emit()
       }
     })
   }

@@ -1,10 +1,10 @@
-<profile-icon 
-  *ngFor="let icon of icons"
-  [fullFrame]="templateIcons"
-  [icon]='icon' 
-  [showName]="false"  
-  [isInteractive]="true" 
-  [isSelected]="isSelected(icon)" 
-  [width]="iconWidth"
-  (click)="toggle(icon)">
-</profile-icon>
+<div style="display: contents"  *ngFor="let icon of icons" (click)="toggle(icon)">
+    <profile-icon 
+      [fullFrame]="templateIcons"
+      [icon]='icon' 
+      [showName]="false"  
+      [isInteractive]="true" 
+      [isSelected]="isSelected(icon)" 
+      [width]="iconWidth">
+    </profile-icon>
+</div>

@@ -34,6 +34,7 @@ import { EditCollectionDialogComponent } from './collections/collection-list/edi
 import { LibraryEffects } from './shared/library/library.effects';
 import { ImportCollectionDialogComponent } from './collections/collection-list/import-collection-dialog/import-collection-dialog.component';
 import { SelectCollectionProfilesDialogComponent } from './trips/collection-selection-form/select-collection-profiles-dialog/select-collection-profiles-dialog.component';
+import { WeatherSettingsDialogComponent } from './trips/packing-list/weather-settings-dialog/weather-settings-dialog.component';
 
 
 
@@ -65,7 +66,8 @@ import { SelectCollectionProfilesDialogComponent } from './trips/collection-sele
     SetPermissionsDialogComponent,
     EditCollectionDialogComponent,
     ImportCollectionDialogComponent,
-    SelectCollectionProfilesDialogComponent
+    SelectCollectionProfilesDialogComponent,
+    WeatherSettingsDialogComponent,
   ]
 
 })

@@ -1,0 +1,33 @@
+.tempSelector{
+    width: 70px;
+    text-align: center;
+}
+.spread{
+    display: flex;
+    justify-content: space-between;
+}
+.ng5-slider .ng5-slider-pointer{
+    cursor: pointer;
+    top: -8px!important;
+    z-index: 3!important;
+    height: 20px!important;
+    width: 20px!important;
+    border-radius: 50%!important;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12) !important;
+    background-color: #fafafa!important; 
+    outline:none!important;
+}
+.ng5-slider .ng5-slider-pointer:after {
+    display: none!important;
+}
+
+.ng5-slider .ng5-slider-active{
+    background-color: #e91e63!important;
+}
+.ng5-slider .ng5-slider-bar{
+    background: rgba(0, 0, 0, 0.1)!important;
+}
+.ng5-slider .ng5-slider-selection{
+    background: rgba(233,30,99,.5)!important;
+} 
+

@@ -1,25 +1,19 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { PackableComplete, PackableOriginal } from '@shared/models/packable.model';
-import { Profile, ProfileComplete } from '@app/shared/models/profile.model';
-import { CollectionComplete, CollectionOriginal } from '../../../shared/models/collection.model';
+import { Profile } from '@app/shared/models/profile.model';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { isPackableOriginal } from '../../../shared/models/packable.model';
-import { CollectionFactory } from '@shared/factories/collection.factory';
-import { ProfileFactory } from '../../../shared/factories/profile.factory';
-import { CollectionProfile, CollectionSelectorConfirmEvent } from './choose-collections-dialog/choose-collections-dialog.component';
+import { CollectionProfile } from './choose-collections-form/choose-collections-form.component';
 import { weatherFactory } from '@factories/weather.factory';
 import { Store } from '@ngrx/store';
 import * as packableActions from '@app/packables/store/packables.actions';
-import * as collectionActions from '@app/collections/store/collections.actions'
-import * as profileActions from '@app/profiles/store/profile.actions'
 import * as fromApp from '@shared/app.reducers';
-import { PackableFactory } from '../../../shared/factories/packable.factory';
 import { WindowService } from '../../../shared/services/window.service';
-import { expandAndFadeTrigger, transitionTrigger } from '../../../shared/animations';
-import { indexOfId, timeStamp, isDefined } from '../../../shared/global-functions';
+import { transitionTrigger } from '../../../shared/animations';
+import { timeStamp, isDefined } from '../../../shared/global-functions';
 import { ContextService } from '../../../shared/services/context.service';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
+import { editPackableForm_update } from './packable-edit-form/packable-edit-form.component';
 
 export interface DialogData_EditPackable {
   pakable?: PackableComplete,
@@ -45,18 +39,18 @@ export class EditPackableDialogComponent implements OnInit {
   packable: PackableComplete;
   newPackable: PackableOriginal;
   profileGroup: Profile[];
-  selectedProfiles: string[];
+  selectedProfiles: string[] = []
+  selectedCollectionProfiles: CollectionProfile[] = []
   collectionId: string;
   collectionName: string;
   isNew: boolean;
   editName: boolean;
   step: number = 1;
   msg:string;
+  formValid:boolean = false;
+
   constructor(
     private storeSelector: StoreSelectorService,
-    private proFac: ProfileFactory,
-    private pacFac: PackableFactory,
-    private colFac: CollectionFactory,
     @Inject(MAT_DIALOG_DATA) public data: DialogData_EditPackable,
     public dialogRef: MatDialogRef<EditPackableDialogComponent>,
     private wFactory: weatherFactory,
@@ -95,15 +89,36 @@ export class EditPackableDialogComponent implements OnInit {
     this.collectionName = this.collectionId ? this.storeSelector.getCollectionById(this.collectionId).name : null;
   }
 
+  onUpdateForm(data: editPackableForm_update){
+    this.formValid = data.valid
+    this.packable = data.packable
+    this.selectedProfiles = data.selectedProfiles
+    console.log(`packable updated`, this.packable)
+  }
+  onUpdateCollections(CP:CollectionProfile[]){
+    this.selectedCollectionProfiles=CP;
+  }
 
-
-  onConfirmPackable(data: {
-    packable: PackableComplete,
-    selectedProfiles: string[]
-  }) {
-    this.packable = data.packable;
+  valid():boolean{
+    let step = this.step
+    if(step===1){
+      return this.formValid
+    } else {
+      return true
+    }
+  }
+  onConfirm(){
+    switch(this.step){
+      case 1:
+          this.onConfirmPackable()
+          break;
+      case 2:
+        this.onConfirmCollections()
+        break;
+    }
+  }
+  onConfirmPackable() {
     this.packable.dateModified = timeStamp()
-    this.selectedProfiles = data.selectedProfiles;
     // save original packable
     this.newPackable = new PackableOriginal(
       this.packable.id,
@@ -137,8 +152,11 @@ export class EditPackableDialogComponent implements OnInit {
       this.onClose(this.newPackable)
     }
   }
-  onConfirmCollections(confirm: CollectionSelectorConfirmEvent) {
-    this.bulkActions.pushOriginalPackablesByCP([this.newPackable],confirm.selectedIds)
+  
+  onConfirmCollections() {
+    if(this.selectedCollectionProfiles.length>0){
+      this.bulkActions.pushOriginalPackablesByCP([this.newPackable],this.selectedCollectionProfiles)
+    }
     this.onClose(this.packable);
   }
   onClose(packable:PackableComplete) {

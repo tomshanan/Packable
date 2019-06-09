@@ -1,6 +1,6 @@
 <div class="checkbox-container" #checkboxContainer
-[appColor]="checked ? 'accent' : 'muted'" 
-[appColorResponsive]="!disabled"
+[activeColor]="checked ? 'accent' : 'muted'" 
+[disabled]="disabled"
 [class.disabled]="disabled" 
 [class.small-screen]="smallScreen && wService.max('xs')" 
 (click)="toggle()">

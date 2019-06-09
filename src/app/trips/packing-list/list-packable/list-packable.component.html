@@ -36,7 +36,7 @@
       <div class="alert-box">
           <span class="ml-2">
             <ng-container *ngIf="listSettings.showWarnings ">
-              <button mat-icon-button [ngbPopover]="weatherNotChecked" placement="left" triggers="click:mouseleave" appColor="danger"
+              <button mat-icon-button [ngbPopover]="weatherNotChecked" placement="left" triggers="click:mouseleave" activeColor="danger"
                 *ngIf="packable.weatherNotChecked || (!packable.passChecks && packable.weatherReasons.length>0)">
                 <mat-icon svgIcon="weather_error" class="text-orange"></mat-icon>
               </button>
@@ -44,7 +44,7 @@
                   <p class="p-0 m-0 small" *ngFor="let reason of packable.weatherReasons" [class.strikeThrough]="!reason.active" [innerHtml]="reason.text"></p>
               </ng-template>
         
-              <button mat-icon-button [ngbPopover]="changedAfterChecked" placement="left" triggers="click:mouseleave" appColor="danger"
+              <button mat-icon-button [ngbPopover]="changedAfterChecked" placement="left" triggers="click:mouseleave" activeColor="danger"
                *ngIf="packable.changedAfterChecked">
                 <i class="material-icons-outlined">cached</i>
               </button>
@@ -55,7 +55,7 @@
               </ng-template>
             </ng-container>
             <ng-container *ngIf="listSettings.showCalculations ">
-              <button mat-icon-button [ngbPopover]="quantityReasons" placement="left" triggers="click:mouseleave" appColor="muted"
+              <button mat-icon-button [ngbPopover]="quantityReasons" placement="left" triggers="click:mouseleave" activeColor="muted"
                 class="pointer">
                 <i class="material-icons-outlined">live_help</i>
               </button>
@@ -83,11 +83,11 @@
     </ng-container>
     <div class="button-box">
 
-      <button mat-icon-button (click)="toggleEditMode()" *ngIf="!editMode" appColor="muted">
+      <button mat-icon-button (click)="toggleEditMode()" *ngIf="!editMode" activeColor="muted">
         <mat-icon svgIcon="plus-minus"></mat-icon>
       </button>
       <ng-container *ngIf="editMode">
-        <button mat-icon-button (click)="onSetQuantity(spinnerQuantity)" [appColor]="spinnerQuantity > 0 ? 'accent' : 'danger'">
+        <button mat-icon-button (click)="onSetQuantity(spinnerQuantity)" [activeColor]="spinnerQuantity > 0 ? 'accent' : 'danger'">
           <mat-icon>{{spinnerQuantity > 0 ? 'check' : 'remove_circle_outline'}}</mat-icon>
         </button>
       </ng-container>

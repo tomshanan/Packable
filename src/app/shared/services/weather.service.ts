@@ -226,7 +226,7 @@ export class WeatherService {
             !test && response.push(joinSpecial(rule.weatherTypes,', ',' or ')+` will not be expected during this trip`)
           }
         } else {
-            response.push('This Trip\'s weather data is invalid')
+            response.push('<b>Could not validate Weather Rules.</b><br>This Trip\'s weather data is invalid')
         }
         return {conditionsMet:conditionsMet,response:response}
       }

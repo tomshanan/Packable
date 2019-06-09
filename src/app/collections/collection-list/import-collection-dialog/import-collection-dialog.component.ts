@@ -18,6 +18,7 @@ import { PackableComplete,remotePackable} from '../../../shared/models/packable.
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import * as packableActions from '@app/packables/store/packables.actions';
 import { takeUntil, single } from 'rxjs/operators';
+import { WindowService } from '../../../shared/services/window.service';
 
 export interface importCollections_data {
   profileName?:string,
@@ -51,21 +52,19 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     private storeSelector:StoreSelectorService,
-    private storage: StorageService,
     private store: Store<LibraryState>,
-    private proFac:ProfileFactory,
-    private pacFac: PackableFactory,
     private colFac: CollectionFactory,
     private context:ContextService,
     private bulkActions: BulkActionsService,
     @Inject(MAT_DIALOG_DATA) public data:importCollections_data,
     public dialogRef: MatDialogRef<ImportCollectionDialogComponent>,
+    private windowService: WindowService,
 
   ) { 
     this.profileName = data.profileName || ''
     this.profileGroup = data.profileGroup || this.storeSelector.profiles
     this.selectedProfiles = data.selectedProfiles || (this.context.profileId ? [this.context.profileId] : [])
-    this.dialogRef.addPanelClass('dialog-full-height')
+    this.dialogRef.addPanelClass('dialog-tall')
   }
 
   ngOnInit() {
@@ -95,21 +94,39 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
       this.usedCollections = this.localCollections
     }
   }
+  back(){
+    this.step--
+    this.dialogRef.addPanelClass('dialog-tall')
+  }
 
+  valid():boolean{
+    switch(this.step){
+      case 1:
+        return this.selectedCollections.length>0
+      case 2:
+        return this.selectedProfiles.length > 0 && !this.context.profileId
+    }
+
+  }
+  onConfirm(){
+    switch(this.step){
+      case 1:
+        this.onSelectCollections()
+        break;
+      case 2:
+        this.onSelectProfiles()
+        break;
+    }
+  }
   onSelectCollections(){
-    this.dialogRef.removePanelClass('dialog-full-height')
-    this.dialogRef.addPanelClass('dialog-form')
+    this.dialogRef.removePanelClass('dialog-tall')
     if(this.context.profileId){
       this.onSelectProfiles()
     } else {
       this.step++
     }
   }
-  back(){
-    this.step--
-    this.dialogRef.addPanelClass('dialog-full-height')
-    this.dialogRef.removePanelClass('dialog-form')
-  }
+  
   onSelectProfiles(){
   this.bulkActions.processImportCollections(this.selectedCollections,this.selectedProfiles)    
   let allComplete = this.collections.filter(c=>this.selectedCollections.includes(c.id))

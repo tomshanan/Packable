@@ -148,7 +148,7 @@
               </button>
               <button
                 mat-menu-item
-                appColor="danger"
+                activeColor="danger"
                 (click)="actionRemoveCollection(collection)"
                 *ngIf="collection.profileGroup.length != 0">
                 <mat-icon svgIcon="users-remove"></mat-icon>
@@ -156,7 +156,7 @@
               </button>
               <button
                 mat-menu-item
-                appColor="danger"
+                activeColor="danger"
                 (click)="bulkActionDeleteSelectedCollections(collection.id)"
                 *ngIf="!context.profileId">
                 <mat-icon outlined>delete</mat-icon>

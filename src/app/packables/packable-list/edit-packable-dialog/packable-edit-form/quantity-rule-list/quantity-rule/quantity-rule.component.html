@@ -3,7 +3,7 @@
   <mat-card class="quantity-rule">
     <div class="quantity-rule-input-containter">
       <span >
-        <button mat-icon-button [matMenuTriggerFor]="typeMenu" appColor="action">
+        <button mat-icon-button [matMenuTriggerFor]="typeMenu" activeColor="action">
             <mat-icon *ngIf="type.value == 'period'">date_range</mat-icon>
             <mat-icon *ngIf="type.value == 'profile'">person</mat-icon>
             <mat-icon *ngIf="type.value == 'trip'" svgIcon="together"></mat-icon>

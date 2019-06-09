@@ -6,7 +6,7 @@ import { Profile, ProfileComplete, Avatar } from '../models/profile.model';
 import { CollectionPrivate, CollectionComplete } from '../models/collection.model';
 import { indexOfId } from '../global-functions';
 import { PackablePrivate } from '../models/packable.model';
-import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-form/choose-collections-form.component';
 import { remoteProfile } from '../library/library.model';
 
 @Injectable()

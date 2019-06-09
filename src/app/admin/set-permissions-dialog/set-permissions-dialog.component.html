@@ -1,30 +1,32 @@
 <app-dialog-header [super]="alias" header="Set Permissions" (close)="onClose()"></app-dialog-header>
+<mat-dialog-content>
 
-<p>
-    <mat-checkbox [checked]="permissions.setPermissions" (change)="update('setPermissions', $event)">
-        Set Permissions
+    <p>
+        <mat-checkbox [checked]="permissions.setPermissions" (change)="update('setPermissions', $event)">
+            Set Permissions
+            </mat-checkbox>
+    </p>
+    <p>
+        <mat-checkbox [checked]="permissions.userManagement" (change)="update('userManagement', $event)">
+            User Management
         </mat-checkbox>
-</p>
-<p>
-    <mat-checkbox [checked]="permissions.userManagement" (change)="update('userManagement', $event)">
-        User Management
-    </mat-checkbox>
-</p>
-<p>
-    <mat-checkbox [checked]="permissions.creator" (change)="update('creator', $event)" >
-        Content Creator
-      </mat-checkbox>
-</p>
-<p>
-    <mat-checkbox [checked]="permissions.user" (change)="update('user', $event)">
-        Active User
-      </mat-checkbox>
-</p>
+    </p>
+    <p>
+        <mat-checkbox [checked]="permissions.creator" (change)="update('creator', $event)" >
+            Content Creator
+          </mat-checkbox>
+    </p>
+    <p>
+        <mat-checkbox [checked]="permissions.user" (change)="update('user', $event)">
+            Active User
+          </mat-checkbox>
+    </p>
+</mat-dialog-content>
 
-
-
-  <dialog-confirm-button style="display:contents;">
-      <button mat-fab color="primary" (click)="onClose(permissions)">
-          <mat-icon>check</mat-icon>
-      </button>
-  </dialog-confirm-button>
+<mat-dialog-actions>
+    <dialog-confirm-button style="display:contents;">
+        <button mat-fab activeColor="action" (click)="onClose(permissions)">
+            <mat-icon>check</mat-icon>
+        </button>
+    </dialog-confirm-button>
+</mat-dialog-actions>

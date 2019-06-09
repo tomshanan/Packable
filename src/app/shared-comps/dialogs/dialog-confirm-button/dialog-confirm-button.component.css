@@ -1,9 +1,8 @@
 .dialog-floating-actions {
-    margin-top:95px;
-    position: -webkit-sticky;
-    position: sticky;
     z-index: 19;
     bottom: 0;
+    position: absolute;
+    width: 100%;
 }
 
 .dialog-floating-actions-centralizer{
@@ -26,4 +25,4 @@
     width: 100%;
     bottom: 0;
     z-index: 1;
-}
+} 

@@ -42,7 +42,7 @@ import { PackableEditFormComponent } from "@app/packables/packable-list/edit-pac
 import { QuantityRuleComponent } from "@app/packables/packable-list/edit-packable-dialog/packable-edit-form/quantity-rule-list/quantity-rule/quantity-rule.component";
 import { QuantityRuleListComponent } from "@app/packables/packable-list/edit-packable-dialog/packable-edit-form/quantity-rule-list/quantity-rule-list.component";
 import { EditPackableDialogComponent } from "@app/packables/packable-list/edit-packable-dialog/edit-packable-dialog.component";
-import { ChooseCollectionsDialogComponent } from '../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { ChooseCollectionsFormComponent } from '../packables/packable-list/edit-packable-dialog/choose-collections-form/choose-collections-form.component';
 import { CollectionListComponent } from '../collections/collection-list/collection-list.component';
 import { CollectionPanelComponent } from '../collections/collection-list/collection-panel/collection-panel.component';
 import { ConfirmDialog } from '@shared-comps/dialogs/confirm-dialog/confirm.dialog';
@@ -64,6 +64,7 @@ import { ProfileEditFormComponent } from '../profiles/profile-edit-form/profile-
 import { NameInputComponent } from '../shared-comps/name-input/name-input.component';
 import { HorizontalIconSelectorComponent } from '../shared-comps/horizontal-icon-selector/horizontal-icon-selector.component';
 import { AppColorDirective } from '../shared/directives/app-color.directive';
+import { ActiveColorDirective } from '../shared/directives/app-color.directive';
 import { NewProfileDialogComponent } from '../profiles/new-profile-dialog/new-profile-dialog.component';
 import { CollectionSelectorComponent } from '../collections/collection-selector/collection-selector.component';
 import { CardButtonComponent } from '../shared-comps/card-button/card-button.component';
@@ -94,6 +95,7 @@ import { OutlinedDirective } from '../shared/directives/outlined.directive';
 import { SettingsComponent } from '../trips/packing-list/settings/settings.component';
 import { WeatherSettingsDialogComponent } from '../trips/packing-list/weather-settings-dialog/weather-settings-dialog.component';
 import { WeatherSettingsFormComponent } from '../trips/packing-list/weather-settings-dialog/weather-settings-form/weather-settings-form.component';
+import { LoadingOverlayComponent } from '../shared-comps/loading-overlay/loading-overlay.component';
 
 let imports = [
     ProfilesComponent,
@@ -125,7 +127,7 @@ let imports = [
     OptionsMenuComponent,
     QuantityRuleListComponent,
     EditPackableDialogComponent,
-    ChooseCollectionsDialogComponent,
+    ChooseCollectionsFormComponent,
     DialogConfirmButtonComponent,
     IconCheckboxComponent, 
     PackableListComponent,
@@ -151,6 +153,7 @@ let imports = [
     NameInputComponent, 
     HorizontalIconSelectorComponent, 
     AppColorDirective, 
+    ActiveColorDirective,
     NewProfileDialogComponent, 
     CollectionSelectorComponent, 
     CardButtonComponent, 
@@ -171,7 +174,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent],
     exports: [...imports]
 })
 export class SharedModule {

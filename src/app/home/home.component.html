@@ -1,16 +1,16 @@
 <app-nav [header]="'Home'"></app-nav>
 
-<number-spinner [(number)]="number" (numberChange)="log($event)" min="2" max="4">
-</number-spinner>
 
-{{number}}
-<!-- 
 
-<button (click)="generateData()">Generate Dummy Data</button>
-<button (click)="saveDummyDate()">Save Dummy Data</button>
-<div>
-        <collection-selection-form
-            [selected]="selected"
-            [profiles]="profiles">
-        </collection-selection-form>
-</div> -->
+<loading-wrapper [loading]="loadingWeather">
+  <trip-weather-settings-form [(weather)]="weatherData"></trip-weather-settings-form>
+</loading-wrapper>
+
+
+
+
+
+
+<button (click)="loadingWeather = !loadingWeather">
+  {{loadingWeather ? 'loading' : 'not loading'}}
+</button>

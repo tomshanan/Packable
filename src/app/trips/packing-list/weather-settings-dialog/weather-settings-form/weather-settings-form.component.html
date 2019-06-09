@@ -10,7 +10,7 @@
 <div class="form-row">
   <div class="col-12 py-2">
     <div class="spread">
-      <button mat-button (click)="onNoneTypes()" [appColor]="getNumberOfChecked()===0 ? 'accent' : 'muted'">
+      <button mat-button (click)="onNoneTypes()" [activeColor]="getNumberOfChecked()===0 ? 'accent' : 'muted'">
         None
       </button>
       <ng-container *ngFor="let weather of weatherOptions">

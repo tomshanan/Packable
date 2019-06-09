@@ -1,0 +1,26 @@
+:host{
+  display: block;
+}
+:host.loading{
+  position: relative;
+  overflow: hidden;
+}
+
+.loadingOverlay{
+  display: none;
+}
+:host.loading .loadingOverlay{
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content:center;
+    background: #ffffffa6;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+mat-spinner{
+  display: block;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { IconService } from '@app/core';
 import { Avatar } from '@app/shared/models/profile.model';
 import { Profile } from '../../shared/models/profile.model';
@@ -34,7 +34,7 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   icon: string;             
   @Input('color') inputColor: string;        // will override avatar
   color: string; 
-
+  @Output('onClick') click = new EventEmitter<void>()
   @ViewChild('profile') profileIcon: ElementRef;
   sub: Subscription;
 
@@ -44,6 +44,11 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
     private storeSelector: StoreSelectorService
   ) { 
     
+  }
+  emitClick(){
+    if(this.isInteractive){
+      this.click.emit()
+    }
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.init();

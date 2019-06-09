@@ -13,8 +13,8 @@
             (onClick)="onClickStep(i+1)">
           </icon-text-button>
         </div>
-        <div class="line" *ngIf="steps.length >  i+1" appColor="muted" [appColorResponsive]="false">
-          <div class="inner-line" [class.complete]="currentStep >  i+1 " appColor="action" [appColorResponsive]="false"></div>
+        <div class="line" *ngIf="steps.length >  i+1" appColor="muted">
+          <div class="inner-line" [class.complete]="currentStep >  i+1 " appColor="action"></div>
         </div>
   </ng-container>
 </div>

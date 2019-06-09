@@ -15,17 +15,17 @@ import * as profileActions from '@app/profiles/store/profile.actions'
 import * as fromApp from '@shared/app.reducers';
 import { setPackableState } from '../../store/packables.actions';
 import { transitionTrigger } from '../../../shared/animations';
-import { CollectionProfile } from '../edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
-import { importPackables_selection } from './import-packables-selector/import-packables-selector.component';
+import { CollectionProfile } from '../edit-packable-dialog/choose-collections-form/choose-collections-form.component';
 import { timeStamp } from '../../../shared/global-functions';
 import { CollectionFactory } from '@app/shared/factories/collection.factory';
+import { WindowService } from '../../../shared/services/window.service';
 
 export interface importPackables_data {
   header: string,
   usedPackables: PackableComplete[]
 }
 export interface importPackables_result {
-  packables: PackableComplete[],
+  packables: string[],
   selectedProfiles: string[]
 }
 
@@ -40,8 +40,7 @@ export class ImportPackablesDialogComponent implements OnInit {
   step: number = 1;
   header: string;
   collectionName: string;
-  selectedRemotePackables: PackableOriginal[] = [];
-  selectedOriginalPackables: PackableOriginal[];
+  selectedIds:string[] = []
   profileGroup: Profile[];
   selectedProfiles: string[] = []
 
@@ -52,6 +51,7 @@ export class ImportPackablesDialogComponent implements OnInit {
     private colFac: CollectionFactory,
     private context: ContextService,
     private bulkActions: BulkActionsService,
+    public windowService: WindowService,
     @Inject(MAT_DIALOG_DATA) public data: importPackables_data,
     public dialogRef: MatDialogRef<ImportPackablesDialogComponent>,
   ) {
@@ -70,60 +70,70 @@ export class ImportPackablesDialogComponent implements OnInit {
         this.selectedProfiles = [this.context.profileId]
       }
     }
-    this.dialogRef.addPanelClass('dialog-full-height')
+    this.dialogRef.addPanelClass('dialog-tall')
+  }
+  onUpdateSelected(selected:string[]){
+    this.selectedIds = selected;
+  }
+  valid():boolean{
+    switch(this.step){
+      case 1:
+          return this.selectedIds.length>0
+      case 2:
+          return this.profilesValid()
+      default:
+        return false;
+    }
+  }
+  onConfirm(){
+    switch(this.step){
+      case 1:
+          this.dialogRef.removePanelClass('dialog-tall')
+          this.confirmPackables() 
+        break;
+      case 2:
+          this.confirmProfiles()
+        break;
+    }
+  }
+  updatePackabels(){
 
   }
-
-  confirmPackables(e: importPackables_selection) {
+  confirmPackables() {
     if (this.step == 1) {
-      this.selectedRemotePackables = e.remoteItems
       if (this.collection) {
-        this.selectedOriginalPackables = [...e.localItems, ...e.remoteItems]
         this.step++
         /*  if profile group is empty, or if we are working inside a profile,
             then skip profile selection*/
         if(this.profileGroup.length === 0 || (this.context.profileId && this.profileGroup.length < 2)){
           this.confirmProfiles()
-        } else {
-          this.dialogRef.removePanelClass('dialog-full-height')
-          this.dialogRef.addPanelClass('dialog-form')
-        }
+        } 
       } else {
-        this.storeRemotePackables()
-        let completeRemote = this.pacFac.makeCompleteFromArray(this.selectedRemotePackables)
-        this.onClose({ packables: completeRemote, selectedProfiles: [] }) // send new remotePackables to onClose
+        this.bulkActions.addMissingPackableIdsFromRemote(this.selectedIds)
+        this.onClose({ packables: this.selectedIds, selectedProfiles: [] }) // send new remotePackables to onClose
       }
     }
   }
-
+  
   confirmProfiles() {
     if (this.step == 2 && this.profilesValid()) {
-      this.storeRemotePackables()
+      let local = this.storeSelector.originalPackables.filter(p => this.selectedIds.includes(p.id))
+      let remote = this.bulkActions.addMissingPackableIdsFromRemote(this.selectedIds)
+      let all = [...local,...remote]
+      let CPs:{pId: string,cId: string}[] = []
       if(this.selectedProfiles.length>0){
-        let CPs = this.selectedProfiles.map(pId => {
-          return { pId: pId, cId: this.collection.id }
+        this.selectedProfiles.forEach(pId => {
+          CPs.push({ pId: pId, cId: this.collection.id }) 
         })
-        this.bulkActions.pushOriginalPackablesByCP(this.selectedOriginalPackables, CPs)
       }
        if(!this.context.profileId){
-        let privatePackables = this.selectedOriginalPackables.map(p => this.pacFac.makePrivate(p)) 
-        console.log('IMPORT PACKABLES -> COMFIRM PROFILES -> new private packables')
-        let collection = this.storeSelector.getCollectionById(this.collection.id)
-        collection = this.colFac.addEditPackables(collection,privatePackables)
-        collection.dateModified = timeStamp()
-        this.store.dispatch(new collectionActions.updateOriginalCollections([collection]))
+        CPs.push({ pId: null, cId: this.collection.id }) 
       }
-      let completePackables = this.pacFac.makeCompleteFromArray(this.selectedOriginalPackables)
-      this.onClose({ packables: completePackables, selectedProfiles: this.selectedProfiles })
+      this.bulkActions.pushOriginalPackablesByCP(all, CPs)
+      this.onClose({ packables: this.selectedIds, selectedProfiles: this.selectedProfiles })
     }
   }
 
-  storeRemotePackables() {
-    this.selectedRemotePackables.forEach(p => {
-      p.dateModified = timeStamp()
-    })
-    this.store.dispatch(new packableActions.updateOriginalPackables(this.selectedRemotePackables))
-  }
 
   onClose(result: importPackables_result) {
     this.dialogRef.close(result)

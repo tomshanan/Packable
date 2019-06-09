@@ -1,45 +1,60 @@
-<div class="step-container">
-    <div class="dialog-flex-container">
-        <div class="dialog-row">
-            <app-dialog-header [super]="collectionName ? collectionName : ''" [header]="stepTitle()" (close)="onClose()" [showReturn]="step>1" (return)="returnStep()" ></app-dialog-header>
-          </div>
+<app-dialog-header
+  [super]="collectionName ? collectionName : ''"
+  [header]="stepTitle()"
+  (close)="onClose()"
+  [showReturn]="step>1"
+  (return)="returnStep()">
+</app-dialog-header>
 
-          <div class="dialog-row" *ngIf="step===1" #inputName @transitionTrigger>
-
-              <name-input
-              title="Collection"
-              [value]='collectionName'
-              [usedNames]='usedCollectionNames'
-              (changeEvent)='setName($event)'>
-              </name-input>
-
-              <dialog-confirm-button style="display:contents;">
-                <button mat-fab color="primary" (click)="confirmName()" [disabled]="!collectionNameValid">
-                  Next
-                </button>
-              </dialog-confirm-button>
-            </div>
-
-          <div class="dialog-row nested-flex" *ngIf="step===2" #selectPackables @transitionTrigger>
-              <import-packables-selector 
-              [collection]="collection"
-              (confirm)="confirmPackables($event)">
-            </import-packables-selector>
-          </div>
-            
-          <div class="dialog-row" *ngIf="step===3" @transitionTrigger>
-              <div class="text-center my-2">
-                  <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
-                    [showNames]="true">
-                  </profile-selector>
-
-                </div>
-                <dialog-confirm-button style="display:contents;">
-                    <button mat-fab color="primary" (click)="confirmProfiles()" [disabled]="!collectionNameValid">
-                      <mat-icon>check</mat-icon>
-                    </button>
-                  </dialog-confirm-button>
-          </div>
-
+<mat-dialog-content>
+    <div
+      *ngIf="step===1"
+      #inputName
+      (@transitionTrigger.done)="windowService.updateOpenDialogs()"
+      @transitionTrigger>
+      <name-input
+        title="Collection"
+        [value]='collectionName'
+        [usedNames]='usedCollectionNames'
+        (changeEvent)='setName($event)'>
+      </name-input>
     </div>
-</div>
+
+    <div
+      *ngIf="step===2"
+      #selectPackables
+      (@transitionTrigger.done)="windowService.updateOpenDialogs()"
+      @transitionTrigger>
+      <import-packables-selector
+        [collection]="collection"
+        (updateSelected)="updatePackables($event)">
+      </import-packables-selector>
+    </div>
+
+    <div
+      *ngIf="step===3"
+      (@transitionTrigger.done)="windowService.updateOpenDialogs()"
+      @transitionTrigger>
+      <div class="text-center my-2">
+        <profile-selector
+          iconWidth="50px"
+          [profiles]="profileGroup"
+          [(selected)]="selectedProfiles"
+          [multiselect]="true"
+          [showNames]="true">
+        </profile-selector>
+      </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      activeColor="action"
+      (click)="onConfirm()"
+      [disabled]="!valid()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-actions>

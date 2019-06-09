@@ -1,25 +1,27 @@
 <name-input
-*ngIf="editName"
-title="Packable"
-[value]='packableName'
-[usedNames]='usedPackableNames'
-(changeEvent)='onEditName($event)'>
+  *ngIf="editName"
+  title="Packable"
+  [value]='packableName'
+  [usedNames]='usedPackableNames'
+  (changeEvent)='onEditName($event)'>
 </name-input>
 
 <quantity-rule-list [(rules)]="packable.quantityRules"></quantity-rule-list>
 
-<app-weather-conditions-form [(weather)]="packable.weatherRules"></app-weather-conditions-form>
-<div *ngIf="showProfileSelector" class="text-center">
+<app-weather-conditions-form [(weather)]="packable.weatherRules" (weatherChange)="emitChange()"></app-weather-conditions-form>
+<div
+  *ngIf="showProfileSelector"
+  class="text-center">
   <span class="form-heading">
     {{ isNew ? 'Add to:' : 'Apply changes to Travelers:'}}
   </span>
-  <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
+  <profile-selector
+    iconWidth="50px"
+    [profiles]="profileGroup"
+    [(selected)]="selectedProfiles"
+    (selectedChange)="emitChange()"
+    [multiselect]="true"
     [showNames]="true">
   </profile-selector>
 
 </div>
-<dialog-confirm-button>
-    <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!valid()">
-        <mat-icon>check</mat-icon>
-    </button>
-</dialog-confirm-button>

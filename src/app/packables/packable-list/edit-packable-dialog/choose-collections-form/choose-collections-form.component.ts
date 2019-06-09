@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, AfterViewChecked } from '@angular/core';
 import { CollectionComplete } from '@models/collection.model';
 import { MatCheckboxChange } from '@angular/material';
 import { Profile, Avatar } from '@app/shared/models/profile.model';
@@ -8,6 +8,7 @@ import { StoreSelectorService } from '@shared/services/store-selector.service';
 import { CollectionFactory } from '@shared/factories/collection.factory';
 import { dropInTrigger, expandAndFadeTrigger, quickTransitionTrigger } from '@shared/animations';
 import { isDefined } from '../../../../shared/global-functions';
+import { WindowService } from '../../../../shared/services/window.service';
 
 export interface CollectionProfile {
   pId: string,
@@ -18,21 +19,17 @@ interface CollectionBranch {
   id: string
   profiles: Profile[],
   selected: string[],
-  branchOpen:boolean
+  branchOpen: boolean
 }
-export interface CollectionSelectorConfirmEvent {
-  selectedIds: CollectionProfile[],
-  action: 'add' | 'update'
 
-}
 
 @Component({
-  selector: 'app-choose-collections-dialog',
-  templateUrl: './choose-collections-dialog.component.html',
-  styleUrls: ['../../../../shared/css/mat-card-list.css', './choose-collections-dialog.component.css'],
+  selector: 'app-choose-collections-form',
+  templateUrl: './choose-collections-form.component.html',
+  styleUrls: ['../../../../shared/css/mat-card-list.css', './choose-collections-form.component.css'],
   animations: [expandAndFadeTrigger, quickTransitionTrigger]
 })
-export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
+export class ChooseCollectionsFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedIds']) {
@@ -48,7 +45,6 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
   @Input() limitCollections: string[] = [];
 
   @Output() selectedIdsChange = new EventEmitter<CollectionProfile[]>();
-  @Output() confirm = new EventEmitter<CollectionSelectorConfirmEvent>();
 
   collectionsOpen: string[] = []
 
@@ -56,15 +52,13 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
   ColProTree: CollectionBranch[];
 
   constructor(
-    private pFac: ProfileFactory,
-    private cFac: CollectionFactory,
-    private storeSelector: StoreSelectorService
+    private storeSelector: StoreSelectorService,
   ) {
   }
 
   ngOnInit() {
     let profilesWithPackableId = this.PackableId != null ? this.storeSelector.getProfilesWithPackableId(this.PackableId) : [];
-    console.log('CHOOSE COLLECTION DIALOG: filteredProfileGroup',profilesWithPackableId)
+    console.log('CHOOSE COLLECTION DIALOG: filteredProfileGroup', profilesWithPackableId)
 
     if (profilesWithPackableId.length > 0) {
       this.CollectionProfileGroup = this.createCollectionProfileGroupByPackable(profilesWithPackableId, this.PackableId)
@@ -74,18 +68,18 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
       this.action = 'add'
     }
     this.ColProTree = this.buildTree();
-    if(isDefined(this.limitCollections) &&isDefined(this.limitProfiles)){
+    if (isDefined(this.limitCollections) && isDefined(this.limitProfiles)) {
       this.addAll()
     }
   }
 
   createCollectionProfileGroupByPackable(profiles: Profile[], packableId: string = null): CollectionProfile[] {
     let collectionProfileGroup: CollectionProfile[] = []
-    console.log('CHOOSE COLLECTION DIALOG: createCollectionProfileGroupByPackable received Profiles:',profiles)
+    console.log('CHOOSE COLLECTION DIALOG: createCollectionProfileGroupByPackable received Profiles:', profiles)
     profiles.forEach(p => {
-      if(!isDefined(this.limitProfiles) || this.limitProfiles.includes(p.id)){
-          p.collections.forEach(c => {
-          if(!isDefined(this.limitCollections) || this.limitCollections.includes(c.id)){
+      if (!isDefined(this.limitProfiles) || this.limitProfiles.includes(p.id)) {
+        p.collections.forEach(c => {
+          if (!isDefined(this.limitCollections) || this.limitCollections.includes(c.id)) {
             if (packableId == null || c.packables.some(Packable => Packable.id == packableId)) {
               collectionProfileGroup.push({ cId: c.id, pId: p.id })
             }
@@ -98,7 +92,7 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
 
   buildTree(): CollectionBranch[] {
     let tree: CollectionBranch[] = [];
-    console.log('CHOOSE COLLECTION DIALOG: Building tree from CollectionProfileGroup',this.CollectionProfileGroup)
+    console.log('CHOOSE COLLECTION DIALOG: Building tree from CollectionProfileGroup', this.CollectionProfileGroup)
     this.CollectionProfileGroup.forEach(colPro => {
       let profile = this.storeSelector.getProfileById(colPro.pId)
       let indexOfCollection = tree.findIndex(colBranch => colBranch.id == colPro.cId)
@@ -131,22 +125,22 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
   isCollectionIntermediate(collection: CollectionBranch) {
     return collection.selected.length > 0 && collection.selected.length < collection.profiles.length
   }
-  toggleBranch(colIndex, state?:boolean){
+  toggleBranch(colIndex, state?: boolean) {
     let col = this.ColProTree[colIndex]
-    if(!this.isCollectionChecked(col) || state!=null){
+    if (!this.isCollectionChecked(col) || state != null) {
       col.branchOpen = state || !col.branchOpen;
     }
-    
+
   }
-  toggleCollection(colIndex: number, state: boolean = null) {   
+  toggleCollection(colIndex: number, state: boolean = null) {
     let col = this.ColProTree[colIndex]
     if (state !== false && !col.branchOpen) {
-      this.toggleBranch(colIndex,true)
+      this.toggleBranch(colIndex, true)
       col.selected = col.profiles.slice().map(p => p.id)
-      
-    } else if(state !== true && col.branchOpen){
-      this.toggleBranch(colIndex,false)
-      if(state === false){
+
+    } else if (state !== true && col.branchOpen) {
+      this.toggleBranch(colIndex, false)
+      if (state === false) {
         col.selected = []
       }
     }
@@ -199,12 +193,4 @@ export class ChooseCollectionsDialogComponent implements OnInit, OnChanges {
     this.selectedIds = selectedColPros;
     this.selectedIdsChange.emit(this.selectedIds)
   }
-
-  onConfirm() {
-    this.emitSelection();
-    this.confirm.emit({ 'selectedIds': this.selectedIds, 'action': this.action })
-  }
-
-
-  
 }

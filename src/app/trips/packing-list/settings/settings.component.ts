@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material';
 import { tripWeatherDialog_data, WeatherSettingsDialogComponent } from '../weather-settings-dialog/weather-settings-dialog.component';
 import { take } from 'rxjs/operators';
 import { TripWeatherData } from '../../../shared/services/weather.service';
+import { Trip } from '../../../shared/models/trip.model';
 
 @Component({
   selector: 'packinglist-settings',
@@ -19,7 +20,7 @@ import { TripWeatherData } from '../../../shared/services/weather.service';
 export class SettingsComponent implements OnInit, OnDestroy {
   settings: PackingListSettings = new PackingListSettings()
   packinglist_sub: Subscription;
-
+  trip:Trip;
   constructor(
     private packingListService: PackingListService,
     private store: Store<appState>,
@@ -32,6 +33,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       console.log('PackingListSettings received:', settings)
       this.settings = settings;
     })
+    this.trip = this.packingListService.trip;
   }
   ngOnDestroy() {
     this.packinglist_sub && this.packinglist_sub.unsubscribe()
@@ -46,7 +48,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   editWeather() {
     let data: tripWeatherDialog_data = {
       destinationName: 'whatever',
-      weatherData: this.packingListService.tripWeather
+      weatherData: this.packingListService.tripWeather,
+      packingListService: this.packingListService,
     }
     let editWeatherDialog = this.dialog.open(WeatherSettingsDialogComponent, {
       width: '500px',
@@ -57,11 +60,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     })
     editWeatherDialog.afterClosed().pipe(take(1)).subscribe((weatherData: TripWeatherData) => {
       if (weatherData !== null) {
-        if (weatherData.dataInput === 'auto') {
-          this.packingListService.updateUsingWeatherAPI({ save: true })
-        } else {
-          this.packingListService.updateUsingCustomWeather({ weatherData: weatherData, save: true })
-        }
+        this.packingListService.updatePackingListBySetting(weatherData.dataInput,{ weatherData: weatherData, save: true })
       }
     })
   }

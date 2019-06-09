@@ -1,7 +1,7 @@
 <div class="pofileSelectorContainer"
   #container>
   <div class="selectedProfile d-flex flex-row align-items-center"  [class.hide]="selectorOpen" *ngIf="selected">
-    <button mat-icon-button appColor="action" (click)="toggleProfileSelector()" *ngIf="!selectorOpen" @horizontalShringAndFade>
+    <button mat-icon-button activeColor="action" (click)="toggleProfileSelector()" *ngIf="!selectorOpen" @horizontalShringAndFade>
       <mat-icon>arrow_back_ios</mat-icon>
     </button>
     <div class="selectorTrigger">
@@ -20,7 +20,7 @@
           {{getSelectedProfileName()}}
         </p>
         <div #settingsButton *ngIf="!selectorOpen" @showTrigger>
-          <button mat-icon-button [matMenuTriggerFor]="profileMenu" appColor="action">
+          <button mat-icon-button [matMenuTriggerFor]="profileMenu" activeColor="action">
               <mat-icon>settings</mat-icon>
             </button>
             <mat-menu #profileMenu="matMenu">

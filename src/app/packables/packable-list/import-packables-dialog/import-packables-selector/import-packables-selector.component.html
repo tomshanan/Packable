@@ -1,14 +1,19 @@
-<app-item-selector 
-  *ngIf="loaded && completeList; else loading"
-  [completeList]="completeList" 
-  [usedList]="usedList" 
-  (onSelect)="updateSelected($event)"
-  (confirm)="onConfirm()">
-</app-item-selector>
-<ng-template #loading>
+<div
+  *ngIf="!loaded"
+  @transitionTrigger
+  (@transitionTrigger.start)="windowService.unsetOpenDialogs()"
+  (@transitionTrigger.done)="windowService.updateOpenDialogs()">
   <p class="text-muted text-center small pt-2">
-      Loading Packable Library
-      <br>
-      <mat-spinner diameter="20"></mat-spinner>
+    <a class="inline-link" (click)="initList()" *ngIf="finishedLoading">Load</a>{{!finishedLoading ? 'Loading' : ''}} Packable Library
+    <br>
+    <mat-spinner diameter="30" style="display: inline-block"></mat-spinner>
   </p>
-</ng-template>
+</div>
+<app-item-selector
+  *ngIf="loaded && completeList"
+  [completeList]="completeList"
+  [usedList]="usedList"
+  (onSelect)="updateSelected($event)"
+  @transitionTrigger>
+</app-item-selector>
+

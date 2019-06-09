@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, AfterViewChecked } from '@angular/core';
 import { CollectionComplete } from '../../../../shared/models/collection.model';
 import { Profile } from '../../../../shared/models/profile.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
@@ -52,18 +52,11 @@ export class ChooseProfileDialogComponent implements OnInit, OnDestroy {
   }
   
   ngOnInit() {
-    this.updateWindowWidth()
-    this.sub = this.windowService.change.subscribe(width => {
-      this.updateWindowWidth()
-    })
-  }
-  ngOnDestroy(){
-    this.sub.unsubscribe()
-  }
-  updateWindowWidth() {
-    this.dialogRef.updateSize(this.windowService.max('xs') ? '99vw' : '500px')
+
   }
 
+  ngOnDestroy(){
+  }
 
   onClose(ids:string[] = []){
     this.dialogRef.close(ids)

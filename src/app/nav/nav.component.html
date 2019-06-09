@@ -6,7 +6,7 @@
       class="ff-header-action"
       (click)="toggleNav()"
       mat-icon-button
-      appColor="action">
+      activeColor="action">
       <mat-icon>menu</mat-icon>
     </button>
     <div class="ff-header-title h5 m-0">{{header}}</div>
@@ -59,7 +59,7 @@
       type="button"
       (click)="onRight()"
       mat-icon-button
-      [appColor]="rightDisabled ? 'muted' : 'action'">
+      [activeColor]="rightDisabled ? 'muted' : 'action'">
       <ng-container *ngIf="rightIcon.icon !== null; else justText">
         <mat-icon
           *ngIf="rightIcon.icon.type === 'mat'"

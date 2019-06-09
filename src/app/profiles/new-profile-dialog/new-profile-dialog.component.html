@@ -20,15 +20,12 @@
             Templates come with pre-selected collections.
           </p>
         </card-button>
-        <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('copy')">
-          Copy Existing Traveler
-          <p class="small text-muted">
-            Use all the collections and settings of another Traverler you have already created.
-          </p>
-        </card-button>
+        
       </div>
     </div>
   </div>
+
+
 
 
 </div>
@@ -138,3 +135,12 @@
       </div>
   
 </div> 
+
+<mat-dialog-actions>
+    <card-button [disabled]="!profileFormValid" (click)="profileFormValid && onChooseMethod('copy')">
+        Copy Existing Traveler
+        <p class="small text-muted">
+          Use all the collections and settings of another Traverler you have already created.
+        </p>
+      </card-button>
+</mat-dialog-actions>

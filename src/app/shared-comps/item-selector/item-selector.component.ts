@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, Type, TemplateRef, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Type, TemplateRef, Renderer2, ElementRef, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { FilteredArray } from '../../shared/global-functions';
 import { listItemTrigger, quickTransitionTrigger, animateSize } from '../../shared/animations';
 import { AnimationEvent } from '@angular/animations';
@@ -8,8 +8,6 @@ export type filterItemLocality = 'user'|'local'|'remote';
 export interface filterItem{
   id: string,
   name: string,
-  type: filterItemLocality,
-  sortPosition: number
 }
 
 
@@ -19,12 +17,11 @@ export interface filterItem{
   styleUrls: ['../../shared/css/full-flex.css', './item-selector.component.css'],
   animations: [quickTransitionTrigger, listItemTrigger, animateSize]
 })
-export class ItemSelectorComponent implements OnInit {
+export class ItemSelectorComponent implements OnInit,AfterViewChecked {
 
   @Input('completeList') listOriginal: filterItem[];
   @Input('usedList') listUsed: filterItem[] = [];
   @Output('onSelect') selectedEvent = new EventEmitter<filterItem[]>();
-  @Output() confirm = new EventEmitter<void>()
   @ViewChild('basket') basket: ElementRef;
 
   selected: filterItem[] = []
@@ -45,7 +42,11 @@ export class ItemSelectorComponent implements OnInit {
     this.listFiltered.original = this.listOriginal
     this.resetFilters()
   }
-  
+  ngAfterViewChecked(){
+    setTimeout(() => {
+      this.setStartHeight()
+    }, 0);
+  }
   resetSearch(){
     this.searchFilterInput ='';
     this.resetFilters();
@@ -81,7 +82,9 @@ export class ItemSelectorComponent implements OnInit {
   objectUsed(item: filterItem):boolean {
     return this.listUsed.idIndex(item.id) > -1
   }
-
+  unusedItems():number{
+    return this.listOriginal.length - this.listUsed.length
+  }
   availableItems():number{
     return this.listFiltered.filtered.filter(item=>!this.objectSelected(item)).length
   }
@@ -129,13 +132,5 @@ export class ItemSelectorComponent implements OnInit {
   animateItemEnd(e:AnimationEvent){
     this.animateItemsState = this.getEndHeight()
     //his.setStartHight();
-  }
-  onConfirm(){
-    if(this.valid()){
-      this.confirm.emit()
-    }
-  }
-  valid():boolean{
-    return this.selected.length>0
   }
 }

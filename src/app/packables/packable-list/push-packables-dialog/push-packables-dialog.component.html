@@ -1,10 +1,21 @@
-<app-dialog-header [super]="collectionName" header="Push Packables" (close)="onClose()"></app-dialog-header>
-
-
-<mat-dialog-content style="margin-bottom:-24px;">
-        <p class="text-center" [innerHtml]="content"></p>
-        <app-choose-collections-dialog 
-            [(selectedIds)]="selectedCollections"
-            (confirm)="onConfirmCollections($event)">
-        </app-choose-collections-dialog>
+<app-dialog-header
+  [super]="collectionName"
+  header="Push Packables"
+  (close)="onClose()"></app-dialog-header>
+<mat-dialog-content>
+  <p
+    class="text-center"
+    [innerHtml]="content"></p>
+  <app-choose-collections-form [(selectedIds)]="selectedCollections"></app-choose-collections-form>
 </mat-dialog-content>
+<mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      activeColor="action"
+      (click)="onConfirmCollections()"
+      [disabled]="selectedCollections.length===0">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-actions>

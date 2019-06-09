@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { CollectionProfile, CollectionSelectorConfirmEvent } from '../edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { CollectionProfile } from '../edit-packable-dialog/choose-collections-form/choose-collections-form.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
 
@@ -39,8 +39,8 @@ export class PushPackablesDialogComponent implements OnInit {
   onClose(){
     this.dialogRef.close()
   }
-  onConfirmCollections(e:CollectionSelectorConfirmEvent){
-    this.bulkAction.pushPackablesByCP(this.ids, e.selectedIds)
+  onConfirmCollections(){
+    this.bulkAction.pushPackablesByCP(this.ids, this.selectedCollections)
     this.onClose()
   }
 

@@ -9,6 +9,7 @@ import { CollectionComplete } from '../shared/models/collection.model';
 import { CollectionFactory } from '../shared/factories/collection.factory';
 import { randomBetween } from '@app/shared/global-functions';
 import { ProfileFactory } from '../shared/factories/profile.factory';
+import { TripWeatherData } from '../shared/services/weather.service';
 
 @Component({
   selector: 'app-home',
@@ -17,13 +18,8 @@ import { ProfileFactory } from '../shared/factories/profile.factory';
   animations: [quickTransitionTrigger]
 })
 export class HomeComponent implements OnInit {
-  collections: CollectionComplete[];
-
-  selected: string[] = [];
-  profiles: Profile[] = []
-
-  testSelected = true;
-  number = 20;
+  loadingWeather:boolean = false;
+  weatherData = new TripWeatherData()
 
   constructor(
     private store:StoreSelectorService,
@@ -40,9 +36,7 @@ export class HomeComponent implements OnInit {
     console.log(e);
   }
   ngOnInit() {
-    this.store.store_obs.subscribe(()=>{
-      this.profiles = this.store.profiles.splice(0,2)
-    })
+   
   }
 
   

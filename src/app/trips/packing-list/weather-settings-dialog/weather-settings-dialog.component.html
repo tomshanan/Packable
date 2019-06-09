@@ -1,26 +1,76 @@
+<app-dialog-header
+  [super]="destinationName"
+  header="Weather Settings"
+  (close)="onClose()"></app-dialog-header>
+<mat-dialog-content>
+  <div class="text-center">
 
+    <p
+      class="temp"
+      [innerHtml]="weatherData.tempToHtmlString()"></p>
+    <p
+      class="types"
+      [innerHtml]="weatherData.typesToString()"></p>
+    <div class="my-3">
+      <p
+        class="my-2 small"
+        appColor="muted"
+        *ngIf="dataInput === 'auto'">
+        The weather settings have been automatically set based on the forecast for your planned dates and destination.
+      </p>
+      <p
+        class="my-2 small"
+        appColor="muted"
+        *ngIf="dataInput === 'manual'">
+        The weather settings have been set manually.
+      </p>
+      <ng-container *ngIf="errors.length>0">
+        <p
+          class="small"
+          appColor="danger"
+          *ngFor="let error of errors"
+          [innerHtml]="error">
+        </p>
+      </ng-container>
+    </div>
 
-<app-dialog-header [super]="destinationName" header="Weather Settings" (close)="onClose()"></app-dialog-header>
-<mat-dialog-content style="margin-bottom:-24px;">
-    <div class="text-center">
-      <p class="temp" [innerHtml]="weatherData.tempToHtmlString()"></p>
-      <p class="types" [innerHtml]="weatherData.typesToString()"></p>
-      <p class="my-2" *ngIf="weatherData.dataInput === 'auto'">
-          The weather settings have been automatically set based on the forecast for your planned dates and destination.
-      </p>
-      <p class="my-2" *ngIf="weatherData.dataInput === 'manual'">
-          The weather settings have been set manually.
-      </p>
-    </div>
-    <div>
-      <trip-weather-settings-form [(weather)]="weatherData"></trip-weather-settings-form>
-    </div>
-    <dialog-confirm-button>
-        <button mat-raised-button (click)="onSetManual()" class="mx-1">
-            Set Manually
+  </div>
+  <div class="mt-3">
+    <loading-wrapper [loading]="loadingWeather">
+      <trip-weather-settings-form
+        [weather]="weatherData"
+        (weatherChange)="onSetManual($event)"></trip-weather-settings-form>
+    </loading-wrapper>
+  </div>
+  <div class="text-center">
+    <button
+          *ngIf="dataInput === 'manual'"
+          [disabled]="loadingWeather"
+          mat-raised-button
+          (click)="onReloadForecast()"
+          @addRemoveElementTrigger
+          class="mx-1">
+          Reload Forecast
         </button>
-        <button mat-raised-button (click)="onReloadForecast()"  class="mx-1">
-           Reload Forecast
-        </button>
-    </dialog-confirm-button>
+  </div>
 </mat-dialog-content>
+<mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      activeColor="muted"
+      (click)="onClose()"
+      class="mx-1">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button
+      [disabled]="loadingWeather"
+      mat-fab
+      activeColor="action"
+      (click)="onConfirm()"
+      class="mx-1">
+      <mat-icon svgIcon="weather-edit" *ngIf="dataInput === 'manual'"></mat-icon>
+      <mat-icon *ngIf="dataInput === 'auto'">check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-actions>

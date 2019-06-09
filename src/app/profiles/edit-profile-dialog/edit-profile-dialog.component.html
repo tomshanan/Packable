@@ -3,9 +3,12 @@
 <mat-dialog-content>
   <profile-edit-form [(profile)]="profile" #profileForm>
   </profile-edit-form>
-  <dialog-confirm-button>
-      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
-        <mat-icon>check</mat-icon>
-      </button>
-    </dialog-confirm-button>
 </mat-dialog-content>
+
+<mat-dialog-actions>
+    <dialog-confirm-button>
+        <button mat-fab activeColor="action" (click)="onConfirm()" [disabled]="!valid()">
+          <mat-icon>check</mat-icon>
+        </button>
+      </dialog-confirm-button>
+</mat-dialog-actions>

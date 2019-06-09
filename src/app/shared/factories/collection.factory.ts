@@ -5,7 +5,7 @@ import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplet
 import { PackableComplete, PackablePrivate } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
 import { indexOfId, isDefined } from '../global-functions';
-import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-form/choose-collections-form.component';
 import { remoteCollection } from '@shared/library/library.model';
 
 type T = { packables: PackablePrivate[] }

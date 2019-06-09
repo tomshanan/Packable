@@ -14,6 +14,13 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { ContextService } from '@app/shared/services/context.service';
 import { NameInputChangeEvent } from '@app/shared-comps/name-input/name-input.component';
 
+
+export interface editPackableForm_update{
+  packable: PackableComplete,
+  valid: boolean,
+  selectedProfiles: string[],
+}
+
 @Component({
   selector: 'app-packable-edit-form',
   templateUrl: './packable-edit-form.component.html',
@@ -35,11 +42,7 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
   @Input() isNew: boolean = false;
   @Input() editName: boolean = false;
 
-  @Output() close = new EventEmitter<void>();
-  @Output() confirm = new EventEmitter<{
-    packable: PackableComplete,
-    selectedProfiles: string[]
-  }>()
+  @Output() update = new EventEmitter<editPackableForm_update>()
 
   @ViewChild('editNameInput') editNameInput:ElementRef;
   @ViewChild(QuantityRuleListComponent) QuantityRuleList:QuantityRuleListComponent;
@@ -88,19 +91,15 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
     }
   }
 
-  onClose() {
-    this.close.emit();
-  }
-  onConfirm() {
+  emitChange() {
     if (this.editName) {
       this.packable.name = this.packableName
     }
-    if(this.valid()){
-      this.confirm.emit({
-        packable: this.packable,
-        selectedProfiles: this.selectedProfiles
-      })
-    }
+    this.update.emit({
+      packable: this.packable,
+      valid:this.valid(),
+      selectedProfiles: this.selectedProfiles
+    })
   }
 
   onEditName(e:NameInputChangeEvent) {
@@ -108,6 +107,7 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
     if(e.valid){
       this.packableName = titleCase(e.value.trim())
     }
+    this.emitChange()
   }
 
   log(e) {

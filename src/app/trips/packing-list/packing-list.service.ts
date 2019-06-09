@@ -139,29 +139,32 @@ export class PackingListService {
   }
   updateUsingWeatherAPI({weatherData,save}:updateOptions = {save:true}) {
     log(`fetching trip weather data`);
-    this.weatherService.createWeatherData(this.trip).then(tripWeather => {
-      this.setTripWeather(tripWeather)
-      if(save){
-        this.generateAndStorePackingList()
-      } else{
-        this.generateAndSetPackingList()
-      }
-    }).catch(e => {
-      log('could not get new weather data', e)
-    })
+    if(weatherData && weatherData.isValid){
+      this.setTripWeather(weatherData)
+      this.updateWeather(save)
+    } else {
+      this.weatherService.createWeatherData(this.trip).then(tripWeather => {
+        this.setTripWeather(tripWeather)
+        this.updateWeather(save)
+      }).catch(e => {
+        log('could not get new weather data', e)
+      })
+    }
   }
   updateUsingCustomWeather({weatherData,save}:updateOptions = {save:true}) {
     this.packingListEmitter.next(null)
     this.tripWeather =  weatherData || (this.packingList ? this.packingList.data.weatherData : new TripWeatherData({ dataInput: 'manual' }));
     setTimeout(() => {
-      if(save){
-        this.generateAndStorePackingList()
-      } else{
-        this.generateAndSetPackingList()
-      }
+      this.updateWeather(save)
     }, 0);
   }
-
+  updateWeather(save:boolean){
+    if(save){
+      this.generateAndStorePackingList()
+    } else{
+      this.generateAndSetPackingList()
+    }
+  }
   generateAndStorePackingList() {
     this.storePackingList(this.generateAndSetPackingList())
   }

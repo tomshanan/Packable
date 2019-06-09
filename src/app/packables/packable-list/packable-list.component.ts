@@ -54,9 +54,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   subscription: Subscription;
   packableList: PackableComplete[] = [];
   dialogSettings = {
-    width:'500px',
-    maxWidth: "99vw",
-    maxHeight: "99vh",
     disableClose: true,
     autoFocus: false
   }
@@ -255,7 +252,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     }
     let pushPackablesDialod = this.dialog.open(PushPackablesDialogComponent, {
       ...this.dialogSettings,
-      disableClose: false,
       data: data
     });
     pushPackablesDialod.afterClosed().pipe(take(1)).subscribe(()=>{
@@ -340,10 +336,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     }
     let importPackablesDialog = this.dialog.open(ImportPackablesDialogComponent, {
       ...this.dialogSettings,
-      minWidth: "300px",
-      maxWidth: "99vw",
-      minHeight: "none",
-      maxHeight: "99vh",
       disableClose: false,
       data: data
     });

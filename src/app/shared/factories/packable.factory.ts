@@ -66,7 +66,7 @@ export class PackableFactory {
         return this.newPrivatePackable(original);
     }
     public makeComplete = (p: PackableAny): PackableComplete => {
-        if (isPackableOriginal(p)) {
+        if (isPackableOriginal(p) || isPackableRemote(p)) {
             return new PackableComplete(
                 p.id,
                 p.name,

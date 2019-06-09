@@ -1,35 +1,32 @@
 #container {
-    width:500px;
-    max-width: 99vw;
+    width:calc(100% + 48px);
     height: 100%;
     display: flex;
     flex-direction: column;
     margin-left: -24px;
     margin-right: -24px;
 }
-.static-row{
+.sticky-row{
     padding: 5px 24px;
-    flex-shrink: 0;
-    flex-grow: 0;
+    background: rgba(255, 255, 255, 0.90);
+    position: sticky;
+    top:0;
+    z-index: 1;
 }
 #basket{
     position: relative;
-    padding: 5px 24px;
-    flex-grow: 0;
+    padding: 5px;
     min-height: 35px;
     max-height: 30vh;
     overflow-y: auto;
-    flex-shrink: 0;
 }
 #basket-text{
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: block;
     width: 100%;
+    font-size: .8em;
 }
 #list-container{
     padding: 0px 24px;
-    flex-grow: 1;
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
@@ -84,4 +81,27 @@ a.list-item{
 .list-item > i{
     width: 24px;
     text-align: center;
+}
+
+.tag {
+    display: inline-block;
+    text-align: center;
+    vertical-align: center;
+    white-space: nowrap;
+    color: #343a40;
+    background-color: white;
+    font-weight: 400;
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    user-select: none;
+    margin-bottom:2px;
+    box-shadow: 1px 1px 4px -2px black;
+}
+.tag > * {
+    vertical-align: middle;
+}
+.tag:not(:last-of-type){
+    margin-right:2px;
 }

@@ -1,57 +1,79 @@
 <div id="container">
-  <div class="static-row">
-      <search-field
+  <div class="sticky-row">
+    <search-field
       [(value)]="searchFilterInput"
       (valueChange)="typeSearch()"
       (keyEnter)="addItemFromSearch(listFiltered.filtered[0])"
       placeholder="Search Packables">
-      </search-field> 
-
-  </div>
-  <div id="basket" 
-  [animateSize]="animateItemsState" 
-  [startHeight]="startHeight" 
-  #basket>
-    <div class="ps-selected-container" *ngIf="selected.length > 0" @quickTransitionTrigger>
-      <span 
-      *ngFor="let item of selected; let i = index" 
-      class="tag" 
-      [@listItemTrigger]
-      (@listItemTrigger.start)="animateItemStart($event)"
-      (@listItemTrigger.done)="animateItemEnd($event)">
-        {{item.name}}
-        <i class="fa fa-times pointer" (click)="removeItemFromSelection(item.id)"></i>
-      </span>
-    </div>
-      <div id="basket-text" class="text-center small text-muted" 
-        *ngIf="selected.length === 0 && availableItems()>0" 
+    </search-field>
+    <div
+      id="basket"
+      [animateSize]="animateItemsState"
+      [startHeight]="startHeight"
+      #basket>
+      <div
+        class="ps-selected-container"
+        *ngIf="selected.length > 0"
         @quickTransitionTrigger>
-        Select items to add
+        <span
+          *ngFor="let item of selected; let i = index"
+          class="tag"
+          [@listItemTrigger]
+          (@listItemTrigger.start)="animateItemStart($event)"
+          (@listItemTrigger.done)="animateItemEnd($event)">
+          <span class="tag-text">{{item.name}}</span>
+          <i class="material-icons pointer ml-1"
+            (click)="removeItemFromSelection(item.id)">close</i>
+        </span>
       </div>
+      <div
+        id="basket-text"
+        class="text-center small text-muted"
+        *ngIf="selected.length === 0 && availableItems()>0"
+        @quickTransitionTrigger>
+        {{unusedItems()>0 ? 'Select items to add' : 'You\'ve used all the items'}}
+      </div>
+    </div>
   </div>
   <div id="list-container">
-    <div class="list" *ngIf="listFiltered && listOriginal">
+    <div
+      class="list"
+      *ngIf="listFiltered && listOriginal">
       <!-- ADD MESSAGES HERE -->
 
-      <a class="list-item d-flex justify-content-start align-items-center" 
-      *ngFor="let item of listFiltered.filtered; let i = index"
-      [ngClass]="{
+      <a
+        class="list-item d-flex justify-content-start align-items-center"
+        *ngFor="let item of listFiltered.filtered; let i = index"
+        [ngClass]="{
         'list-item-used': objectUsed(item), 
         'list-item-selected': objectSelected(item), 
         'border border-primary rounded': searchFilterInput!='' && i==0 && !objectUsed(item)}"
-      (click)="!objectUsed(item) && toggleItemInSelection(item,i)">
+        [activeColor]="objectSelected(item) ? 'accent' : 'muted'"
+        [disabled]="!objectUsed(item)"
+        [colorTarget]="buttons"
+        (click)="!objectUsed(item) && toggleItemInSelection(item,i)">
         <div class="item-name align-self-stretch d-flex flex-column justify-content-center">
           <span>{{item.name}}</span>
         </div>
-        <i class="far fa-circle ml-auto text-secondary list-item-action-icon" *ngIf="!objectSelected(item) && !objectUsed(item)"></i>
-        <i class="far fa-check-circle ml-auto text-primary list-item-action-icon" *ngIf="objectSelected(item)"></i>
-        <i class="fas fa-check ml-auto list-item-action-icon" *ngIf="objectUsed(item)"></i>
+        <div #buttons>
+          <button
+            mat-icon-button
+            *ngIf="!objectSelected(item) && !objectUsed(item)">
+            <mat-icon>radio_button_unchecked</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            *ngIf="objectSelected(item)">
+            <mat-icon outlined>check_circle</mat-icon>
+          </button>
+          <button
+            disabled
+            mat-icon-button
+            *ngIf="objectUsed(item)">
+            <mat-icon outlined>check</mat-icon>
+          </button>
+        </div>
       </a>
     </div>
-    <dialog-confirm-button style="display:contents;">
-        <button mat-fab color="primary" (click)="onConfirm()" [disabled]="!valid()">
-            <mat-icon>check</mat-icon>
-        </button>
-    </dialog-confirm-button>
   </div>
-</div> 
+</div>

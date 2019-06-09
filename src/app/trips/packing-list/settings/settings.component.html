@@ -10,7 +10,7 @@
     InnerLink>
     <mat-icon
       svgIcon="weather_error"
-      [appColor]="settings.showWarnings ? 'accent' : 'muted'"></mat-icon>
+      [activeColor]="settings.showWarnings ? 'accent' : 'muted'"></mat-icon>
     <span>Warnings</span>
   </button>
   <button
@@ -19,7 +19,7 @@
     InnerLink>
     <mat-icon
       outlined
-      [appColor]="settings.showCalculations ? 'accent' : 'muted'">
+      [activeColor]="settings.showCalculations ? 'accent' : 'muted'">
       live_help
     </mat-icon>
     <span>Calculations</span>
@@ -30,7 +30,7 @@
     (click)="toggleSettings('showInvalid')">
     <mat-icon
       svgIcon="t-shirt-remove"
-      [appColor]="settings.showInvalid ? 'accent' : 'muted'"></mat-icon>
+      [activeColor]="settings.showInvalid ? 'accent' : 'muted'"></mat-icon>
     <span>Removed Packables</span>
   </button>
 </mat-menu>

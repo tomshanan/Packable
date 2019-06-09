@@ -1,50 +1,94 @@
-<app-dialog-header [super]="collection.name" header="Settings" (close)="onClose(null)"></app-dialog-header>
+<app-dialog-header
+  [super]="collection.name"
+  header="Settings"
+  (close)="onClose(null)"></app-dialog-header>
 
-<mat-dialog-content style="margin-bottom:-24px;">
-    <ng-container *ngIf="!profileId && collection.userCreated">
-        <name-input title="Collection" [value]='collection.name' [usedNames]='usedNames' (changeEvent)='changeNameEvent($event)'>
-        </name-input>
-        <p class="small text-muted" *ngIf="collection.essential">This will change the name of the collection for all
-          Travelers.</p>
-      </ng-container>
-      
-      <ng-container *ngIf="profileId">
-        <slide-toggle-with-text [checked]="collection.essential" (change)="toggleEssential($event)"
-          text="Essential Collection" (textClick)="nameToggle.toggle()" #nameToggle>
-        </slide-toggle-with-text>
-        <p class="small text-muted" *ngIf="collection.essential">This Collection will be automatically added to every trip for this Traveler 
-          (This does not override Collection and Packable Weather settings)</p>
-      </ng-container>
-      
-      <app-weather-conditions-form [(weather)]="collection.weatherRules" #weatherForm></app-weather-conditions-form>
-      
-      
-        <slide-toggle-with-text [checked]="collection.weatherOverride" (change)="toggleweatherOverride($event)"
-          text="Override Packable Weather Rules" (textClick)="weatherOverride.toggle()" #weatherOverride>
-        </slide-toggle-with-text>
-        <div *ngIf="weatherForm.limitTemp || weatherForm.limitWeather; else noRules" @expandAndFadeTrigger>
-          <p class="small text-muted" *ngIf="collection.weatherOverride; else notOverride">The weather rules set here will override all weather rules set for the contained Packables.</p>
-          <ng-template #notOverride>
-            <p class="small text-muted">While switched off, both the Collection's and the Packable's weather rules will be checked.</p>
-          </ng-template> 
-        </div>
-        <ng-template #noRules>
-            <p class="small text-muted">Currently no rules are set on this collection.</p>
-        </ng-template>
-     
-      
-      <div *ngIf="showProfileSelector" class="text-center">
-        <span class="form-heading">
-         Apply changes to:
-        </span>
-        <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
-          [showNames]="true">
-        </profile-selector>
-      </div>
-      
-      <dialog-confirm-button>
-        <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!formValid()">
-          <mat-icon>check</mat-icon>
-        </button>
-      </dialog-confirm-button>
+<mat-dialog-content>
+  <ng-container *ngIf="!profileId && collection.userCreated">
+    <name-input
+      title="Collection"
+      [value]='collection.name'
+      [usedNames]='usedNames'
+      (changeEvent)='changeNameEvent($event)'>
+    </name-input>
+    <p
+      class="small text-muted"
+      *ngIf="collection.essential">
+      This will change the name of this Collection for all
+          Travelers.
+    </p>
+  </ng-container>
+
+  <ng-container *ngIf="profileId">
+    <slide-toggle-with-text
+      [checked]="collection.essential"
+      (change)="toggleEssential($event)"
+      text="Essential Collection"
+      (textClick)="nameToggle.toggle()"
+      #nameToggle>
+    </slide-toggle-with-text>
+    <p
+      class="small text-muted"
+      *ngIf="collection.essential">
+      This Collection will be automatically selected on every Trip 
+          (This does not override Collection and Packable Weather settings)
+    </p>
+  </ng-container>
+
+  <app-weather-conditions-form
+    [(weather)]="collection.weatherRules"
+    #weatherForm></app-weather-conditions-form>
+
+  <slide-toggle-with-text
+    [checked]="collection.weatherOverride"
+    (change)="toggleweatherOverride($event)"
+    text="Override Packable Weather Rules"
+    (textClick)="weatherOverride.toggle()"
+    #weatherOverride>
+  </slide-toggle-with-text>
+  <div
+    *ngIf="weatherForm.limitTemp || weatherForm.limitWeather; else noRules"
+    @expandAndFadeTrigger>
+    <p
+      class="small text-muted"
+      *ngIf="collection.weatherOverride; else notOverride">
+      The weather rules set here will override all weather rules set for the contained Packables.
+    </p>
+    <ng-template #notOverride>
+      <p class="small text-muted">
+        While switched off, both the Collection's and the Packable's weather rules will be checked.
+      </p>
+    </ng-template>
+  </div>
+  <ng-template #noRules>
+    <p class="small text-muted">
+      Currently no rules are set on this collection.
+    </p>
+  </ng-template>
+
+  <div
+    *ngIf="showProfileSelector"
+    class="text-center">
+    <span class="form-heading">Apply changes to:</span>
+    <profile-selector
+      iconWidth="50px"
+      [profiles]="profileGroup"
+      [(selected)]="selectedProfiles"
+      [multiselect]="true"
+      [showNames]="true">
+    </profile-selector>
+  </div>
+
 </mat-dialog-content>
+<mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      class="mx-1"
+      activeColor="action"
+      (click)="onConfirm()"
+      [disabled]="!formValid()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-actions>

@@ -6,7 +6,7 @@
     type="button"
     (click)="null"
     mat-icon-button
-    appColor="action">
+    activeColor="action">
     <mat-icon outlined>settings</mat-icon>
   </button>
 </app-nav>
@@ -142,8 +142,7 @@
                     [inline]="true"
                     class="completedTick"
                     *ngIf="isProfileChecked(profile)"
-                    appColor="accent"
-                    [appColorResponsive]="false">
+                    appColor="accent">
                     done_outline
                   </mat-icon>
                 </h4>
@@ -159,7 +158,7 @@
                 mat-icon-button
                 [matMenuTriggerFor]="profileDropDown"
                 title="Traveler List Options"
-                appColor="muted">
+                activeColor="muted">
                 <i class="material-icons">more_vert</i>
               </button>
               <mat-menu #profileDropDown="matMenu">

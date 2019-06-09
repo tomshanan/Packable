@@ -1,5 +1,6 @@
 import { filterItem } from '@app/shared-comps/item-selector/item-selector.component';
 import * as moment from 'moment'
+import { ItemMetaData } from './library/library.model';
 
 export type item = {
   id: string
@@ -147,6 +148,10 @@ export function comparableName(str:string){
 type hasDateModified = {dateModified:number}
 export function sortByMostRecent(a:hasDateModified,b:hasDateModified):number{
   return a.dateModified > b.dateModified ? -1 : 1;
+}
+type hasMetaData = {metaData:ItemMetaData}
+export function sortByMetaData(a:hasMetaData,b:hasMetaData):number{
+  return b.metaData.metaScore - a.metaData.metaScore
 }
 export const allowedSpacesRegEx = /[\s\-\_\(\)]+/;
 export const allowedNameRegEx = /^[A-Za-z0-9\s\-\_\(\)\']+$/;

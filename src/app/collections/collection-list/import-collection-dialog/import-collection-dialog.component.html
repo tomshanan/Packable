@@ -1,44 +1,66 @@
-<div class="step-container">
-  <div class="dialog-flex-container">
-      <div class="dialog-row">
-        <app-dialog-header [super]="profileName" header="Import Collections" [showReturn]="step === 2" (return)="back()" (close)="onClose()"></app-dialog-header>
-      </div>
-    <div class="dialog-row"  *ngIf="step === 1" @transitionTrigger>
+<app-dialog-header
+  [super]="profileName"
+  header="Import Collections"
+  [showReturn]="step === 2"
+  (return)="back()"
+  (close)="onClose()"></app-dialog-header>
+
+<mat-dialog-content>
+  <div
+    *ngIf="step === 1"
+    @transitionTrigger
+    (@transitionTrigger.start)="step === 2 && windowService.updateOpenDialogs()">
+    <div id="sticky">
       <p class="form-heading">Import Collections:</p>
-      <search-field [(value)]="searchString" placeholder="Search Collections">
+      <search-field
+        [(value)]="searchString"
+        placeholder="Search Collections">
       </search-field>
     </div>
-    <div class="dialog-row scrollable" *ngIf="step === 1" @transitionTrigger>
-      <collection-selector [used]="usedCollections" [collections]="collections" [(selected)]="selectedCollections" [filterInput]="searchString"
-        *ngIf="!loading && collections; else stillLoading">
-      </collection-selector>
-      <ng-template #stillLoading>
-        <p class="text-center text-muted small">
-          Loading Collections
-          <br>
-          <mat-spinner diameter="20" style="display:inline"></mat-spinner>
-        </p>
-      </ng-template>
-      <dialog-confirm-button>
-        <button mat-fab class="mx-1" color="primary" (click)="onSelectCollections()" [disabled]="selectedCollections.length==0">
-          <mat-icon>check</mat-icon>
-        </button>
-      </dialog-confirm-button>
-    </div>
-    <div class="dialog-row" *ngIf="step === 2" @transitionTrigger>
-        <p class="text-center my-1">
-          Import Collections to Travelers:
-        </p>
-      <div class="text-center my-2">
-        <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
-          [showNames]="true">
-        </profile-selector>
-      </div>
-      <dialog-confirm-button style="display:contents;">
-        <button mat-fab color="primary" (click)="onSelectProfiles()" [disabled]="selectedProfiles.length === 0 && context.profileId">
-          <mat-icon>check</mat-icon>
-        </button>
-      </dialog-confirm-button>
+    <collection-selector
+      [used]="usedCollections"
+      [collections]="collections"
+      [(selected)]="selectedCollections"
+      [filterInput]="searchString"
+      *ngIf="!loading && collections; else stillLoading">
+    </collection-selector>
+    <ng-template #stillLoading>
+      <p class="text-center text-muted small">
+        Loading Collections
+        <br>
+        <mat-spinner
+          diameter="20"
+          style="display:inline"></mat-spinner>
+      </p>
+    </ng-template>
+  </div>
+
+  <div
+    class="dialog-row"
+    *ngIf="step === 2"
+    (@transitionTrigger.start)="step === 1 && windowService.updateOpenDialogs()"
+    @transitionTrigger>
+    <p class="text-center my-1">Import Collections to Travelers:</p>
+    <div class="text-center my-2">
+      <profile-selector
+        iconWidth="50px"
+        [profiles]="profileGroup"
+        [(selected)]="selectedProfiles"
+        [multiselect]="true"
+        [showNames]="true">
+      </profile-selector>
     </div>
   </div>
-</div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      activeColor="action"
+      (click)="onConfirm()"
+      [disabled]="!valid()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-actions>

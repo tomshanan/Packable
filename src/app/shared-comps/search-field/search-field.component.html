@@ -1,7 +1,7 @@
 <mat-form-field floatLabel="never" class="w-100 mini-mat-form-field">
-    <mat-icon matPrefix appColor="muted">search</mat-icon>
+    <mat-icon matPrefix activeColor="muted">search</mat-icon>
   <input type="search" [(ngModel)]="value" (keyup)="inputChange()"  (keyup.enter)="onKeyEnter()" matInput [placeholder]="placeholder" >
-  <button mat-icon-button matSuffix  (click)="clearInput()" class="pointer" *ngIf="value!==''" appColor="muted">
+  <button mat-icon-button matSuffix  (click)="clearInput()" class="pointer" *ngIf="value!==''" activeColor="muted">
       <mat-icon>clear</mat-icon>
   </button>
 </mat-form-field>

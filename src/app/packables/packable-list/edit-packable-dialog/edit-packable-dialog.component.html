@@ -1,20 +1,48 @@
-<app-dialog-header [super]="collectionName" [header]="packable.name || 'New Packable'" (close)="onClose(null)"></app-dialog-header>
-<mat-dialog-content style="margin-bottom:-24px;">
-    <div @transitionTrigger *ngIf="step == 1">
-        <app-packable-edit-form 
-            [packable]="packable" 
-            [profileGroup]="profileGroup"
-            [selectedProfiles]="selectedProfiles" 
-            [isNew]="isNew" 
-            [editName]="editName" 
-            [collection]="collectionId"
-            (confirm)="onConfirmPackable($event)" #packableForm>
-        </app-packable-edit-form>
-    </div>
-    <div  @transitionTrigger *ngIf="step == 2">
-        <p class="text-success text-center small font-weight-bold" *ngIf="msg">{{msg}} </p>
-        <app-choose-collections-dialog [PackableId]="packable.id" [limitProfiles]='data.limitProfileGroup' [limitCollections]="data.limitCollectionGroup"
-            (confirm)="onConfirmCollections($event)">
-        </app-choose-collections-dialog>
-    </div>
+<app-dialog-header
+  [super]="collectionName"
+  [header]="packable.name || 'New Packable'"
+  (close)="onClose(null)"></app-dialog-header>
+<mat-dialog-content>
+  <div
+    @transitionTrigger
+    (@transitionTrigger.done)="windowService.updateOpenDialogs()"
+    *ngIf="step == 1">
+    <app-packable-edit-form
+      [packable]="packable"
+      [profileGroup]="profileGroup"
+      [selectedProfiles]="selectedProfiles"
+      [isNew]="isNew"
+      [editName]="editName"
+      [collection]="collectionId"
+      (update)="onUpdateForm($event)"
+      #packableForm>
+    </app-packable-edit-form>
+  </div>
+  <div
+    @transitionTrigger
+    (@transitionTrigger.done)="windowService.updateOpenDialogs()"
+    *ngIf="step == 2">
+    <p
+      class="text-success text-center small font-weight-bold"
+      *ngIf="msg">
+      {{msg}}
+    </p>
+    <app-choose-collections-form
+      [PackableId]="packable.id"
+      [limitProfiles]='data.limitProfileGroup'
+      [limitCollections]="data.limitCollectionGroup"
+      (selectedIdsChange)="onUpdateCollections($event)">
+    </app-choose-collections-form>
+  </div>
 </mat-dialog-content>
+<div mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      activeColor="action"
+      (click)="onConfirm()"
+      [disabled]="!valid()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</div>

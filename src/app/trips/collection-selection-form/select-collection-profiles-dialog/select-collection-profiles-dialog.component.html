@@ -1,37 +1,37 @@
 <app-dialog-header (close)="onClose()"></app-dialog-header>
-<div class="text-center">
-  <p class="h3">{{header}}</p>
-  <p class="text-muted">{{packablesString}} 
-    <ng-container *ngIf="packablesVary"> <br><small>*Packables may vary between Travelers</small></ng-container>
-  </p>
-  <ng-container *ngIf="weatherFac.isSet(wRules)">
-    <p class="form-heading">Weather Rules:</p>
-    <p class="text-muted" innerHtml="{{weatherFac.getTempRuleString(wRules)}}"></p>
-    <p class="text-muted" *ngIf="wRules.weatherTypes.length>0">{{wRules.weatherTypes | join:', ' | titlecase}}</p>
-    <p class="small text-success" *ngIf="weatherCheck.conditionsMet && wData.isValid; else notMet">
-      <mat-icon [inline]="true" style="vertical-align:bottom">check</mat-icon> Conditions have been met for this trip
-    </p>
-    <ng-template #notMet>
-      <p class="small text-danger" *ngFor="let reason of weatherCheck.response" [innerHtml]="reason"></p>
-    </ng-template>
-
-  </ng-container>
-</div>
 <mat-dialog-content>
+  <div class="text-center">
+    <p class="h3">{{header}}</p>
+    <p class="text-muted">{{packablesString}} 
+      <ng-container *ngIf="packablesVary"> <br><small>*Packables may vary between Travelers</small></ng-container>
+    </p>
+    <ng-container *ngIf="weatherFac.isSet(wRules)">
+      <p class="form-heading">Weather Rules:</p>
+      <p class="text-muted" innerHtml="{{weatherFac.getTempRuleString(wRules)}}"></p>
+      <p class="text-muted" *ngIf="wRules.weatherTypes.length>0">{{wRules.weatherTypes | join:', ' | titlecase}}</p>
+      <p class="small text-success" *ngIf="weatherCheck.conditionsMet && wData.isValid; else notMet">
+        <mat-icon [inline]="true" style="vertical-align:bottom">check</mat-icon> Conditions have been met for this trip
+      </p>
+      <ng-template #notMet>
+        <p class="small text-danger" *ngFor="let reason of weatherCheck.response" [innerHtml]="reason"></p>
+      </ng-template>
+  
+    </ng-container>
+  </div>
   <p innerHtml="{{content}}" class="text-center mt-4"></p>
   <div class="text-center mt-1 mb-3">
     <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
       [showNames]="true">
     </profile-selector>
   </div>
-  <p *ngIf class="text-warning text-center text-small"></p>
-
-    <dialog-confirm-button>
-      <button mat-fab class="mx-1" color="none" (click)="onClose()">
-        <mat-icon>close</mat-icon>
-      </button>
-      <button mat-fab class="mx-1" color="primary" (click)="onConfirm()">
-        <mat-icon>check</mat-icon>
-      </button>
-    </dialog-confirm-button>
 </mat-dialog-content>
+<mat-dialog-actions>
+        <dialog-confirm-button>
+          <button mat-fab class="mx-1" activeColor="muted" (click)="onClose()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <button mat-fab class="mx-1" activeColor="action" (click)="onConfirm()">
+            <mat-icon>check</mat-icon>
+          </button>
+        </dialog-confirm-button>
+</mat-dialog-actions>

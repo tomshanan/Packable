@@ -6,31 +6,31 @@ import * as authActions from '@app/user/store/auth.actions'
 
 import { firebaseSettings } from './user/firebase-settings.object';
 import { StorageService } from './shared/storage/storage.service';
+import { MatDialogRef, MatDialog } from '@angular/material';
+import { WindowService } from './shared/services/window.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  encapsulation: ViewEncapsulation.None 
+  encapsulation: ViewEncapsulation.None
 
 })
 export class AppComponent implements OnInit {
   constructor(
     private storage: StorageService,
-    private store:Store<fromApp.appState>
-
-  ){
+    private store: Store<fromApp.appState>,
+  ) {
   }
-  ngOnInit(){
+  ngOnInit() {
     //this.storage.generateDummyData();
     firebase.initializeApp(firebaseSettings)
-    firebase.auth().onAuthStateChanged((user)=>{
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-          user.getIdToken().then((token)=>{
-              this.store.dispatch(new authActions.Login())
-              this.store.dispatch(new authActions.SetToken(token))
-          })
-      } 
-  });
+        user.getIdToken().then((token) => {
+          this.store.dispatch(new authActions.Login())
+          this.store.dispatch(new authActions.SetToken(token))
+        })
+      }
+    });
   }
-    
 }

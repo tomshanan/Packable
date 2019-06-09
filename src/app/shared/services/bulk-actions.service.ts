@@ -8,7 +8,7 @@ import { CollectionFactory } from '../factories/collection.factory';
 import { ContextService } from './context.service';
 import { weatherFactory } from '../factories/weather.factory';
 import * as packableActions from '@app/packables/store/packables.actions';
-import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-dialog/choose-collections-dialog.component';
+import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-form/choose-collections-form.component';
 import * as profileActions from '@app/profiles/store/profile.actions';
 import { PackablePrivate, PackableOriginal } from '../models/packable.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
@@ -151,8 +151,6 @@ export class BulkActionsService {
 
   public addPackablesFromRemoteCollections(selectedRemoteCollections:remoteCollection[]){
     if(isDefined(selectedRemoteCollections)){
-      let allRemotePackables = this.storeSelector.getRemotePackables()
-      let allLocalPackables = this.storeSelector.originalPackables.filter(p=>!p.deleted) // only show living packables
       let packablesInRemote:string[] = []
       // iterate over collections and push one of each unique packable
       selectedRemoteCollections.forEach(col =>{
@@ -160,16 +158,28 @@ export class BulkActionsService {
           if(!packablesInRemote.includes(pac.id)){
             packablesInRemote.push(pac.id)
       }})})
-      console.log('BULK ACTION: allLocalPackables',allLocalPackables)
-      console.log('BULK ACTION: allRemotePackables',allRemotePackables)
-      let missingPackables = 
-        allRemotePackables
-        .filter(p=>packablesInRemote.includes(p.id)) // filter remotepackables for the ones used in the collections
-        .filter(p=>allLocalPackables.idIndex(p.id)===-1) // filter for the ones not used locally already
-        .map(p=>this.pacFac.clonePackableOriginal(p)); // turn into an original packable for local use
-      missingPackables.forEach(p=>p.dateModified=timeStamp())
+      this.addMissingPackableIdsFromRemote(packablesInRemote)
+    }
+  }
+
+  public addMissingPackableIdsFromRemote(ids:string[]):PackableOriginal[]{
+    let allRemotePackables = this.storeSelector.getRemotePackables()
+    let allLocalPackables = this.storeSelector.originalPackables.filter(p=>!p.deleted) // only show living packables
+    console.log('BULK ACTION: allLocalPackables',allLocalPackables)
+    console.log('BULK ACTION: allRemotePackables',allRemotePackables)
+    let missingPackables = 
+      allRemotePackables
+      .filter(p=>ids.includes(p.id)) // filter allRemotePackables for the ones required
+      .filter(p=>allLocalPackables.idIndex(p.id)===-1) // filter for the ones not used locally already
+      .map(p=>this.pacFac.clonePackableOriginal(p)); // turn into an original packable for local use
+    missingPackables.forEach(p=>p.dateModified=timeStamp()) // update timestamp
+    if(missingPackables.length > 0){
       console.log('BULK ACTION: dispatch addMissingPackables',missingPackables)
-      missingPackables.length > 0 && this.store.dispatch(new packableActions.updateOriginalPackables(missingPackables))
+      this.store.dispatch(new packableActions.updateOriginalPackables(missingPackables))
+      return missingPackables
+    } else {
+      console.log('BULK ACTION: did not distpatch addMissingPackables',missingPackables)
+      return []
     }
   }
   /**

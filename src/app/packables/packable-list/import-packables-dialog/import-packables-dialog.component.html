@@ -1,60 +1,48 @@
-<!-- <app-dialog-header [super]="collectionName" header="Add Packables" (close)="onClose()"></app-dialog-header>
+<app-dialog-header
+  [super]="collectionName"
+  header="Add Packables"
+  (close)="onClose(null)">
+</app-dialog-header>
+<mat-dialog-content>
+  <div
+    @transitionTrigger
+    (@transitionTrigger.done)="windowService.updateOpenDialogs()"
+    *ngIf="step == 1">
+    <import-packables-selector
+      [collection]="collection"
+      (updateSelected)="onUpdateSelected($event)">
+    </import-packables-selector>
+  </div>
+  <div
+    @transitionTrigger
+    (@transitionTrigger.done)="windowService.updateOpenDialogs()"
+    *ngIf="step == 2"
+    class="text-center">
+    <p class="text-small">
+      The
+      <i>"{{collectionName}}"</i>
+      Collection is also used by other Travelers.
+      <br>
+      Select the Travelers you would like to update:
+    </p>
+    <profile-selector
+      iconWidth="50px"
+      [profiles]="profileGroup"
+      [(selected)]="selectedProfiles"
+      [multiselect]="true"
+      [showNames]="true">
+    </profile-selector>
+  </div>
+</mat-dialog-content>
 
-<mat-dialog-content style="padding-bottom:0px; overflow: hidden;max-height: -webkit-fill-available;">
-    <div @transitionTrigger *ngIf="step == 1">
-        <import-packables-selector 
-            [collection]="collection" 
-            (confirm)="confirmPackables($event)">
-        </import-packables-selector>
-    </div>
-    <div @transitionTrigger *ngIf="step == 2" class="text-center">
-            <p class="text-small">
-                Please choose the Profiles you would like to add the selected Packables to:
-            </p>
-            <profile-selector 
-            iconWidth="50px" 
-            [profiles]="profileGroup" 
-            [(selected)]="selectedProfiles" 
-            [multiselect]="true"
-            [showNames]="true">
-          </profile-selector>
-          <dialog-confirm-button style="display:contents;">
-                <button mat-fab color="primary" (click)="confirmProfiles()" [disabled]="!profilesValid()">
-                    <mat-icon>check</mat-icon>
-                </button>
-            </dialog-confirm-button>
-    </div>
-</mat-dialog-content> -->
-
-<div class="step-container">
-    <div class="dialog-flex-container">
-        <div class="dialog-row">
-            <app-dialog-header [super]="collectionName" header="Add Packables" (close)="onClose(null)"></app-dialog-header>
-        </div>
-        <div class="dialog-row nested-flex" @transitionTrigger *ngIf="step == 1">
-            <import-packables-selector 
-                [collection]="collection" 
-                (confirm)="confirmPackables($event)">
-            </import-packables-selector>
-        </div>
-        <div class="dialog-row" @transitionTrigger *ngIf="step == 2" class="text-center">
-            <p class="text-small">
-                The <i>"{{collectionName}}"</i> Collection is also used by other Travelers.<br>
-                Select the Travelers you would like to update:
-            </p>
-            <profile-selector 
-            iconWidth="50px" 
-            [profiles]="profileGroup" 
-            [(selected)]="selectedProfiles" 
-            [multiselect]="true"
-            [showNames]="true">
-            </profile-selector>
-            <dialog-confirm-button style="display:contents;">
-                <button mat-fab color="primary" (click)="confirmProfiles()" [disabled]="!profilesValid()">
-                    <mat-icon>check</mat-icon>
-                </button>
-            </dialog-confirm-button>
-        </div>
-
-    </div>
-</div>    
+<mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      activeColor="action"
+      (click)="onConfirm()"
+      [disabled]="!valid()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-actions>

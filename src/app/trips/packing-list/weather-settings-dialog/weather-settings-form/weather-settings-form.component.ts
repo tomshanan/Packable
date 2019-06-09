@@ -17,7 +17,7 @@ import { TripWeatherData } from '../../../../shared/services/weather.service';
 })
 export class WeatherSettingsFormComponent implements OnInit {
   @Input('weather') inputWeather:TripWeatherData = new TripWeatherData();
-  @Output('weatherChange') inputWeatherChange = new EventEmitter<WeatherRule>();
+  @Output('weatherChange') inputWeatherChange = new EventEmitter<TripWeatherData>();
   
   tempOptions = tempOptions 
   weatherOptions = weatherOptions;

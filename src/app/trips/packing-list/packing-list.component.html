@@ -1,5 +1,5 @@
 <app-nav
-  [header]="'Packing List'"
+  [header]="displayTrip ? displayTrip.destinationName : 'Packing List'"
   [useNgContent]="true">
   <button
     [matMenuTriggerFor]="packinglistMenu"
@@ -22,99 +22,21 @@
   </ng-template>
   <div
     *ngIf="packingList && sortedList; else loading"
-    class="mt-1 col">
-    <div class="row">
-      <mat-accordion class="w-100">
-        <mat-expansion-panel
-          (opened)="settingsOpen = true"
-          (closed)="settingsOpen = false"
-          [expanded]="settingsOpen">
-          <mat-expansion-panel-header>
-            <mat-panel-description
-              class="d-flex w-100"
-              *ngIf="!settingsOpen">
-              <span
-                class="setting_header"
-                [innerHtml]="forecastString">
-              </span>
-              <span
-                class="setting_header"
-                *ngIf="packingList.dataInput == 'manual'">
-                (Manual Input)
-              </span>
-              <span class="setting_header ml-auto small">
-                <i>Updated: {{ lastSave }}</i>
-              </span>
-            </mat-panel-description>
-            <mat-panel-title *ngIf="settingsOpen">Manually enter weather settings</mat-panel-title>
-          </mat-expansion-panel-header>
-          <form [formGroup]="customWeatherForm">
-            <mat-form-field style="width:110px;">
-              <mat-label>Min Temp</mat-label>
-              <mat-select
-                [value]="packingList.data.weatherData.minTemp || absoluteMinTemp"
-                formControlName="min"
-                #minTempSelect>
-                <mat-option
-                  *ngFor="let t of tempOptions"
-                  [value]="t"
-                  [disabled]="t>maxTempSelect.value">
-                  {{t!=absoluteMinTemp ? t+'&#176;C' : 'Any'}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field style="width:110px;">
-              <mat-label>Max Temp</mat-label>
-              <mat-select
-                [value]="packingList.data.weatherData.maxTemp || absoluteMaxTemp"
-                formControlName="max"
-                #maxTempSelect>
-                <mat-option
-                  *ngFor="let t of tempOptions"
-                  [value]="t"
-                  [disabled]="minTempSelect.value>t">
-                  {{t!=absoluteMaxTemp ? t+'&#176;C' : 'Any'}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field style="width:200px;">
-              <mat-label>Weather Types</mat-label>
-              <mat-select
-                [value]="packingList.data.weatherData.weatherTypes || null"
-                multiple
-                formControlName="types">
-                <mat-option
-                  *ngFor="let w of weatherTypeOptions"
-                  [value]="w">
-                  {{w | titlecase}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </form>
-          <mat-action-row>
-            <span class="p-2 align-self-center">
-              <b>Update Using:</b>
-            </span>
-            <button
-              type="button"
-              class="btn btn-primary"
-              (click)="updatePackingListWithCustomWeather(trip)"
-              (click)="settingsOpen = false">
-              Manual Input
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-primary ml-1"
-              (click)="updatePackingListWithWeatherAPI(trip)"
-              (click)="settingsOpen = false">
-              Forecast
-            </button>
-          </mat-action-row>
-        </mat-expansion-panel>
-      </mat-accordion>
+    class="col">
+    <div class="mb-2" [class.justify-content-center]="windowService.max('md')">
+      <div class="small text-muted" [class.text-center]="windowService.max('md')">
+        <p>
+          <span [innerHtml]="displayTrip.displayDate"></span>&nbsp;
+          (<span [innerHtml]="packingList.data.totalDays"></span>&nbsp;Days)
+        </p>
+        <p>
+          <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
+          <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
+        </p>
+      </div>
     </div>
 
-    <div class="row py-2">
+    <div class="row my-2">
       <mat-accordion
         multi="true"
         class="w-100">

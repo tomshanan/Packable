@@ -1,66 +1,92 @@
-<div class="pofileSelectorContainer"
+<div
+  class="pofileSelectorContainer"
   #container>
-  <div class="selectedProfile d-flex flex-row align-items-center"  [class.hide]="selectorOpen" *ngIf="selected">
-    <button mat-icon-button activeColor="action" (click)="toggleProfileSelector()" *ngIf="!selectorOpen" @horizontalShringAndFade>
+  <div
+    class="selectedProfile d-flex flex-row align-items-center"
+    [class.hide]="selectorOpen"
+    *ngIf="selected">
+    <button
+      mat-icon-button
+      activeColor="action"
+      (click)="toggleProfileSelector()"
+      *ngIf="!selectorOpen"
+      @horizontalShringAndFade>
       <mat-icon>arrow_back_ios</mat-icon>
     </button>
-    <div class="selectorTrigger">
-        <div class="selectedProfile-iconContainer">
-            <profile-icon 
-            [profileId]='selected' 
-            [showName]="false"  
-            [isInteractive]="false" 
-            [isButton]="false" 
-            [color]="storeSelector.isLibraryStore ? 'white' : null"
-            [fullFrame]="storeSelector.isLibraryStore ? true : false"
-            width="55px">
-          </profile-icon>
-        </div>
-        <p class="h3 m-0 ml-1 mb-1" *ngIf="!selectorOpen" @showTrigger>
-          {{getSelectedProfileName()}}
-        </p>
-        <div #settingsButton *ngIf="!selectorOpen" @showTrigger>
-          <button mat-icon-button [matMenuTriggerFor]="profileMenu" activeColor="action">
-              <mat-icon>settings</mat-icon>
-            </button>
-            <mat-menu #profileMenu="matMenu">
-              <button mat-menu-item (click)="onClickSettings()">
-                <mat-icon>settings</mat-icon>
-                <span>Edit Settings</span>
-              </button>
-              <button mat-menu-item (click)="onDeleteProfile(selected)">
-                <mat-icon>delete</mat-icon>
-                <span>Delete Traveler</span>
-              </button>
-            </mat-menu>
-        </div>
-        
-      </div>
-       
-      
-  </div>
-  <div class="horizontalSelector" [class.hide]="!selectorOpen">
-      <horizontal-icon-selector stepWidth="55" #iconSelector>
-          <profile-selector 
-          iconWidth="55PX" 
-          [profiles]="profiles" 
-          [selected]="selected ? [selected] : []" 
-          [multiselect]="false"
-          [showNames]="true" 
-          [selectedFirst]="true"
-          (selectedChange)="onSelectedProfiles($event)"
+    <ng-container>
+      <div class="selectedProfile-iconContainer">
+        <profile-icon
+          [profileId]='selected'
+          [showName]="false"
+          [isInteractive]="false"
+          [isButton]="false"
           [color]="storeSelector.isLibraryStore ? 'white' : null"
-          [fullFrame]="storeSelector.isLibraryStore ? true : false">
+          [fullFrame]="storeSelector.isLibraryStore ? true : false"
+          width="55px">
+        </profile-icon>
+      </div>
+      <p
+        class="h3 m-0 ml-1 mb-1"
+        *ngIf="!selectorOpen"
+        @showTrigger>
+        {{getSelectedProfileName()}}
+      </p>
+      <div
+        #settingsButton
+        *ngIf="!selectorOpen"
+        @showTrigger>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="profileMenu"
+          activeColor="action">
+          <mat-icon outlined>settings</mat-icon>
+        </button>
+        <mat-menu #profileMenu="matMenu">
+          <button
+            mat-menu-item
+            (click)="onClickSettings()">
+            <mat-icon outlined>settings</mat-icon>
+            <span>Edit Settings</span>
+          </button>
+          <button
+            mat-menu-item
+            (click)="onDeleteProfile(selected)">
+            <mat-icon outlined>delete</mat-icon>
+            <span>Delete Traveler</span>
+          </button>
+        </mat-menu>
+      </div>
 
-        </profile-selector>
-        <div class="d-inline-block">
-            <icon-text-button
-              svgIcon="circle-add"
-              (onClick)="newProfile()"
-              buttonWidth="55px"
-              innerPadding="0.1em">
-            </icon-text-button>
-        </div>
-    </horizontal-icon-selector> 
+    </ng-container>
+
+  </div>
+  <div
+    class="horizontalSelector"
+    [class.hide]="!selectorOpen">
+    <horizontal-icon-selector
+      stepWidth="55"
+      #iconSelector>
+      <profile-selector
+        iconWidth="55PX"
+        [profiles]="profiles"
+        [selected]="selected ? [selected] : []"
+        [multiselect]="false"
+        [showNames]="true"
+        [selectedFirst]="true"
+        (selectedChange)="onSelectedProfiles($event)"
+        [color]="storeSelector.isLibraryStore ? 'white' : null"
+        [fullFrame]="storeSelector.isLibraryStore ? true : false">
+
+      </profile-selector>
+      <div class="d-inline-block" style="height: 1em;
+      line-height: 1em;">
+        <icon-text-button
+          svgIcon="circle-add"
+          (onClick)="newProfile()"
+          buttonWidth="55px"
+          innerPadding="0.1em">
+        </icon-text-button>
+      </div>
+    </horizontal-icon-selector>
   </div>
 </div>

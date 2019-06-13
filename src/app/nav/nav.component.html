@@ -37,11 +37,9 @@
   <div class="d-flex flex-column w-100">
     <div class="row">
       <div class="col-12">
-        <a
-          class="pointer navLink"
-          (click)="toggleNav()">
-          <i class="fas fa-times p-2"></i>
-        </a>
+        <button mat-icon-button (click)="toggleNav()" activeColor="muted">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
     </div>
     <div class="row">

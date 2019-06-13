@@ -1,21 +1,39 @@
-<app-dialog-header [super]="super" [header]="header" (close)="onClose()"></app-dialog-header>
+<app-dialog-header
+  [super]="super"
+  [header]="header"
+  (close)="onClose()"></app-dialog-header>
 
 <mat-dialog-content>
-  <p innerHtml="{{content}}" class="text-center"></p>
+  <p
+    innerHtml="{{content}}"
+    class="text-center"></p>
   <div class="text-center my-2">
-    <profile-selector iconWidth="50px" [profiles]="profileGroup" [(selected)]="selectedProfiles" [multiselect]="true"
+    <profile-selector
+      iconWidth="50px"
+      [profiles]="profileGroup"
+      [(selected)]="selectedProfiles"
+      [multiselect]="true"
       [showNames]="true">
     </profile-selector>
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-    <dialog-confirm-button>
-        <button mat-fab class="mx-1" color="none" (click)="onClose()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <button mat-fab class="mx-1" color="primary" (click)="onConfirm()" [disabled]="!valid()">
-          <mat-icon>check</mat-icon>
-        </button>
-      </dialog-confirm-button>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      class="mx-1"
+      activeColor="muted"
+      (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button
+      mat-fab
+      class="mx-1"
+      activeColor="action"
+      (click)="onConfirm()"
+      [disabled]="!valid()">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
 </mat-dialog-actions>

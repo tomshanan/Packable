@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Input, EventEmitter, Output, ViewChild, OnChanges, SimpleChange, SimpleChanges, ElementRef, ChangeDetectorRef, Inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input, EventEmitter, Output, ViewChild, OnChanges, SimpleChange, SimpleChanges, ElementRef, ChangeDetectorRef, Inject, AfterViewInit } from '@angular/core';
 import { StoreSelectorService } from '@shared/services/store-selector.service';
 import { PackableOriginal, QuantityRule } from '@shared/models/packable.model';
 import { WeatherRule } from '@models/weather.model';
@@ -12,7 +12,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { QuantityRuleListComponent } from './quantity-rule-list/quantity-rule-list.component';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { ContextService } from '@app/shared/services/context.service';
-import { NameInputChangeEvent } from '@app/shared-comps/name-input/name-input.component';
+import { NameInputChangeEvent, NameInputComponent } from '@app/shared-comps/name-input/name-input.component';
 
 
 export interface editPackableForm_update{
@@ -28,10 +28,11 @@ export interface editPackableForm_update{
   encapsulation: ViewEncapsulation.None,
   
 })
-export class PackableEditFormComponent implements OnInit, OnChanges {
+export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewInit {
   constructor(
     private storeSelector: StoreSelectorService,
     private context: ContextService,
+    private cd: ChangeDetectorRef,
   ) {
   }
 
@@ -44,8 +45,8 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
 
   @Output() update = new EventEmitter<editPackableForm_update>()
 
-  @ViewChild('editNameInput') editNameInput:ElementRef;
-  @ViewChild(QuantityRuleListComponent) QuantityRuleList:QuantityRuleListComponent;
+  @ViewChild('nameInput') nameInput:NameInputComponent;
+  @ViewChild(QuantityRuleListComponent) quantityRuleComponent:QuantityRuleListComponent;
   
   showProfileSelector: boolean = false;
   isDefined = isDefined;
@@ -57,11 +58,18 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
   ngOnInit() {
       this.resetForm()
   }
+  ngAfterViewInit(){
+    if(this.editName){
+      this.nameValid = this.nameInput.nameInput.valid
+      this.cd.detectChanges()
+    }
+  }
 
   resetForm() {
     if (this.isNew) {
       this.packable = new PackableComplete();
       this.packableName = ''
+      this.nameValid = false;
     } else {
       this.packableName = this.packable.name
     }
@@ -69,7 +77,6 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
     if (this.editName){
       this.usedPackableNames = this.storeSelector.getUsedPackableNames()
     }
-
   }
 
   profileSelect(select:'all'|'none'){
@@ -83,11 +90,6 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
   ngOnChanges(changes:SimpleChanges):void {
     if(changes['isNew']){
       this.resetForm();
-    }
-    if(changes['editName']){
-      if (this.editName == true && this.editNameInput){
-        this.editNameInput.nativeElement.focus();
-      }
     }
   }
 
@@ -109,6 +111,10 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
     }
     this.emitChange()
   }
+  onEditRules(e:QuantityRule[]){
+    this.packable.quantityRules = e
+    this.emitChange()
+  }
 
   log(e) {
     console.log(e);
@@ -121,9 +127,10 @@ export class PackableEditFormComponent implements OnInit, OnChanges {
       valid = false;
     } else if( this.editName && !this.nameValid){
       valid = false
-    } else if( this.packable.quantityRules.length == 0 || !this.QuantityRuleList.valid){
+    } else if( this.packable.quantityRules.length == 0 || !this.quantityRuleComponent.valid){
       valid = false;
     }
+    console.log('form validation:'+(valid?'valid':'invalid'))
     return valid
   }
 

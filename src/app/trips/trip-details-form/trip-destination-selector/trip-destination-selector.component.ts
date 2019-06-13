@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl, AbstractControl } from '@angular/forms';
 import { DestinationDataService, Destination } from '@shared/services/location-data.service';
-import { MatAutocompleteTrigger } from '@angular/material';
+import { MatAutocompleteTrigger, MatOptionSelectionChange } from '@angular/material';
 import { Observable, Subscription } from 'rxjs';
 import { startWith, map, debounce, debounceTime, tap } from 'rxjs/operators';
 import { isDefined, round } from '@app/shared/global-functions';
@@ -49,8 +49,11 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
   }
   ngAfterViewInit (){
     this.subs.add(
-      this.trigger.panelClosingActions.subscribe(()=>{
-        this.confirmDestination();
+      this.trigger.panelClosingActions.subscribe((selectionChange:MatOptionSelectionChange)=>{
+        console.log('SELECTED',selectionChange)
+        if(!selectionChange && this.destination.value != ''){
+          this.confirmDestination();
+        }
       })
     )
   }
@@ -75,15 +78,22 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
     this.subs.unsubscribe()
   }
   isDestinationIdValid(id:string):boolean {
-    return !!this.destService.DestinationByCityId(id)
+    return !!this.destService.findDestination(id)
   }
   displayDestination(dest?: Destination): string | undefined {
     return dest ? dest.fullName : undefined;
   }
   isDestination(input:any): input is Destination {
-    return typeof input === 'object' && input.id !== undefined && this.isDestinationIdValid(input.id);
+    console.log('isDestination input',input)
+    const isObject = typeof input === 'object'
+    const cityIdDefined = input && isDefined(input['cityId'])
+    const isDestinationIdValid = cityIdDefined && this.isDestinationIdValid(input.cityId)
+    console.log(`isObject`,isObject);
+    console.log(`cityIdDefined`,isObject);
+    console.log(`isDestinationIdValid`,isDestinationIdValid);
+    return isObject && cityIdDefined && isDestinationIdValid;
   }
-  confirmDestination() {
+  confirmDestination(value?:string) {
     let dest = this.destination.value;
     if (!this.isDestination(dest) && this.topDestOption) {
       this.destination.patchValue(this.topDestOption);
@@ -94,7 +104,7 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
     let searchterm:string = ''
     this.filteredDestOptions = this.destination.valueChanges
       .pipe(
-        //tap(search=>console.warn(`Searching "${search}"`)),
+        tap(val=>console.log(`this.destination=`,val)),
         debounceTime(300),
         startWith<string | Destination>(''),
         map(value => typeof value === 'string' ? value : value.fullName),
@@ -145,6 +155,8 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
 
   }
   validator_destinationInvalid(control:AbstractControl):{[key:string]:boolean} | null{
-    return !this.isDestination(control.value) ? {destinationInvalid:true} : null;
+    const isDest = this.isDestination(control.value)
+    console.log('validation:',isDest, control.value)
+    return !isDest ? {destinationInvalid:true} : null;
   }
 }

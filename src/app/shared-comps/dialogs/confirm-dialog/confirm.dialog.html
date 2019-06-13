@@ -1,13 +1,14 @@
 <app-dialog-header [header]="header" (close)="onClose()"></app-dialog-header>
-
 <mat-dialog-content>
-  <span innerHtml="{{content}}"></span>
+  <span innerHtml="{{content}}"></span> 
+</mat-dialog-content> 
+<mat-dialog-actions>
   <dialog-confirm-button>
-    <button mat-fab class="mx-1" color="none" (click)="onClose()">
+    <button mat-fab class="mx-1" activeColor="muted" (click)="onClose()">
       <mat-icon>close</mat-icon>
     </button>
-    <button mat-fab class="mx-1" color="primary" (click)="onConfirm()">
+    <button mat-fab class="mx-1" [activeColor]="activeColor" (click)="onConfirm()">
       <mat-icon>check</mat-icon>
     </button>
   </dialog-confirm-button>
-</mat-dialog-content> 
+</mat-dialog-actions>

@@ -5,7 +5,7 @@ import { Observable, from } from 'rxjs';
 import { map, take, switchMap, mapTo, catchError } from 'rxjs/operators';
 import * as moment from 'moment';
 import { weatherType, WeatherRule, tempC, temp } from '../models/weather.model';
-import { isDefined, getAllDates, timeStamp, stringArraysAreSame, joinSpecial } from '../global-functions';
+import { isDefined, getAllDates, timeStamp, stringArraysAreSame, joinSpecial, titleCase } from '../global-functions';
 import { Trip } from '../models/trip.model';
 import { DestinationDataService } from './location-data.service';
 
@@ -48,13 +48,13 @@ export class TripWeatherData {
         return isDefined(this.minTemp) && isDefined(this.maxTemp) && !!this.weatherTypes;
     } 
     forecastString():string{
-        return `${temp(this.minTemp)}-${tempC(this.maxTemp)} ${this.typesToString() }`
+        return `${this.tempToHtmlString()}${this.weatherTypes.length>0 ? ', '+ this.typesToString() :''}`
     }
     tempToHtmlString():string{
         return `<b>${tempC(this.maxTemp)}</b>&nbsp&nbsp<span class="low-temp">${tempC(this.minTemp)}</span>`
     }
     typesToString():string{
-        return joinSpecial(this.weatherTypes,', ',' and ')
+        return joinSpecial(this.weatherTypes,', ',' and ').toTitleCase()
     }
 }
 
@@ -127,7 +127,7 @@ export class WeatherService {
         return this.http.get('http://packable.stevenhuang.co.uk/weather.php?cityId=' + destId).toPromise()
     }
     getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Promise<DayWeatherData[]> {
-        let weatherId = this.destService.DestinationByCityId(destId).weatherId
+        let weatherId = this.destService.findDestination(destId).weatherId
         return this.getCityWeather(weatherId).then(data=>{
             console.warn('WEATHER RECIEVED FROM API',data);
 

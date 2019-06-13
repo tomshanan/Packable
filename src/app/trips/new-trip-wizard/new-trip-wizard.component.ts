@@ -27,6 +27,7 @@ import { ImportCollectionDialogComponent, importCollections_result, importCollec
 import { take, takeWhile } from 'rxjs/operators';
 import { expandAndFadeTrigger } from '../../shared/animations';
 import { Router } from '@angular/router';
+import { StorageService } from '../../shared/storage/storage.service';
 
 @Component({
   selector: 'app-new-trip-wizard',
@@ -53,6 +54,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     public windowService:WindowService,
     public tripMemory:TripMemoryService,
     public storeSelector:StoreSelectorService,
+    private storageService: StorageService,
     private destinationData:DestinationDataService,
     private bulkActions: BulkActionsService,
     private colFac: CollectionFactory,
@@ -70,7 +72,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     ]
   ngOnInit() {
     this.trip = this.tripMemory.trip || new Trip();
-    for(let i = 1; i < this.steps.length; i++){
+    for(let i = 0; i < this.steps.length; i++){
       if(this.checkStep(i) && i < 3){
         this.stepActions(i)
         continue;
@@ -106,6 +108,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     this.loadingLibrary = true;
     // check that all the trips properties that are required for weather data are present
     if(this.tripFac.validateTripProperties(this.trip,['startDate','startDate','destinationId'])){
+      this.storageService.getLibrary()
       const libState =this.storeSelector.libraryState_obs
       const weatherDataObs = from(this.weatherService.createWeatherData(this.trip))
       console.log('TRIP WIZARD',`subscribing to lib/weatherAPI`)
@@ -117,7 +120,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
         }))
         .subscribe(([state,wData])=>{
           console.log('TRIP WIZARD',`received update from lib/weatherAPI\nstate`,state,'\nWeather',wData)
-          this.loadingLibrary = (state.loading || !wData) ? true : false;
+          this.loadingLibrary = (state.loading || isDefined(state.error) || !wData) ? true : false;
           if(!state.loading){
             this.remoteCollections = this.storeSelector.getRemoteCollections()
             this.destMetaData = new destMetaData(state.destMetaData[this.trip.destinationId])

@@ -54,7 +54,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
         if(state.error){
           console.warn(state.error)
         }
-        //this.initList()
+        this.initList()
         this.finishedLoading = true
       }
     })

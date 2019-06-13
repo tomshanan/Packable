@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import * as fromApp from '../../shared/app.reducers'
 import { Subscription } from 'rxjs';
 import { PackingList, PackingListPackable, Reason, packingListData, PackingListSettings } from '../../shared/models/packing-list.model';
-import { Trip } from '../../shared/models/trip.model';
+import { Trip, displayTrip } from '../../shared/models/trip.model';
 import * as moment from 'moment';
 import { Router, ActivatedRoute } from '@angular/router';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
@@ -66,10 +66,13 @@ export class PackingListComponent implements OnInit, OnDestroy {
   showInvalidPackables = true // for template
   menuIcon:Icon = {icon:{type:'mat',name:'settings'},text:'Options'}
   editingPackable: ListPackableComponent; // for list-collection-component
+
   forecastString:string = 'Loading Weather';
   customWeatherForm: FormGroup;
   sharedAvatar = new Avatar('together', this.colorGen.getUnused())
   trip: Trip;
+  displayTrip:displayTrip;
+
   packingList: PackingList;
   sortedList: listProfile[] = [];
   packingListSettings: PackingListSettings;
@@ -118,11 +121,13 @@ export class PackingListComponent implements OnInit, OnDestroy {
         this.packingListSettings = new PackingListSettings(settings)
       })
     )
+    
   }
 
   updateView(newPackinglist: PackingList) {
     this.packingList = newPackinglist
     this.trip = this.packingListService.trip
+    this.displayTrip = this.packingListService.displayTrip
     this.forecastString = newPackinglist.data.weatherData.forecastString()
     this.patchWeatherForm(this.packingList)
     this.lastSave = moment().format('MMM Do, hh:mm')
@@ -135,7 +140,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   }
   navSetup() {
     this.navParams = {
-      header: this.trip ? this.destService.DestinationByCityId(this.trip.destinationId).fullName : 'Packing List',
+      header: this.trip ? this.destService.findDestination(this.trip.destinationId).fullName : 'Packing List',
       left: { enabled: true, text: 'Trips', iconClass: 'fas fa-chevron-left' },
       right: { enabled: true, text: '', iconClass: 'fas fa-ellipsis-h' },
       options: []

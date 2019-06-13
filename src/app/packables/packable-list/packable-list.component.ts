@@ -53,10 +53,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
 
   subscription: Subscription;
   packableList: PackableComplete[] = [];
-  dialogSettings = {
-    disableClose: true,
-    autoFocus: false
-  }
+
   editList: boolean = false;
   selected: string[] = []
 
@@ -210,7 +207,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       isNew: false
     }
     let dialogRef = this.dialog.open(EditPackableDialogComponent, {
-      ...this.dialogSettings,
+      disableClose: true,
       data: data,
     });
     dialogRef.afterClosed().pipe(take(1)).subscribe((packable:PackableComplete) => {
@@ -228,7 +225,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       isNew: true,
     }
     let dialogRef = this.dialog.open(EditPackableDialogComponent, {
-      ...this.dialogSettings,
+      disableClose:true,
       data: data,
     });
     dialogRef.afterClosed().pipe(take(1)).subscribe((packables:PackableComplete[]) => {
@@ -251,7 +248,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       collectionName: this.editingCollectionId ? this.storeSelector.getCollectionById(this.editingCollectionId).name : null
     }
     let pushPackablesDialod = this.dialog.open(PushPackablesDialogComponent, {
-      ...this.dialogSettings,
       data: data
     });
     pushPackablesDialod.afterClosed().pipe(take(1)).subscribe(()=>{
@@ -278,8 +274,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
         <br>Select the Profiles you would like to update:`
       }
       let chooseProfileDIalog = this.dialog.open(ChooseProfileDialogComponent, {
-        ...this.dialogSettings,
-        disableClose: false,
         data: data
       });
       chooseProfileDIalog.afterClosed().pipe(take(1)).subscribe((profileIds: string[]) => {
@@ -308,11 +302,10 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       let header = multiple ? `Delete ${deletePackables.length} Packables?` : `Delete ${deletePackables[0].name}?`
       let content = `If you remove ${multiple ? 'these Packables they' : 'this Packable it'} will also be removed from all Collections and Profiles.<br> Delete anyway?`
       let confirmDeleteDialog = this.dialog.open(ConfirmDialog, {
-        ...this.dialogSettings,
-        disableClose: false,
         data: {
           header: header,
-          content: content
+          content: content,
+          activeColor: 'danger',
         },
       });
       confirmDeleteDialog.afterClosed().pipe(take(1)).subscribe(confirm => {
@@ -335,8 +328,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       usedPackables: this.packableList
     }
     let importPackablesDialog = this.dialog.open(ImportPackablesDialogComponent, {
-      ...this.dialogSettings,
-      disableClose: false,
       data: data
     });
     importPackablesDialog.afterClosed().pipe(take(1)).subscribe((result:importPackables_result)=>{
@@ -354,7 +345,15 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   // TEMPLATE HELPERS
-
+  testPress(e){
+    console.log('press event',e)
+    let test = this.dialog.open(ConfirmDialog, {
+      data: {
+        header: 'Long Press!',
+        content: 'You pressed for very long!'
+      },
+    });
+  }
   croppedRulesString(rules: string[]): string {
     return rules.length > 1 ? `${rules[0]}...(+${rules.length - 1})` : rules[0]
   }

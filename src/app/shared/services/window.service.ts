@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs';
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
+import { ConfirmDialog } from '../../shared-comps/dialogs/confirm-dialog/confirm.dialog';
 
 export interface screenSizes {
     xs: number,
@@ -91,9 +92,9 @@ export class WindowService {
             dialogRef.updateSize(null, null)
         })
     }
-    public updateDialogsSize = (dialogRef: MatDialogRef<any>, newDialog: boolean = false) => {
+    public updateDialogsSize = (dialogRef: MatDialogRef<any|ConfirmDialog>, newDialog: boolean = false) => {
         dialogRef.updateSize(null, null)
-        if (this.max("md")) {
+        if (this.max("md") && (dialogRef.componentInstance instanceof ConfirmDialog) === false) {
             dialogRef.addPanelClass('dialog-full-screen')
             dialogRef.removePanelClass('dialog-default')
         } else {
@@ -114,23 +115,10 @@ export class WindowService {
         let dialogEl = document.querySelector('#' + dialogRef.id)
         if (dialogEl) {
             let dialogHeight = dialogEl.scrollHeight
-            let contentArea = dialogEl.querySelector('.mat-dialog-content')
-            log(`updated dialog '#${dialogRef.id}':\n`, `dialogHeight:${dialogHeight} windowHeight:${windowHeight}`)
             if (dialogHeight >= windowHeight) {
-                // this.renderer.removeStyle(dialogEl,'height')
                 dialogRef.addPanelClass('dialog-tall')
-                log('added class dialog-tall, and removed set height')
-            } else if (contentArea) {
-                let contentViewHeight = contentArea.clientHeight;
-                let ContentScrollHeight = contentArea.scrollHeight;
-                log(`contentViewHeight:${contentViewHeight} ${contentViewHeight === ContentScrollHeight ? '===' : '!='} ContentScrollHeight:${ContentScrollHeight}`)
-                if (contentViewHeight === ContentScrollHeight) {
-                    console.log(dialogEl.parentElement)
-                    // this.renderer.setStyle(dialogEl.parentElement,'height',dialogHeight+"px")
-                    dialogRef.updateSize(null, dialogHeight + "px")
-                    log('removed class dialog-tall, and set height:' + dialogHeight)
-                }
-            }
+            } 
+
         }
     }
 }

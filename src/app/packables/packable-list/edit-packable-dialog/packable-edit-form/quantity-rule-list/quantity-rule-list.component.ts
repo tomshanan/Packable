@@ -53,5 +53,6 @@ rulesWithValidators: {rule:QuantityRule,valid:boolean}[] = [];
     this.rules.push(newRule)
     this.RulesForView.push(newRule)
     this.rulesWithValidators.push({rule:newRule,valid:true})
+    this.rulesChange.emit(this.rules)
   }
 }

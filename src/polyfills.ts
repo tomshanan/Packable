@@ -33,13 +33,13 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 
- const el = document.createElement("link")
-  el.href = "https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
-  el.rel = "stylesheet"
-  document.body.appendChild(el)
+const el = document.createElement("link")
+el.href = "https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+el.rel = "stylesheet"
+document.body.appendChild(el)
 
 
- type comparableItem = { id: string, dateModified: number }
+type comparableItem = { id: string, dateModified: number }
 declare global {
     interface Array<T> {
         /**
@@ -49,7 +49,7 @@ declare global {
         /**
         * get an array of all the element's ids
         */
-       ids(): string[];
+        ids(): string[];
         /**
         * check if an array of Objects has an object with matching ID
         */
@@ -62,7 +62,7 @@ declare global {
          * This will mutate an Array (this), removing elements missing from the comparison Array, and adding ones that are missing from the original (this).
          * @param compare The array to compare with. 
          */
-        compare(compare: T[], callback?: (changedItem:T,action:'add'|'remove'|'update')=>any): T[];
+        compare(compare: T[], callback?: (changedItem: T, action: 'add' | 'remove' | 'update') => any): T[];
         /**
          * Returns a new array without undefined and null objects, and without empty arrays and string
          */
@@ -71,19 +71,22 @@ declare global {
          * Given a removeArray, the method removes any elemets with matching IDs and returns a new array
          * @param removeArray The array of items you wish to clear from the original array. (all must have ID property)
          */
-        removeElements(removeArray:T[]):T[];
+        removeElements(removeArray: T[]): T[];
         /**
          * Find an element that matches another element by specifing an array of properties for comparison.
          * @param findObject the object for comparison
          * @param propArray array of properties to compare
          */
-        findBy(findObject:T,propArray:Array<keyof T>):T;
+        findBy(findObject: T, propArray: Array<keyof T>): T;
         /**
          * Find an element's index that matches another element by specifing an array of properties for comparison.
          * @param findObject the object for comparison
          * @param propArray array of properties to compare
          */
-        findIndexBy(findObject:T,propArray:Array<keyof T>):number;
+        findIndexBy(findObject: T, propArray: Array<keyof T>): number;
+    }
+    interface String {
+        toTitleCase(): string;
     }
 
 }
@@ -108,40 +111,40 @@ if (!Array.prototype.findId) {
 
 if (!Array.prototype.idIndex) {
     Array.prototype.idIndex = function <T extends comparableItem>(this: T[], id: string): number {
-            return this.findIndex(e => {
-                if (e && 'id' in e) {
-                    return e.id === id
-                } else {
-                    return false
-                }
-            })
-        
+        return this.findIndex(e => {
+            if (e && 'id' in e) {
+                return e.id === id
+            } else {
+                return false
+            }
+        })
+
     }
 }
 
 if (!Array.prototype.compare) {
-    Array.prototype.compare = function <T extends comparableItem>(this: T[], updatedArray: T[], callback:(changedItem:T,action:'add'|'remove'|'update')=>any): T[] {
-        updatedArray.forEach((item,i,arr) => {
-            if('id' in item){
+    Array.prototype.compare = function <T extends comparableItem>(this: T[], updatedArray: T[], callback: (changedItem: T, action: 'add' | 'remove' | 'update') => any): T[] {
+        updatedArray.forEach((item, i, arr) => {
+            if ('id' in item) {
                 if (!this.findId(item.id)) {
-                    callback != null ? callback(item,'add') : this.unshift(item)
+                    callback != null ? callback(item, 'add') : this.unshift(item)
                     // console.log('Added new item:'+item['name']);
                 }
-            } 
+            }
             else {
-                arr.splice(i,1)
+                arr.splice(i, 1)
             }
         })
         this.slice().forEach((oldItem) => {
-            if('id' in oldItem){
+            if ('id' in oldItem) {
                 const i = this.idIndex(oldItem.id)
                 let newItem = updatedArray.findId(oldItem.id)
                 if (!newItem) {
-                    callback != null ? callback(oldItem,'remove') : this.splice(i, 1);
+                    callback != null ? callback(oldItem, 'remove') : this.splice(i, 1);
                     // console.log('Removed an item:'+oldItem['name']);
-                } else if (('dateModified' in newItem && 'dateModified' in oldItem)&&(newItem.dateModified !== oldItem.dateModified)){
+                } else if (('dateModified' in newItem && 'dateModified' in oldItem) && (newItem.dateModified !== oldItem.dateModified)) {
                     // console.log('Replacing old item:',oldItem,'\nwith new item:',newItem);
-                    callback != null ? callback(newItem,'update') : this.splice(i,1,newItem)
+                    callback != null ? callback(newItem, 'update') : this.splice(i, 1, newItem)
                 }
             }
         })
@@ -149,45 +152,89 @@ if (!Array.prototype.compare) {
     }
 }
 if (!Array.prototype.clearUndefined) {
-    Array.prototype.clearUndefined = function<T extends object|string|number>(this: T[]): T[] {
-        let newarray = this.filter(el=>{
+    Array.prototype.clearUndefined = function <T extends object | string | number>(this: T[]): T[] {
+        let newarray = this.filter(el => {
             return el != null && el != undefined && el !== "" && el !== []
         })
         return newarray
     }
 }
 
-if(!Array.prototype.removeElements){
-    Array.prototype.removeElements = function <T extends comparableItem>(this:T[], removeArray:T[]):T[]{
+if (!Array.prototype.removeElements) {
+    Array.prototype.removeElements = function <T extends comparableItem>(this: T[], removeArray: T[]): T[] {
         removeArray.forEach(item => {
-            if('id' in item){
+            if ('id' in item) {
                 let i = this.idIndex(item.id)
-                if(i > -1){
-                    this.splice(i,1)
+                if (i > -1) {
+                    this.splice(i, 1)
                 }
             }
         })
         return this
     }
 }
-if(!Array.prototype.ids){
-    Array.prototype.ids = function <T extends {id:string}>(this:T[]):string[]{
-        let returnArray:string[] = []
+if (!Array.prototype.ids) {
+    Array.prototype.ids = function <T extends { id: string }>(this: T[]): string[] {
+        let returnArray: string[] = []
         this.forEach(item => {
-            if('id' in item){
+            if ('id' in item) {
                 returnArray.push(item.id)
             }
         })
         return returnArray
     }
 }
-if(!Array.prototype.findBy){
-    Array.prototype.findBy = function <T>(this: T[], findObject:T,propArray:Array<keyof T>):T{
-        return this.find(obj=>propArray.every(prop=>findObject[prop]===obj[prop]))
+if (!Array.prototype.findBy) {
+    Array.prototype.findBy = function <T>(this: T[], findObject: T, propArray: Array<keyof T>): T {
+        return this.find(obj => propArray.every(prop => findObject[prop] === obj[prop]))
     }
 }
-if(!Array.prototype.findIndexBy){
-    Array.prototype.findIndexBy = function <T>(this: T[], findObject:T,propArray:Array<keyof T>):number{
-        return this.findIndex(obj=>propArray.every(prop=>findObject[prop]===obj[prop]))
+if (!Array.prototype.findIndexBy) {
+    Array.prototype.findIndexBy = function <T>(this: T[], findObject: T, propArray: Array<keyof T>): number {
+        return this.findIndex(obj => propArray.every(prop => findObject[prop] === obj[prop]))
+    }
+}
+
+if (!String.prototype.toTitleCase) {
+    String.prototype.toTitleCase = function () {
+        'use strict'
+        var smallWords = /^(a|an|and|as|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|v.?|vs.?|via)$/i
+        var alphanumericPattern = /([A-Za-z0-9\u00C0-\u00FF])/
+        var wordSeparators = /([ :–—-])/
+
+        return this.split(wordSeparators)
+            .map(function (current, index, array) {
+                if (
+                    /* Check for small words */
+                    current.search(smallWords) > -1 &&
+                    /* Skip first and last word */
+                    index !== 0 &&
+                    index !== array.length - 1 &&
+                    /* Ignore title end and subtitle start */
+                    array[index - 3] !== ':' &&
+                    array[index + 1] !== ':' &&
+                    /* Ignore small words that start a hyphenated phrase */
+                    (array[index + 1] !== '-' ||
+                        (array[index - 1] === '-' && array[index + 1] === '-'))
+                ) {
+                    return current.toLowerCase()
+                }
+
+                /* Ignore intentional capitalization */
+                if (current.substr(1).search(/[A-Z]|\../) > -1) {
+                    return current
+                }
+
+                /* Ignore URLs */
+                if (array[index + 1] === ':' && array[index + 2] !== '') {
+                    return current
+                }
+
+                /* Capitalize the first letter */
+                return current.replace(alphanumericPattern, function (match) {
+                    return match.toUpperCase()
+                })
+            })
+            .join('')
     }
 }

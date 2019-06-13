@@ -67,7 +67,7 @@ export class ActiveColorDirective implements OnInit, OnChanges {
       this.setInitialColor()
     }
     if(changes['inputColor']){
-      this.setInitialColor()
+      this.initElement()
     }
     if(changes['targetElement']){
       this.initElement()

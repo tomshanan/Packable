@@ -111,7 +111,7 @@ export class PackingListService {
   }
   autoUpdatePackingList(newTrip: Trip, loadedPackingList: PackingList) {
     this.trip = newTrip
-    //this.displayTrip = this.tripFac.makeDisplayTrip(this.trip)
+    this.displayTrip = this.tripFac.makeDisplayTrip(this.trip)
     if (loadedPackingList) {
       if (this.packingList && this.tripWeather) {
         if(this.packingList.dateModified !== loadedPackingList.dateModified){
@@ -153,7 +153,13 @@ export class PackingListService {
   }
   updateUsingCustomWeather({weatherData,save}:updateOptions = {save:true}) {
     this.packingListEmitter.next(null)
-    this.tripWeather =  weatherData || (this.packingList ? this.packingList.data.weatherData : new TripWeatherData({ dataInput: 'manual' }));
+    if(weatherData){
+      this.setTripWeather(weatherData)
+    } else if (this.packingList) {
+      this.setTripWeather(this.packingList.data.weatherData)
+    } else {
+      this.setTripWeather(new TripWeatherData({ dataInput: 'manual' }))
+    }
     setTimeout(() => {
       this.updateWeather(save)
     }, 0);
@@ -203,8 +209,8 @@ export class PackingListService {
     let data = new packingListData({
       totalDays: dates.length,
       totalNights: dates.length - 1,
-      destination: this.destService.DestinationByCityId(trip.destinationId),
-      weatherData: new TripWeatherData(this.tripWeather)
+      destination: this.destService.findDestination(trip.destinationId),
+      weatherData: this.tripWeather
     })
 
     profiles.forEach(profile => {

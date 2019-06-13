@@ -76,8 +76,10 @@
     height: 100%;
     position: absolute;
 }
-
-.mat-expansion-panel-header {
+.mat-expansion-panel-header{
+    transition: all 300ms;
+}
+.collection-panel:not(.listEditing) .mat-expansion-panel-header {
     padding: 0 0 0 24px;
 }
 

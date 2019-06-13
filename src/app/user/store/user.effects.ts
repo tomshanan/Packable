@@ -26,7 +26,6 @@ export class userEffects{
         ofType(userActions.SET_USER_STATE),
         tap((action:userActions.setUserState)=>{
             this.storageService.initialGetAllItems()
-            this.storageService.listenToUserItems()
         })
     )
 }

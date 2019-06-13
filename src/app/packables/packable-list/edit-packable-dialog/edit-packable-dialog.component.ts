@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { PackableComplete, PackableOriginal } from '@shared/models/packable.model';
 import { Profile } from '@app/shared/models/profile.model';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
@@ -13,7 +13,7 @@ import { transitionTrigger } from '../../../shared/animations';
 import { timeStamp, isDefined } from '../../../shared/global-functions';
 import { ContextService } from '../../../shared/services/context.service';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
-import { editPackableForm_update } from './packable-edit-form/packable-edit-form.component';
+import { editPackableForm_update, PackableEditFormComponent } from './packable-edit-form/packable-edit-form.component';
 
 export interface DialogData_EditPackable {
   pakable?: PackableComplete,
@@ -28,7 +28,7 @@ export interface DialogData_EditPackable {
   styleUrls: ['./edit-packable-dialog.component.css'],
   animations: [transitionTrigger]
 })
-export class EditPackableDialogComponent implements OnInit {
+export class EditPackableDialogComponent implements OnInit,AfterViewInit {
   /*
    RECEIVE PACKABLE-COMPLETE
    SEND BACK UPDATED PACKABLE COMPLETE
@@ -48,6 +48,7 @@ export class EditPackableDialogComponent implements OnInit {
   step: number = 1;
   msg:string;
   formValid:boolean = false;
+  @ViewChild('packableForm') packableForm: PackableEditFormComponent;
 
   constructor(
     private storeSelector: StoreSelectorService,
@@ -57,7 +58,8 @@ export class EditPackableDialogComponent implements OnInit {
     private store: Store<fromApp.appState>,
     public windowService: WindowService,
     private context: ContextService,
-    private bulkActions: BulkActionsService
+    private bulkActions: BulkActionsService,
+    private cd: ChangeDetectorRef,
   ) {
     this.packable = Object.assign(new PackableComplete(), data.pakable)
     this.isNew = data.isNew || false;
@@ -87,6 +89,10 @@ export class EditPackableDialogComponent implements OnInit {
     : [] ) );
 
     this.collectionName = this.collectionId ? this.storeSelector.getCollectionById(this.collectionId).name : null;
+  }
+  ngAfterViewInit(){
+    this.formValid = this.packableForm.valid()
+    this.cd.detectChanges()
   }
 
   onUpdateForm(data: editPackableForm_update){

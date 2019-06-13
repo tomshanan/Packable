@@ -19,64 +19,11 @@
     padding: 0.4em;
     margin-left: -0.4em;
 }
-.packable {
-    flex: 1 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-}
-.packable .first-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.packable .first-row > .name {
-    flex: 1 1 0;
-    transition: color 500ms;
-    margin: 0.1em 0;
-}
-.packable .first-row > .name > p {
-    margin: 0;
-    padding: 0;
-    line-height: 1.5em;
-}
 
-.packable > .quantity {
-    flex: 1 0 auto;
-    text-align: left;
-}
-.packable > .quantity  span{
-    font-size: 0.7em;
-    margin:0;
-    transition: color 200ms;
-    color:grey;
-}
-.packable .rule-icons {
-    display: contents;
-    flex-direction: row-reverse;   
-    flex-wrap: wrap; 
-    align-items: center;
-    flex: 1 1 0;
-    text-align: right;
-    line-height: 1em;
-    font-size: 1.5em;
-    min-height: 1em;
-}
 .cardless .rule-icons {
     flex-wrap: nowrap;
 }
-.packable .rule-icons > .icon-container{
-    flex:0 1 auto;
-    display: inline-block;
-    height: 1em;
-    width: 1em;
-    margin: 0.1em;
-}
-.packable .rule-icons.small-screen > .icon-container{
-    flex:0 1 auto;
-    height: 1em;
-    width: 1em;
-}
+
 mat-card.cardless {
     padding: 0.2em 0em;
     margin: 0;
@@ -93,9 +40,7 @@ mat-card.cardless:hover:not(.selectable) {
     flex-direction: row;
     align-items: center;
 }
-/* .options .option {
-    padding: 0.4em;
-} */
+
 .options .option-close {
     margin-right:-0.4em;
 }
@@ -105,7 +50,7 @@ mat-card.cardless:hover:not(.selectable) {
 
 .options > .option {
     display: inline-block;
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .options.editing{

@@ -26,7 +26,6 @@ import { NewCollectionDialogComponent } from './collections/collection-list/new-
 import { EditProfileDialogComponent } from './profiles/edit-profile-dialog/edit-profile-dialog.component';
 import { NewProfileDialogComponent } from './profiles/new-profile-dialog/new-profile-dialog.component';
 import { AdminUserTableComponent } from './admin/admin-user-table/admin-user-table.component';
-import { MatTableModule, MatPaginatorModule, MatSortModule, MatSpinner } from '@angular/material';
 import { SetPermissionsDialogComponent } from './admin/set-permissions-dialog/set-permissions-dialog.component';
 import { userEffects } from './user/store/user.effects';
 import { adminEffects } from './admin/store/admin.effects';

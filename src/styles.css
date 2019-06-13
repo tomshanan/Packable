@@ -20,18 +20,19 @@
 .dialog-full-screen .mat-dialog-container{
     border-radius: 0px;
 }
-.dialog-default .mat-dialog-actions{
+.dialog-default .mat-dialog-actions, .form-actions{
     position: relative;
     height: 0px;
     min-height: 0px;
     padding: 0;
     margin: 0;
 }
-.dialog-full-screen .mat-dialog-actions{
-    position: fixed;
+.form-actions{
+    margin-top: 80px;
+}
+.dialog-full-screen .mat-dialog-actions, .form-actions-mobile{
+    position: sticky;
     bottom: 0;
-    right: 0;
-    left: 0;
     overflow: visible;
     height: 0px;
     min-height: 0px;
@@ -51,6 +52,9 @@ mat-dialog-content{
     flex-grow: 1;
     flex-shrink: 1;
     max-height: unset!important;
+    padding-bottom: 24px!important;
+}
+mat-dialog-content:not(:last-child){
     padding-bottom: 80px!important;
 }
 
@@ -90,8 +94,8 @@ button.mat-fab > mat-icon{
 }
 
 profile-icon, profile-selector {
-    display: contents;
 }
+
 a.inline-link, a.inline-link:not([href]){
     color: #007bff;
     text-decoration: none!important;

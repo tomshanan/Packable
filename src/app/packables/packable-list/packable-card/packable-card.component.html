@@ -14,11 +14,10 @@
         <div class="name" [class.text-success]="packable.new">
           <p>{{packable.name | titlecase}}</p>
         </div>
-        <div class="rule-icons">
-          <div class="icon-container" *ngFor="let icon of packable.icons">
-            <mat-icon style="width: 100%; height: 100%;" [title]="icon.description" [svgIcon]="icon.icon"></mat-icon>
-          </div>
+        <div class="rule-icon-container" *ngFor="let icon of packable.icons">
+          <mat-icon style="width: 100%; height: 100%;" [title]="icon.description" [svgIcon]="icon.icon"></mat-icon>
         </div>
+        
       </div>
       <div class="quantity">
         <span *ngFor="let rule of packable.rules; let i=index" [class.text-success]="packable.new">

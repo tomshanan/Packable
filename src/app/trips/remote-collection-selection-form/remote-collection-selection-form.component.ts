@@ -85,18 +85,16 @@ export class RemoteCollectionSelectionFormComponent implements OnInit, OnChanges
       })
     let updatedComplete = this.colFac.remoteToComplete(filtered)
       .map(c => this.attachWeahter(c))
-      .sort((a, b) => {
-        let aWeather = a.weatherMet
-        let bWeather = b.weatherMet
-        return aWeather ? (bWeather ? 0 : 1) : (bWeather ? -1 : 0)
-      })
-
     if (this.sortedCollections) {
-      console.log('RemoteCollectionForm used COMPARE')
         this.sortedCollections.compare(updatedComplete)
     } else {
       this.sortedCollections = updatedComplete
     }
+    this.sortedCollections.sort((a, b) => {
+      let aWeather = a.weatherMet
+      let bWeather = b.weatherMet
+      return aWeather ? (bWeather ? 0 : -1) : 1
+    })
     console.log('RemoteCollectionForm Updated to:',this.sortedCollections)
   }
   attachWeahter(col: CollectionComplete): completeAndWeatherMet {

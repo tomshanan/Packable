@@ -305,7 +305,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
         `This will delete the ${multi ? 'selected collections' : 'collection'} from all Travelers and from this library.<br>
         <span class="text-danger"><b>Are you sure you wish to continue?</b></span>`
       let data: ConfirmDialogData = {
-        header: 'Removing Collections',
+        header: 'Deleting Collections',
         content: content
       }
       let confirmDialogRef = this.dialog.open(ConfirmDialog, {

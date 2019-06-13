@@ -7,7 +7,7 @@
 }
 .ff-header {
     align-items: center;
-    padding:5px 15px;
+    /* padding:5px 15px; */
     display: -webkit-flex;
     display:flex;
     flex-shrink: 0;

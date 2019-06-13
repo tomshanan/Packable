@@ -1,12 +1,12 @@
 <div class="dialog-header" mat-dialog-title #headerElement [class.minimal]="noHeader">
-    <button class="return-button mini" mat-icon-button (click)="onReturn()" *ngIf="showReturn">
+    <button class="return-button" mat-icon-button (click)="onReturn()" *ngIf="showReturn">
         <mat-icon>arrow_back</mat-icon>
     </button>
     <span class="title super" *ngIf="super">{{super}}</span>
     <span class="title d-flex justify-content-center">
         <span class="header">{{header}}</span>
     </span>
-    <button class="close-button mini" mat-icon-button (click)="onClose()">
+    <button class="close-button" mat-icon-button (click)="onClose()">
         <mat-icon>close</mat-icon>
     </button>
 </div>

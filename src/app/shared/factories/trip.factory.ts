@@ -32,8 +32,8 @@ export class TripFactory {
         })
         return newTrip
     }
-    public makeDisplayTrip = (trip:Trip): displayTrip =>{  
-        let destination = this.destServices.destinations.findId(trip.destinationId)
+    public makeDisplayTrip = (trip:Trip,weatherData?:TripWeatherData): displayTrip =>{  
+        let destination = this.destServices.findDestination(trip.destinationId)
         let dates:string = this.tripDatesToDateString(trip)
         let profiles:string[] = this.storeSelector.profiles
             .filter(p=>trip.profiles.includes(p.id))
@@ -44,7 +44,7 @@ export class TripFactory {
             return new displayTrip(
                 trip.id,
                 dates,
-                'tbc', // convert temperature to string
+                weatherData ? weatherData.tempToHtmlString() : 'TBC',
                 destination.fullName,
                 profiles,
                 collections,
@@ -65,7 +65,7 @@ export class TripFactory {
     public validateTrip = (trip:Trip):tripProperties[]=>{
         let validArray: tripProperties[] = []
         let id = trip.destinationId
-        let destisValid = !!this.destServices.DestinationByCityId(id)
+        let destisValid = !!this.destServices.findDestination(id)
         destisValid && validArray.push('destinationId')
         let now = moment()
         let startDate = moment(trip.startDate)

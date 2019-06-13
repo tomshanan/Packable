@@ -21,7 +21,7 @@
     <h5>Where to next?</h5>
     <trip-details-form (tripChange)="onTripChange($event)" #tripDetailsForm>
     </trip-details-form>
-    <button mat-fab class="mx-1" color="primary" (click)="confirmNewTrip()" [disabled]="!tripDetailsForm.valid">
+    <button mat-fab class="mx-1" appColor="action" (click)="confirmNewTrip()" [disabled]="!tripDetailsForm.valid">
       <mat-icon>check</mat-icon>
     </button>
   </div>

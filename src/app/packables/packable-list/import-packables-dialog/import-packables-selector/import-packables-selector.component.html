@@ -4,7 +4,7 @@
   (@transitionTrigger.start)="windowService.unsetOpenDialogs()"
   (@transitionTrigger.done)="windowService.updateOpenDialogs()">
   <p class="text-muted text-center small pt-2">
-    <a class="inline-link" (click)="initList()" *ngIf="finishedLoading">Load</a>{{!finishedLoading ? 'Loading' : ''}} Packable Library
+    Loading Packable Library
     <br>
     <mat-spinner diameter="30" style="display: inline-block"></mat-spinner>
   </p>

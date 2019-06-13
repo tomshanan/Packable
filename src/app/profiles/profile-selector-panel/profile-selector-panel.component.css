@@ -13,9 +13,7 @@
     align-items: center;
     line-height: 0em;
 }
-.selectorTrigger {
-    display: contents;
-}
+
 .selectedProfile-iconContainer{
     display: inline-block;
     position: relative;

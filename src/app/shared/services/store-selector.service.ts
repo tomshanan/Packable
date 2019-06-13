@@ -137,7 +137,7 @@ export class StoreSelectorService{
     }
     getDisplayTrips(trips:Trip[]): displayTrip[]{
         return trips.map(trip =>{
-            let destination = this.destServices.DestinationByCityId(trip.destinationId)
+            let destination = this.destServices.findDestination(trip.destinationId)
             let startDate = moment(trip.startDate)
             let endDate = moment(trip.endDate)
             let dates:string;

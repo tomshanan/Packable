@@ -51,8 +51,8 @@ export class DestinationDataService {
   countryNameById(id: string): string {
     return countries.find(x => x.id == id).displayName
   }
-  DestinationByCityId(id: string): Destination {
-    return this._destinations.find(x => x.cityId == id);
+  findDestination(cityId: string): Destination {
+    return this._destinations.find(x => x.cityId == cityId);
   }
   private nonLetters = /[\s\.\,\-\'\;\:]+/g
 

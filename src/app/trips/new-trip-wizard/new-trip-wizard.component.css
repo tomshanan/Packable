@@ -2,13 +2,13 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height:100vh;
+    /* height:100vh; */
     justify-content: flex-start;
     align-items: stretch;
 }
 
 .scrollable{
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
     position: relative;
     flex-grow: 1;
     display: flex;
@@ -30,8 +30,8 @@
 }
 .flex-device-height .content{
     padding-bottom: 70px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /* overflow-y: auto;
+    overflow-x: hidden; */
     position: relative;
 }
 .flex-device-height .step.centered .content{

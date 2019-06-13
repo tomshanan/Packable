@@ -49,13 +49,13 @@
         'list-item-selected': objectSelected(item), 
         'border border-primary rounded': searchFilterInput!='' && i==0 && !objectUsed(item)}"
         [activeColor]="objectSelected(item) ? 'accent' : 'muted'"
-        [disabled]="!objectUsed(item)"
+        [disabled]="objectUsed(item)"
         [colorTarget]="buttons"
         (click)="!objectUsed(item) && toggleItemInSelection(item,i)">
         <div class="item-name align-self-stretch d-flex flex-column justify-content-center">
           <span>{{item.name}}</span>
         </div>
-        <div #buttons>
+        <div class="button-container" #buttons>
           <button
             mat-icon-button
             *ngIf="!objectSelected(item) && !objectUsed(item)">
@@ -64,7 +64,7 @@
           <button
             mat-icon-button
             *ngIf="objectSelected(item)">
-            <mat-icon outlined>check_circle</mat-icon>
+          <mat-icon outlined>check_circle</mat-icon>
           </button>
           <button
             disabled

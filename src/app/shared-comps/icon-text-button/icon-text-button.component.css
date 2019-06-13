@@ -1,6 +1,7 @@
 :host {
-    display: contents;
-    font-size: 24px
+    font-size: 24px;
+    /* line-height: 1em;
+    height: 1em; */
 }
 
 a{
@@ -10,8 +11,8 @@ a{
     transition: color 300ms;
 }
 .text{
-    font-size: 0.8em;
-    padding: .5em 0em;
+    font-size: 1em;
+    padding: .5em 0.1em;
     transition: color 300ms;
 }
 .icon-container {

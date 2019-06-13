@@ -3,10 +3,11 @@
   title="Packable"
   [value]='packableName'
   [usedNames]='usedPackableNames'
-  (changeEvent)='onEditName($event)'>
+  (changeEvent)='onEditName($event)'
+  #nameInput>
 </name-input>
 
-<quantity-rule-list [(rules)]="packable.quantityRules"></quantity-rule-list>
+<quantity-rule-list [rules]="packable.quantityRules" (rulesChange)="onEditRules($event)"></quantity-rule-list>
 
 <app-weather-conditions-form [(weather)]="packable.weatherRules" (weatherChange)="emitChange()"></app-weather-conditions-form>
 <div

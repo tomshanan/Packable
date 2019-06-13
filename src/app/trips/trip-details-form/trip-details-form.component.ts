@@ -26,7 +26,7 @@ export class TripDetailsFormComponent implements OnInit {
     private tripFac: TripFactory,
   ) { }
   ngOnInit() {
-    this.destination = this.destinationData.DestinationByCityId(this.trip.destinationId) || null
+    this.destination = this.destinationData.findDestination(this.trip.destinationId) || null
     this.fromDate = this.trip.startDate ? moment(this.trip.startDate) : null;
     this.toDate = this.trip.endDate ? moment(this.trip.endDate) : null;
     this.validate()

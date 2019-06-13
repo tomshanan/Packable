@@ -63,9 +63,13 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
     this.color = this.appColors[this.inputColor]
     if (this.setSize()){
       this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', this.buttonWidth)
+      this.renderer.setStyle(this.hostElement.nativeElement, 'line-height', '1em')
+      this.renderer.setStyle(this.hostElement.nativeElement, 'height', '1em')
       let width = this.hostElement.nativeElement.clientWidth
     } else {
       this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', 'inherit')
+      this.renderer.removeClass(this.hostElement.nativeElement,'line-height')
+      this.renderer.removeClass(this.hostElement.nativeElement,'height')
     }
     if(!!this.innerPadding){
       this.renderer.setStyle(this.rippleTrigger.nativeElement,'padding',this.innerPadding)

@@ -45,7 +45,7 @@ export type nodeOrAll = nodeOptions | 'all'
 type updates = { [path: string]: any } 
 type configItem = {[id:string]:userConfig}
 type firebaseItem =  {[id:string]:{[x:string]:any}}
-type localItem = {id:string, [x:string]:any}
+type localItem = {id:string, userCreated?:boolean, [x:string]:any}
 
 const USER_CONFIG = 'userConfig'
 const USERS = 'users'
@@ -200,15 +200,8 @@ export class StorageService {
         }
     }
     initialGetAllItems() {
-        if (this.checkAuth()) {
-            let path = this.pathToUserItems
-            log(`getting all items with path ${path}`);
-            firebase.database().ref(path).once('value', snapshot => {
-                log('received initial items')
-                let data = snapshot.val();
-                this.tidayAndStoreUserItems(data,['all'])
-            }).catch(e=>log(e.message))
-        }
+        this.listenToUserItems()
+        this.getLibrary()
     }
     private tidayAndStoreUserItems(data:{},replace:nodeOrAll[]=[]):void{
         if(data!==null){
@@ -423,6 +416,7 @@ export class StorageService {
         })
         return firebaseData
     }
+    
     unwrapForLocalStore<T extends localItem>(firebaseItems:firebaseItem):T[]{
         let itemArray: T[] = [];
         for(let item in firebaseItems){

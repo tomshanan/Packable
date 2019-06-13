@@ -22,7 +22,7 @@ export class NameInputComponent implements OnInit,AfterViewInit {
   @Output() changeEvent = new EventEmitter<NameInputChangeEvent>()
   @ViewChild('editNameInput') editNameInput: ElementRef;
   allowedName: string;
- 
+  
 /**
  <name-input
   title="Packable"

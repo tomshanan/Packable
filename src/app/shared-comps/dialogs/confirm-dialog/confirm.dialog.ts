@@ -1,10 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { appColors } from '../../../shared/app-colors';
 
 
 export interface ConfirmDialogData {
   header: string,
-  content:string
+  content:string,
+  activeColor?: keyof appColors,
 }
 
 @Component({
@@ -15,6 +17,7 @@ export interface ConfirmDialogData {
 export class ConfirmDialog implements OnInit {
 header: string;
 content:string;
+activeColor: keyof appColors;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData,
@@ -22,6 +25,7 @@ content:string;
   ) { 
     this.header = data.header || 'Are you sure?'
     this.content = data.content || '';
+    this.activeColor = data.activeColor || 'action';
   }
 
   ngOnInit() {

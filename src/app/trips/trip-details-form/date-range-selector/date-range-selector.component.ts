@@ -39,10 +39,10 @@ export class DateRangeSelectorComponent implements OnInit {
   prevDates: { from: NgbDateStruct, to: NgbDateStruct };
   formattedDate: string;
   selectorOpen = false;
-  minDate: NgbDateStruct;
+  today: NgbDateStruct;
 
   constructor(private calendar: NgbCalendar, public windowSize:WindowService) {
-    this.minDate = calendar.getToday();
+    this.today = calendar.getToday();
   }
 
   ngOnInit() {
@@ -52,7 +52,7 @@ export class DateRangeSelectorComponent implements OnInit {
       this.toDate = this.momentToDatepicker(this.setToDate)
       this.formattedDate = this.formatDate(this.fromDate, this.toDate)
     } else {
-      this.fromDate = this.minDate;
+      this.fromDate = this.today;
       this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 3);
     }
     this.prevDates = {
@@ -67,6 +67,9 @@ export class DateRangeSelectorComponent implements OnInit {
     switch (state) {
       case 'open':
         this.d.open()
+        this.fromDate = this.isBeforeMin(this.fromDate) ? (this.isBeforeMin(this.toDate) ? null : this.today) : this.fromDate;
+        this.toDate = this.isBeforeMin(this.toDate) ? null : this.toDate;
+
         this.prevDates.from = this.fromDate;
         this.prevDates.to = this.toDate;
         setTimeout(() => { this.selectorOpen = true; }, 1)
@@ -104,7 +107,7 @@ export class DateRangeSelectorComponent implements OnInit {
   isInside = date => after(date, this.fromDate) && before(date, this.toDate);
   isFrom = date => equals(date, this.fromDate);
   isTo = date => equals(date, this.toDate);
-  isBeforeMin = date => before(date, this.minDate);
+  isBeforeMin = date => before(date, this.today);
 
   formatDate(from: NgbDateStruct, to: NgbDateStruct) {
     if (from.month == to.month) {

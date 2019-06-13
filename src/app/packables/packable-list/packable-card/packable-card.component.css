@@ -52,32 +52,15 @@
     transition: color 200ms;
     color:grey;
 }
-.packable .rule-icons {
-    display: contents;
-    flex-direction: row-reverse;   
-    flex-wrap: wrap; 
-    align-items: center;
-    flex: 1 1 0;
-    text-align: right;
+.packable .rule-icon-container {
+    flex: 0 0 auto;
     line-height: 1em;
     font-size: 1.5em;
-    min-height: 1em;
-}
-.cardless .rule-icons {
-    flex-wrap: nowrap;
-}
-.packable .rule-icons > .icon-container{
-    flex:0 1 auto;
-    display: inline-block;
     height: 1em;
     width: 1em;
     margin: 0.1em;
-}
-.packable .rule-icons.small-screen > .icon-container{
-    flex:0 1 auto;
-    height: 1em;
-    width: 1em;
-}
+ }
+ 
 mat-card.cardless {
     padding: 0.2em 0em;
     margin: 0;

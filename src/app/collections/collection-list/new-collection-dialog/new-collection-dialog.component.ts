@@ -40,7 +40,7 @@ export class NewCollectionDialogComponent implements OnInit {
   collectionName: string;
   collection: CollectionComplete;
   usedCollectionNames: string[];
-  collectionNameValid: boolean = true;
+  collectionNameValid: boolean = false;
   step: number = 1;
   remotePackableIds: string[] = [];
 
@@ -142,21 +142,19 @@ export class NewCollectionDialogComponent implements OnInit {
   }
   nextStep() {
     this.step++
-    //this.stepSettings()
+    this.stepSettings()
   }
   returnStep() {
     this.step--
-    //this.stepSettings()
+    this.stepSettings()
   }
-  // stepSettings() {
-  //   if (this.step == 1 || this.step == 3) {
-  //     this.dialogRef.addPanelClass('dialog-form')
-  //     this.dialogRef.removePanelClass('dialog-full-height')
-  //   } else {
-  //     this.dialogRef.addPanelClass('dialog-full-height')
-  //     this.dialogRef.removePanelClass('dialog-form')
-  //   }
-  // }
+  stepSettings() {
+    if (this.step == 1 || this.step == 3) {
+      this.dialogRef.removePanelClass('dialog-tall')
+    } else {
+      this.dialogRef.addPanelClass('dialog-tall')
+    }
+  }
   validate_usedName(control: FormControl): { [s: string]: boolean } {
     let input = control.value.toLowerCase();
     if (this.usedCollectionNames.indexOf(input) > -1) {

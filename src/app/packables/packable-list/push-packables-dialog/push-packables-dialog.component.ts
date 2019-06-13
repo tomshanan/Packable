@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { CollectionProfile } from '../edit-packable-dialog/choose-collections-form/choose-collections-form.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
+import { WindowService } from '../../../shared/services/window.service';
 
 
 export interface PushPackables_DialogData{
@@ -32,6 +33,7 @@ export class PushPackablesDialogComponent implements OnInit {
     this.collectionName = data.collectionName || null;
     this.header = data.header || "Push Packables";
     this.ids = data.ids || [];
+    this.dialogRef.addPanelClass('dialog-tall')
   }
 
   ngOnInit() {

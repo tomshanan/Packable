@@ -96,6 +96,7 @@ import { SettingsComponent } from '../trips/packing-list/settings/settings.compo
 import { WeatherSettingsDialogComponent } from '../trips/packing-list/weather-settings-dialog/weather-settings-dialog.component';
 import { WeatherSettingsFormComponent } from '../trips/packing-list/weather-settings-dialog/weather-settings-form/weather-settings-form.component';
 import { LoadingOverlayComponent } from '../shared-comps/loading-overlay/loading-overlay.component';
+import { PrintComponent } from '../trips/packing-list/print/print.component';
 
 let imports = [
     ProfilesComponent,
@@ -174,7 +175,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent, PrintComponent],
     exports: [...imports]
 })
 export class SharedModule {

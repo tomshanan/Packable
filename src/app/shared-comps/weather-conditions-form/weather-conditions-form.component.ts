@@ -81,6 +81,7 @@ export class WeatherConditionsFormComponent implements OnInit, OnChanges {
   options: Options = {
     floor: absoluteMin,
     ceil: absoluteMax,
+    animate:false,
     step: 1,
     translate: (value: number, label: LabelType): string => {
       switch (label) {

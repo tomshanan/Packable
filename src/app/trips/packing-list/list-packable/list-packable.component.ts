@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
-import { PackingListPackable, PackingListSettings } from '@shared/models/packing-list.model';
+import { PackingListPackable, PackingListSettings, pass } from '@shared/models/packing-list.model';
 import { WindowService } from '@shared/services/window.service';
 import { appColors } from '../../../shared/app-colors';
 import { isDefined } from '../../../shared/global-functions';
-import { pass, PackingListService } from '../packing-list.service';
+import { PackingListService } from '../packing-list.service';
 
 @Component({
   selector: 'list-packable',

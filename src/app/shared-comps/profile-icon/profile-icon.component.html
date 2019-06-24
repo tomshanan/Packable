@@ -12,17 +12,23 @@
   (click)="isInteractive && emitClick()">
   <div class="icon_sizer">
     <div
-      class="profile_circle"
+      class="icon_container"
       [class.inline]="inline">
-      <div class="profile_circle_content">
-        <div
-          class="profile_background"
-          [style.background]="color"></div>
-        <mat-icon
-          [svgIcon]="icon"
-          [inline]="true"
-          style="height: 100%; line-height: 100%;"></mat-icon>
-      </div>
+      <svg viewBox="0 0 100 100" id="clipper" xmlns="http://www.w3.org/2000/svg" height="100%" width="100%">
+        <defs>
+          <radialGradient id="backgroundColor" *ngIf="colors.length>1">
+            <stop [attr.offset]="offset(i)+'%'" [attr.stop-color]="color" *ngFor="let color of colors;let i = index" />
+          </radialGradient>
+        </defs>
+
+           <circle  class="circle-background" x="0" y="0"  cx="50" cy="50" r="50" [attr.fill]="colors.length>1 ? 'url(#backgroundColor)' : colors[0]"/>
+
+          <g class="svgHost">
+          <!--- SVG ELEMENT RENDERED HERE-->
+          </g>
+           <circle  class="circle-border" x="0" y="0"  cx="50" cy="50" r="50" />
+        </svg>
+      
     </div>
   </div>
   <span

@@ -34,6 +34,14 @@ import { LibraryEffects } from './shared/library/library.effects';
 import { ImportCollectionDialogComponent } from './collections/collection-list/import-collection-dialog/import-collection-dialog.component';
 import { SelectCollectionProfilesDialogComponent } from './trips/collection-selection-form/select-collection-profiles-dialog/select-collection-profiles-dialog.component';
 import { WeatherSettingsDialogComponent } from './trips/packing-list/weather-settings-dialog/weather-settings-dialog.component';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+
+export class CustomHammerConfig extends HammerGestureConfig  {
+    overrides = <any>{
+        'pinch': { enable: false },
+        'rotate': { enable: false }
+    }
+  }
 
 
 
@@ -67,7 +75,12 @@ import { WeatherSettingsDialogComponent } from './trips/packing-list/weather-set
     ImportCollectionDialogComponent,
     SelectCollectionProfilesDialogComponent,
     WeatherSettingsDialogComponent,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: CustomHammerConfig
+  }
   ]
-
 })
 export class AppModule { }

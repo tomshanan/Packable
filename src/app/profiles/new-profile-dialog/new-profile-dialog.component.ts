@@ -5,14 +5,14 @@ import * as fromApp from '@shared/app.reducers';
 import { Store } from '@ngrx/store';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
-import { Profile, ProfileComplete } from '../../shared/models/profile.model';
+import { Profile, ProfileComplete, ProfileCompleteWithMetadata } from '../../shared/models/profile.model';
 import { transitionTrigger } from '../../shared/animations';
 import { ProfileEditFormComponent } from '../profile-edit-form/profile-edit-form.component';
 import { CollectionComplete } from '@app/shared/models/collection.model';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { Subscription } from 'rxjs';
 import { ColorGeneratorService } from '../../shared/services/color-gen.service';
-import { titleCase, Guid, timeStamp } from '../../shared/global-functions';
+import { titleCase, Guid, timeStamp, sortByMetaData } from '../../shared/global-functions';
 import * as libraryActions from '@shared/library/library.actions';
 import { remoteCollection } from '@app/shared/library/library.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
@@ -31,6 +31,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   step: number = 1;
   method: profileCreationMethod;
   profile = new ProfileComplete();
+  color: string;
   @ViewChild('profileForm') profileForm: ProfileEditFormComponent;
   profileFormValid: boolean;
   searchString = '';
@@ -39,7 +40,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   selectedEssentialCollections: string[] = [];
 
   allProfiles: ProfileComplete[];
-  templateProfiles: ProfileComplete[]
+  templateProfiles: ProfileCompleteWithMetadata[]
   profileCollectionStrings: {id:string,list:string[]}[] = [];
   remoteCollections: remoteCollection[];
   subs: Subscription;
@@ -71,7 +72,8 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     this.collections = this.colFac.getImportCollectionList()
     this.allProfiles = this.proFac.getAllProfilesAndMakeComplete()
     console.log('NEWPROFILE DIALOG: allProfiles', this.allProfiles)
-    this.templateProfiles = this.proFac.makeComplete(this.storeSelector.getRemoteProfiles()) 
+    this.templateProfiles = this.proFac.getAllRemoteAndMakeComplete() 
+    this.templateProfiles.sort(sortByMetaData)
     console.log('NEWPROFILE DIALOG: templateProfiles', this.templateProfiles)
     this.profileCollectionStrings = [...this.allProfiles, ...this.templateProfiles].map(p=>{
       return {
@@ -87,18 +89,13 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   }
   backStep() {
     this.step--
+    if(this.step===1){
+      this.dialogRef.removePanelClass('dialog-tall')
+    }
   }
   profileEditFormValidation(e: boolean) {
     this.profileFormValid = e;
     console.log(`profile edit form validation = ${e}`)
-  }
-  stepHeading(): string {
-    switch (this.step) {
-      case 1: return 'New Traveler'; break;
-      case 2:
-      case 3:
-        return '';
-    }
   }
 
   // when complete step  1: 
@@ -107,53 +104,37 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   //this.step++
   onChooseMethod(method: profileCreationMethod) {
     this.method = method;
-    this.profile.avatar.color = this.colorGen.getUnused()
+    if(!this.color){
+      this.color = this.colorGen.getUnused()
+      this.profile.avatar.color = this.color
+    }
     if (this.profileForm.valid) {
+      this.dialogRef.addPanelClass('dialog-tall')
       this.step++
     }
-    this.dialogRef.addPanelClass('dialog-full-height')
+
   }
 
   /* when complete step 2: 
     get collections and apply to this.profile
-    this.step++
+    then complete
   */
   onChooseProfile(profile: ProfileComplete) {
     this.selectedCollections = profile.collections.map(c=>c.id)
-    this.onChooseOriginalCollections()
-  }
-  onChooseOriginalCollections() {
-    let localCollections = this.colFac.getAllComplete().filter(c=>this.selectedCollections.includes(c.id))
-    let localCollectionsIds = localCollections.map(c=>c.id)
-    //GET REMOTE COLLECTIONS -> filter only selected ones -> filter ones already being used in local library
-    this.remoteCollections =  this.storeSelector.getRemoteCollections().filter(c=> 
-      this.selectedCollections.includes(c.id) && !localCollectionsIds.includes(c.id)) 
-    let completeRemoteCollections = this.colFac.makeCompleteArray(this.remoteCollections)
-    this.onChooseCollections(localCollections, completeRemoteCollections)
-  }
-  onChooseCollections(collections: CollectionComplete[] = [], remoteCollections: CollectionComplete[] = []) {
-    // store remote collections in profile, and save for processing before final step
-    this.profile.collections = [...collections,...remoteCollections]
-    this.selectedEssentialCollections = this.profile.collections.filter(c=>c.essential).map(c=>c.id)
-    this.step++
-    console.log(this.profile);
+    this.onComplete()
   }
 
-  /* when complete step 3: 
-  set selected collections to essential in this.profile 
-  save remote collections to local storage
-  give profile an id
-  save profile in store
-  close modal
-*/
   onComplete() {
+    if(this.selectedCollections.length>0){
+      // SAVE REMOTE REMOTE COLLECTIONS IN STORAGE
+      let complete = this.bulkActions.processImportCollections(this.selectedCollections)
+      // Set Essential Collections in profile
+      this.profile.collections = complete
+      this.profile.collections.forEach(c=>{
+        c.essential = true
+      })
+    }
     
-    // SAVE REMOTE REMOTE COLLECTIONS IN STORAGE
-    this.bulkActions.processImportCollections(this.remoteCollections.map(c=>c.id))
-    // Set Essential Collections in profile
-    this.selectedEssentialCollections.forEach(id=>{
-      this.profile.collections.findId(id).essential = true
-    })
     this.profile.id = Guid.newGuid()
     this.profile.dateModified = timeStamp()
     let newProfile = this.proFac.completeToPrivate(this.profile)

@@ -2,6 +2,7 @@ import { Destination } from '../services/location-data.service';
 import { DayWeatherData, TripWeatherData } from '../services/weather.service';
 import * as moment from 'moment';
 import { timeStamp } from '../global-functions';
+import { Avatar } from './profile.model';
 
 export class packingListData {
     destination:Destination = null;
@@ -22,6 +23,30 @@ export class Reason {
     }
 
 }
+export class listCollection {
+    header: string = ''
+    id: string = ''
+    packables: PackingListPackable[] = []
+    constructor(list: Partial<listCollection> = {}) {
+      Object.assign(this, list)
+    }
+    validPackables(): number {
+      return this.packables.reduce((count, p) => {
+        return pass(p) ? count + 1 : count
+      }, 0)
+    }
+  }
+
+  export class DisplayPackingList {
+    header: string = ''
+    id: string = ''
+    avatar: Avatar = new Avatar()
+    collections: listCollection[] = []
+    constructor(list: Partial<DisplayPackingList> = {}) {
+      Object.assign(this, list)
+    }
+  }
+
 export interface PackingListPackable {
     profileID: string,
     collectionID: string,
@@ -37,7 +62,9 @@ export interface PackingListPackable {
     weatherNotChecked: boolean,
     forcePass: boolean,
     recentlyAdded?:boolean,
+    dateModified:number,
 }
+
 
 export class PackingListSettings {
     showInvalid: boolean = false;
@@ -59,4 +86,8 @@ export class PackingList {
         public dateModified: number = timeStamp(),
     ){}
 
+}
+
+export function pass(p:PackingListPackable):boolean{
+    return (p.passChecks || p.forcePass) && p.quantity > 0
 }

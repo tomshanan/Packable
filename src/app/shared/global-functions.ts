@@ -9,8 +9,10 @@ export function timeStamp():number{
   let newStamp = new Date().valueOf()
   return newStamp
 }
-export function isDefined(obj:any){
-  return obj!==null && obj !==undefined && obj!=='' && (!Array.isArray(obj) || obj.length > 0)
+export function isDefined(...objs){
+  return objs.every(obj=>{
+    return obj!==null && obj !==undefined && obj!=='' && (!Array.isArray(obj) || obj.length > 0)
+  })
 }
 export function indexOfId(obj:Array<{id:string}>, id:string):number{
   return obj.findIndex(x=>x.id == id)
@@ -183,4 +185,8 @@ export function copyProperties<T extends Object>(to:T, from:T, props:Array<keyof
         Object.assign(to,from[prop])
     }
   })
+}
+
+export function XOR(a:boolean,b:boolean):boolean {
+  return (a && !b) || (b && !a)
 }

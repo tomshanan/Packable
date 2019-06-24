@@ -12,19 +12,22 @@ import { HomeComponent } from '../home/home.component';
 import { AdminComponent } from '../admin/admin.component';
 import { UsersComponent } from '../admin/users/users.component';
 import { NewTripWizardComponent } from '../trips/new-trip-wizard/new-trip-wizard.component';
+import { PrintComponent } from '@app/trips/packing-list/print/print.component';
 
 const appRoutes:Routes = [
-    {path: '', pathMatch: 'full', component:HomeComponent},
+    {path: '',pathMatch: 'full', redirectTo: 'home'},
+    {path: 'home', pathMatch: 'full', component:HomeComponent},
     {path: 'user', pathMatch: 'full', component:UserComponent},
     {path: 'trips', pathMatch: 'full', component:TripsComponent, canActivate: [AuthGuard]},
     {path: 'trips/new', pathMatch: 'full', component:NewTripWizardComponent, canActivate: [AuthGuard]},
-    {path: 'trips/packing-list', pathMatch: 'full', component:PackingListComponent, canActivate: [AuthGuard]},
+    {path: 'trips/packing-list/:id', pathMatch: 'full', component:PackingListComponent, canActivate: [AuthGuard]},
+    {path: 'print/:id', pathMatch: 'full', outlet:'print',component:PrintComponent, canActivate: [AuthGuard]} ,
     {path: 'travelers', pathMatch: 'full', component:ProfilesComponent, canActivate: [AuthGuard]},
     {path: 'packables', pathMatch: 'full', component:PackablesComponent, canActivate: [AuthGuard]},
     {path: 'collections', pathMatch: 'full', component:CollectionsComponent, canActivate: [AuthGuard]},
     {path: 'admin/settings', pathMatch: 'full', component:AdminComponent, canActivate: [AuthGuard]},
     {path: 'admin/users', pathMatch: 'full', component:UsersComponent, canActivate: [AuthGuard]},
-    {path: '**', redirectTo: 'user'}
+    {path: '**', redirectTo: 'home'}
 ];
 @NgModule({
     imports: [RouterModule.forRoot(appRoutes, { enableTracing: false })],

@@ -1,6 +1,6 @@
 import { PackableOriginal } from '../models/packable.model';
 import { CollectionOriginal } from '../models/collection.model';
-import { Profile } from '../models/profile.model';
+import { Profile, ProfileComplete } from '../models/profile.model';
 import { timeStamp } from '../global-functions';
 
 export type libraryItem = PackableOriginal | CollectionOriginal | Profile;
@@ -12,13 +12,7 @@ export class remoteCollection extends CollectionOriginal {
         this.metaData = new ItemMetaData(c.id,metaData)
     }
 }
-export class remoteProfile extends Profile {
-    metaData: ItemMetaData
-    constructor(p:Profile, metaData: ItemMetaData){
-        super(p.id,p.name,p.collections,p.avatar,p.dateModified)
-        this.metaData = new ItemMetaData(p.id,metaData)
-    }
-}
+
 export interface ItemLibrary{
     packables: PackableOriginal[],
     collections: CollectionOriginal[],

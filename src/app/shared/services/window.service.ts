@@ -42,7 +42,10 @@ export class WindowService {
         this._height = window.innerHeight
         this._width = window.innerWidth
         this.change.next(this._width)
-
+        window.addEventListener( 'touchmove', function() {
+            event.preventDefault()
+            log('touch start')
+        })
         window.addEventListener('resize', (event) => {
             if (this._width != window.innerWidth || this._height != window.innerHeight) {
                 clearTimeout(this.timeout)

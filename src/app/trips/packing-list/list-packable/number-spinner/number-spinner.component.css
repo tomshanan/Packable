@@ -5,6 +5,7 @@
     box-sizing: content-box;
     align-items: stretch;
     height: 35px;
+    line-height: 35px;
     border-radius: 0.25em;
     margin-right: .5em;
 }
@@ -15,7 +16,7 @@
     flex-shrink: 0;
     user-select: none;
     font-size: 20px;
-    line-height: 35px;
+    line-height: inherit;
     font-weight: 100;
     display: flex;
     align-items: center;
@@ -31,4 +32,5 @@ input.spinner_input {
     height: inherit;
     align-self: baseline;
     font-size: 16px;
+    line-height: inherit;
 }

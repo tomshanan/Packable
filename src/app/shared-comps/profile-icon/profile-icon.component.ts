@@ -1,17 +1,18 @@
-import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ViewChild, ElementRef, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter, AfterContentInit, AfterViewInit } from '@angular/core';
 import { IconService } from '@app/core';
 import { Avatar } from '@app/shared/models/profile.model';
 import { Profile } from '../../shared/models/profile.model';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
 import { Subscription } from 'rxjs';
 import { isDefined } from '../../shared/global-functions';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'profile-icon',
   templateUrl: './profile-icon.component.html',
   styleUrls: ['./profile-icon.component.css']
 })
-export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
+export class ProfileIconComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
   
 
   @Input() showName: boolean = false;
@@ -32,11 +33,12 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   name: string;   
   @Input('icon') iconInput: string;         // will override avatar
   icon: string;             
-  @Input('color') inputColor: string;        // will override avatar
-  color: string; 
+  @Input('color') inputColor: string|string[];        // will override avatar
+  colors: string[]; 
   @Output('onClick') click = new EventEmitter<void>()
   @ViewChild('profile') profileIcon: ElementRef;
   sub: Subscription;
+
 
   constructor(
     private iconService:IconService, //for template
@@ -53,6 +55,18 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes: SimpleChanges): void {
     this.init();
   }
+  ngAfterViewInit(){
+    // setTimeout(() => {
+    //   if(this.profileIcon){
+        let svgHost:HTMLElement = this.profileIcon.nativeElement.querySelector('.svgHost')
+        let svgElementObs = this.iconService.registry.getNamedSvgIcon(this.icon)
+        svgElementObs.pipe(take(1)).subscribe((svgElement)=>{
+          this.renderer.appendChild(svgHost,svgElement)
+        })
+    //   }
+    // }, 0);
+  }
+
   ngOnInit() {
     this.init();
     this.sub = this.storeSelector.profiles_obs.subscribe((state)=>{
@@ -68,6 +82,10 @@ export class ProfileIconComponent implements OnInit, OnChanges, OnDestroy {
     this.avatar = this.avatarInput || (this.profile ? this.profile.avatar : new Avatar())
     this.name = this.nameInput || (this.profile ? this.profile.name : 'Traveler')
     this.icon = this.iconInput || this.avatar.icon || 'default';
-    this.color = this.inputColor || this.avatar.color || 'white';
+    let color: string|string[] = this.inputColor || this.avatar.color || ['#dae2f8', '#d6a4a4'];
+    this.colors = Array.isArray(color) ? color : [color];
+  }
+  offset(i:number):number{
+    return this.colors.length>1 ? (i * (100/ this.colors.length-1) ) : 0;
   }
 }

@@ -99,7 +99,7 @@ export class IconService {
     }
 
     constructor(
-        private matIconRegistry: MatIconRegistry,
+        public registry: MatIconRegistry,
         private domSanitizer: DomSanitizer
     ) {
         this.registerIcons(this.profileIcons)
@@ -111,7 +111,7 @@ export class IconService {
     private registerIcons(iconGroup:iconGroup) {
         let {path,icons} = iconGroup;
         icons.forEach(icon => {
-            this.matIconRegistry.addSvgIcon(
+            this.registry.addSvgIcon(
                 icon,
                 this.domSanitizer.bypassSecurityTrustResourceUrl(`assets/icons/${path}/${icon}.svg`)
             );

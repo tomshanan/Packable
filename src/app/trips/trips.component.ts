@@ -13,6 +13,7 @@ import { State as tripState } from './store/trip.reducers';
 import { sortByMostRecent } from '@app/shared/global-functions';
 import * as tripActions from './store/trip.actions';
 import { evaporateTransitionTrigger } from '../shared/animations';
+import { TripFactory } from '../shared/factories/trip.factory';
 
 @Component({
   selector: 'app-trips',
@@ -34,14 +35,20 @@ export class TripsComponent implements OnInit, OnDestroy {
     private activeRoute:ActivatedRoute,
     private tripMemory:TripMemoryService,
     private storeSelector: StoreSelectorService,
-    private store: Store<fromApp.appState>
+    private store: Store<fromApp.appState>,
+    private tripFac:TripFactory,
   ) { }
 
   ngOnInit() {
     this.trips_obs = this.store.select('trips');
     this.state_subscription = this.trips_obs.subscribe((tripState)=>{
-      this.trips.compare(this.storeSelector.getDisplayTrips(tripState.trips))
-      this.incomplete.compare(this.storeSelector.getDisplayTrips(tripState.incomplete))
+      let displayTrips=tripState.trips.map(trip=>this.tripFac.makeDisplayTrip(trip)) 
+      this.trips.compare(displayTrips)
+      this.trips.sort((a,b)=>{
+        return a.firstDate < b.firstDate ? -1 : 1;
+      })
+      let incompleteDisplay =tripState.incomplete.map(trip => this.tripFac.makeDisplayTrip(trip))
+      this.incomplete.compare(incompleteDisplay)
       this.incomplete.sort(sortByMostRecent)
       console.log(this.incomplete)
     })
@@ -69,10 +76,11 @@ export class TripsComponent implements OnInit, OnDestroy {
     this.incomplete.removeElements([trip])
     this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
   }
+  deleteTrip(id:string){
+    this.store.dispatch(new tripActions.removeTrips([id]))
+  }
   loadPackingList(tripId:string){
-    const trip = this.storeSelector.getTripById(tripId)
-    this.tripMemory.setTrip(trip)
-    this.router.navigate(['packing-list'], {relativeTo: this.activeRoute})
+    this.router.navigate(['packing-list',tripId],{relativeTo: this.activeRoute})
   }
   // makeTripName(displayTrip: displayTrip, trip: Trip){
   //   let reverseDate = (dateString:string):string=>{ return dateString.split('-').reverse().join('')}

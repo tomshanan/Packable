@@ -9,6 +9,7 @@ import { ProfileFactory } from '@factories/profile.factory';
 import { weatherFactory } from '@factories/weather.factory';
 import { TripFactory } from '@factories/trip.factory';
 import { ContextService } from '../shared/services/context.service';
+
 import {
     AuthService, 
     AuthGuard, 
@@ -21,6 +22,7 @@ import {
     IconService,
     ColorGeneratorService
 } from '@app/core';
+
 
 @NgModule({
     providers: [
@@ -39,9 +41,7 @@ import {
         weatherFactory,
         IconService,
         ColorGeneratorService,
-        
         {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
-        
     ]
 })
 export class CoreModule {}

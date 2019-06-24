@@ -1,11 +1,10 @@
-<nav class="nav flex-column">
-
+<nav class="nav flex-column align-items-stretch">
     <ng-template ngFor let-listItem [ngForOf]="mainNav">
         <a 
             *ngIf="canView(listItem)" 
             class="nav-link navLink text-right" 
             [ngClass]="{'small': listItem.size=='sub'}"
-            (click)="routeTo(listItem.link)"
+            [routerLink]="[listItem.link]"
             routerLinkActive="active">
             {{listItem.text}}
         </a>
@@ -19,7 +18,7 @@
                 *ngIf="adminCanView(listItem)"
                 class="nav-link navLink text-right" 
                 [ngClass]="{'small': listItem.size=='sub'}"
-                (click)="routeTo(listItem.link)"
+                [routerLink]="[listItem.link]"
                 routerLinkActive="active">
                 {{listItem.text}}
             </a>
@@ -28,37 +27,37 @@
         <br>
     </ng-container>
     <ng-container *ngIf="isAuthenticated; else login">
-        <span class="nav-link text-right">
+        <div class="text-right nav-link">
             <a 
-                class="navLink"
+                class="nav-link-colors"
                 routerLink="user"
                 fragment="settings"
                 routerLinkActive="active">
                 {{username}}</a>
             &nbsp;(<a 
-            class="navLink small" 
+            class="small nav-link-colors" 
             routerLink="user"
             fragment="logout"
             routerLinkActive="active">Logout</a>)
-        </span>
+        </div>
     </ng-container>
     <ng-template #login>
             <a 
-            class="nav-link navLink text-right" 
+            class="nav-link text-right" 
             routerLink="user"
             fragment="login"
             routerLinkActive="active">
             Login
         </a>
         <a 
-            class="nav-link navLink text-right small" 
+            class="nav-link text-right small" 
             routerLink="user"
             fragment="register"
             routerLinkActive="active">
             Register
         </a>
     </ng-template>
-    <ng-container *ngIf="user.permissions.creator">
+    <div *ngIf="user.permissions.creator" class="text-right">
         <settings-simulate-user></settings-simulate-user>
-    </ng-container>
+    </div>
 </nav>

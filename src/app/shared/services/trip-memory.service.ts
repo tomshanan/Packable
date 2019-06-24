@@ -33,7 +33,8 @@ export class TripMemoryService {
     this.store.dispatch(new tripActions.updateTrips([trip]))
   }
   saveTripAndDeleteTemp(trip:Trip){
-    this.saveTrip(trip)
+    this.store.dispatch(new tripActions.updateTrips([trip]))
     this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
+    this.clear()
   }
 }

@@ -19,6 +19,7 @@ export class displayTrip {
     constructor(
         public id: string,
         public displayDate: string,
+        public firstDate: string,
         public temp: string,
         public destinationName: string,
         public profileNames: string[],

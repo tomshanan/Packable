@@ -126,7 +126,7 @@ export class BulkActionsService {
     }
   }
   
-  public processImportCollections(selectedColIds:string[],profileIds?:string[]){
+  public processImportCollections(selectedColIds:string[],profileIds?:string[]):CollectionComplete[]{
     let localCollections = this.colFac.getAllComplete() // will only return living collections (not deleted)
     let allRemoteCollections = this.storeSelector.getRemoteCollections()
 
@@ -141,12 +141,13 @@ export class BulkActionsService {
     // REVIVE / ADD MISSING PACKABLES TO PACKABLE STORE
     this.addPackablesFromRemoteCollections(selectedRemoteCollections)
     // BULK ACTION- ADD SELECTED COLLECTIONS TO PROFILES, IF PROFILES WERE SELECTED
+    let newCompletes = this.colFac.remoteToComplete(selectedRemoteCollections)
+    let selectedLocal = localCollections.filter(c=>selectedColIds.includes(c.id))
+    let allComplete = [...selectedLocal,...newCompletes]
     if(isDefined(profileIds)){
-      let newCompletes = this.colFac.remoteToComplete(selectedRemoteCollections)
-      let selectedLocal = localCollections.filter(c=>selectedColIds.includes(c.id))
-      let allComplete = [...selectedLocal,...newCompletes]
       this.pushCompleteCollectionsToProfiles(allComplete,profileIds)
     }
+    return allComplete
   }
 
   public addPackablesFromRemoteCollections(selectedRemoteCollections:remoteCollection[]){

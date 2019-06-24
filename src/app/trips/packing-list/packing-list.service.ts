@@ -9,9 +9,9 @@ import { WeatherService, TripWeatherData, weatherCheckResponse } from '../../sha
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { weatherFactory } from '@app/shared/factories/weather.factory';
 import { Trip, displayTrip } from '../../shared/models/trip.model';
-import { PackingList, packingListData, PackingListPackable, Reason, PackingListSettings } from '../../shared/models/packing-list.model';
-import { Subscription, Subject } from 'rxjs';
-import { getAllDates, copyProperties, timeStamp } from '../../shared/global-functions';
+import { PackingList, packingListData, PackingListPackable, Reason, PackingListSettings, pass } from '../../shared/models/packing-list.model';
+import { Subscription, Subject, combineLatest } from 'rxjs';
+import { getAllDates, copyProperties, timeStamp, isDefined } from '../../shared/global-functions';
 import { PackableComplete } from '../../shared/models/packable.model';
 import { CollectionComplete } from '../../shared/models/collection.model';
 import { ProfileComplete } from '../../shared/models/profile.model';
@@ -20,17 +20,23 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../shared/services/user.service';
 import * as userActions  from '@app/user/store/user.actions';
 import { UserSettings } from '../../user/store/userState.model';
-import { TripFactory } from '../../shared/factories/trip.factory';
+import { TripFactory, SHARED } from '../../shared/factories/trip.factory';
+import * as moment from 'moment';
 
 
-export function pass(p:PackingListPackable):boolean{
-    return (p.passChecks || p.forcePass) && p.quantity > 0
-}
+
 function log(...args){
   console.log('💼',...args)
 }
-
+function warn(...args){
+  console.warn('💼',...args)
+}
+/**
+ * @weatherData TripWeatherData
+ * @save boolean
+ */
 export interface updateOptions {weatherData?:TripWeatherData,save?:boolean}
+
 
 @Injectable()
 export class PackingListService {
@@ -62,6 +68,13 @@ export class PackingListService {
     this.packingListSettings = Object.assign(this.packingListSettings, newSettings)
     this.settingsEmitter.next(this.packingListSettings)
   }
+  loading;
+  loadingEmit = new Subject<boolean>();
+  setloading(bool: boolean) {
+    log('set loading', bool)
+    this.loading = bool
+    this.loadingEmit.next(bool)
+  }
 
   constructor(
     private store: Store<fromApp.appState>,
@@ -74,30 +87,37 @@ export class PackingListService {
     private weatherFactory: weatherFactory,
     private router:Router,
     private userService:UserService,
-    private currentRount:ActivatedRoute,
+    private route:ActivatedRoute,
   ) {
     log('PackingListService inititated')
+    this.setloading(true)
+    let memoryTrip:Trip = this.tripMemory.trip;
+    let combinedObserver = combineLatest(this.storeSelector.trips_obs, this.route.paramMap,this.store.select('auth'))
     /*
-      Retrieve packingListSettings from user settings
+      ADD FUNCTIONALITY, COMBINE WITH AUTH GUARD TOO:
+        disable editing unless user logged in 
     */
-    let memoryTrip = this.tripMemory.trip
-    /*
-        ADD ALTERNATIVE HERE: 
-        get trip from router params, disable editing unless user logged in 
-    */
-   
-    if (!!memoryTrip) {
       this.serviceSubscription.add(
-        this.storeSelector.trips_obs.subscribe(tripState => {
-          log('📥 received new tripstate')
-          let newTrip = tripState.trips.find(trip => trip.id == memoryTrip.id);
-          if (newTrip) {
-            let loadedPackingList = tripState.packingLists.findId(memoryTrip.id);
+        combinedObserver.subscribe(([tripState,paramMap]) => {
+          const id = paramMap.get('id')
+          let loadedPackingList:PackingList;
+          let loadedTrip: Trip;
+          if(isDefined(id)){
+            loadedPackingList = tripState.packingLists.findId(id)
+            loadedTrip = tripState.trips.findId(id)
+          } else if(isDefined(memoryTrip)){
+            loadedPackingList = tripState.packingLists.findId(memoryTrip.id)
+            loadedTrip = tripState.trips.findId(memoryTrip.id)
+          } 
+          if(isDefined(loadedTrip)){
             log('Received packinglist from tripState',loadedPackingList)
-            this.autoUpdatePackingList(newTrip,loadedPackingList)
+            this.autoUpdatePackingList(loadedTrip,loadedPackingList)
           } else {
-            log(`This trip was not saved in the Store.`);
+            warn('Could not load trip')
+            this.setloading(false);
+            this.setPackingList(null)
           }
+          
         }))
         this.serviceSubscription.add(
           this.userService.userState_obs.subscribe(userState=>{
@@ -105,25 +125,26 @@ export class PackingListService {
             this.setSettings(userState.settings.packinglistSettings)
           })
         )
-    } else {
-      this.router.navigate(['trips'])
-    }
   }
   autoUpdatePackingList(newTrip: Trip, loadedPackingList: PackingList) {
     this.trip = newTrip
     this.displayTrip = this.tripFac.makeDisplayTrip(this.trip)
+    // THERES A SAVED PACKING LIST
     if (loadedPackingList) {
+      // THIS SERVICE ALREADY HAS LOADED A PACKING LIST
       if (this.packingList && this.tripWeather) {
-        if(this.packingList.dateModified !== loadedPackingList.dateModified){
-          this.generateAndSetPackingList()
+        if(this.packingList.dateModified < loadedPackingList.dateModified){
+          // NEW LIST IS NEWER
+          this.setPackingList(this.cleanUpList(loadedPackingList))
         } else{
-          log(`received new packinglist, but it has the same timestamp\ncurrent:`,this.packingList,'\nnew:',loadedPackingList)
+          log(`new packing list does not have a later time stamp\nOLD:`,this.packingList,'\nNEW:',loadedPackingList)
         }
       } else {
         log('Weather or PackingList not setup, updatingListBySetting,\n','Packinglist:',this.packingList,'\nTripWeather:',this.tripWeather)
         this.packingList = loadedPackingList
         this.updatePackingListBySetting(loadedPackingList.data.weatherData.dataInput,{save:false})
       }
+      // THERES NO SAVED PACKING LIST
     } else {
       this.updatePackingListBySetting('auto',{save:true})
     }
@@ -138,14 +159,18 @@ export class PackingListService {
     }
   }
   updateUsingWeatherAPI({weatherData,save}:updateOptions = {save:true}) {
-    log(`fetching trip weather data`);
+    
     if(weatherData && weatherData.isValid){
+      log(`using input weatherData`);
       this.setTripWeather(weatherData)
       this.updateWeather(save)
     } else {
+      log(`fetching trip weather data`);
+      this.setloading(true)
       this.weatherService.createWeatherData(this.trip).then(tripWeather => {
         this.setTripWeather(tripWeather)
         this.updateWeather(save)
+        this.setloading(false)
       }).catch(e => {
         log('could not get new weather data', e)
       })
@@ -180,28 +205,43 @@ export class PackingListService {
     return newList
   }
 
-  onUpdatePackable(newPackable: PackingListPackable, save:boolean = true) {
-    const i = this.packingList.packables.findIndexBy(newPackable, ['id', 'profileID', 'collectionID'])
-    this.packingList.packables[i] = newPackable
+  onUpdatePackables(newPackables: PackingListPackable[], save:boolean = true) {
+    let stamp = timeStamp()
+    newPackables.forEach(p=>{
+      p.dateModified = stamp
+      const i = this.packingList.packables.findIndexBy(p, ['id', 'profileID', 'collectionID'])
+      this.packingList.packables[i] = p
+    })
+    this.packingList.dateModified = stamp
     if(save === true){
-        this.delayedSave()
+      log(`Saving packables`,newPackables,moment(stamp).format('HH:mm:ss'))
+      this.store.dispatch(new tripActions.updatePackingListPackables({packingList:this.packingList,packables:newPackables}))
     }
+  }
+  onUpdateList(updatedList:PackingList){
+    updatedList.dateModified = timeStamp()
+    this.setPackingList(updatedList)
+    this.storePackingList(this.packingList)
   }
 
   delayedSave() {
-    log(`Delayed save...`);
-    this.packingList.dateModified = timeStamp()
     clearTimeout(this.saveTimeout)
+    this.packingList.dateModified = timeStamp()
+    log(`Delayed save...`, moment(this.packingList.dateModified).format('HH:mm:ss'));
     this.saveTimeout = setTimeout(() => {
       this.storePackingList(this.packingList)
     }, 2000)
   }
 
   storePackingList(packinglist: PackingList) {
-    log('💾 store packing list', packinglist)
+    log('💾 store packing list', moment(packinglist.dateModified).format('HH:mm:ss'))
     this.store.dispatch(new tripActions.updatePackingList([packinglist]))
   }
 
+  cleanUpList(packingList:PackingList):PackingList{
+    packingList.data.weatherData = new TripWeatherData(packingList.data.weatherData)
+    return packingList
+  }
   generateList(trip: Trip, oldPackingList: PackingList = null): PackingList {
     let newPackingList = new PackingList(trip.id);
     let dates = getAllDates(trip.startDate, trip.endDate);
@@ -229,11 +269,12 @@ export class PackingListService {
         
       })
     })
-    newPackingList.packables = newPackingList.packables.map(p => this.checkPackableChanges(oldPackingList, p))
+    newPackingList.packables.forEach(p => this.checkPackableChanges(oldPackingList, p))
     newPackingList.data = data;
     log(`Generated updated list`,newPackingList)
     return newPackingList
   }
+  
 
   applyChecksOnPackable(data: packingListData, packable: PackableComplete, collection: CollectionComplete, profile: ProfileComplete): PackingListPackable[] {
     let collectionName = collection.name
@@ -270,19 +311,21 @@ export class PackingListService {
     }
     
     const basePackable: PackingListPackable = {
+      name: packable.name,
+      checked: false,
+      quantity: accQuantity,
       id: packable.id,
       profileID: profile.id,
       collectionID: collection.id,
-      name: packable.name,
-      quantity: accQuantity,
       quantityReasons: [],
-      checked: false,
       changedAfterChecked: false,
       weatherNotChecked: weatherNotChecked,
       passChecks: passChecks,
       weatherReasons: weatherReasons,
       forcePass: false,
       forceQuantity: false,
+      recentlyAdded:false,
+      dateModified: timeStamp(),
     }
     // CHECK QUANTITY RULES
     packable.quantityRules.forEach(rule => {
@@ -305,7 +348,7 @@ export class PackingListService {
             returnListPackable.push(
               {
                 ...basePackable,
-                profileID: null, // TO SHARE
+                profileID: SHARED, // TO SHARE
                 quantity: rule.amount,
                 quantityReasons: [new Reason(reasonText)],
               }
@@ -334,9 +377,7 @@ export class PackingListService {
   }
 
   addPackableToList(newP: PackingListPackable, packingList: PackingList): void {
-    let oldPackableIndex = packingList.packables.findIndex(p => {
-      return p.id == newP.id && p.profileID == newP.profileID
-    })
+    let oldPackableIndex = packingList.packables.findIndexBy(newP,['id','profileID'])
     // COMPARE OLD PACKABLE'S QUANTITIES AND WEATHER CHECKS
     if (oldPackableIndex != -1) {
       let oldP = packingList.packables[oldPackableIndex]
@@ -348,7 +389,7 @@ export class PackingListService {
       }
       if (newP.passChecks || newP.passChecks == oldP.passChecks) {
         voidWeather(oldP)
-        copyProperties(oldP, newP, ['weatherNotChecked', 'passChecks'])
+        copyProperties(oldP, newP, ['weatherNotChecked', 'passChecks', 'checked'])
         if (newP.quantity >= oldP.quantity) {
           voidQuantity(oldP)
           copyProperties(oldP, newP, ['quantity'])
@@ -359,24 +400,20 @@ export class PackingListService {
         voidWeather(newP)
         voidQuantity(newP)
       }
-
       oldP.quantityReasons.push(...newP.quantityReasons)
       oldP.weatherReasons.push(...newP.weatherReasons)
     } else {
       packingList.packables.push(newP)
     }
+
   }
 
   checkWeatherRules(item: { weatherRules: WeatherRule }): weatherCheckResponse {
     return this.weatherService.checkWeatherRules(item.weatherRules, this.tripWeather)
   }
-  checkPackableChanges(oldList: PackingList, newPackable: PackingListPackable): PackingListPackable {
+  checkPackableChanges(oldList: PackingList, newPackable: PackingListPackable) {
     if (oldList) {
-      let oldPackable = oldList.packables.find(p => {
-        return (p.id == newPackable.id
-          && p.collectionID == newPackable.collectionID
-          && p.profileID == newPackable.profileID)
-      })
+      let oldPackable = oldList.packables.findBy(newPackable,['id','collectionID','profileID'])
       if (oldPackable) {
         if (oldPackable.forceQuantity && !newPackable.forceQuantity) {
           newPackable.forceQuantity = true
@@ -396,9 +433,10 @@ export class PackingListService {
       }
       if (!oldPackable || (!pass(oldPackable) && pass(newPackable))) {
         newPackable.recentlyAdded = true;
+      } else {
+        newPackable.recentlyAdded = false;
       }
     }
-    return newPackable
   }
 
   storeSettings(listSettings:PackingListSettings){

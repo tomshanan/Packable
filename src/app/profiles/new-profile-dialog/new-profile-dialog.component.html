@@ -1,8 +1,10 @@
 <app-dialog-header
-  [header]="stepHeading()"
+  [header]="step>1? '' : 'New Traveler' "
   (close)="onClose()"
   [showReturn]="step>1"
   (return)="backStep()"></app-dialog-header>
+
+
 
 <ng-container *ngIf="step === 1">
   <mat-dialog-content>
@@ -16,74 +18,47 @@
         <card-button
           [disabled]="!profileFormValid"
           (click)="profileFormValid && onChooseMethod('new')">
-          Create From Scratch
-          <p class="small text-muted">Select and import the collections</p>
+          Select Essentials
+          <p class="small text-muted">
+            Select what this Traveler would always need.
+          </p>
         </card-button>
         <card-button
           [disabled]="storeSelector.isLibraryStore || !profileFormValid"
           (click)="profileFormValid && onChooseMethod('template')">
-          Create from Template
+          Select Traveler Template
           <p class="small text-muted">
-            Templates come with pre-selected collections.
+            Templates come with pre-selected Essential Collections.
           </p>
         </card-button>
         <card-button
+          *ngIf="allProfiles && allProfiles.length > 0"
           [disabled]="!profileFormValid"
           (click)="profileFormValid && onChooseMethod('copy')">
-          Copy Existing Traveler
+          Copy Traveler
           <p class="small text-muted">
-            Use all the collections and settings of another Traverler you have already created.
+            Copy all the collections and settings of another Traverler you have already created.
           </p>
         </card-button>
       </div>
     </div>
   </mat-dialog-content>
+  <mat-dialog-actions>
+    <dialog-confirm-button>
+      <button
+        mat-fab
+        class="mx-1"
+        activeColor="action"
+        (click)="onComplete()"
+        [disabled]="!profileFormValid">
+        <mat-icon>check</mat-icon>
+      </button>
+    </dialog-confirm-button>
+  </mat-dialog-actions>
 </ng-container>
 <ng-container
   *ngIf="step === 2"
   [ngSwitch]="method">
-  <ng-container *ngSwitchCase="'new'">
-    <mat-dialog-content>
-      <div @transitionTrigger>
-        <div style="position: sticky;top:0;z-index:1; background: white;">
-          <div class="text-center">
-            <profile-icon
-              [profile]="profile"
-              [showName]="true"
-              width="65px">
-            </profile-icon>
-          </div>
-          <p class="form-heading">Select the type of Collections you may want to pack. You can always add more later.</p>
-          <search-field
-            [(value)]="searchString"
-            placeholder="Search Collections">
-          </search-field>
-        </div>
-        <div>
-          <collection-selector
-            [collections]="collections"
-            [(selected)]="selectedCollections"
-            [filterInput]="searchString">
-          </collection-selector>
-          
-        </div>
-      </div>
-    </mat-dialog-content>
-    <mat-dialog-actions>
-        <dialog-confirm-button>
-            <button
-              mat-fab
-              class="mx-1"
-              activeColor="action"
-              (click)="onChooseOriginalCollections()"
-              [disabled]="selectedCollections.length===0">
-              <mat-icon>check</mat-icon>
-            </button>
-          </dialog-confirm-button>
-    </mat-dialog-actions>
-  </ng-container>
-
-
   <ng-container *ngSwitchCase="'copy'">
     <mat-dialog-content>
       <div @transitionTrigger>
@@ -125,6 +100,8 @@
   </ng-container>
 
 
+
+
   <ng-container *ngSwitchCase="'template'">
     <mat-dialog-content>
       <div @transitionTrigger>
@@ -136,7 +113,7 @@
               width="65px">
             </profile-icon>
           </div>
-          <p class="form-heading">Select a Traveler Template:</p>
+          <p>Select a Traveler Template:</p>
         </div>
         <div class="dialog-row scrollable">
           <ng-container *ngFor="let profile of templateProfiles">
@@ -166,41 +143,48 @@
       </div>
     </mat-dialog-content>
   </ng-container>
-
-
-</ng-container>
-<ng-container *ngIf="step === 3">
-  <mat-dialog-content>
-    <div @transitionTrigger>
-      <div style="position: sticky;top:0;z-index:1; background: white;">
-        <div class="text-center">
-          <profile-icon
-            [profile]="profile"
-            [showName]="true"
-            width="65px">
-          </profile-icon>
-        </div>
-        <p class="form-heading">
-          Select the Essential Collections which would be added to every trip:
-        </p>
-      </div>
-      <div>
-        <collection-selector
-          [collections]="profile.collections"
-          [starIcons]="true"
-          [(selected)]="selectedEssentialCollections">
-        </collection-selector>
-      </div>
-    </div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <dialog-confirm-button>
-      <button
-        mat-fab
-        activeColor="action"
-        (click)="onComplete()">
-        <mat-icon>check</mat-icon>
-      </button>
-    </dialog-confirm-button>
-  </mat-dialog-actions>
+  <ng-container *ngSwitchCase="'new'">
+      <mat-dialog-content>
+          <div @transitionTrigger>
+            <div>
+              <div class="text-center">
+                <profile-icon
+                  [profile]="profile"
+                  [showName]="true"
+                  width="65px">
+                </profile-icon>
+              </div>
+              <p>
+                Select the Essential Collections you wish to pack on EVERY trip. Collections and Packables with weather rules will only be added once conditions are met.
+              </p>
+            </div>
+            <div style="position: sticky;top:0;z-index:1; background: white;">
+              <search-field
+                [(value)]="searchString"
+                placeholder="Search Collections">
+              </search-field>
+            </div>
+            <div>
+              <collection-selector
+                [collections]="collections"
+                [(selected)]="selectedCollections"
+                [filterInput]="searchString">
+              </collection-selector>
+            </div>
+          </div>
+        </mat-dialog-content>
+        <mat-dialog-actions>
+          <dialog-confirm-button>
+            <button
+              mat-fab
+              class="mx-1"
+              activeColor="action"
+              (click)="onComplete()"
+              [disabled]="selectedCollections.length===0">
+              <mat-icon>check</mat-icon>
+            </button>
+          </dialog-confirm-button>
+        </mat-dialog-actions>
+      
+  </ng-container>
 </ng-container>

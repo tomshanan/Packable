@@ -76,6 +76,34 @@ mat-icon > svg {
     min-height: 100vh;
 }
 
+/* @media print {
+    body * {
+      visibility: hidden;
+    }
+    #section-to-print, #section-to-print * {
+      visibility: visible;
+    }
+    #section-to-print {
+      position: absolute;
+      width: 600px;
+      left: 0;
+      top: 0;
+    }
+    .mat-expansion-panel {
+        page-break-after: always;
+    }
+  } */
+  @media print {
+    @page{
+        size: portrait;
+    }
+    /* @viewport{
+        width:auto;
+    } */
+    app-root > * { display: none; }
+    app-root app-print { display: block; }
+}
+
 a, .pointer{
     cursor: pointer;
 }
@@ -113,44 +141,6 @@ a.inline-link.withIcon{
     align-items: center;
 }
 
-.sideNav{
-    position: fixed;
-    left: 0;
-    top: 0;
-    min-width: 0vw;
-    width: 0px;
-    height: 100vh;
-    transition: 0.4s;
-    overflow: hidden;
-    box-shadow: 3px 1px 4px 0px rgba(0, 0, 0, 0.35);
-}
-.sideNav .navLink{
-    opacity: 0;
-    transition: 0.4s;
-}
-.sideNav.active{
-    min-width: 25vw;
-    max-width: 100vw;
-    width:250px;
-}
-
-.sideNav.active .navLink{
-    opacity: 1;
-    transition: 1s;
-}
-
-a.navLink{
-    color: #a5a5a5!important;
-    letter-spacing: 1px;
-    transition: 0.3s, letter-spacing 1s;
-}
-a.navLink:hover{
-    letter-spacing: 2px;
-    color: white!important;
-}
-a.navLink.active,a.navLink:active{
-    color: #d6d6d6!important;
-}
 
 .grid-border{
     border:1px solid lightgrey;

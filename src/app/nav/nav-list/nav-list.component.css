@@ -1,0 +1,21 @@
+
+:host-context(.sideNav) .nav-link{
+  opacity: 0;
+  transition: 0.4s;
+}
+:host-context(.sideNav.active) .nav-link{
+  opacity: 1;
+  transition: 1s;
+}
+
+a.nav-link-colors , a.nav-link{
+  color: #a5a5a5!important;
+  letter-spacing: 1px;
+  transition: 0.3s, letter-spacing 1s;
+}
+a.nav-link:hover, a.nav-link.active, a.nav-link:active,
+a.nav-link-colors:hover, a.nav-link-colors.active, a.nav-link-colors:active
+{
+  letter-spacing: 2px;
+  color: white!important;
+}

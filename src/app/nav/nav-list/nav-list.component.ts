@@ -64,7 +64,7 @@ export class NavListComponent implements OnInit {
     {
       text:'Home',
       size: 'main',
-      link:'/',
+      link:'/home',
       showAuth: true,
       showPublic: true,
     },

@@ -39,6 +39,7 @@ export class WeatherSettingsFormComponent implements OnInit {
 
 
   options: Options = {
+    animate: false, 
     floor: absoluteMin,
     ceil: absoluteMax,
     step: 1,

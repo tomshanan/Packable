@@ -1,0 +1,14 @@
+<div *ngIf="packingList; else nothingToPrint">
+  <p>
+    Loaded packing list:<br>
+    {{packingList.id}}
+  </p>
+  <ul>
+    <li *ngFor="let packable of packingList.packables">
+        {{packable.quantity}} x {{packable.name}}
+    </li>
+  </ul>
+</div>
+<ng-template #nothingToPrint>
+  This page is not ready to print
+</ng-template>

@@ -179,7 +179,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
         return true
       case 4:
         this.tripMemory.saveTripAndDeleteTemp(this.trip)
-        this.router.navigate(['trips/packing-list'])
+        this.router.navigate(['trips','packing-list',this.trip.id])
         return false
     }
   }

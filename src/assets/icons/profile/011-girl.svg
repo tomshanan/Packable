@@ -1,10 +1,6 @@
 <svg viewBox="0 0 188.149 188.149" width="188.148" height="188.148" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
- <g>
-  <title>background</title>
-  <rect fill="none" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
- </g>
- <g>
-  <title>Layer 1</title>
+
+ <g class="profileIcon">
   <g id="svg_1">
    <g id="svg_2">
 

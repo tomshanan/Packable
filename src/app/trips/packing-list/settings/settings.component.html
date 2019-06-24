@@ -43,19 +43,23 @@
   <mat-icon outlined>share</mat-icon>
   <span>Share List</span>
 </button>
+<button mat-menu-item (click)="print()">
+    <mat-icon outlined>print</mat-icon>
+    <span>Print</span>
+  </button>
 <button mat-menu-item (click)="editWeather()">
   <mat-icon svgIcon="weather-edit"></mat-icon>
   <span>Weather Settings</span>
 </button>
-<button mat-menu-item>
+<button mat-menu-item (click)="checkAll()">
   <mat-icon>done_all</mat-icon>
-  <span>Cehck All</span>
+  <span>Check All</span>
 </button>
-<button mat-menu-item>
+<button mat-menu-item (click)="resetList()">
   <mat-icon>replay</mat-icon>
   <span>Reset List</span>
 </button>
-<button mat-menu-item>
+<button mat-menu-item (click)="deleteTrip()">
   <mat-icon outlined>delete</mat-icon>
   <span>Delete Trip</span>
 </button>

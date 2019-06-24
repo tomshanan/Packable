@@ -27,10 +27,10 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
                 ...action.payload
             }
         case TripActions.UPDATE_TRIP:
-            action.payload.forEach(trip=>{
+            action.payload.forEach(trip => {
                 editId = trip.id;
                 editIndex = tripState.idIndex(editId);
-                if(editIndex !== -1){
+                if (editIndex !== -1) {
                     tripState[editIndex] = trip
                 } else {
                     tripState.unshift(trip)
@@ -40,28 +40,12 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
                 ...state,
                 trips: [...tripState]
             }
-        case TripActions.REMOVE_TRIP:
-        action.payload.forEach(id=>{
-            let removeId = id;
-            let tripIndex = tripState.idIndex(removeId)
-            if(tripIndex !== -1){
-                tripState.splice(tripIndex,1);
-            }
-            let packinglistIndex = tripState.idIndex(removeId)
-            if(packinglistIndex !== -1){
-                packingListState.splice(packinglistIndex,1);
-            }
-        })
-            return {
-                ...state,
-                trips: [...tripState],
-                packingLists: [...packingListState]
-            }
-            case TripActions.UPDATE_INCOMPLETE:
-            action.payload.forEach(trip=>{
+
+        case TripActions.UPDATE_INCOMPLETE:
+            action.payload.forEach(trip => {
                 editId = trip.id;
                 editIndex = incompleteState.idIndex(editId);
-                if(editIndex !== -1){
+                if (editIndex !== -1) {
                     incompleteState[editIndex] = trip
                 } else {
                     incompleteState.unshift(trip)
@@ -72,32 +56,58 @@ export function tripReducers(state = initialState, action: TripActions.tripActio
                 incomplete: [...incompleteState]
             }
         case TripActions.REMOVE_INCOMPLETE:
-        action.payload.forEach(id=>{
-            let removeId = id;
-            let removeIndex = incompleteState.idIndex(removeId)
-            if(removeIndex !== -1){
-                incompleteState.splice(removeIndex,1);
-            }
-        })
+            action.payload.forEach(id => {
+                let removeId = id;
+                let removeIndex = incompleteState.idIndex(removeId)
+                if (removeIndex !== -1) {
+                    incompleteState.splice(removeIndex, 1);
+                }
+            })
             return {
                 ...state,
                 incomplete: [...incompleteState]
             }
-        case TripActions.UPDATE_PACKING_LIST:
-                action.payload.forEach(packinglist=>{
-                    editId = packinglist.id;
-                    editIndex = packingListState.idIndex(editId);
-                    if(editIndex !== -1){
-                        packingListState[editIndex] = packinglist
-                    } else {
-                        packingListState.unshift(packinglist)
-                    }
-                })
-                return {
-                    ...state,
-                    incomplete: [...incompleteState]
+        case TripActions.REMOVE_TRIPS:
+            action.payload.forEach(id => {
+                let removeId = id;
+                let tripIndex = tripState.idIndex(removeId)
+                if (tripIndex !== -1) {
+                    tripState.splice(tripIndex, 1);
                 }
+                let packinglistIndex = packingListState.idIndex(removeId)
+                if (packinglistIndex !== -1) {
+                    packingListState.splice(packinglistIndex, 1);
+                }
+            })
+            return {
+                ...state,
+                trips: [...tripState],
+                packingLists: [...packingListState]
+            }
+        case TripActions.UPDATE_PACKING_LIST:
+            action.payload.forEach(packinglist => {
+                editId = packinglist.id;
+                editIndex = packingListState.idIndex(editId);
+                if (editIndex !== -1) {
+                    packingListState[editIndex] = packinglist
+                } else {
+                    packingListState.unshift(packinglist)
+                }
+            })
+            return {
+                ...state,
+                packingLists: [...packingListState]
+            }
+        case TripActions.UPDATE_PACKING_LIST_PACKABLES:
+            let list = action.payload.packingList
+            let id = action.payload.packingList.id
+            editIndex = packingListState.idIndex(id)
+            packingListState[editIndex] = list
+            return {
+                ...state,
+                packingLists: [...packingListState]
+            }
         default:
             return state;
-        }
+    }
 }

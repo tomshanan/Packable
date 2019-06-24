@@ -4,13 +4,13 @@ import { Injectable } from '@angular/core';
 import { Observable, combineLatest } from "rxjs";
 import { PackableOriginal, PackablePrivate, remotePackable } from '../models/packable.model';
 import { CollectionOriginal } from '../models/collection.model';
-import { Profile } from "../models/profile.model";
+import { Profile,ProfileWithMetadata } from "../models/profile.model";
 import { Trip, displayTrip } from '../models/trip.model';
 import { DestinationDataService } from './location-data.service';
 import * as moment from 'moment';
 import { PackingList } from '../models/packing-list.model';
 import {State as AdminState} from '@app/admin/store/adminState.model'
-import {State as libraryState, libraryItem, remoteCollection, remoteProfile} from '@shared/library/library.model'
+import {State as libraryState, libraryItem, remoteCollection, } from '@shared/library/library.model'
 import { UserService } from './user.service';
 import { ItemLibrary, MetaDataNode, ItemMetaData } from '../library/library.model';
 import { isDefined } from '../global-functions';
@@ -119,9 +119,9 @@ export class StoreSelectorService{
             return remoteCollections
         }
     }
-    getRemoteProfiles(ids?:string[]):remoteProfile[]{
+    getRemoteProfiles(ids?:string[]):ProfileWithMetadata[]{
         let profiles = this.libraryState.library.profiles
-        let remoteProfiles = profiles.map(p=>new remoteProfile(p,this.getMetaDataForId(p.id)))
+        let remoteProfiles = profiles.map(p=>new ProfileWithMetadata(p,this.getMetaDataForId(p.id)))
         if(isDefined(ids)){
             return remoteProfiles.filter(c=>ids.includes(c.id))
         } else {
@@ -135,42 +135,7 @@ export class StoreSelectorService{
     getIncompleteTripById(id:string):Trip{
         return this.incompleteTrips.find(t=>t.id == id) || null;
     }
-    getDisplayTrips(trips:Trip[]): displayTrip[]{
-        return trips.map(trip =>{
-            let destination = this.destServices.findDestination(trip.destinationId)
-            let startDate = moment(trip.startDate)
-            let endDate = moment(trip.endDate)
-            let dates:string;
-            if (startDate.month != endDate.month){
-                dates = `${startDate.format('D MMM')} - ${endDate.format('D MMM')}`
-            } else {
-                dates = `${startDate.date()} - ${endDate.format('D MMMM')}`
-            }
-            let profiles = [];
-            trip.profiles.forEach(pid => {
-                let p = this.getProfileById(pid)
-                if (p){
-                    profiles.push(p.name) 
-                }
-            })
-            let collections = [];
-            trip.collections.forEach(aid => {
-                let c = this.getCollectionById(aid.id)
-                if (c){
-                    collections.push(c.name) 
-                }
-            })
-            return {
-                id: trip.id,
-                displayDate: dates,
-                temp: 'TBC',
-                destinationName: destination.fullName,
-                profileNames: profiles,
-                collectionNames: collections,
-                dateModified: trip.dateModified
-            }
-        })
-    }
+
     getPackableById(id:string):PackableOriginal {
         let index = this.originalPackables.findIndex(x => x.id === id);
         return index >= 0 ? this.originalPackables[index]: null;

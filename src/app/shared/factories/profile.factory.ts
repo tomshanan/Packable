@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableFactory } from './packable.factory';
 import { CollectionFactory } from './collection.factory';
-import { Profile, ProfileComplete, Avatar } from '../models/profile.model';
+import { Profile, ProfileComplete, Avatar, ProfileWithMetadata, ProfileCompleteWithMetadata } from '../models/profile.model';
 import { CollectionPrivate, CollectionComplete } from '../models/collection.model';
 import { indexOfId } from '../global-functions';
 import { PackablePrivate } from '../models/packable.model';
 import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-form/choose-collections-form.component';
-import { remoteProfile } from '../library/library.model';
 
 @Injectable()
 export class ProfileFactory{
@@ -17,7 +16,7 @@ export class ProfileFactory{
         private collectionFactory: CollectionFactory
     ){}
 
-    public duplicateProfile =(profile:Profile|remoteProfile): Profile =>{
+    public duplicateProfile =(profile:Profile|ProfileWithMetadata): Profile =>{
         return new Profile(
             profile.id,
             profile.name,
@@ -26,7 +25,7 @@ export class ProfileFactory{
             profile.dateModified
         )
     }
-    public remoteToOriginal = (profiles:remoteProfile[]):Profile[]=>{
+    public remoteToOriginal = (profiles:ProfileWithMetadata[]):Profile[]=>{
         return profiles.map(p=>this.duplicateProfile(p))
     }
     public completeToPrivate(p: ProfileComplete): Profile{
@@ -42,7 +41,14 @@ export class ProfileFactory{
         let profiles = this.storeSelector.profiles
         return this.makeComplete(profiles)
     }
-    public makeComplete =(profiles: Profile[]): ProfileComplete[] =>{
+    public getAllRemoteAndMakeComplete():ProfileCompleteWithMetadata[]{
+        let remoteProfiles = this.storeSelector.getRemoteProfiles();
+        let completeProfiles = this.makeComplete(remoteProfiles)
+        return remoteProfiles.map(p=>{
+            return new ProfileCompleteWithMetadata(completeProfiles.findId(p.id),p.metaData)
+        })
+    }
+    public makeComplete =(profiles:Array<Profile|ProfileWithMetadata>): ProfileComplete[] =>{
         return profiles.map(profile => {
             let completeCollections = this.collectionFactory.makeCompleteArray(profile.collections)
             return new ProfileComplete(
@@ -54,6 +60,7 @@ export class ProfileFactory{
             )
         })
     }
+
     public getCompleteProfilesByIds = (ids:string[]): ProfileComplete[] =>{
         let profiles = []
         ids.forEach(id=>{

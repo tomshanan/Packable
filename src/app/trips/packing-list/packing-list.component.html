@@ -2,6 +2,7 @@
   [header]="displayTrip ? displayTrip.destinationName : 'Packing List'"
   [useNgContent]="true">
   <button
+   *ngIf="packingList && sortedList"
     [matMenuTriggerFor]="packinglistMenu"
     type="button"
     (click)="null"
@@ -14,20 +15,33 @@
   <packinglist-settings></packinglist-settings>
 </mat-menu>
 <div class="row">
-  <ng-template #loading>
-    <div class="col">
-      <i class="fas fa-sync-alt fa-spin"></i>
-      Loading List...
-    </div>
+  <ng-template #notLoaded>
+    <ng-container *ngIf="!(loading$ | async); else loading">
+        <div class="col">No packing list was loaded.</div>
+    </ng-container>
+    <ng-template #loading>
+      <div class="col">
+        <i class="fas fa-sync-alt fa-spin"></i>
+        Loading List...
+      </div>
+    </ng-template>
   </ng-template>
   <div
-    *ngIf="packingList && sortedList; else loading"
-    class="col">
-    <div class="mb-2" [class.justify-content-center]="windowService.max('md')">
-      <div class="small text-muted" [class.text-center]="windowService.max('md')">
+    *ngIf="packingList && sortedList; else notLoaded"
+    class="col"
+    id="section-to-print">
+    <div
+      class="mb-2"
+      [class.justify-content-center]="windowService.max('md')">
+      <div
+        class="small text-muted"
+        [class.text-center]="windowService.max('md')">
         <p>
-          <span [innerHtml]="displayTrip.displayDate"></span>&nbsp;
-          (<span [innerHtml]="packingList.data.totalDays"></span>&nbsp;Days)
+          <span [innerHtml]="displayTrip.displayDate"></span>
+          &nbsp;
+          (
+          <span [innerHtml]="packingList.data.totalDays"></span>
+          &nbsp;Days)
         </p>
         <p>
           <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>

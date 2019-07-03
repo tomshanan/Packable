@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableFactory } from './packable.factory';
-import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplete, CollectionRef, isCollectionOriginal } from '../models/collection.model';
+import { CollectionAny, CollectionOriginal, CollectionPrivate, CollectionComplete, CollectionRef, isCollectionOriginal, CollectionWithMetadata, CollectionCompleteWithMetadata } from '../models/collection.model';
 import { PackableComplete, PackablePrivate } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
 import { indexOfId, isDefined } from '../global-functions';
 import { CollectionProfile } from '../../packables/packable-list/edit-packable-dialog/choose-collections-form/choose-collections-form.component';
-import { remoteCollection } from '@shared/library/library.model';
+import { MetaDataNode, Metadata } from '../library/library.model';
 
 type T = { packables: PackablePrivate[] }
 
@@ -44,7 +44,7 @@ export class CollectionFactory {
             original.weatherOverride,
         )
     }
-    public remoteToComplete = (complete:remoteCollection[]):CollectionComplete[] => {
+    public remoteToComplete = (complete:CollectionWithMetadata[]):CollectionComplete[] => {
         let originals = complete.map(c=>this.duplicateOriginalCollection(c))
         return originals.map(c=>{
             return new CollectionComplete(
@@ -61,7 +61,7 @@ export class CollectionFactory {
             )
         })
     }
-    public newPrivateCollection = (original: CollectionOriginal, patchValue?: {}): CollectionPrivate => {
+    public newPrivateCollection = (original: CollectionOriginal, patchValues: Partial<CollectionPrivate> = {}): CollectionPrivate => {
         let privatePackables = original.packables.map(p => this.pacFac.makePrivate(p))
         let newCollection = new CollectionPrivate(
             original.id,
@@ -71,15 +71,7 @@ export class CollectionFactory {
             original.dateModified,
             original.weatherOverride,
         );
-        if (patchValue) {
-            for (var property in patchValue) {
-                if (patchValue.hasOwnProperty(property) && newCollection.hasOwnProperty(property)) {
-                    newCollection[property] = patchValue[property]
-                } else {
-                    !newCollection.hasOwnProperty(property) && console.warn(`could not find property "${property}" in private collection "${original.name}" \n`, newCollection, patchValue);
-                }
-            }
-        }
+        Object.assign(newCollection,patchValues)
         return newCollection
     }
     public restorePrivate = (collection: CollectionPrivate): CollectionPrivate => {
@@ -132,7 +124,7 @@ export class CollectionFactory {
                     collection.weatherOverride,
                 )
             } else {
-                let original = this.storeSelector.getCollectionById(collection.id) || this.storeSelector.getRemoteCollections([collection.id])[0]
+                let original = this.storeSelector.getCollectionById(collection.id) || this.storeSelector.getRemoteCollectionsWithMetadata([collection.id])[0]
                 let completePackables = this.pacFac.makeCompleteFromArray(collection.packables)
                 return new CollectionComplete(
                     collection.id,
@@ -185,7 +177,7 @@ export class CollectionFactory {
         }
     }
     public getAllCompleteRemote():CollectionComplete[]{
-        return this.makeCompleteArray(this.storeSelector.getRemoteCollections())
+        return this.makeCompleteArray(this.storeSelector.getRemoteCollectionsWithMetadata())
     }
     public getImportCollectionList():CollectionComplete[]{
         let localCollections = this.getAllComplete()
@@ -193,7 +185,7 @@ export class CollectionFactory {
         
         let idsImported = localCollections.map(c=>c.id)
     
-        let allRemoteCollections = this.storeSelector.getRemoteCollections()
+        let allRemoteCollections = this.storeSelector.getRemoteCollectionsWithMetadata()
     
         let filteredRemoteCollections = allRemoteCollections.filter(c=>!idsImported.includes(c.id)).sort((a,b)=>{
           return a.metaData.metaScore - b.metaData.metaScore
@@ -202,6 +194,14 @@ export class CollectionFactory {
 
         let completeRemote = this.makeCompleteArray(filteredRemoteCollections)
         return [...localCollections,...completeRemote]
+    }
+
+    public makeCompleteWithMetaData(cols:Array<CollectionOriginal>):CollectionCompleteWithMetadata[] {
+        return cols.map(col=>{
+            let completeCol = this.makeComplete(col)
+            let metaData = this.storeSelector.getMetaDataForId(col.id) || new Metadata(col.id);
+            return new CollectionCompleteWithMetadata(completeCol,metaData)
+        })
     }
     
     public addEditPackablesByCP(collections: CollectionOriginal[], packables: PackablePrivate[], cps: CollectionProfile[]): CollectionOriginal[] {

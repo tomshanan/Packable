@@ -8,7 +8,7 @@ import { DestinationDataService } from '../../shared/services/location-data.serv
 import { WeatherService, TripWeatherData, weatherCheckResponse } from '../../shared/services/weather.service';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { weatherFactory } from '@app/shared/factories/weather.factory';
-import { Trip, displayTrip } from '../../shared/models/trip.model';
+import { Trip, DisplayTrip } from '../../shared/models/trip.model';
 import { PackingList, packingListData, PackingListPackable, Reason, PackingListSettings, pass } from '../../shared/models/packing-list.model';
 import { Subscription, Subject, combineLatest } from 'rxjs';
 import { getAllDates, copyProperties, timeStamp, isDefined } from '../../shared/global-functions';
@@ -41,7 +41,7 @@ export interface updateOptions {weatherData?:TripWeatherData,save?:boolean}
 @Injectable()
 export class PackingListService {
   trip: Trip;
-  displayTrip: displayTrip;
+  displayTrip: DisplayTrip;
   packingList: PackingList;
   tripWeather: TripWeatherData;
   packingListData: packingListData;
@@ -92,7 +92,7 @@ export class PackingListService {
     log('PackingListService inititated')
     this.setloading(true)
     let memoryTrip:Trip = this.tripMemory.trip;
-    let combinedObserver = combineLatest(this.storeSelector.trips_obs, this.route.paramMap,this.store.select('auth'))
+    let combinedObserver = combineLatest(this.storeSelector.trips$, this.route.paramMap,this.store.select('auth'))
     /*
       ADD FUNCTIONALITY, COMBINE WITH AUTH GUARD TOO:
         disable editing unless user logged in 
@@ -120,32 +120,38 @@ export class PackingListService {
           
         }))
         this.serviceSubscription.add(
-          this.userService.userState_obs.subscribe(userState=>{
+          this.userService.userState$.subscribe(userState=>{
             log('Received UserState',userState)
             this.setSettings(userState.settings.packinglistSettings)
           })
         )
   }
   autoUpdatePackingList(newTrip: Trip, loadedPackingList: PackingList) {
+    const tripUpdated = isDefined(this.trip) && newTrip.dateModified > this.trip.dateModified;
     this.trip = newTrip
+    log(`autoUpdate using trip`,this.trip)
     this.displayTrip = this.tripFac.makeDisplayTrip(this.trip)
-    // THERES A SAVED PACKING LIST
-    if (loadedPackingList) {
+    // THERES A SAVED PACKING LIST and TRIP IS NOT UPDATED
+    if (loadedPackingList && !tripUpdated) {
       // THIS SERVICE ALREADY HAS LOADED A PACKING LIST
       if (this.packingList && this.tripWeather) {
-        if(this.packingList.dateModified < loadedPackingList.dateModified){
+        if(this.packingList.dateModified < loadedPackingList.dateModified ){
           // NEW LIST IS NEWER
-          this.setPackingList(this.cleanUpList(loadedPackingList))
+          this.setPackingList(this.tripFac.cleanUpList(loadedPackingList))
         } else{
           log(`new packing list does not have a later time stamp\nOLD:`,this.packingList,'\nNEW:',loadedPackingList)
         }
       } else {
         log('Weather or PackingList not setup, updatingListBySetting,\n','Packinglist:',this.packingList,'\nTripWeather:',this.tripWeather)
         this.packingList = loadedPackingList
-        this.updatePackingListBySetting(loadedPackingList.data.weatherData.dataInput,{save:false})
+        this.updatePackingListBySetting(loadedPackingList.data.weatherData.dataInput,{save:true})
       }
       // THERES NO SAVED PACKING LIST
     } else {
+      if(tripUpdated){
+        this.setPackingList(null)
+        log(`Received updated trip`)
+      }
       this.updatePackingListBySetting('auto',{save:true})
     }
   }
@@ -167,7 +173,7 @@ export class PackingListService {
     } else {
       log(`fetching trip weather data`);
       this.setloading(true)
-      this.weatherService.createWeatherData(this.trip).then(tripWeather => {
+      this.weatherService.getTripWeatherData(this.trip).then(tripWeather => {
         this.setTripWeather(tripWeather)
         this.updateWeather(save)
         this.setloading(false)
@@ -238,10 +244,7 @@ export class PackingListService {
     this.store.dispatch(new tripActions.updatePackingList([packinglist]))
   }
 
-  cleanUpList(packingList:PackingList):PackingList{
-    packingList.data.weatherData = new TripWeatherData(packingList.data.weatherData)
-    return packingList
-  }
+  
   generateList(trip: Trip, oldPackingList: PackingList = null): PackingList {
     let newPackingList = new PackingList(trip.id);
     let dates = getAllDates(trip.startDate, trip.endDate);

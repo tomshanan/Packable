@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angu
 import { CollectionComplete } from '../../../../shared/models/collection.model';
 import { filterItem } from '../../../../shared-comps/item-selector/item-selector.component';
 import { StoreSelectorService } from '../../../../shared/services/store-selector.service';
-import { PackableOriginal, remotePackable } from '../../../../shared/models/packable.model';
+import { PackableOriginal, PackableOriginalWithMetaData } from '../../../../shared/models/packable.model';
 import { PackableFactory } from '../../../../shared/factories/packable.factory';
 import { Subscription } from 'rxjs';
 import { StorageService } from '../../../../shared/storage/storage.service';
@@ -26,7 +26,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
   usedList:filterItem[] = []
   completeList:filterItem[];
   selected: filterItem[];
-  remotePackables: remotePackable[];
+  remotePackables: PackableOriginalWithMetaData[];
   originalPackables: PackableOriginal[];
   sub:Subscription;
   @Output('loaded') emitLoaded = new EventEmitter<boolean>()
@@ -46,7 +46,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
     this.emitLoaded.emit(this.loaded)
   }
   ngOnInit() {
-    this.sub = this.storeSelector.libraryState_obs.subscribe(state=>{
+    this.sub = this.storeSelector.libraryState$.subscribe(state=>{
       if(state.loading){
         this.setLoaded(false)
         console.log('State still loading',state)
@@ -67,7 +67,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
     this.originalPackables= this.storeSelector.originalPackables.filter(p=>!p.deleted).sort(sortByMostRecent)
     let localList = this.createFilterObject(this.originalPackables)
     let usedIds = this.originalPackables.map(p=>p.id)
-    this.remotePackables = this.storeSelector.getRemotePackables().filter(p=>!usedIds.includes(p.id)).sort(sortByMetaData)
+    this.remotePackables = this.storeSelector.getRemotePackablesWithMetaData().filter(p=>!usedIds.includes(p.id)).sort(sortByMetaData)
     let remoteList = this.createFilterObject(this.remotePackables)
     this.completeList = [...localList,...remoteList] 
     console.log('import packables collection input:',this.collection)
@@ -79,7 +79,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
     console.log('Used List:',this.usedList,'\nCompelte List::',this.completeList)
     this.setLoaded(true)
   }
-  createFilterObject(inputObjects:Array<PackableOriginal|remotePackable>):filterItem[]{
+  createFilterObject(inputObjects:Array<PackableOriginal|PackableOriginalWithMetaData>):filterItem[]{
     return inputObjects.map((obj) => {
       return {
         id: obj.id,

@@ -1,6 +1,6 @@
 import { Component, OnInit, Renderer2, ViewChild, ElementRef, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { WindowService } from '../../shared/services/window.service';
-import { appColors } from '../../shared/app-colors';
+import { AppColors } from '../../shared/app-colors';
 import { Subscription, Subject } from 'rxjs';
 import { fadeInOut } from '../../shared/animations';
 

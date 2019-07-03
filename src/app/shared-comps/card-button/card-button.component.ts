@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { appColors } from '@app/shared/app-colors';
+import { AppColors } from '@app/shared/app-colors';
 
 @Component({
   selector: 'card-button',
@@ -9,7 +9,7 @@ import { appColors } from '@app/shared/app-colors';
 export class CardButtonComponent implements OnInit {
   @Input() disabled:boolean = false;
   constructor(
-    public appColors:appColors
+    public appColors:AppColors
   ) { }
 
   ngOnInit() {

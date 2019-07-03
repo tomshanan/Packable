@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { Profile } from '../../shared/models/profile.model';
 import { transitionTrigger, horizontalShringAndFade, addRemoveElementTrigger } from '../../shared/animations';
 import { PackableComplete } from '../../shared/models/packable.model';
-import { appColors } from '@app/shared/app-colors';
+import { AppColors } from '@app/shared/app-colors';
 import { weatherFactory } from '../../shared/factories/weather.factory';
 import { Trip } from '../../shared/models/trip.model';
 import { WeatherService, TripWeatherData, weatherCheckResponse } from '../../shared/services/weather.service';
@@ -54,7 +54,7 @@ weatherCheck: weatherCheckResponse;
 
   constructor(
     public windowService: WindowService, // used in template
-    public colors: appColors, // in tempalte
+    public colors: AppColors, // in tempalte
     private changeDetection: ChangeDetectorRef,
     public weatherFac:weatherFactory,
     public weatherService:WeatherService,
@@ -62,7 +62,6 @@ weatherCheck: weatherCheckResponse;
 
   ngOnInit() {
     this.profileGroup = this.inputProfileGroup ? this.inputProfileGroup.slice() : [];
-    console.log('WEATHER DATA',this.weatherData)
   }
   ngOnDestroy(){
   }
@@ -76,7 +75,6 @@ weatherCheck: weatherCheckResponse;
     }
     if(this.weatherData){
       this.weatherCheck = this.weatherService.checkWeatherRules(this.collection.weatherRules,this.weatherData)
-      console.log('WEATHER CHECK',this.weatherCheck)
     }
   }
   

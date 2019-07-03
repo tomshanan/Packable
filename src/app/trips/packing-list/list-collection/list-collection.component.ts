@@ -89,8 +89,8 @@ export class ListCollectionComponent implements OnInit {
     dialogRef.afterClosed().pipe(take(1)).subscribe((newPackable: PackableComplete) => {
       console.log(`Received from modal:`, newPackable);
       if(newPackable){
-        if (this.editingPackable && this.editingPackable.editMode) {
-          this.editingPackable.toggleEditMode(false)
+        if (this.editingPackable && this.editingPackable.editToggle) {
+          this.editingPackable.toggleEditing(false)
         }
         packable.forceQuantity = false
         packable.forcePass = false
@@ -102,8 +102,8 @@ export class ListCollectionComponent implements OnInit {
 
   onToggleEditPackable(editing: boolean, editingPackable: ListPackableComponent) {
     if (editing) {
-      if (this.editingPackable && this.editingPackable.editMode) {
-        this.editingPackable.toggleEditMode(false)
+      if (this.editingPackable && this.editingPackable.editToggle) {
+        this.editingPackable.toggleEditing(false)
       }
       this.editingPackable = editingPackable
     } else if (!editing && this.editingPackable) {

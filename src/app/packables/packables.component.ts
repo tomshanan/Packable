@@ -33,7 +33,7 @@ sub: Subscription;
   deletedPackables: PackableComplete[];
   ngOnInit() {
     this.context.reset();
-    this.sub = this.storeSelector.packables_obs.subscribe(state=>{
+    this.sub = this.storeSelector.packables$.subscribe(state=>{
       console.log('packables recieved new state:',state.packables);
       this.packables = this.pacFac.makeCompleteFromArray(state.packables)
       this.deletedPackables = this.packables.filter(p=>p.deleted)

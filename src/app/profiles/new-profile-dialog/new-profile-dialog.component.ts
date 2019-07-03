@@ -8,13 +8,12 @@ import { StoreSelectorService } from '../../shared/services/store-selector.servi
 import { Profile, ProfileComplete, ProfileCompleteWithMetadata } from '../../shared/models/profile.model';
 import { transitionTrigger } from '../../shared/animations';
 import { ProfileEditFormComponent } from '../profile-edit-form/profile-edit-form.component';
-import { CollectionComplete } from '@app/shared/models/collection.model';
+import { CollectionComplete, CollectionWithMetadata } from '@app/shared/models/collection.model';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { Subscription } from 'rxjs';
 import { ColorGeneratorService } from '../../shared/services/color-gen.service';
 import { titleCase, Guid, timeStamp, sortByMetaData } from '../../shared/global-functions';
 import * as libraryActions from '@shared/library/library.actions';
-import { remoteCollection } from '@app/shared/library/library.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
 import * as packableActions from '@app/packables/store/packables.actions';
 import { BulkActionsService } from '@app/shared/services/bulk-actions.service';
@@ -42,7 +41,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   allProfiles: ProfileComplete[];
   templateProfiles: ProfileCompleteWithMetadata[]
   profileCollectionStrings: {id:string,list:string[]}[] = [];
-  remoteCollections: remoteCollection[];
+  remoteCollections: CollectionWithMetadata[];
   subs: Subscription;
   loadingCollections: boolean;
 
@@ -58,7 +57,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.subs = this.storeSelector.libraryState_obs.subscribe((state)=>{
+    this.subs = this.storeSelector.libraryState$.subscribe((state)=>{
       if(state.loading){
         this.loadingCollections = true
       } else {

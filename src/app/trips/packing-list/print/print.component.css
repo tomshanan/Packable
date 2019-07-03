@@ -3,6 +3,18 @@
     display: none;
   }
 }
+:host{
+  font-size: 1.4em;
+}
 .page-break{
-  page-break-after: always;
+  break-before: always;
+  page-break-before: always;
+}
+.packable-line{
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+}
+.packable-line > *:not(:first-child){
+  margin-left: 5px;
 }

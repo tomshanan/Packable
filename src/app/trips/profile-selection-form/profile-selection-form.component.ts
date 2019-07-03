@@ -24,7 +24,7 @@ export class ProfileSelectionFormComponent implements OnInit,OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.subs = this.storeSelector.profiles_obs.subscribe(()=>{
+    this.subs = this.storeSelector.profiles$.subscribe(()=>{
       this.profileGroup = this.storeSelector.profiles
     })
   }

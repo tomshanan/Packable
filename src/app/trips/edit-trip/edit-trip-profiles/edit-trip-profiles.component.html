@@ -1,0 +1,25 @@
+<h5 class="text-center">Trip Travelers</h5>
+<div class="text-center">
+  <profile-selection-form 
+    [selected]="trip.profiles" 
+    (selectedChange)="setSelectedProfiles($event)">
+  </profile-selection-form>
+</div>
+<div class="text-center" *ngIf="collectionsNeedUpdate && isValid">
+  <p>Confirm to choose Collections for the added Travelers</p>
+</div>
+<div
+  class="form-actions form-actions-sticky"
+  [class.form-actions-mobile]="windowService.max('md')">
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      appColor="action"
+      (click)="onConfirm()"
+      [disabled]="!isValid || !touched">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</div>
+
+

@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { ConfirmDialog } from '../../shared-comps/dialogs/confirm-dialog/confirm.dialog';
 
 export interface screenSizes {
+    xxs: number,
     xs: number,
     sm: number,
     md: number,
@@ -14,6 +15,7 @@ export interface screenSizes {
 export type screenSize = keyof screenSizes;
 
 export var screenSizes: screenSizes = {
+    xxs: 360,
     xs: 480,
     sm: 576,
     md: 768,
@@ -42,10 +44,10 @@ export class WindowService {
         this._height = window.innerHeight
         this._width = window.innerWidth
         this.change.next(this._width)
-        window.addEventListener( 'touchmove', function() {
-            event.preventDefault()
-            log('touch start')
-        })
+        // window.addEventListener( 'touchmove', function() {
+        //     event.preventDefault()
+        //     log('touch start')
+        // })
         window.addEventListener('resize', (event) => {
             if (this._width != window.innerWidth || this._height != window.innerHeight) {
                 clearTimeout(this.timeout)

@@ -25,7 +25,7 @@ import { Subscription } from 'rxjs';
 import { PackableFactory } from '../../shared/factories/packable.factory';
 import { ImportCollectionDialogComponent, importCollections_result } from './import-collection-dialog/import-collection-dialog.component';
 import { EditCollectionDialogComponent, editCollectionDialog_data } from './edit-collection-dialog/edit-collection-dialog.component';
-import { appColors } from '@app/shared/app-colors';
+import { AppColors } from '@app/shared/app-colors';
 import { tripCollectionGroup, Trip } from '../../shared/models/trip.model';
 import { TripMemoryService } from '../../shared/services/trip-memory.service';
 
@@ -89,7 +89,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     this.initialSort()
 
     
-    this.subs = this.storeSelector.profiles_obs.subscribe((profileState)=>{
+    this.subs = this.storeSelector.profiles$.subscribe((profileState)=>{
       this.totalProfiles = profileState.profiles.length
     })
     this.subs.add(this.windowService.change.subscribe(()=>{

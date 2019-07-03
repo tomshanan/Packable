@@ -1,0 +1,28 @@
+<div *ngIf="trip">
+  <h5  class="text-center">Trip Collections</h5>
+  <div *ngIf="!isValid && touched" class="text-center">
+    <p class="text-danger small">All Travelers should have at least 1 Collection</p>
+  </div>
+  <div [ngStyle]="{paddingBottom: windowService.max('md') ? '80px' : '0'}">
+    <collection-selection-form
+      [selected]="trip.collections"
+      [profiles]="trip.profiles"
+      [destWeatherData]="destWeatherData$"
+      [destMetaData]="destMetaData$"
+      (selectedChange)="setCollections($event)">
+    </collection-selection-form>
+  </div>
+  <div
+    class="form-actions form-actions-sticky"
+    [class.form-actions-mobile]="windowService.max('md')">
+    <dialog-confirm-button>
+      <button
+        mat-fab
+        appColor="action"
+        (click)="onConfirm()"
+        [disabled]="!isValid || !touched">
+        <mat-icon>check</mat-icon>
+      </button>
+    </dialog-confirm-button>
+  </div>
+</div>

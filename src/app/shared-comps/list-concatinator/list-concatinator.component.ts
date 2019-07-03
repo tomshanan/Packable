@@ -2,7 +2,7 @@ import { Component, OnInit, Input, HostBinding, ElementRef, ViewChild, Renderer2
 import { WindowService } from '../../shared/services/window.service';
 import { isDefined } from '../../shared/global-functions';
 import { Subscription } from 'rxjs';
-import { color } from '../../shared/app-colors';
+import { Color } from '../../shared/app-colors';
 
 interface viewObject {
   text: string,
@@ -20,7 +20,7 @@ export class ListConcatinatorComponent implements OnInit, OnChanges,AfterContent
 
   @Input('list') stringArray: string[] = [];
   @Input('lines') lines: number = 1;
-  @Input('color') color: color;
+  @Input('color') color: Color;
   @Input('showMore') showMore: boolean = true;
   @Output('open') concatinated = new EventEmitter<boolean>()
   @ViewChild('textContainer') textContainer: ElementRef;

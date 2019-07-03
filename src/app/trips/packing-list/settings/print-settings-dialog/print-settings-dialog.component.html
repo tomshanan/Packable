@@ -1,0 +1,24 @@
+<app-dialog-header
+  [super]="destinationName"
+  [header]="'Print Packing List'"
+  (close)="onClose(null)"></app-dialog-header>
+<mat-dialog-content>
+  <slide-toggle-with-text
+    [(checked)]="printSettings.pagePerProfile"
+    text="One page per Traveler">
+  </slide-toggle-with-text>
+  <slide-toggle-with-text
+    [(checked)]="printSettings.cleanCheckboxes"
+    text="Clear checkboxes">
+  </slide-toggle-with-text>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      activeColor="action"
+      (click)="onConfirm()">
+      <mat-icon outlined>print</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</mat-dialog-actions>

@@ -2,6 +2,7 @@ import { timeStamp, Guid } from '../global-functions';
 import { Profile } from './profile.model';
 
 export interface tripCollectionGroup {id:string,profiles: string[]}
+
 export class Trip {
     constructor(
         public id: string = Guid.newGuid(),
@@ -15,7 +16,7 @@ export class Trip {
     }
 }
 
-export class displayTrip {
+export class DisplayTrip {
     constructor(
         public id: string,
         public displayDate: string,

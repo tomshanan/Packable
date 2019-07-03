@@ -85,7 +85,7 @@ import { ProfileSelectionFormComponent } from '../trips/profile-selection-form/p
 import { CollectionSelectionFormComponent } from '../trips/collection-selection-form/collection-selection-form.component';
 import { SelectCollectionProfilesDialogComponent } from '../trips/collection-selection-form/select-collection-profiles-dialog/select-collection-profiles-dialog.component';
 import { CollectionDestinationSelectorComponent } from '../collections/collection-list/edit-collection-dialog/collection-destination-selector/collection-destination-selector.component';
-import { RemoteCollectionSelectionFormComponent } from '../trips/remote-collection-selection-form/remote-collection-selection-form.component';
+import { RecommendedCollectionSelectionFormComponent } from '../trips/recommended-collection-selection-form/recommended-collection-selection-form.component';
 import { CustomiseTripProfilesFormComponent } from '../trips/customise-trip-profiles-form/customise-trip-profiles-form.component';
 import { ListPackableComponent } from '../trips/packing-list/list-packable/list-packable.component';
 import { NumberSpinnerComponent } from '../trips/packing-list/list-packable/number-spinner/number-spinner.component';
@@ -97,6 +97,13 @@ import { WeatherSettingsDialogComponent } from '../trips/packing-list/weather-se
 import { WeatherSettingsFormComponent } from '../trips/packing-list/weather-settings-dialog/weather-settings-form/weather-settings-form.component';
 import { LoadingOverlayComponent } from '../shared-comps/loading-overlay/loading-overlay.component';
 import { PrintComponent } from '../trips/packing-list/print/print.component';
+import { PrintSettingsDialogComponent } from '../trips/packing-list/settings/print-settings-dialog/print-settings-dialog.component';
+import { ToggleIconDirective } from '../shared/directives/toggle-icon.directive';
+import { EditTripCollectionsComponent } from '../trips/edit-trip/edit-trip-collections/edit-trip-collections.component';
+import { EditTripProfilesComponent } from '../trips/edit-trip/edit-trip-profiles/edit-trip-profiles.component';
+import { EditTripComponent } from '../trips/edit-trip/edit-trip.component';
+import { EditTripDestinationDatesComponent } from '../trips/edit-trip/edit-trip-destination-dates/edit-trip-destination-dates.component';
+
 
 let imports = [
     ProfilesComponent,
@@ -175,7 +182,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RemoteCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent, PrintComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RecommendedCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent, PrintComponent, PrintSettingsDialogComponent, ToggleIconDirective, EditTripCollectionsComponent, EditTripProfilesComponent, EditTripComponent, EditTripDestinationDatesComponent],
     exports: [...imports]
 })
 export class SharedModule {

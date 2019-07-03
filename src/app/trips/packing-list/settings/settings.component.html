@@ -1,65 +1,126 @@
-<button
-  mat-menu-item
-  [matMenuTriggerFor]="displaySettings">
-  Show/Hide
-</button>
-<mat-menu #displaySettings="matMenu">
-  <button
-    mat-menu-item
-    (click)="toggleSettings('showWarnings')"
-    InnerLink>
-    <mat-icon
-      svgIcon="weather_error"
-      [activeColor]="settings.showWarnings ? 'accent' : 'muted'"></mat-icon>
-    <span>Warnings</span>
-  </button>
-  <button
-    mat-menu-item
-    (click)="toggleSettings('showCalculations')"
-    InnerLink>
-    <mat-icon
-      outlined
-      [activeColor]="settings.showCalculations ? 'accent' : 'muted'">
-      live_help
-    </mat-icon>
-    <span>Calculations</span>
-  </button>
-  <button
-    mat-menu-item
-    InnerLink
-    (click)="toggleSettings('showInvalid')">
-    <mat-icon
-      svgIcon="t-shirt-remove"
-      [activeColor]="settings.showInvalid ? 'accent' : 'muted'"></mat-icon>
-    <span>Removed Packables</span>
-  </button>
-</mat-menu>
+<div class="d-flex align-items-center mb-2">
+  <div
+    class="small text-muted"
+    *ngIf="!settings.editMode">
+    <p>
+      <span [innerHtml]="displayTrip.displayDate"></span>
+      &nbsp;({{packingList.data.totalDays}}&nbsp;Days)
+    </p>
+    <p>
+      <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
+      <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
+    </p>
+  </div>
+  <div
+    class="d-inline-flex align-items-baseline"
+    *ngIf="settings.editMode">
+    <button
+      mat-icon-button
+      activeColor="accent"
+      [activeColorState]="anySettingToggled() ? 'inactive' : 'muted'"
+      [matMenuTriggerFor]="displaySettings">
+      <mat-icon outlined>visibility</mat-icon>
+    </button>
+    <mat-menu #displaySettings="matMenu">
+      <button
+        mat-menu-item
+        (click)="toggleSettings('showWarnings')"
+        InnerLink>
+        <mat-icon
+          svgIcon="weather_error"
+          [activeColor]="settings.showWarnings ? 'accent' : 'muted'"></mat-icon>
+        <span>Warnings</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="toggleSettings('showCalculations')"
+        InnerLink>
+        <mat-icon
+          outlined
+          [activeColor]="settings.showCalculations ? 'accent' : 'muted'">
+          info
+        </mat-icon>
+        <span>Calculations</span>
+      </button>
+      <button
+        mat-menu-item
+        InnerLink
+        (click)="toggleSettings('showInvalid')">
+        <mat-icon
+          svgIcon="t-shirt-remove"
+          [activeColor]="settings.showInvalid ? 'accent' : 'muted'"></mat-icon>
+        <span>Removed Packables</span>
+      </button>
+    </mat-menu>
+    <button
+      mat-icon-button
+      activeColor="action"
+      [matMenuTriggerFor]="editTripMenu">
+      <mat-icon outlined>settings</mat-icon>
+    </button>
+    <mat-menu #editTripMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="editWeather()">
+        <mat-icon svgIcon="weather-edit"></mat-icon>
+        <span>Weather Settings</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="checkAll()">
+        <mat-icon>done_all</mat-icon>
+        <span>Check All</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="resetList()">
+        <mat-icon>replay</mat-icon>
+        <span>Reset List</span>
+      </button>
+      <button
+        mat-menu-item
+        activeColor='danger'
+        (click)="deleteTrip()">
+        <mat-icon outlined>delete</mat-icon>
+        <span>Delete Trip</span>
+      </button>
+    </mat-menu>
+    <button
+      mat-icon-button
+      activeColor="action"
+      (click)="selectCollections()">
+      <mat-icon svgIcon="collection-add"></mat-icon>
+    </button>
+  </div>
+  <div class="ml-auto d-inline-flex align-items-baseline">
 
-<button mat-menu-item>
-  <mat-icon svgIcon="place-edit"></mat-icon>
-  <span>Edit Trip</span>
-</button>
-<button mat-menu-item>
-  <mat-icon outlined>share</mat-icon>
-  <span>Share List</span>
-</button>
-<button mat-menu-item (click)="print()">
-    <mat-icon outlined>print</mat-icon>
-    <span>Print</span>
-  </button>
-<button mat-menu-item (click)="editWeather()">
-  <mat-icon svgIcon="weather-edit"></mat-icon>
-  <span>Weather Settings</span>
-</button>
-<button mat-menu-item (click)="checkAll()">
-  <mat-icon>done_all</mat-icon>
-  <span>Check All</span>
-</button>
-<button mat-menu-item (click)="resetList()">
-  <mat-icon>replay</mat-icon>
-  <span>Reset List</span>
-</button>
-<button mat-menu-item (click)="deleteTrip()">
-  <mat-icon outlined>delete</mat-icon>
-  <span>Delete Trip</span>
-</button>
+    <button
+      type="button"
+      activeColor="action"
+      (click)="null"
+      mat-icon-button
+      [matMenuTriggerFor]="packinglistMenu">
+      <mat-icon svgIcon="share"></mat-icon>
+    </button>
+    <mat-menu #packinglistMenu="matMenu">
+      <button mat-menu-item>
+        <mat-icon outlined>share</mat-icon>
+        <span>Share List</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="print()">
+        <mat-icon outlined>print</mat-icon>
+        <span>Print</span>
+      </button>
+    </mat-menu>
+
+    <button
+      mat-icon-button
+      activeColor="accent"
+      [activeColorState]="settings.editMode ? 'inactive' : 'muted'"
+      (click)="toggleSettings('editMode')">
+      <mat-icon outlined>edit</mat-icon>
+    </button>
+  </div>
+</div>

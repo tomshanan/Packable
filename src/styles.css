@@ -30,6 +30,10 @@
 .form-actions{
     margin-top: 80px;
 }
+.form-actions-sticky{
+    position: sticky;
+    bottom: 0;
+}
 .dialog-full-screen .mat-dialog-actions, .form-actions-mobile{
     position: sticky;
     bottom: 0;
@@ -76,30 +80,8 @@ mat-icon > svg {
     min-height: 100vh;
 }
 
-/* @media print {
-    body * {
-      visibility: hidden;
-    }
-    #section-to-print, #section-to-print * {
-      visibility: visible;
-    }
-    #section-to-print {
-      position: absolute;
-      width: 600px;
-      left: 0;
-      top: 0;
-    }
-    .mat-expansion-panel {
-        page-break-after: always;
-    }
-  } */
   @media print {
-    @page{
-        size: portrait;
-    }
-    /* @viewport{
-        width:auto;
-    } */
+
     app-root > * { display: none; }
     app-root app-print { display: block; }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { PackingList, PackingListPackable, PackingListSettings, DisplayPackingList, pass } from '../../shared/models/packing-list.model';
-import { Trip, displayTrip } from '../../shared/models/trip.model';
+import { Trip, DisplayTrip } from '../../shared/models/trip.model';
 import * as moment from 'moment';
 import { Router } from '@angular/router';
 import { DestinationDataService } from '../../shared/services/location-data.service';
@@ -14,6 +14,10 @@ import { ListPackableComponent } from './list-packable/list-packable.component';
 import { PackingListService} from './packing-list.service';
 import { Icon } from '../../shared-comps/stepper/stepper.component';
 import { TripFactory } from '../../shared/factories/trip.factory';
+import { PrintOptions } from './print/print.component';
+import { printDialog_data, PrintSettingsDialogComponent } from './settings/print-settings-dialog/print-settings-dialog.component';
+import { take } from 'rxjs/operators';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-packing-list',
@@ -39,11 +43,11 @@ export class PackingListComponent implements OnInit, OnDestroy {
   forecastString:string = 'Loading Weather';
   customWeatherForm: FormGroup; 
   trip: Trip;
-  displayTrip:displayTrip;
-
+  displayTrip:DisplayTrip;
   packingList: PackingList;
   sortedList: DisplayPackingList[] = [];
   packingListSettings: PackingListSettings;
+
 
   constructor(
     private router: Router,
@@ -51,6 +55,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     private destService: DestinationDataService,
     public windowService: WindowService, // used by template
     private fb: FormBuilder,
+    private dialog:MatDialog,
     private packingListService: PackingListService,
   ) {
     /*

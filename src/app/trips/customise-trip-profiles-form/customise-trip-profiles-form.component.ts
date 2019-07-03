@@ -36,7 +36,7 @@ export class CustomiseTripProfilesFormComponent implements OnInit,OnDestroy {
     if(isDefined(this.profileGroup)){
       this.onSelectedProfiles([this.trip.profiles[0]])
     }
-    this.subs = this.storeSelector.profiles_obs.subscribe(state => {
+    this.subs = this.storeSelector.profiles$.subscribe(state => {
       console.log('profile state emitted', state);
       this.profileGroup = state.profiles.filter(p=>this.profileGroup.hasId(p.id))
       this.setCollections(this.selectedProfileId)

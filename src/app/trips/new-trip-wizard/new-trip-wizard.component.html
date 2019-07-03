@@ -5,6 +5,9 @@
     <div class="step centered" *ngIf="step===1">
       <div class="content w-500 text-center">
           <h5>Where to next?</h5>
+          <div class="errors" *ngIf="stepTouched[step] && stepErrors.length>0">
+            <p class="text-danger" *ngFor="let errorText of stepErrors">{{errorText}}</p>
+          </div>
           <trip-details-form [trip]="trip" (tripChange)="setTimeAndPlace($event)">
           </trip-details-form>
       </div>
@@ -12,28 +15,23 @@
     <div class="step centered" *ngIf="step===2">
         <div class="content w-500 text-center">
             <h5>Who's going?</h5>
+            <div class="errors" *ngIf="stepTouched[step] && stepErrors.length>0">
+                <p class="text-danger" *ngFor="let errorText of stepErrors">{{errorText}}</p>
+              </div>
             <profile-selection-form [selected]="trip.profiles" (selectedChange)="setSelectedProfiles($event)"></profile-selection-form>
         </div>
     </div>
     <div class="step" *ngIf="step===3">
       <div class="content w-500 px-1">
           <h5 class="text-center">What do we need?</h5>
-          <remote-collection-selection-form
-            [remoteCollections]="remoteCollections"
-            [localCollections]="localCollections"
-            [selected]="trip.collections"
-            [profiles]="trip.profiles"
-            [loadingLibrary]="loadingLibrary"
-            [destMetaData]="destMetaData"
-            [destWeatherData]="destWeatherData"
-            [limit]="getLimit()"
-            (selectedChange)="setCollections($event)" #remoteColSelector>
-          </remote-collection-selection-form>
+          <div class="errors text-center" *ngIf="stepTouched[step] && stepErrors.length>0">
+              <p class="text-danger" *ngFor="let errorText of stepErrors">{{errorText}}</p>
+            </div>
           <collection-selection-form
-              [localCollections]="localCollections"
               [selected]="trip.collections"
               [profiles]="trip.profiles"
-              [destWeatherData]="destWeatherData"
+              [destWeatherData]="destWeatherData$"
+              [destMetaData]="destMetaData$"
               (selectedChange)="setCollections($event)">
           </collection-selection-form>
       </div>
@@ -51,7 +49,7 @@
           <p class="text-center">Save Trip and Pack</p>
       </div>
     </div>
-    <div class="form-actions" [class.form-actions-mobile]="windowService.max('md')">
+    <div class="form-actions form-actions-sticky" [class.form-actions-mobile]="windowService.max('md')">
         <dialog-confirm-button>
           <button mat-fab appColor="action" (click)="onConfirmStep(step)" [disabled]="!stepValid">
             <mat-icon *ngIf="4>step">check</mat-icon>

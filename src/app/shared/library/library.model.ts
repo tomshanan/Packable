@@ -3,15 +3,9 @@ import { CollectionOriginal } from '../models/collection.model';
 import { Profile, ProfileComplete } from '../models/profile.model';
 import { timeStamp } from '../global-functions';
 
-export type libraryItem = PackableOriginal | CollectionOriginal | Profile;
+export type LibraryItem = PackableOriginal | CollectionOriginal | Profile;
 
-export class remoteCollection extends CollectionOriginal {
-    metaData: ItemMetaData
-    constructor(c:CollectionOriginal, metaData:ItemMetaData){
-        super(c.id,c.name,c.packables,c.weatherRules,false,c.dateModified, c.locations)
-        this.metaData = new ItemMetaData(c.id,metaData)
-    }
-}
+
 
 export interface ItemLibrary{
     packables: PackableOriginal[],
@@ -31,7 +25,9 @@ export class destMetaData {
 }
 export interface destMetaDataNode {[id:string]:destMetaData}
 
-export class ItemMetaData {
+export type HasMetaData = {metaData:Metadata}
+
+export class Metadata {
     id: string
     metaScore: number = 0 // a popularity score
     downloaded: number= 0 // How many users have imported this item (includes deleted items)
@@ -39,12 +35,12 @@ export class ItemMetaData {
     usedOnTrip: number = 0 // how many users have used this on a trip (does not include deleted trips or incomplete trips)
     modified: number = 0 // how many times users modified the item (does not include deleting the item)
     description: string = ''
-    constructor(id:string, metaData:Partial<ItemMetaData> = {}){
+    constructor(id:string, metaData:Partial<Metadata> = {}){
         this.id = id
         Object.assign(this,metaData)
     }
 }
-export interface MetaDataNode {[id:string]:ItemMetaData}
+export interface MetaDataNode {[id:string]:Metadata}
 
 export interface State {
     library: ItemLibrary,

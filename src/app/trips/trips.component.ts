@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MemoryService } from '../shared/services/memory.service';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../shared/app.reducers'
-import { Trip, displayTrip } from '../shared/models/trip.model';
+import { Trip, DisplayTrip } from '../shared/models/trip.model';
 import { Observable ,  Subscription } from 'rxjs';
 import { StoreSelectorService } from '../shared/services/store-selector.service';
 import { TripMemoryService } from '../shared/services/trip-memory.service';
@@ -24,9 +24,9 @@ import { TripFactory } from '../shared/factories/trip.factory';
 export class TripsComponent implements OnInit, OnDestroy {
 
   state_subscription: Subscription;
-  trips_obs: Observable<tripState>;
-  trips: displayTrip[] = []
-  incomplete: displayTrip[] = []
+  trips$: Observable<tripState>;
+  trips: DisplayTrip[] = []
+  incomplete: DisplayTrip[] = []
   newTrip:Trip;
 
   constructor(
@@ -40,8 +40,8 @@ export class TripsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.trips_obs = this.store.select('trips');
-    this.state_subscription = this.trips_obs.subscribe((tripState)=>{
+    this.trips$ = this.store.select('trips');
+    this.state_subscription = this.trips$.subscribe((tripState)=>{
       let displayTrips=tripState.trips.map(trip=>this.tripFac.makeDisplayTrip(trip)) 
       this.trips.compare(displayTrips)
       this.trips.sort((a,b)=>{
@@ -72,7 +72,7 @@ export class TripsComponent implements OnInit, OnDestroy {
     this.tripMemory.saveTempTrip(incTrip)
     this.router.navigate(['new'], {relativeTo: this.activeRoute})
   }
-  removeIncomplete(trip:displayTrip){
+  removeIncomplete(trip:DisplayTrip){
     this.incomplete.removeElements([trip])
     this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
   }

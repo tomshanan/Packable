@@ -39,6 +39,8 @@ import { User } from '../../admin/store/adminState.model';
 import { PackingList, PackingListPackable } from '../models/packing-list.model';
 import { initialLibraryState } from '../library/library.model';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TripWeatherData } from '../services/weather.service';
+
 export type nodeOptions = 'packables' | 'collections' | 'profiles' | 'tripState';
 export type nodeOrAll = nodeOptions | 'all'
 
@@ -416,14 +418,14 @@ export class StorageService {
     }
 
 
-    //adminUserConfig_Obs: Subject<configItem>
+    //adminUserConfig$: Subject<configItem>
     adminListenToUserConfig(listen: boolean = true) {
         if (this.checkAuth()) {
             if (this.user.permissions.userManagement) {
                 if (!!listen) {
-                    //this.adminUserConfig_Obs = new Subject()
+                    //this.adminUserConfig$ = new Subject()
                     firebase.database().ref(USER_CONFIG).on('value', (snapshot) => {
-                        //this.adminUserConfig_Obs.next(snapshot.val())
+                        //this.adminUserConfig$.next(snapshot.val())
                         let records: configItem = snapshot.val();
                         let newData: User[] = []
                         for (let record in records) {
@@ -436,7 +438,7 @@ export class StorageService {
                         this.store.dispatch(new adminActions.adminSetUsers(newData))
                     })
                 } else {
-                    //this.adminUserConfig_Obs.complete()
+                    //this.adminUserConfig$.complete()
                     firebase.database().ref(USER_CONFIG).off()
                 }
             }
@@ -452,7 +454,8 @@ export class StorageService {
     }
     unwrapPackingLists(packingLists:firebaseItem = {}):PackingList[]{
         for(let list in packingLists){
-            packingLists[list].packables = this.unwrapPackingListsPackables(packingLists[list].packables)
+            (<PackingList>packingLists[list]).packables = this.unwrapPackingListsPackables(packingLists[list].packables);
+            (<PackingList>packingLists[list]).data.weatherData = new TripWeatherData((<PackingList>packingLists[list]).data.weatherData);
         }
         return this.unwrapForLocalStore(packingLists)
     }

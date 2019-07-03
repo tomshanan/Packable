@@ -1,0 +1,16 @@
+.content{
+  width: 100%;
+  margin-top:1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-container{
+  font-size: 1.3em;
+  height: 1em;
+  width: 1em;
+  line-height: 1em;
+}
+.largeIcon{
+  font-size: 1.5em;
+}

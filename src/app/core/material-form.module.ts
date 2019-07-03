@@ -28,7 +28,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         MatDialogModule,
         MatRippleModule,
         MatListModule,
-        MatMenuModule
+        MatMenuModule,
+        MatTabsModule
     ], providers: [
         { provide: MatDialogRef, useValue: {} },
         { provide: MAT_DIALOG_DATA, useValue: [] },

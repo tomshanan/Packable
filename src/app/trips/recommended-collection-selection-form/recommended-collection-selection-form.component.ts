@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { StoreSelectorService } from '../../shared/services/store-selector.service';
-import { remoteCollection } from '@app/shared/library/library.model';
-import { CollectionOriginal, CollectionComplete } from '../../shared/models/collection.model';
+import { CollectionOriginal, CollectionComplete, CollectionWithMetadata } from '../../shared/models/collection.model';
 import { Profile } from '../../shared/models/profile.model';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { destMetaData } from '../../shared/library/library.model';
@@ -18,13 +17,13 @@ import { importCollections_data, ImportCollectionDialogComponent, importCollecti
 type weatherMet = { weatherMet: boolean }
 type completeAndWeatherMet = CollectionComplete & weatherMet
 @Component({
-  selector: 'remote-collection-selection-form',
-  templateUrl: './remote-collection-selection-form.component.html',
-  styleUrls: ['./remote-collection-selection-form.component.css'],
+  selector: 'recommended-collection-selection-form',
+  templateUrl: './recommended-collection-selection-form.component.html',
+  styleUrls: ['./recommended-collection-selection-form.component.css'],
   animations: [blockInitialAnimations, dropInTrigger,expandAndFadeTrigger]
 })
-export class RemoteCollectionSelectionFormComponent implements OnInit, OnChanges {
-  @Input('remoteCollections') remoteCollections: remoteCollection[] = []
+export class RecommendedCollectionSelectionFormComponent implements OnInit, OnChanges {
+  @Input('remoteCollections') remoteCollections: CollectionWithMetadata[] = []
   @Input('localCollections') localCollections: CollectionComplete[] = []
   @Input('selected') selected: tripCollectionGroup[] = []
   @Input('loadingLibrary') loadingLibrary: boolean;
@@ -141,7 +140,7 @@ export class RemoteCollectionSelectionFormComponent implements OnInit, OnChanges
       data: data
     });
     importCollectionDialog.afterClosed().pipe(take(1)).subscribe((r:importCollections_result)=>{
-      if(isDefined(r.collections) && isDefined(r.collections)){
+      if(isDefined(r) && isDefined(r.collections)){
         r.collections.forEach(col=>{
           this.selected.push({ id: col.id, profiles: r.profiles})
         })

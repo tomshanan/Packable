@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostBinding, Renderer2, HostListener, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
-import { color, appColors } from '../app-colors';
+import { Color, AppColors } from '../app-colors';
 import { isDefined } from '../global-functions';
 
 @Directive({
@@ -11,16 +11,17 @@ import { isDefined } from '../global-functions';
 })
 export class ActiveColorDirective implements OnInit, OnChanges {
   element: any;
-  @Input('activeColor') inputColor:keyof appColors = 'action';
+  @Input('activeColor') inputColor:keyof AppColors = 'action';
+  @Input('activeColorState') colorState:keyof Color = 'inactive';
   @Input('colorTarget') targetElement;
   @Input('disabled') disabled: boolean = false;
-  color: color;
+  color: Color;
 
   @HostListener('mouseenter') onMouseEnter() {
     !this.disabled  && this.setColor(this.color.hover);
   }
   @HostListener('mouseleave') onMouseLeave() {
-    !this.disabled  && this.setColor(this.color.inactive);
+    !this.disabled  && this.setInitialColor();
   }
   @HostListener('mouseup') onMouseUp() {
     !this.disabled  && this.setColor(this.color.hover);
@@ -29,13 +30,13 @@ export class ActiveColorDirective implements OnInit, OnChanges {
     !this.disabled  && this.setColor(this.color.click);
   }
   @HostListener('touchend') onTouchEnd() {
-    !this.disabled  && this.setColor(this.color.inactive);
+    !this.disabled  && this.setInitialColor();
   }
   @HostListener('touchcancel') onTouchCancel() {
-    !this.disabled && this.setColor(this.color.inactive);
+    !this.disabled && this.setInitialColor();
   }
   @HostListener('blur') onBlur() {
-    !this.disabled && this.setColor(this.color.inactive);
+    !this.disabled && this.setInitialColor();
   }
   @HostListener('touchstart') onTouchStart() {
     !this.disabled && this.setColor(this.color.click);
@@ -43,7 +44,7 @@ export class ActiveColorDirective implements OnInit, OnChanges {
   
   constructor(
     private elRef: ElementRef,
-    private appColors:appColors,
+    private appColors:AppColors,
     private renderer: Renderer2
   ) { 
   }
@@ -60,14 +61,8 @@ export class ActiveColorDirective implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes:SimpleChanges){
-    if(changes['responsive']){
+    if(changes['disabled'] || changes['inputColor'] || changes['colorState']){
       this.setInitialColor()
-    }
-    if(changes['disabled']){
-      this.setInitialColor()
-    }
-    if(changes['inputColor']){
-      this.initElement()
     }
     if(changes['targetElement']){
       this.initElement()
@@ -75,7 +70,7 @@ export class ActiveColorDirective implements OnInit, OnChanges {
   }
   setInitialColor(){
     this.color = this.appColors[this.inputColor]
-    this.setColor(this.color.inactive)
+    this.setColor(this.color[this.colorState])
   }
   // disableState(){
   //   let disabled = this.disabled
@@ -101,13 +96,13 @@ export class ActiveColorDirective implements OnInit, OnChanges {
 })
 export class AppColorDirective implements OnInit, OnChanges {
   element: any;
-  @Input('appColor') inputColor:keyof appColors = 'action';
+  @Input('appColor') inputColor:keyof AppColors = 'action';
   @Input('colorTarget') targetElement;
   @Input('disabled') disabled: boolean = false;
-  color: color;
+  color: Color;
   constructor(
     private elRef: ElementRef,
-    private appColors:appColors,
+    private appColors:AppColors,
     private renderer: Renderer2
   ) { 
   }

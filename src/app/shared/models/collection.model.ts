@@ -3,6 +3,7 @@ import { Guid, timeStamp } from '../global-functions';
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
 import { WeatherRule } from './weather.model';
+import { Metadata } from '../library/library.model';
 
 export type collectionType = 'complete' | 'private' | 'original';
 
@@ -53,6 +54,21 @@ export class CollectionPrivate {
         public dateModified: number =  timeStamp(),
         public weatherOverride: boolean = false,
     ){
+    }
+}
+
+export class CollectionWithMetadata extends CollectionOriginal {
+    metaData: Metadata
+    constructor(c:CollectionOriginal, metaData:Metadata){
+        super(c.id,c.name,c.packables,c.weatherRules,false,c.dateModified, c.locations)
+        this.metaData = new Metadata(c.id,metaData)
+    }
+}
+export class CollectionCompleteWithMetadata extends CollectionComplete {
+    metaData: Metadata
+    constructor(c:CollectionComplete, metaData:Metadata){
+        super(c.id,c.name,c.essential,c.packables,c.weatherRules,false,c.dateModified, c.locations)
+        this.metaData = new Metadata(c.id,metaData)
     }
 }
 

@@ -1,7 +1,7 @@
 import { Directive, Renderer2, ElementRef } from '@angular/core';
 
 @Directive({
-  selector: 'mat-icon[outlined]'
+  selector: 'mat-icon[outlined],mat-icon[outline]'
 })
 export class OutlinedDirective {
 el:any;

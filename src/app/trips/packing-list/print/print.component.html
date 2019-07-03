@@ -1,14 +1,46 @@
-<div *ngIf="packingList; else nothingToPrint">
-  <p>
-    Loaded packing list:<br>
-    {{packingList.id}}
-  </p>
-  <ul>
-    <li *ngFor="let packable of packingList.packables">
-        {{packable.quantity}} x {{packable.name}}
-    </li>
-  </ul>
-</div>
-<ng-template #nothingToPrint>
-  This page is not ready to print
+<ng-container *ngIf="packingList && displayTrip; else nothingToPrint">
+  <ng-container *ngTemplateOutlet="header"></ng-container>
+  <div *ngFor="let profile of displayList; let i = index" [class.page-break]="checkPageBreak(i)">
+    <ng-container *ngTemplateOutlet="checkPageBreak(i) ? header : null"></ng-container>
+    <div class="d-flex align-items-center">
+        <profile-icon
+          [avatar]="profile.avatar"
+          width="50px"
+          [fullFrame]="profile.id==='shared'"></profile-icon>
+        <h4 class="m-0 text-capitalize">{{profile.header}}</h4>
+    </div>
+    <app-column-divider [cols]="pagePerProfile ? calcColumns(profile) : 3">
+      <div *ngFor="let collection of profile.collections" class="pb-1">
+        <h6>{{collection.header}}</h6>
+        <ul class="p-0">
+          <ng-container *ngFor="let packable of collection.packables">
+            <div class="packable-line">
+              <mat-icon outlined *ngIf="packable.checked && !cleanCheckboxes">check_box</mat-icon>
+              <mat-icon outlined *ngIf="!packable.checked || cleanCheckboxes">check_box_outline_blank</mat-icon>
+              <p>{{packable.quantity}}</p>
+              <p class="small">X</p>
+              <p>{{packable.name}}</p>
+            </div>
+          </ng-container>
+        </ul>
+      </div>
+    </app-column-divider>
+  </div>
+</ng-container>
+<ng-template #nothingToPrint>This page is not ready to print</ng-template>
+
+<ng-template #header>
+    <header class="pb-3">
+        <h2>Your Packables for {{displayTrip.destinationName}}</h2>
+        <p class="small text-muted">Created Using Packable.app</p>
+        <p>
+          <span [innerHtml]="displayTrip.displayDate"></span>
+          &nbsp;
+            ({{packingList.data.totalDays}} Days)
+        </p>
+        <p>
+          <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
+          <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
+        </p>
+      </header>
 </ng-template>

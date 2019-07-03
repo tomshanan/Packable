@@ -2,27 +2,27 @@ import { Store } from "@ngrx/store";
 import * as fromApp from '../app.reducers'
 import { Injectable } from '@angular/core';
 import { Observable, combineLatest } from "rxjs";
-import { PackableOriginal, PackablePrivate, remotePackable } from '../models/packable.model';
-import { CollectionOriginal } from '../models/collection.model';
+import { PackableOriginal, PackablePrivate, PackableOriginalWithMetaData } from '../models/packable.model';
+import { CollectionOriginal, CollectionWithMetadata } from '../models/collection.model';
 import { Profile,ProfileWithMetadata } from "../models/profile.model";
-import { Trip, displayTrip } from '../models/trip.model';
+import { Trip, DisplayTrip } from '../models/trip.model';
 import { DestinationDataService } from './location-data.service';
 import * as moment from 'moment';
 import { PackingList } from '../models/packing-list.model';
 import {State as AdminState} from '@app/admin/store/adminState.model'
-import {State as libraryState, libraryItem, remoteCollection, } from '@shared/library/library.model'
+import {State as libraryState, LibraryItem } from '@shared/library/library.model'
 import { UserService } from './user.service';
-import { ItemLibrary, MetaDataNode, ItemMetaData } from '../library/library.model';
+import { ItemLibrary, MetaDataNode, Metadata } from '../library/library.model';
 import { isDefined } from '../global-functions';
 
 @Injectable()
 export class StoreSelectorService{    
-    public packables_obs:Observable<{packables: PackableOriginal[]}>;
-    public collections_obs:Observable<{collections: CollectionOriginal[]}>;
-    public profiles_obs:Observable<{profiles: Profile[]}>;
-    public trips_obs:Observable<{trips: Trip[], incomplete: Trip[], packingLists:PackingList[]}>;
-    public adminState_obs: Observable<AdminState>
-    public libraryState_obs: Observable<libraryState>
+    public packables$:Observable<{packables: PackableOriginal[]}>;
+    public collections$:Observable<{collections: CollectionOriginal[]}>;
+    public profiles$:Observable<{profiles: Profile[]}>;
+    public trips$:Observable<{trips: Trip[], incomplete: Trip[], packingLists:PackingList[]}>;
+    public adminState$: Observable<AdminState>
+    public libraryState$: Observable<libraryState>
 
     private _originalPackables: PackableOriginal[];
     private _originalCollections: CollectionOriginal[];
@@ -32,35 +32,35 @@ export class StoreSelectorService{
     private _packingLists: PackingList[]
     private _adminState: AdminState
     private _libraryState: libraryState
-    store_obs: Observable<[{ packables: PackableOriginal[]; }, { collections: CollectionOriginal[]; }, { profiles: Profile[]; }, { trips: Trip[]; packingLists: PackingList[]; }]>;
+    store$: Observable<[{ packables: PackableOriginal[]; }, { collections: CollectionOriginal[]; }, { profiles: Profile[]; }, { trips: Trip[]; packingLists: PackingList[]; }]>;
 
     constructor(private store:Store<fromApp.appState>, private destServices: DestinationDataService, private user: UserService){
-        this.packables_obs = this.store.select('packables');
-        this.collections_obs = this.store.select('collections');
-        this.profiles_obs = this.store.select('profiles');
-        this.trips_obs = this.store.select('trips');
-        this.adminState_obs = this.store.select('admin')
-        this.libraryState_obs = this.store.select('library')
-        this.store_obs = combineLatest(this.packables_obs,this.collections_obs,this.profiles_obs,this.trips_obs)
+        this.packables$ = this.store.select('packables');
+        this.collections$ = this.store.select('collections');
+        this.profiles$ = this.store.select('profiles');
+        this.trips$ = this.store.select('trips');
+        this.adminState$ = this.store.select('admin')
+        this.libraryState$ = this.store.select('library')
+        this.store$ = combineLatest(this.packables$,this.collections$,this.profiles$,this.trips$)
 
-        this.packables_obs.subscribe(packablesState =>{
+        this.packables$.subscribe(packablesState =>{
             this._originalPackables = packablesState.packables;
         })
-        this.collections_obs.subscribe(collectionState =>{
+        this.collections$.subscribe(collectionState =>{
             this._originalCollections = collectionState.collections;
         })
-        this.profiles_obs.subscribe(profileState =>{
+        this.profiles$.subscribe(profileState =>{
             this._profiles = profileState.profiles;
         })
-        this.trips_obs.subscribe(tripState =>{
+        this.trips$.subscribe(tripState =>{
             this._trips = tripState.trips;
             this._incompleteTrips = tripState.incomplete;
             this._packingLists = tripState.packingLists
         })
-        this.adminState_obs.subscribe(adminState =>{
+        this.adminState$.subscribe(adminState =>{
             this._adminState = adminState
         })
-        this.libraryState_obs.subscribe(libState =>{
+        this.libraryState$.subscribe(libState =>{
             console.log('StoreSelector: library state updeted',libState);
             this._libraryState = libState
         })
@@ -88,31 +88,34 @@ export class StoreSelectorService{
         // }
         return lib
     }
-    getLibraryItemById(node:keyof ItemLibrary,id:string):libraryItem{
+    getLibraryItems(node:keyof ItemLibrary):LibraryItem[]{
+        return this.libraryState.library[node] || [];
+    }
+    getLibraryItemById(node:keyof ItemLibrary,id:string):LibraryItem{
         return this.libraryState.library[node].findId(id) || 
         (console.warn(`could not find item id: ${id} in Library/${node}`), null);
     }
     
-    getLibraryItemsByIds(node:keyof ItemLibrary,ids:string[]):libraryItem[]{
-       let itemsArray:libraryItem[] = this.libraryState.library[node]
-       return itemsArray.filter((x:libraryItem)=>ids.includes(x.id))
+    getLibraryItemsByIds(node:keyof ItemLibrary,ids:string[]):LibraryItem[]{
+       let itemsArray:LibraryItem[] = this.libraryState.library[node]
+       return itemsArray.filter((x:LibraryItem)=>ids.includes(x.id))
     }
-    getMetaDataForId(id:string): ItemMetaData{
+    getMetaDataForId(id:string): Metadata{
         return this.libraryState.metaData[id]
     }
 
-    getRemotePackables(ids?:string[]):remotePackable[]{
+    getRemotePackablesWithMetaData(ids?:string[]):PackableOriginalWithMetaData[]{
         let packables = this.libraryState.library.packables
-        let remotePackables = packables.map(p=>new remotePackable(p,this.getMetaDataForId(p.id)))
+        let remotePackables = packables.map(p=>new PackableOriginalWithMetaData(p,this.getMetaDataForId(p.id)))
         if(isDefined(ids)){
             return remotePackables.filter(c=>ids.includes(c.id))
         } else {
             return remotePackables
         } 
     }
-    getRemoteCollections(ids?:string[]):remoteCollection[]{
+    getRemoteCollectionsWithMetadata(ids?:string[]):CollectionWithMetadata[]{
         let libCollections:CollectionOriginal[] = this.libraryState.library.collections
-        let remoteCollections:remoteCollection[] = libCollections.map(c=>new remoteCollection(c,this.getMetaDataForId(c.id)))
+        let remoteCollections:CollectionWithMetadata[] = libCollections.map(c=>new CollectionWithMetadata(c,this.getMetaDataForId(c.id)))
         if(isDefined(ids)){
             return remoteCollections.filter(c=>ids.includes(c.id))
         } else {
@@ -128,7 +131,9 @@ export class StoreSelectorService{
             return remoteProfiles
         } 
     }
-
+    getPackinglistById(id:string):PackingList{
+        return this.packingLists.findId(id) || null;
+    }
     getTripById(id:string):Trip{
         return this.trips.find(t=>t.id == id) || null;
     }

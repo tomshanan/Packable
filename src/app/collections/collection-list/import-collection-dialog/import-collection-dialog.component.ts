@@ -1,9 +1,9 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { CollectionComplete } from '../../../shared/models/collection.model';
+import { CollectionComplete,CollectionWithMetadata as RemoteCollection } from '../../../shared/models/collection.model';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { Store } from '@ngrx/store';
 import * as libraryActions from '@shared/library/library.actions';
-import { State as LibraryState, remoteCollection as RemoteCollection } from '@shared/library/library.model';
+import { State as LibraryState } from '@shared/library/library.model';
 import { ProfileFactory } from '../../../shared/factories/profile.factory';
 import { ContextService } from '../../../shared/services/context.service';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
@@ -14,7 +14,7 @@ import { StorageService } from '../../../shared/storage/storage.service';
 import * as collectionActions from '@app/collections/store/collections.actions';
 import { Profile } from '../../../shared/models/profile.model';
 import { transitionTrigger } from '../../../shared/animations';
-import { PackableComplete,remotePackable} from '../../../shared/models/packable.model';
+import { PackableComplete,PackableOriginalWithMetaData} from '../../../shared/models/packable.model';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import * as packableActions from '@app/packables/store/packables.actions';
 import { takeUntil, single } from 'rxjs/operators';
@@ -48,7 +48,7 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
   profileGroup: Profile[];
   selectedProfiles: string[];
   localCollections: CollectionComplete[];
-  allRemotePackables: remotePackable[];
+  allRemotePackables: PackableOriginalWithMetaData[];
 
   constructor(
     private storeSelector:StoreSelectorService,
@@ -68,7 +68,7 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subs = this.storeSelector.libraryState_obs.subscribe((state)=>{
+    this.subs = this.storeSelector.libraryState$.subscribe((state)=>{
       if(state.loading){
         this.loading = true
       } else {
@@ -84,8 +84,8 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
   }
   initSelector(){
     this.localCollections = this.colFac.getAllComplete()
-    this.allRemoteCollections = this.storeSelector.getRemoteCollections()
-    this.allRemotePackables = this.storeSelector.getRemotePackables()
+    this.allRemoteCollections = this.storeSelector.getRemoteCollectionsWithMetadata()
+    this.allRemotePackables = this.storeSelector.getRemotePackablesWithMetaData()
     this.collections = this.colFac.getImportCollectionList()
 
     if(this.context.profileId){

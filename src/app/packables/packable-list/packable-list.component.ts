@@ -282,7 +282,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
             return {pId:pid,cId:this.editingCollectionId}
           })
           this.bulkActions.removePackablesByCP(ids,CPs)
-          this.storeSelector.profiles_obs.pipe(take(1)).subscribe(()=>{
+          this.storeSelector.profiles$.pipe(take(1)).subscribe(()=>{
             //this.updateViewObject(deletePackables, 'remove') 
             this.toggleEditList(false)
             this.selected = []
@@ -312,7 +312,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
         console.log('confirmDeleteDialog: returned',confirm,ids);
         if (confirm == true) {
           this.store.dispatch(new packableActions.removeOriginalPackables(ids))
-          this.storeSelector.packables_obs.pipe(take(1)).subscribe(() => {
+          this.storeSelector.packables$.pipe(take(1)).subscribe(() => {
             //this.updateViewObject(deletePackables, 'remove')
             this.toggleEditList(false)
             this.selected = []

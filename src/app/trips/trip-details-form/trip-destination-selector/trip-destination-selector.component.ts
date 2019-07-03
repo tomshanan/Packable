@@ -88,9 +88,6 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
     const isObject = typeof input === 'object'
     const cityIdDefined = input && isDefined(input['cityId'])
     const isDestinationIdValid = cityIdDefined && this.isDestinationIdValid(input.cityId)
-    console.log(`isObject`,isObject);
-    console.log(`cityIdDefined`,isObject);
-    console.log(`isDestinationIdValid`,isDestinationIdValid);
     return isObject && cityIdDefined && isDestinationIdValid;
   }
   confirmDestination(value?:string) {

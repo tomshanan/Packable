@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, Directive, ElementRef, 
 import { RippleAnimationConfig } from '@angular/material';
 import { WindowService, screenSize } from '../../shared/services/window.service';
 import { isDefined } from '@app/shared/global-functions';
-import { appColors, color } from '../../shared/app-colors';
+import { AppColors, Color } from '../../shared/app-colors';
 import { Subscription } from 'rxjs';
 
 
@@ -17,10 +17,10 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
   @Input('matIcon') matIcon: string;
   @Input() disabled: boolean = false;
   @Input() showTextFromSize: screenSize;
-  @Input('color') inputColor: keyof appColors = 'action'
+  @Input('color') inputColor: keyof AppColors = 'action'
   @Input('reverse') reverse: boolean = false
 
-  color: color;
+  color: Color;
   rippleRadius: number;
   @Input() buttonWidth: string = null
   @Input() innerPadding: string = null
@@ -42,7 +42,7 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
    */
   constructor(
     public windowService: WindowService,
-    private appColors: appColors,
+    private appColors: AppColors,
     private hostElement: ElementRef,
     private renderer: Renderer2,
   ) { }

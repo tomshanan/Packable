@@ -1,6 +1,6 @@
 import { WeatherRule } from './weather.model';
 import { Guid, timeStamp } from '../global-functions';
-import { ItemMetaData } from '../library/library.model';
+import { Metadata } from '../library/library.model';
 
 export type QuantityType = "period" | "profile" | "trip";
 
@@ -52,16 +52,15 @@ export class PackablePrivate {
         public dateModified: number = timeStamp()
     ) { }
 }
-export class remotePackable extends PackableOriginal {
-    metaData: ItemMetaData
-    constructor(p:PackableOriginal, metaData:ItemMetaData){
-        super(p.id,p.name,p.quantityRules,p.weatherRules,false,p.dateModified, p.deleted)
-        this.metaData = new ItemMetaData(p.id,metaData)
-        this.type = 'remote'
+export class PackableOriginalWithMetaData extends PackableOriginal {
+    metaData: Metadata
+    constructor(p:PackableOriginal, metaData:Metadata){
+        super(p.id,p.name,p.quantityRules,p.weatherRules,p.userCreated,p.dateModified, p.deleted)
+        this.metaData = new Metadata(p.id,metaData)
     }
 }
 
-export type PackableAny = PackablePrivate | PackableOriginal | remotePackable;
+export type PackableAny = PackablePrivate | PackableOriginal | PackableOriginalWithMetaData;
 
 export function isPackableOriginal(p: { type: packableType }): p is PackableOriginal {
     return p.type == 'original'
@@ -71,7 +70,4 @@ export function isPackablePrivate(p: { type: packableType }): p is PackablePriva
 }
 export function isPackableComplete(p: { type: packableType }): p is PackableComplete {
     return p.type == 'complete'
-}
-export function isPackableRemote(p: { type: packableType }): p is remotePackable {
-    return p.type == 'remote'
 }

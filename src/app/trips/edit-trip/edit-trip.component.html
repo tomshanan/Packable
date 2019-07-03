@@ -1,0 +1,29 @@
+<app-nav [header]="displayTrip ? displayTrip.destinationName : 'loading'" [rightIcon]="packingIcon" (rightClick)="goToPackinglist()"></app-nav>
+<ng-template #loadingTemplate>
+  <p class="text-center">
+    <span class="mat-spinner-wrapper ml-1">
+      <mat-spinner [diameter]='36'></mat-spinner>
+    </span>
+  </p>
+</ng-template>
+<div *ngIf="displayTrip;else loadingTemplate">
+  <nav
+    mat-tab-nav-bar
+    mat-align-tabs="center">
+    <a
+      mat-tab-link
+      *ngFor="let link of tripLinks"
+      [routerLink]="link.path"
+      routerLinkActive
+      #rla="routerLinkActive"
+      [active]="rla.isActive">
+      <div class="icon-container" [class.largeIcon]="windowService.max('xs')">
+        <mat-icon [svgIcon]="link.svgIcon" [inline]="true"></mat-icon>
+      </div>
+      <span *ngIf="windowService.min('xs')">&nbsp;{{link.text}}</span> 
+    </a>
+  </nav>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

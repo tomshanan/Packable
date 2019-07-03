@@ -10,7 +10,7 @@ import * as firebase from 'firebase';
 
 @Injectable({providedIn:'root'})
 export class UserService {
-    public userState_obs: Observable<UserState>
+    public userState$: Observable<UserState>
     private _userSttings: UserSettings
     private _permissions: userPermissions
     private _state: UserState
@@ -22,8 +22,8 @@ export class UserService {
     constructor(
         private store:Store<fromApp.appState>,
     ){
-        this.userState_obs = this.store.select('user');
-        this.userState_obs.subscribe(userState =>{
+        this.userState$ = this.store.select('user');
+        this.userState$.subscribe(userState =>{
             this._state = userState;
             this._userSttings = userState.settings;
             this._permissions = userState.permissions;

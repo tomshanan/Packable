@@ -126,7 +126,7 @@ export class NewCollectionDialogComponent implements OnInit {
   }
 
   confirmPackables() {
-    let remotePackables = this.storeSelector.getRemotePackables(this.remotePackableIds)
+    let remotePackables = this.storeSelector.getRemotePackablesWithMetaData(this.remotePackableIds)
     let completePackables = this.pacFac.makeCompleteFromArray(remotePackables)
     this.collection.packables = completePackables
     this.nextStep()

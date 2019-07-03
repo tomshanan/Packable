@@ -1,23 +1,11 @@
 <app-nav
-  [header]="displayTrip ? displayTrip.destinationName : 'Packing List'"
-  [useNgContent]="true">
-  <button
-   *ngIf="packingList && sortedList"
-    [matMenuTriggerFor]="packinglistMenu"
-    type="button"
-    (click)="null"
-    mat-icon-button
-    activeColor="action">
-    <mat-icon outlined>settings</mat-icon>
-  </button>
+  [header]="displayTrip ? displayTrip.destinationName : 'Packing List'">
 </app-nav>
-<mat-menu #packinglistMenu="matMenu">
-  <packinglist-settings></packinglist-settings>
-</mat-menu>
+
 <div class="row">
   <ng-template #notLoaded>
     <ng-container *ngIf="!(loading$ | async); else loading">
-        <div class="col">No packing list was loaded.</div>
+      <div class="col">No packing list was loaded.</div>
     </ng-container>
     <ng-template #loading>
       <div class="col">
@@ -30,25 +18,11 @@
     *ngIf="packingList && sortedList; else notLoaded"
     class="col"
     id="section-to-print">
-    <div
-      class="mb-2"
-      [class.justify-content-center]="windowService.max('md')">
-      <div
-        class="small text-muted"
-        [class.text-center]="windowService.max('md')">
-        <p>
-          <span [innerHtml]="displayTrip.displayDate"></span>
-          &nbsp;
-          (
-          <span [innerHtml]="packingList.data.totalDays"></span>
-          &nbsp;Days)
-        </p>
-        <p>
-          <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
-          <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
-        </p>
-      </div>
-    </div>
+    <packinglist-settings
+      [trip]="trip"
+      [packingList]="packingList"
+      [displayTrip]="displayTrip">
+    </packinglist-settings>
 
     <div class="row my-2">
       <mat-accordion
@@ -71,7 +45,7 @@
                 <profile-icon
                   [avatar]="profile.avatar"
                   [width]="windowService.max('sm') ? '40px' : '50px'"
-                  [fullFrame]="!profile.id"></profile-icon>
+                  [fullFrame]="profile.id === 'shared'"></profile-icon>
                 <h4 class="m-0 text-capitalize">{{profile.header}}</h4>
                 <h4 class="m-1">
                   <mat-icon

@@ -70,6 +70,7 @@ export class PackingListSettings {
     showInvalid: boolean = false;
     showWarnings: boolean  = true;
     showCalculations: boolean  = false;
+    editMode:boolean = true;
     constructor(settings?:Partial<PackingListSettings>){
         if(settings){
             Object.assign(this,settings)

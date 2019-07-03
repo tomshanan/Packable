@@ -43,23 +43,21 @@
           </p>
           <div
             class="detailBox-weather"
-            *ngIf="weatherFac.isSet(collection.weatherRules)"
-            [style.color]="weatherCheck ? (weatherCheck.conditionsMet && weatherData.isValid ? colors.active.inactive : colors.danger.inactive ): colors.muted.inactive">
-            <span [innerHtml]="weatherFac.getWeatherRulesToString(collection.weatherRules)"></span>
+            *ngIf="weatherFac.isSet(collection.weatherRules)">
+            <span
+              appColor="muted"
+              [innerHtml]="weatherFac.getWeatherRulesToString(collection.weatherRules)"></span>
             <ng-container *ngIf="weatherCheck">
               <mat-icon
                 *ngIf="!weatherCheck.conditionsMet || !weatherData.isValid"
                 class="pl-1"
-                svgIcon="weather_error"
+                activeColor="danger"
                 [ngbPopover]="weatherError"
+                container="body"
                 placement="left"
                 triggers="click:mouseleave"
-                InnerLink></mat-icon>
-              <mat-icon
-                *ngIf="weatherCheck.conditionsMet && weatherData.isValid"
-                class="pl-1">
-                done
-              </mat-icon>
+                InnerLink>error_outline</mat-icon>
+              
               <ng-template #weatherError>
                 <p
                   class="p-0 m-0 small"
@@ -67,6 +65,7 @@
                   [innerHtml]="text"></p>
               </ng-template>
             </ng-container>
+            <div class="detailBox-weather-ribbon-edge"></div>
           </div>
         </div>
         <div

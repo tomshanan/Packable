@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { StoreSelectorService } from '../services/store-selector.service';
-import { PackableOriginal, PackablePrivate, PackableAny, PackableComplete, isPackableOriginal, isPackablePrivate, isPackableComplete, QuantityRule, isPackableRemote, remotePackable } from '../models/packable.model';
+import { PackableOriginal, PackablePrivate, PackableAny, PackableComplete, isPackableOriginal, isPackablePrivate, isPackableComplete, QuantityRule,  PackableOriginalWithMetaData } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
 import { isDefined } from '../global-functions';
 
@@ -66,7 +66,7 @@ export class PackableFactory {
         return this.newPrivatePackable(original);
     }
     public makeComplete = (p: PackableAny): PackableComplete => {
-        if (isPackableOriginal(p) || isPackableRemote(p)) {
+        if (isPackableOriginal(p)) {
             return new PackableComplete(
                 p.id,
                 p.name,
@@ -77,7 +77,7 @@ export class PackableFactory {
                 p.deleted
             )
         } else if (isPackablePrivate(p)){
-            let original = this.storeSelector.getPackableById(p.id) || this.storeSelector.getRemotePackables([p.id])[0]
+            let original = this.storeSelector.getPackableById(p.id) || this.storeSelector.getRemotePackablesWithMetaData([p.id])[0]
             if(isDefined(original)){
                 return new PackableComplete(
                     p.id,

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 import { PackingListPackable, PackingListSettings, pass } from '@shared/models/packing-list.model';
 import { WindowService } from '@shared/services/window.service';
-import { appColors } from '../../../shared/app-colors';
+import { AppColors } from '../../../shared/app-colors';
 import { isDefined } from '../../../shared/global-functions';
 import { PackingListService } from '../packing-list.service';
 
@@ -20,12 +20,13 @@ export class ListPackableComponent implements OnInit,OnChanges {
   @Output('toggleEdit') toggleEditEmitter = new EventEmitter<boolean>();
   @Input() listSettings: PackingListSettings = new PackingListSettings();
 
+  editToggle = false;
   editMode = false;
   spinnerQuantity: number;
   
   constructor(
     public windowService: WindowService, // used by template
-    public appColors:appColors,
+    public appColors:AppColors,
     private packingListService: PackingListService,
     private eRef: ElementRef
   ) { }
@@ -33,10 +34,14 @@ export class ListPackableComponent implements OnInit,OnChanges {
   ngOnInit() {
     this.packable = this.inputPackable
     this.spinnerQuantity = this.packable.quantity
+    this.editMode = this.listSettings.editMode
   }
   ngOnChanges(changes:SimpleChanges){
     if(this.packable && changes['inputPackable']){
       Object.assign(this.packable, this.inputPackable)
+    }
+    if(changes['listSettings'] && isDefined(this.editToggle)){
+      this.editMode = this.listSettings.editMode
     }
   }
   pass():boolean{
@@ -45,24 +50,32 @@ export class ListPackableComponent implements OnInit,OnChanges {
   toggleCheck(){
     this.ToggleCheckEmitter.emit(this.packable)
   }
+  removePackable(){
+    this.packable.checked = false
+    this.packable.forcePass = false
+    this.packable.passChecks = false
+    this.updateQuantityEmitter.emit(this.packable)
+  }
   addInvalid(){
     this.packable.forcePass = true;
     if(this.packable.quantity > 0){
       this.addInvalidEmitter.emit(this.packable)
     } else {
-      this.toggleEditMode(true)
+      this.toggleEditing(true)
     }
   }
-  toggleEditMode(state?:boolean){
-    this.editMode = isDefined(state) ? state : !this.editMode;
+  toggleEditing(state?:boolean){
     if(this.editMode){
-      this.spinnerQuantity = this.packable.quantity
+      this.editToggle = isDefined(state) ? state : !this.editToggle;
+      if(this.editToggle){
+        this.spinnerQuantity = this.packable.quantity
+      }
+      this.toggleEditEmitter.emit(this.editToggle);
     }
-    this.toggleEditEmitter.emit(this.editMode);
   }
 
   onSetQuantity(quantity:number){
-    this.toggleEditMode(false)
+    this.toggleEditing(false)
     if(this.packable.quantity != quantity){
       this.packable.forceQuantity = true;
       this.packable.quantity = quantity

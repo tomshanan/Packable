@@ -55,7 +55,7 @@ export class WeatherSettingsDialogComponent implements OnInit {
   }
   onReloadForecast(){
     this.loadingWeather = true;
-    this.weatherService.createWeatherData(this.trip).then(weatherData=>{
+    this.weatherService.getTripWeatherData(this.trip).then(weatherData=>{
       this.weatherData = weatherData
       this.dataInput = 'auto';
       this.loadingWeather = false;

@@ -16,7 +16,7 @@ export class ContextService {
     private storeSelector: StoreSelectorService,
     private colFac: CollectionFactory,
     ) {
-      this._storeSubscription = combineLatest(this.storeSelector.profiles_obs,this.storeSelector.collections_obs).subscribe(([pState,cState])=>{
+      this._storeSubscription = combineLatest(this.storeSelector.profiles$,this.storeSelector.collections$).subscribe(([pState,cState])=>{
         console.log(`CONTEXT:`,'Received state update from store');
         let profile = this.profileId
         let colleciton = this.collectionId

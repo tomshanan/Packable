@@ -35,6 +35,7 @@ import { ImportCollectionDialogComponent } from './collections/collection-list/i
 import { SelectCollectionProfilesDialogComponent } from './trips/collection-selection-form/select-collection-profiles-dialog/select-collection-profiles-dialog.component';
 import { WeatherSettingsDialogComponent } from './trips/packing-list/weather-settings-dialog/weather-settings-dialog.component';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
+import { PrintSettingsDialogComponent } from './trips/packing-list/settings/print-settings-dialog/print-settings-dialog.component';
 
 export class CustomHammerConfig extends HammerGestureConfig  {
     overrides = <any>{
@@ -75,6 +76,7 @@ export class CustomHammerConfig extends HammerGestureConfig  {
     ImportCollectionDialogComponent,
     SelectCollectionProfilesDialogComponent,
     WeatherSettingsDialogComponent,
+    PrintSettingsDialogComponent,
   ],
   providers: [
     {

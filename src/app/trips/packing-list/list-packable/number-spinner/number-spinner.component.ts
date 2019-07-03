@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { isDefined } from '../../../../shared/global-functions';
-import { appColors } from '../../../../shared/app-colors';
+import { AppColors } from '../../../../shared/app-colors';
 import { RippleAnimationConfig } from '@angular/material';
 
 @Component({
@@ -17,7 +17,7 @@ export class NumberSpinnerComponent implements OnInit {
   rippleAnimationConfig:RippleAnimationConfig = {enterDuration:150,exitDuration:200}
 
   constructor(
-    public appColors:appColors
+    public appColors:AppColors
   ) { }
 
   ngOnInit() {

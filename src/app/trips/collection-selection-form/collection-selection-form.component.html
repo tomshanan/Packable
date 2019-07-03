@@ -1,22 +1,61 @@
-
-<div #collectionList *ngIf="collections" @blockInitialAnimations>
-  <div class="text-center w-100 position-relative" *ngIf="collections.length>0">
-    <h6 >My Collections</h6>
-    <a class="small inline-link newColLink" (click)="newCollection()">Create New</a>
+<ng-template #loadingTemplate>
+  <p class="text-center">
+    <span class="mat-spinner-wrapper ml-1">
+        <mat-spinner [diameter]='36'></mat-spinner>
+      </span>
+  </p>
+</ng-template>
+<ng-container *ngIf="loading === false; else loadingTemplate">
+  <div
+    #collectionList
+    *ngIf="sortedCollections && recommendedCollections"
+    @blockInitialAnimations>
+    <ng-container *ngIf="recommendedCollections.length>0">
+      <div class="text-center w-100 position-relative">
+        <h6>Recommended</h6>
+      </div>
+      <div
+        *ngFor="let collection of recommendedCollections; let i = index">
+        <collection-details-card
+          *ngIf="i===0"
+          [collection]="collection"
+          actionType="selection"
+          selectionOnIcon="circle-added"
+          selectionOffIcon="circle"
+          [weatherData]="weatherData"
+          [boxClickActive]="true"
+          [selectionState]="selectedGroup[collection.id] && selectedGroup[collection.id].length>0"
+          [profileGroup]="selectedGroup[collection.id] || []"
+          (actionClick)="toggleCollection(collection.id)"
+          (boxClick)="setProfiles(collection.id)">
+        </collection-details-card>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="sortedCollections.length>0">
+      <div class="text-center w-100 position-relative">
+        <h6>All Collections</h6>
+        <a
+          class="small inline-link newColLink"
+          (click)="newCollection()">
+          Create New
+        </a>
+      </div>
+      <div
+        *ngFor="let collection of sortedCollections"
+        @dropInTrigger>
+        <collection-details-card
+          [collection]="collection"
+          actionType="selection"
+          selectionOnIcon="circle-added"
+          selectionOffIcon="circle"
+          [weatherData]="weatherData"
+          [boxClickActive]="true"
+          [selectionState]="selectedGroup[collection.id] && selectedGroup[collection.id].length>0"
+          [profileGroup]="selectedGroup[collection.id] || []"
+          (actionClick)="toggleCollection(collection.id)"
+          (boxClick)="setProfiles(collection.id)">
+        </collection-details-card>
+      </div>
+    </ng-container>
   </div>
-  
-  <div *ngFor="let collection of collections" @dropInTrigger>
-    <collection-details-card
-      [collection]="collection"
-      actionType="selection"
-      selectionOnIcon="circle-added"
-      selectionOffIcon="circle"
-      [weatherData]="weatherData"
-      [boxClickActive]="true"
-      [selectionState]="selectedGroup[collection.id] && selectedGroup[collection.id].length>0"
-      [profileGroup]="selectedGroup[collection.id] || []"
-      (actionClick)="toggleCollection(collection.id)"
-      (boxClick)="setProfiles(collection.id)">
-    </collection-details-card>
-  </div>
-</div>
+</ng-container>

@@ -26,7 +26,7 @@ export class SimulateUserComponent implements OnInit,OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.sub = this.storeSelector.adminState_obs.subscribe(state =>{
+    this.sub = this.storeSelector.adminState$.subscribe(state =>{
       this.simulateState = state.simulateUser
       console.log('state change: ',state)
     })

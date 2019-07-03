@@ -44,6 +44,7 @@ export class IconService {
             'star',
             'star-border',
             'check',
+            'share',
             'together',
             't-shirt',
             't-shirt-add',

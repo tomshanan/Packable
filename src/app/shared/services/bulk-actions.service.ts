@@ -12,11 +12,10 @@ import { CollectionProfile } from '../../packables/packable-list/edit-packable-d
 import * as profileActions from '@app/profiles/store/profile.actions';
 import { PackablePrivate, PackableOriginal } from '../models/packable.model';
 import * as collectionActions from '@app/collections/store/collections.actions';
-import { CollectionComplete, CollectionOriginal } from '../models/collection.model';
+import { CollectionComplete, CollectionOriginal, CollectionWithMetadata } from '../models/collection.model';
 import { isDefined, timeStamp } from '../global-functions';
 import { editProfiles } from '../../profiles/store/profile.actions';
 import { Profile } from '../models/profile.model';
-import { remoteCollection } from '../library/library.model';
 import { tripCollectionGroup } from '../models/trip.model';
 import * as tripActions  from '../../trips/store/trip.actions';
 import { updateIncomplete } from '../../trips/store/trip.actions';
@@ -39,13 +38,14 @@ export class BulkActionsService {
   // ---- [ COLLECTIONS ] - BULK ACTIONS
 
   /**
-   * Checks profiles in each collection group to make sure collection exits in it, and adds missing collections.
-   * @param cGroups tripCollectionGroup[] - must use ids already stored in local store
+   * Checks profiles in each collection group to make sure collection exits in it, and adds missing collections, also import library collections
+   * @param cGroups tripCollectionGroup[] 
    */
   public pushMissingCollectionsToProfiles(cGroups:tripCollectionGroup[]){
     if(isDefined(cGroups)){
       let storeProfiles = this.storeSelector.profiles
       let changes:number = 0;
+      let importCollections:string[] = [];
       cGroups.forEach(({id,profiles})=>{
         let cId = id
         let profileIdsToUpdate = []
@@ -55,17 +55,25 @@ export class BulkActionsService {
           }
         })
         if(profileIdsToUpdate.length>0){
-          let privateCol = this.colFac.makePrivate(this.storeSelector.getCollectionById(cId))
-          privateCol.dateModified = timeStamp()
-          profileIdsToUpdate.forEach(pId=>{
-            let profile = storeProfiles.findId(pId)
-            profile.collections.unshift(privateCol)
-            profile.dateModified = timeStamp()
-            changes++
-          })
+          let original = this.storeSelector.getCollectionById(cId)
+          if(!original){
+            original = <CollectionOriginal>this.storeSelector.getLibraryItemById('collections',cId)
+            importCollections.push(cId)
+          }
+          let privateCol = this.colFac.makePrivate(original)
+            privateCol.dateModified = timeStamp()
+            profileIdsToUpdate.forEach(pId=>{
+              let profile = storeProfiles.findId(pId)
+              profile.collections.unshift(privateCol)
+              profile.dateModified = timeStamp()
+              changes++
+            })
         }
       })
       if(changes>0){
+        if(importCollections.length>0){
+          this.processImportCollections(importCollections)
+        }
         this.store.dispatch(new profileActions.editProfiles(storeProfiles))
       }
     }
@@ -128,9 +136,9 @@ export class BulkActionsService {
   
   public processImportCollections(selectedColIds:string[],profileIds?:string[]):CollectionComplete[]{
     let localCollections = this.colFac.getAllComplete() // will only return living collections (not deleted)
-    let allRemoteCollections = this.storeSelector.getRemoteCollections()
+    let allRemoteCollections = this.storeSelector.getRemoteCollectionsWithMetadata()
 
-    // select only remote packables that aren't in the local library already
+    // select only remote collections that aren't in the local library already
     let selectedRemoteCollections = allRemoteCollections.filter(c=>{
       return selectedColIds.includes(c.id) && !localCollections.findId(c.id)
     })
@@ -150,7 +158,7 @@ export class BulkActionsService {
     return allComplete
   }
 
-  public addPackablesFromRemoteCollections(selectedRemoteCollections:remoteCollection[]){
+  public addPackablesFromRemoteCollections(selectedRemoteCollections:CollectionWithMetadata[]){
     if(isDefined(selectedRemoteCollections)){
       let packablesInRemote:string[] = []
       // iterate over collections and push one of each unique packable
@@ -164,7 +172,7 @@ export class BulkActionsService {
   }
 
   public addMissingPackableIdsFromRemote(ids:string[]):PackableOriginal[]{
-    let allRemotePackables = this.storeSelector.getRemotePackables()
+    let allRemotePackables = <PackableOriginal[]>this.storeSelector.getLibraryItems('packables')
     let allLocalPackables = this.storeSelector.originalPackables.filter(p=>!p.deleted) // only show living packables
     console.log('BULK ACTION: allLocalPackables',allLocalPackables)
     console.log('BULK ACTION: allRemotePackables',allRemotePackables)

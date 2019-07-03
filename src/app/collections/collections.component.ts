@@ -26,7 +26,7 @@ import { CollectionListComponent } from './collection-list/collection-list.compo
 export class CollectionsComponent implements OnInit,OnDestroy {
   @Output('test') test:string = 'test worked';
   @ViewChild('usedCollectionsComponent') usedCollectionsComponent: CollectionListComponent;
-  collectionState_obs: Observable<{collections: CollectionOriginal[]}>
+  collectionState$: Observable<{collections: CollectionOriginal[]}>
   subs: Subscription;
   collections: CollectionComplete[];
   unusedCollections: CollectionComplete[];
@@ -46,7 +46,7 @@ export class CollectionsComponent implements OnInit,OnDestroy {
   ngOnInit() {
     this.context.reset();
 
-    this.subs = this.storeSelector.store_obs.subscribe(([pacState,colState,proState,tripState]) =>{
+    this.subs = this.storeSelector.store$.subscribe(([pacState,colState,proState,tripState]) =>{
       console.log('collections - received new state');
       let profiles = proState.profiles
       this.collections = this.collectionFactory.makeCompleteArray(colState.collections)

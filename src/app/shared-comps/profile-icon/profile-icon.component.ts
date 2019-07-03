@@ -69,7 +69,7 @@ export class ProfileIconComponent implements OnInit, OnChanges, AfterViewInit, O
 
   ngOnInit() {
     this.init();
-    this.sub = this.storeSelector.profiles_obs.subscribe((state)=>{
+    this.sub = this.storeSelector.profiles$.subscribe((state)=>{
       this.init();
     })
   }
@@ -86,6 +86,6 @@ export class ProfileIconComponent implements OnInit, OnChanges, AfterViewInit, O
     this.colors = Array.isArray(color) ? color : [color];
   }
   offset(i:number):number{
-    return this.colors.length>1 ? (i * (100/ this.colors.length-1) ) : 0;
+    return this.colors.length>1 ? (i * (100 / (this.colors.length-1))) : 1
   }
 }

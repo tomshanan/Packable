@@ -13,6 +13,9 @@ import { AdminComponent } from '../admin/admin.component';
 import { UsersComponent } from '../admin/users/users.component';
 import { NewTripWizardComponent } from '../trips/new-trip-wizard/new-trip-wizard.component';
 import { PrintComponent } from '@app/trips/packing-list/print/print.component';
+import { EditTripCollectionsComponent } from '../trips/edit-trip/edit-trip-collections/edit-trip-collections.component';
+import { EditTripComponent } from '../trips/edit-trip/edit-trip.component';
+import { EditTripProfilesComponent } from '@app/trips/edit-trip/edit-trip-profiles/edit-trip-profiles.component';
 
 const appRoutes:Routes = [
     {path: '',pathMatch: 'full', redirectTo: 'home'},
@@ -20,6 +23,10 @@ const appRoutes:Routes = [
     {path: 'user', pathMatch: 'full', component:UserComponent},
     {path: 'trips', pathMatch: 'full', component:TripsComponent, canActivate: [AuthGuard]},
     {path: 'trips/new', pathMatch: 'full', component:NewTripWizardComponent, canActivate: [AuthGuard]},
+    {path: 'trips/edit/:id', component:EditTripComponent, canActivate: [AuthGuard], children:[
+        {path: 'collections', component:EditTripCollectionsComponent},
+        {path: 'travelers', component:EditTripProfilesComponent},
+    ]},
     {path: 'trips/packing-list/:id', pathMatch: 'full', component:PackingListComponent, canActivate: [AuthGuard]},
     {path: 'print/:id', pathMatch: 'full', outlet:'print',component:PrintComponent, canActivate: [AuthGuard]} ,
     {path: 'travelers', pathMatch: 'full', component:ProfilesComponent, canActivate: [AuthGuard]},

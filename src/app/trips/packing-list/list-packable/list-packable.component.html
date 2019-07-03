@@ -1,27 +1,34 @@
-<li *ngIf="packable && (pass() || listSettings.showInvalid)">
+<li *ngIf="packable && (pass() || (listSettings.showInvalid && editMode))">
   <div class="list-packable-flex">
-    <ng-container *ngIf="!editMode">
+    <ng-container *ngIf="!editToggle">
       <div class="action-box">
           <mat-checkbox 
             [checked]="packable.checked" 
             (change)="toggleCheck()" 
             [class.changedAfterChecked]="packable.changedAfterChecked" 
-            *ngIf="pass()">
+            *ngIf="!editMode && pass()">
           </mat-checkbox>
           <button mat-icon-button 
           *ngIf="!pass()"
           (click)="addInvalid()"
-          [style.color]="appColors.muted.inactive">
-            <mat-icon>playlist_add</mat-icon>
+          activeColor="muted">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button 
+          *ngIf="editMode && pass()"
+          (click)="removePackable()"
+          activeColor="danger"
+          activeColorState="muted">
+            <mat-icon>remove_circle_outline</mat-icon>
           </button>
       </div>
       <div class="text-box">
         <span class="packableText" 
-          [class.pointer]="pass()"
+          [class.pointer]="!editMode && pass()"
           [class.completed]="packable.checked" 
           [class.text-success]="packable.recentlyAdded && pass()" 
           [style.color]="pass() ? 'black' : appColors.muted.inactive"
-          (click)="pass() && toggleCheck()">
+          (click)="!editMode && pass() && toggleCheck()">
           <span [class.text-primary]="packable.forceQuantity && !packable.checked">
             {{packable.quantity}} 
           </span>
@@ -35,7 +42,7 @@
       </div>
       <div class="alert-box">
           <span class="ml-2">
-            <ng-container *ngIf="listSettings.showWarnings ">
+            <ng-container *ngIf="listSettings.showWarnings && editMode">
               <button mat-icon-button [ngbPopover]="weatherNotChecked" placement="left" triggers="click:mouseleave" activeColor="danger"
                 *ngIf="packable.weatherNotChecked || (!packable.passChecks && packable.weatherReasons.length>0)">
                 <mat-icon svgIcon="weather_error" class="text-orange"></mat-icon>
@@ -54,10 +61,10 @@
                 </p>
               </ng-template>
             </ng-container>
-            <ng-container *ngIf="listSettings.showCalculations ">
+            <ng-container *ngIf="listSettings.showCalculations && editMode">
               <button mat-icon-button [ngbPopover]="quantityReasons" placement="left" triggers="click:mouseleave" activeColor="muted"
                 class="pointer">
-                <i class="material-icons-outlined">live_help</i>
+                <i class="material-icons-outlined">info</i>
               </button>
               <ng-template #quantityReasons>
                 <p class="p-0 m-0 small" *ngIf="packable.forceQuantity">Manually set quantity</p>
@@ -67,7 +74,7 @@
           </span>
       </div>
     </ng-container>
-    <ng-container *ngIf="editMode">
+    <ng-container *ngIf="editToggle">
       <div class="edit-box">
           <number-spinner [(number)]="spinnerQuantity" min="0" max="99">
           </number-spinner>
@@ -81,12 +88,11 @@
           </a>
         </div>
     </ng-container>
-    <div class="button-box">
-
-      <button mat-icon-button (click)="toggleEditMode()" *ngIf="!editMode" activeColor="muted">
-        <mat-icon svgIcon="plus-minus"></mat-icon>
+    <div class="button-box" *ngIf="editMode">
+      <button mat-icon-button (click)="toggleEditing()" *ngIf="!editToggle" activeColor="muted">
+        <mat-icon outlined>edit</mat-icon>
       </button>
-      <ng-container *ngIf="editMode">
+      <ng-container *ngIf="editToggle">
         <button mat-icon-button (click)="onSetQuantity(spinnerQuantity)" [activeColor]="spinnerQuantity > 0 ? 'accent' : 'danger'">
           <mat-icon>{{spinnerQuantity > 0 ? 'check' : 'remove_circle_outline'}}</mat-icon>
         </button>

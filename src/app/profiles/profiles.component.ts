@@ -29,7 +29,7 @@ import { ConfirmDialogData, ConfirmDialog } from '@app/shared-comps/dialogs/conf
 })
 export class ProfilesComponent implements OnInit, OnDestroy {
 
-  profilesState_obs: Observable<{ profiles: Profile[] }>;
+  profilesState$: Observable<{ profiles: Profile[] }>;
   subs: Subscription;
   profiles: Profile[] = []
   selectedProfileId: string;
@@ -60,7 +60,7 @@ export class ProfilesComponent implements OnInit, OnDestroy {
   }
   ngOnInit() {
     this.context.reset();
-    this.subs = this.storeSelector.profiles_obs.subscribe(state => {
+    this.subs = this.storeSelector.profiles$.subscribe(state => {
       // update list of profiles if Profile State
       console.log('profile state emitted', state);
       this.profiles = state.profiles

@@ -1,6 +1,6 @@
 import { filterItem } from '@app/shared-comps/item-selector/item-selector.component';
 import * as moment from 'moment'
-import { ItemMetaData } from './library/library.model';
+import { Metadata, HasMetaData } from './library/library.model';
 
 export type item = {
   id: string
@@ -149,8 +149,7 @@ type hasDateModified = {dateModified:number}
 export function sortByMostRecent(a:hasDateModified,b:hasDateModified):number{
   return a.dateModified > b.dateModified ? -1 : 1;
 }
-type hasMetaData = {metaData:ItemMetaData}
-export function sortByMetaData(a:hasMetaData,b:hasMetaData):number{
+export function sortByMetaData(a:HasMetaData,b:HasMetaData):number{
   return b.metaData.metaScore - a.metaData.metaScore
 }
 export const allowedSpacesRegEx = /[\s\-\_\(\)]+/;
@@ -183,6 +182,15 @@ export function copyProperties<T extends Object>(to:T, from:T, props:Array<keyof
   props.forEach(prop=>{
     if(prop in from){
         Object.assign(to,from[prop])
+    }
+  })
+}
+export function propertiesAreSame<T extends Object>(obj1:T, obj2:T, props:Array<keyof T>):boolean{
+  return props.every(prop=>{
+    if(obj1 && obj2 && prop in obj1 && prop in obj2){
+        return obj1[prop] === obj2[prop]
+    } else {
+      return false
     }
   })
 }

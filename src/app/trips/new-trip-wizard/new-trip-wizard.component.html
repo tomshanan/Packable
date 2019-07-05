@@ -3,7 +3,7 @@
   <div class="scrollable">
     <app-stepper [steps]="steps" [currentStep]="step" (stepClicked)="nextStep($event)"></app-stepper>
     <div class="step centered" *ngIf="step===1">
-      <div class="content w-500 text-center">
+      <div class="content max-w-500 text-center">
           <h5>Where to next?</h5>
           <div class="errors" *ngIf="stepTouched[step] && stepErrors.length>0">
             <p class="text-danger" *ngFor="let errorText of stepErrors">{{errorText}}</p>
@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="step centered" *ngIf="step===2">
-        <div class="content w-500 text-center">
+        <div class="content max-w-500 text-center">
             <h5>Who's going?</h5>
             <div class="errors" *ngIf="stepTouched[step] && stepErrors.length>0">
                 <p class="text-danger" *ngFor="let errorText of stepErrors">{{errorText}}</p>
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="step" *ngIf="step===3">
-      <div class="content w-500 px-1">
+      <div class="content max-w-500 px-1">
           <h5 class="text-center">What do we need?</h5>
           <div class="errors text-center" *ngIf="stepTouched[step] && stepErrors.length>0">
               <p class="text-danger" *ngFor="let errorText of stepErrors">{{errorText}}</p>
@@ -36,24 +36,11 @@
           </collection-selection-form>
       </div>
     </div>
-    <div class="step" *ngIf="step===4">
-      <div class="content w-100">
-        <h5 class="text-center">Customise Collections</h5>
-          <customise-trip-profiles-form [trip]="trip">
-          </customise-trip-profiles-form>
-      </div>
-    </div>
-    <div class="step" *ngIf="step===5">
-      <div class="content">
-          <h5 class="text-center">Done!</h5>
-          <p class="text-center">Save Trip and Pack</p>
-      </div>
-    </div>
     <div class="form-actions form-actions-sticky" [class.form-actions-mobile]="windowService.max('md')">
         <dialog-confirm-button>
           <button mat-fab appColor="action" (click)="onConfirmStep(step)" [disabled]="!stepValid">
-            <mat-icon *ngIf="4>step">check</mat-icon>
-            <mat-icon svgIcon="send" *ngIf="step===4"></mat-icon>
+            <mat-icon *ngIf="3>step">check</mat-icon>
+            <mat-icon svgIcon="minimalist" *ngIf="step===3"></mat-icon>
           </button>
         </dialog-confirm-button>
       </div> 

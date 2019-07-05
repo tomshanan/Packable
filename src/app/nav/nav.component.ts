@@ -25,6 +25,7 @@ export class NavComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.applyBodyStyle(false)
   }
 
   toggleNav(state?:boolean){
@@ -33,10 +34,15 @@ export class NavComponent implements OnInit, OnDestroy {
     } else{
       this.navOpen = !this.navOpen;
     }
-    if(this.navOpen){
+    this.applyBodyStyle(this.navOpen)
+  }
+  applyBodyStyle(open:boolean){
+    if(open){
       this.renderer.addClass(document.body, 'modal-open');
+      this.renderer.addClass(document.documentElement, 'modal-open');
     } else{
       this.renderer.removeClass(document.body, 'modal-open');
+      this.renderer.removeClass(document.documentElement, 'modal-open');
     }
   }
   onRight(){

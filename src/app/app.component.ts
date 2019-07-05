@@ -18,6 +18,7 @@ import { WindowService } from './shared/services/window.service';
 export class AppComponent implements OnInit {
   constructor(
     private storage: StorageService,
+    public windowService:WindowService,
     private store: Store<fromApp.appState>,
   ) {
   }

@@ -12,7 +12,8 @@ a{
 }
 .text{
     font-size: 1em;
-    padding: .5em 0.1em;
+    /* padding: .5em 0.1em; */
+    padding-left: .1em;
     transition: color 300ms;
 }
 .icon-container {
@@ -43,4 +44,11 @@ a{
 .disabled{
     pointer-events: none!important;
     cursor: default!important;
+}
+
+
+/*------ new styles------------*/
+
+.mat-button{
+    padding: 0 0.2em;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { PackingList, PackingListPackable, PackingListSettings, DisplayPackingList, pass } from '../../shared/models/packing-list.model';
 import { Trip, DisplayTrip } from '../../shared/models/trip.model';
@@ -16,8 +16,9 @@ import { Icon } from '../../shared-comps/stepper/stepper.component';
 import { TripFactory } from '../../shared/factories/trip.factory';
 import { PrintOptions } from './print/print.component';
 import { printDialog_data, PrintSettingsDialogComponent } from './settings/print-settings-dialog/print-settings-dialog.component';
-import { take } from 'rxjs/operators';
+import { take, defaultIfEmpty } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
+import { SettingsComponent } from './settings/settings.component';
 
 @Component({
   selector: 'app-packing-list',
@@ -28,7 +29,7 @@ import { MatDialog } from '@angular/material';
 export class PackingListComponent implements OnInit, OnDestroy {
   state_subscription: Subscription = new Subscription();
   saveTimeout = setTimeout(() => { }, 0);
-  loading$:Observable<boolean>|boolean = false;
+  loading$:Observable<boolean>;
   absoluteMaxTemp = absoluteMax // for template
   absoluteMinTemp = absoluteMin // for template
   lastSave: string; // for template
@@ -47,7 +48,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   packingList: PackingList;
   sortedList: DisplayPackingList[] = [];
   packingListSettings: PackingListSettings;
-
+  @ViewChild('settingsComp') settingsComp:SettingsComponent;
 
   constructor(
     private router: Router,
@@ -75,7 +76,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
     // }
     this.packingListSettings = this.packingListService.packingListSettings
     console.log('loaded list with settings:',this.packingListSettings)
-    this.loading$ = this.packingListService.loadingEmit.pipe()
+    this.loading$ = this.packingListService.loadingEmit.pipe(defaultIfEmpty(true))
     this.state_subscription.add(this.packingListService.serviceSubscription)
     this.state_subscription.add(
       this.packingListService.packingListEmitter.subscribe(newPackinglist => {

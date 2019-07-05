@@ -1,4 +1,4 @@
-<a 
+<!-- <a 
   class="inline-link withIcon" 
   [title]="text" 
   (click)="onClick()" 
@@ -24,4 +24,47 @@
       <mat-icon *ngIf="!svgIcon && matIcon" outlined>{{matIcon}}</mat-icon>
     </div>
     <span *ngIf="showText()" class="text">{{text}}</span>
-</a>
+</a> -->
+<ng-container *ngIf="showText() && (text!=null || other.nativeElement.childNodes.length != 0); else iconButton">
+  <button
+    mat-button
+    (click)="onClick()"
+    [activeColor]="inputColor"
+    [disabled]="disabled">
+    <ng-container *ngTemplateOutlet="reverse ? other : icon"></ng-container>
+    <ng-container *ngTemplateOutlet="reverse ? icon : other"></ng-container>
+  </button>
+</ng-container>
+<ng-template #iconButton>
+  <button
+    mat-icon-button
+    (click)="onClick()"
+    [activeColor]="inputColor"
+    [disabled]="disabled">
+    <ng-container *ngTemplateOutlet="icon"></ng-container>
+  </button>
+</ng-template>
+
+<ng-template #icon>
+  <ng-container *ngIf="svgIcon || matIcon">
+    <mat-icon
+      [svgIcon]="svgIcon"
+      *ngIf="svgIcon && !matIcon"></mat-icon>
+    <mat-icon
+      *ngIf="!svgIcon && matIcon"
+      outlined>
+      {{matIcon}}
+    </mat-icon>
+  </ng-container>
+  <ng-container *ngIf="!svgIcon && !matIcon">
+    <ng-content select="mat-icon"></ng-content>
+  </ng-container>
+</ng-template>
+
+<ng-template #other>
+  <span class="text">
+    <span *ngIf="text!=null">{{text}}</span>
+    <ng-content></ng-content>
+  </span>
+
+</ng-template>

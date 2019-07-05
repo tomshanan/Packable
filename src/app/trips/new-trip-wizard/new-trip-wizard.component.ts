@@ -68,9 +68,8 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   ) { }
   steps: Icon[] = [
     { icon: { type: 'svg', name: 'place-edit' }, text: 'Where & When' },
-    { icon: { type: 'svg', name: 'together' }, text: 'Who' },
+    { icon: { type: 'mat', name: 'group' }, text: 'Who' },
     { icon: { type: 'svg', name: 'collection-alt' }, text: 'What' },
-    { icon: { type: 'mat', name: 'tune' }, text: 'Customise' },
     { icon: { type: 'svg', name: 'minimalist' }, text: 'Pack' },
   ]
   ngOnInit() {
@@ -169,8 +168,6 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
         return true
       case 3:
         this.bulkActions.pushMissingCollectionsToProfiles(this.trip.collections)
-        return true
-      case 4:
         this.tripMemory.saveTripAndDeleteTemp(this.trip)
         this.router.navigate(['trips', 'packing-list', this.trip.id])
         return false

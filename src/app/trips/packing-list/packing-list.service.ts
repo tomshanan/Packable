@@ -10,7 +10,7 @@ import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { weatherFactory } from '@app/shared/factories/weather.factory';
 import { Trip, DisplayTrip } from '../../shared/models/trip.model';
 import { PackingList, packingListData, PackingListPackable, Reason, PackingListSettings, pass } from '../../shared/models/packing-list.model';
-import { Subscription, Subject, combineLatest } from 'rxjs';
+import { Subscription, Subject, combineLatest, BehaviorSubject } from 'rxjs';
 import { getAllDates, copyProperties, timeStamp, isDefined } from '../../shared/global-functions';
 import { PackableComplete } from '../../shared/models/packable.model';
 import { CollectionComplete } from '../../shared/models/collection.model';
@@ -69,7 +69,7 @@ export class PackingListService {
     this.settingsEmitter.next(this.packingListSettings)
   }
   loading;
-  loadingEmit = new Subject<boolean>();
+  loadingEmit = new BehaviorSubject<boolean>(true);
   setloading(bool: boolean) {
     log('set loading', bool)
     this.loading = bool

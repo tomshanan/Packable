@@ -18,7 +18,8 @@
       #rla="routerLinkActive"
       [active]="rla.isActive">
       <div class="icon-container" [class.largeIcon]="windowService.max('xs')">
-        <mat-icon [svgIcon]="link.svgIcon" [inline]="true"></mat-icon>
+        <mat-icon *ngIf="link.svgIcon" [svgIcon]="link.svgIcon" [inline]="true"></mat-icon>
+        <mat-icon *ngIf="link.matIcon" [inline]="true">{{link.matIcon}}</mat-icon>
       </div>
       <span *ngIf="windowService.min('xs')">&nbsp;{{link.text}}</span> 
     </a>

@@ -1,0 +1,53 @@
+:host {
+  display: block;
+  position: sticky;
+  top: 0px;
+  z-index: 17;
+  padding: 0 15px;
+  margin: 0 -15px;
+  margin-top: 0;
+  background: white;
+}
+
+:host-context(.small-device) {
+  top: 40px;
+}
+
+:host-context(.small-device toolbar~*) {
+  top: 78px;
+  z-index: 16;
+}
+
+:host-context(.small-device):not(.nested) {
+  border-bottom: 1px solid #efefef;
+  box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+:host.nested .toolbar {
+  border-bottom: 1px solid #efefef;
+}
+
+:host-context(.mat-expansion-panel) {
+  padding: 0 24px;
+  margin: 0 -24px;
+}
+
+:host-context(.mat-expansion-panel:not(.overflow)), :host.notSticky {
+  position: relative;
+  top: 0px;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+}
+
+.left, .right {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.right {
+  margin-left: auto;
+}

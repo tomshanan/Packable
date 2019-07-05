@@ -87,15 +87,15 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
 
   }
   showText(): boolean {
-    if (this.text != '') {
+    // if (this.text != '') {
       if (isDefined(this.showTextFromSize)) {
         return this.windowService.min(this.showTextFromSize)
       } else {
         return true
       }
-    } else {
-      return false
-    }
+    // } else {
+    //   return false
+    // }
   }
   configRipple: RippleAnimationConfig = {
     enterDuration: 200, exitDuration: 100

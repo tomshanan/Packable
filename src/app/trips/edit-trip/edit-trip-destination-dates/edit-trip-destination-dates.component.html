@@ -1,3 +1,22 @@
-<p>
-  edit-trip-destination-dates works!
-</p>
+<div class="max-w-500 text-center" [class.form-mobile-padding]="windowService.max('md')">
+    <h5>Trip Destination and Dates</h5>
+    <div class="errors" *ngIf="touched && !isValid && errors.length>0">
+      <p class="text-danger" *ngFor="let errorText of errors">{{errorText}}</p>
+    </div>
+    <trip-details-form [trip]="trip" (tripChange)="setTimeAndPlace($event)">
+    </trip-details-form>
+</div>
+<div
+  class="form-actions form-actions-sticky"
+  [class.form-actions-mobile]="windowService.max('md')">
+  <dialog-confirm-button>
+    <button
+      mat-fab
+      appColor="action"
+      (click)="onConfirm()"
+      [disabled]="!isValid || !touched">
+      <mat-icon>check</mat-icon>
+    </button>
+  </dialog-confirm-button>
+</div>
+

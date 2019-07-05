@@ -1,13 +1,46 @@
 <app-nav
-  [header]="displayTrip ? displayTrip.destinationName : 'Packing List'">
+  [header]="displayTrip ? displayTrip.destinationName : 'Packing List'"
+  [useNgContent]="true"
+  [rightIcon]="null">
+  <div>
+    <button
+      type="button"
+      activeColor="action"
+      (click)="null"
+      mat-icon-button
+      [disabled]="!packingList || !sortedList"
+      [matMenuTriggerFor]="packinglistMenu">
+      <mat-icon svgIcon="share"></mat-icon>
+    </button>
+    <mat-menu #packinglistMenu="matMenu">
+      <button mat-menu-item>
+        <mat-icon outlined>share</mat-icon>
+        <span>Share List</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="settingsComp.print()">
+        <mat-icon outlined>print</mat-icon>
+        <span>Print</span>
+      </button>
+    </mat-menu>
+    <button
+      mat-icon-button
+      activeColor="accent"
+      [disabled]="!packingList || !sortedList"
+      [activeColorState]="packingListSettings.editMode ? 'inactive' : 'muted'"
+      (click)="settingsComp.toggleSettings('editMode')">
+      <mat-icon outlined>edit</mat-icon>
+    </button>
+  </div>
 </app-nav>
 
 <div class="row">
   <ng-template #notLoaded>
-    <ng-container *ngIf="!(loading$ | async); else loading">
+    <ng-container *ngIf="(loading$ | async) === false; else loadingTemplate">
       <div class="col">No packing list was loaded.</div>
     </ng-container>
-    <ng-template #loading>
+    <ng-template #loadingTemplate>
       <div class="col">
         <i class="fas fa-sync-alt fa-spin"></i>
         Loading List...
@@ -19,6 +52,7 @@
     class="col"
     id="section-to-print">
     <packinglist-settings
+      #settingsComp
       [trip]="trip"
       [packingList]="packingList"
       [displayTrip]="displayTrip">

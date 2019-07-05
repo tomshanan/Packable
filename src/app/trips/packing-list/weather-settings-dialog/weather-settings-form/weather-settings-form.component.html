@@ -1,5 +1,5 @@
-<div class="form-row">
-  <div class="col-12">
+<div class="was-form-row">
+  <div class="">
     <ng5-slider
       [(value)]="inputWeather.minTemp"
       [(highValue)]="inputWeather.maxTemp"
@@ -7,8 +7,8 @@
       (userChangeEnd)="emitUpdate()"></ng5-slider>
   </div>
 </div>
-<div class="form-row">
-  <div class="col-12 py-2">
+<div class="was-form-row">
+  <div class="py-2">
     <div class="spread">
       <button mat-button (click)="onNoneTypes()" [activeColor]="getNumberOfChecked()===0 ? 'accent' : 'muted'">
         None

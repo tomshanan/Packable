@@ -35,7 +35,7 @@ mat-card.cardless:hover:not(.selectable) {
     color: #0069d9;
 }
 
-.options{
+/* .options{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -46,8 +46,8 @@ mat-card.cardless:hover:not(.selectable) {
 }
 .checkbox-container + .packable {
     padding-left: 0.4em;
-}
-
+} */
+/* 
 .options > .option {
     display: inline-block;
     font-size: 1em;
@@ -66,10 +66,10 @@ mat-card.cardless:hover:not(.selectable) {
 .options.editing.in-expansion-panel{
     padding: 0px 24px;
     margin: 0.2em -24px;
-}
+} */
 
-.icon-container, mat-icon{
+/* .icon-container, mat-icon{
     height: 1em;
     width: 1em;
     line-height: 1em;
-}
+} */

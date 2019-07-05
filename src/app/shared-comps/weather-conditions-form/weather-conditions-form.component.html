@@ -1,13 +1,11 @@
 <slide-toggle-with-text [checked]="limitTemp" text="Limit Temperature" (textClick)="!limitTemp && toggleTemp(true)" (change)="onToggleTemp($event)"></slide-toggle-with-text>
-<div class="form-row"*ngIf="limitTemp" @quickTransitionTrigger>
-    <div class="col-12">
+<div class="was-form-row"*ngIf="limitTemp" @quickTransitionTrigger>
         <ng5-slider [(value)]="inputWeather.minTemp" [(highValue)]="inputWeather.maxTemp" [options]="options" (userChangeEnd)="emitUpdate()"></ng5-slider>
-    </div>
 </div>
 
 <slide-toggle-with-text [checked]="limitWeather" text="Limit Weather"  (textClick)="!limitWeather && toggleWeather(true)" (change)="onToggleWeather($event)"></slide-toggle-with-text>
-<div class="form-row" *ngIf="limitWeather" @quickTransitionTrigger>
-    <div class="col-12 py-2">
+<div class="was-form-row" *ngIf="limitWeather" @quickTransitionTrigger>
+    <div class="py-2">
       <div   class="spread">
         <ng-template  ngFor let-weather [ngForOf]="weatherOptions">
             <app-icon-checkbox 

@@ -1,6 +1,6 @@
 <ng-container *ngIf="packingList && displayTrip; else nothingToPrint">
   <ng-container *ngTemplateOutlet="header"></ng-container>
-  <div *ngFor="let profile of displayList; let i = index" [class.page-break]="checkPageBreak(i)">
+  <div *ngFor="let profile of displayList; let i = index" class="profile" [class.page-break]="checkPageBreak(i)">
     <ng-container *ngTemplateOutlet="checkPageBreak(i) ? header : null"></ng-container>
     <div class="d-flex align-items-center">
         <profile-icon

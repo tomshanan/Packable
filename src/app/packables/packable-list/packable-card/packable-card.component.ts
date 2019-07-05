@@ -114,12 +114,9 @@ EDIT    -> handle modal window for packable
   }
 
   onClickPackable(){
-    if(this.editList){
-      this.toggleSelected()
-    } else {
-      this.clickPackable.emit()
-      // edit packable?
-      console.log(`clicked packable: ${this.packable.name}`)
-    }
+    this.clickPackable.emit()
+    // edit packable?
+    console.log(`clicked packable: ${this.packable.name}`)
+    
   }
 }

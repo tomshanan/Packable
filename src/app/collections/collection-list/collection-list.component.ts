@@ -52,6 +52,8 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   profileId: string;  // defaults to context.profileId if inputProfile is null
   @Input('collections') inputCollections: CollectionComplete[];
   currentlyOpenPanel: MatExpansionPanel;
+  panelAnimating: boolean; //for nested toolbars
+  collectionAccordion:MatAccordion
   collectionList: CollectionViewObject[];
   listEditing: boolean = false;
   selected = new SelectedList();
@@ -78,7 +80,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     private colFac: CollectionFactory,
     private bulkActions: BulkActionsService,
     private tripMemory: TripMemoryService,
-  ) { }
+  ) { 
+    
+  }
 
   ngOnInit() {
     if (!this.inputProfileId && this.context.profileId) {
@@ -142,6 +146,9 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   checkboxChange(e: MatCheckboxChange, id: string) {
     if (e.checked) {
       this.selected.add(id)
+      if(!this.listEditing){
+        this.toggleListEditing(true);
+      }
     } else {
       this.selected.remove(id)
     }
@@ -160,18 +167,15 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     this.selected.add(...this.collectionList.map(c => c.id))
   }
   toggleListEditing(state?: boolean) {
-    this.selected.clear()
-    console.log('toggleListEditing is state defined:', state != null);
-    
     if (state != null) {
-      console.log('toggleListEditing state received:',state);
       this.listEditing = state;
     } else {
-      console.log('toggleListEditing not received:',state);
       this.listEditing = !this.listEditing
     }
     if (this.listEditing && this.currentlyOpenPanel) {
       this.collapseCollection(this.context.collectionId, true)
+    } else {
+      this.selected.clear()
     }
     console.log('toggleListEditing:',this.listEditing);
   }
@@ -224,6 +228,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   expandCollection(id: string, matPanel: MatExpansionPanel, forceOpen: boolean = false) {
+    this.panelAnimating = true
     let col = this.collectionList.findId(id)
     col.expanded = true;
     console.log('collectionList.expandCollection: expanded',col.complete);
@@ -234,6 +239,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
   collapseCollection(id: string, forceClose: boolean = false) {
+    this.panelAnimating = true
     let col = this.collectionList.findId(id)
     col.expanded = false;
     if (forceClose) {

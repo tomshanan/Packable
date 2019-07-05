@@ -28,7 +28,7 @@ export class EditTripComponent implements OnInit,OnDestroy {
 
   tripLinks=[
     {path:'destination',text:'Place and Dates',svgIcon:'place-edit'},
-    {path:'travelers',text:'Travelers',svgIcon:'together'},
+    {path:'travelers',text:'Travelers',matIcon:'group'},
     {path:'collections',text:'Collections',svgIcon:'collection-alt'},
   ]
   packingIcon:Icon = { icon: { type: 'svg', name: 'minimalist' }, text: 'Pack' }

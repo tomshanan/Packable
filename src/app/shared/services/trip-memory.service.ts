@@ -9,7 +9,7 @@ import { destMetaData } from '../library/library.model';
 import { TripWeatherData, WeatherService } from './weather.service';
 import { StoreSelectorService } from './store-selector.service';
 import { filter, map, takeWhile, take, first } from 'rxjs/operators';
-import { isDefined, propertiesAreSame } from '../global-functions';
+import { isDefined, propertiesAreSame, timeStamp } from '../global-functions';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +66,7 @@ export class TripMemoryService {
     this.store.dispatch(new tripActions.updateIncomplete([trip]))
   }
   saveTrip(trip: Trip) {
+    trip.dateModified = timeStamp()
     this.setTrip(trip)
     this.store.dispatch(new tripActions.updateTrips([trip]))
   }

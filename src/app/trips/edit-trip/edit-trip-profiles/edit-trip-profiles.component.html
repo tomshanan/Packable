@@ -1,13 +1,15 @@
-<h5 class="text-center">Trip Travelers</h5>
-<div class="text-center">
-  <profile-selection-form 
-    [selected]="trip.profiles" 
-    (selectedChange)="setSelectedProfiles($event)">
-  </profile-selection-form>
-</div>
-<div class="text-center" *ngIf="collectionsNeedUpdate && isValid">
-  <p>Confirm to choose Collections for the added Travelers</p>
-</div>
+<div class="max-w-500" [class.form-mobile-padding]="windowService.max('md')">
+  <h5 class="text-center">Trip Travelers</h5>
+  <div class="text-center">
+    <profile-selection-form 
+      [selected]="trip.profiles" 
+      (selectedChange)="setSelectedProfiles($event)">
+    </profile-selection-form>
+  </div>
+  <div class="text-center" *ngIf="collectionsNeedUpdate && isValid">
+    <p>Confirm to choose Collections for the added Travelers</p>
+  </div>
+</div>  
 <div
   class="form-actions form-actions-sticky"
   [class.form-actions-mobile]="windowService.max('md')">
@@ -17,9 +19,8 @@
       appColor="action"
       (click)="onConfirm()"
       [disabled]="!isValid || !touched">
-      <mat-icon>check</mat-icon>
+      <mat-icon *ngIf="!collectionsNeedUpdate">check</mat-icon>
+      <mat-icon *ngIf="collectionsNeedUpdate" svgIcon="collection-alt"></mat-icon>
     </button>
   </dialog-confirm-button>
 </div>
-
-

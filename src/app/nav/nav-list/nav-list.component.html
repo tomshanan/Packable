@@ -30,13 +30,13 @@
         <div class="text-right nav-link">
             <a 
                 class="nav-link-colors"
-                routerLink="user"
+                [routerLink]="['/user']"
                 fragment="settings"
                 routerLinkActive="active">
                 {{username}}</a>
             &nbsp;(<a 
             class="small nav-link-colors" 
-            routerLink="user"
+            [routerLink]="['/user']"
             fragment="logout"
             routerLinkActive="active">Logout</a>)
         </div>
@@ -44,14 +44,14 @@
     <ng-template #login>
             <a 
             class="nav-link text-right" 
-            routerLink="user"
+            [routerLink]="['/user']"
             fragment="login"
             routerLinkActive="active">
             Login
         </a>
         <a 
             class="nav-link text-right small" 
-            routerLink="user"
+            [routerLink]="['/user']"
             fragment="register"
             routerLinkActive="active">
             Register

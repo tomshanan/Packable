@@ -1,9 +1,9 @@
-<div class="container-fluid">
+<div class="container-fluid" [class.small-device]="windowService.max('md')">
   <div class="row">
     <div class="full-height d-none d-md-flex col-3 col-lg-3 bg-dark text-white pt-md-4 justify-content-end">
       <app-nav-list></app-nav-list>
     </div>
-    <div class="full-height
+    <div class="
     col-12 
     offset-md-0 col-md-8 pt-md-4 pl-md-4
     col-xl-7 position-static">

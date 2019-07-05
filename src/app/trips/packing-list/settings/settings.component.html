@@ -14,6 +14,62 @@
   <div
     class="d-inline-flex align-items-baseline"
     *ngIf="settings.editMode">
+
+    <button
+      mat-icon-button
+      activeColor="action"
+      [matMenuTriggerFor]="editTripMenu">
+      <mat-icon svgIcon="list-edit"></mat-icon>
+    </button>
+    <mat-menu #editTripMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="checkAll()">
+        <mat-icon>done_all</mat-icon>
+        <span>Tick All</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="resetList()">
+        <mat-icon>replay</mat-icon>
+        <span>Reset List</span>
+      </button>
+      <button
+        mat-menu-item
+        activeColor='danger'
+        (click)="deleteTrip()">
+        <mat-icon outlined>delete</mat-icon>
+        <span>Delete Trip</span>
+      </button>
+    </mat-menu>
+    <button
+      mat-icon-button
+      activeColor="action"
+      (click)="changeDestinationDates()">
+      <mat-icon svgIcon="place-edit"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      activeColor="action"
+      (click)="selectTravelers()">
+      <mat-icon>group_add</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      activeColor="action"
+      (click)="selectCollections()">
+      <mat-icon svgIcon="collection-add"></mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      activeColor="action"
+      (click)="editWeather()">
+      <mat-icon svgIcon="weather-edit"></mat-icon>
+    </button>
+  </div>
+  <div
+    class="ml-auto d-inline-flex align-items-baseline"
+    *ngIf="settings.editMode">
     <button
       mat-icon-button
       activeColor="accent"
@@ -52,75 +108,5 @@
         <span>Removed Packables</span>
       </button>
     </mat-menu>
-    <button
-      mat-icon-button
-      activeColor="action"
-      [matMenuTriggerFor]="editTripMenu">
-      <mat-icon outlined>settings</mat-icon>
-    </button>
-    <mat-menu #editTripMenu="matMenu">
-      <button
-        mat-menu-item
-        (click)="editWeather()">
-        <mat-icon svgIcon="weather-edit"></mat-icon>
-        <span>Weather Settings</span>
-      </button>
-      <button
-        mat-menu-item
-        (click)="checkAll()">
-        <mat-icon>done_all</mat-icon>
-        <span>Check All</span>
-      </button>
-      <button
-        mat-menu-item
-        (click)="resetList()">
-        <mat-icon>replay</mat-icon>
-        <span>Reset List</span>
-      </button>
-      <button
-        mat-menu-item
-        activeColor='danger'
-        (click)="deleteTrip()">
-        <mat-icon outlined>delete</mat-icon>
-        <span>Delete Trip</span>
-      </button>
-    </mat-menu>
-    <button
-      mat-icon-button
-      activeColor="action"
-      (click)="selectCollections()">
-      <mat-icon svgIcon="collection-add"></mat-icon>
-    </button>
-  </div>
-  <div class="ml-auto d-inline-flex align-items-baseline">
-
-    <button
-      type="button"
-      activeColor="action"
-      (click)="null"
-      mat-icon-button
-      [matMenuTriggerFor]="packinglistMenu">
-      <mat-icon svgIcon="share"></mat-icon>
-    </button>
-    <mat-menu #packinglistMenu="matMenu">
-      <button mat-menu-item>
-        <mat-icon outlined>share</mat-icon>
-        <span>Share List</span>
-      </button>
-      <button
-        mat-menu-item
-        (click)="print()">
-        <mat-icon outlined>print</mat-icon>
-        <span>Print</span>
-      </button>
-    </mat-menu>
-
-    <button
-      mat-icon-button
-      activeColor="accent"
-      [activeColorState]="settings.editMode ? 'inactive' : 'muted'"
-      (click)="toggleSettings('editMode')">
-      <mat-icon outlined>edit</mat-icon>
-    </button>
   </div>
 </div>

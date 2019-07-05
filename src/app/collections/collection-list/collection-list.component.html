@@ -1,21 +1,20 @@
-<div
-  class="toolbar"
-  [class.listEditing]="listEditing"
-  [class.small-dispay-toolbar]="windowService.max('xs')"
+<toolbar
+  [class.notSticky]="!listEditing"
   *ngIf="optionsEnabled">
-  <ng-container *ngIf="listEditing === false">
+  <!-- <ng-container *ngIf="listEditing === false" ngProjectAs="[toolbar-right]">
     <icon-text-button
-      text="Select"
+      text="Edit"
+      [reverse]="true"
       svgIcon="list"
       (onClick)="toggleListEditing(true)"></icon-text-button>
-  </ng-container>
+  </ng-container> -->
 
   <ng-container *ngIf="listEditing">
     <mat-checkbox
+      style="padding-left: 24px; padding-right: 0.2em"
       [checked]="!selected.isEmpty"
       [indeterminate]="!selected.isEmpty && collectionList.length > selected.length"
-      (change)="masterCheckboxChange($event)"
-      [class.small-device-checkbox]="windowService.max('xs')">
+      (change)="masterCheckboxChange($event)">
     </mat-checkbox>
   </ng-container>
 
@@ -48,7 +47,7 @@
       (onClick)="actionNewCollection()"
       showTextFromSize="xs"></icon-text-button>
   </ng-container>
-  <ng-container *ngIf="listEditing">
+  <ng-container *ngIf="listEditing" ngProjectAs="[toolbar-right]">
     <button
       mat-icon-button
       (click)="toggleListEditing(false)"
@@ -56,7 +55,7 @@
       <mat-icon color="primary">close</mat-icon>
     </button>
   </ng-container>
-</div>
+</toolbar>
 <mat-accordion #collectionAccordion>
   <div
     *ngFor="let collection of collectionList"
@@ -66,6 +65,9 @@
       class="collection-panel"
       (opened)="expandCollection(collection.id, collectionMatPanel)"
       (closed)="collapseCollection(collection.id)"
+      (afterExpand)="panelAnimating=false"
+      (afterCollapse)="panelAnimating=false"
+      [class.overflow]="!panelAnimating"
       [disabled]="listEditing"
       [class.listEditing]="listEditing"
       hideToggle
@@ -75,9 +77,9 @@
           class="collection-title"
           [class.small]="windowService.max('xs')">
           <div
-            class="collection-checkbox"
-            *ngIf="listEditing">
+            class="collection-checkbox" InnerLink>
             <mat-checkbox
+              [class.o-06]="!listEditing"
               [checked]="isSelected(collection.id)"
               (change)="checkboxChange($event, collection.id)"></mat-checkbox>
           </div>

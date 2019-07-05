@@ -3,7 +3,7 @@
   <div *ngIf="!isValid && touched" class="text-center">
     <p class="text-danger small">All Travelers should have at least 1 Collection</p>
   </div>
-  <div [ngStyle]="{paddingBottom: windowService.max('md') ? '80px' : '0'}">
+  <div [class.form-mobile-padding]="windowService.max('md')">
     <collection-selection-form
       [selected]="trip.collections"
       [profiles]="trip.profiles"

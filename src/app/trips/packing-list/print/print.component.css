@@ -6,6 +6,10 @@
 :host{
   font-size: 1.4em;
 }
+.profile{
+  break-inside:avoid-page;
+  page-break-inside: avoid;
+}
 .page-break{
   break-before: always;
   page-break-before: always;

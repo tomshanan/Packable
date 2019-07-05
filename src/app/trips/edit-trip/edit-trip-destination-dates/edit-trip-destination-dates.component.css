@@ -1,0 +1,8 @@
+:host{
+  width: 500px;
+  max-width: 100%;
+}
+.errors{
+  text-align: center;
+  font-size: 0.8em;
+}

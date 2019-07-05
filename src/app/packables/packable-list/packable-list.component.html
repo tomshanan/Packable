@@ -1,8 +1,54 @@
 <div
   @blockInitialAnimations
   *ngIf="packableList">
+  <toolbar [editMode]="editList" [class.nested]="editingCollectionId">
+    <div class="checkbox-container" [class.m-0]="!editingCollectionId">
+      <mat-checkbox
+        [indeterminate]="masterCheckboxIsIntermediate()"
+        [checked]="masterCheckboxIsChecked()"
+        (change)="masterCheckboxToggle()">
+      </mat-checkbox>
+    </div>
+    <ng-container *ngIf="masterCheckboxIsChecked(); else regOptions">
+      <icon-text-button
+        (onClick)="pushSelectedPackables()"
+        showTextFromSize="xs">
+        <mat-icon [svgIcon]="editingCollectionId ? 't-shirt-copy' : 't-shirt-push'"></mat-icon>
+        <span>
+          {{editingCollectionId ? 'Copy' : 'Push'}}({{selected.length}})
+        </span>
+      </icon-text-button>
+      <icon-text-button
+        color="danger"
+        (onClick)="deleteSelectedPackables()">
+        <mat-icon outlined>delete</mat-icon>
+        <span>
+          {{editingCollectionId ? 'Remove' : 'Delete'}}({{selected.length}})
+        </span>
+      </icon-text-button>
+    </ng-container>
+    <ng-template #regOptions>
+
+      <icon-text-button
+        *ngIf="editingCollectionId || !storeSelector.isLibraryStore"
+        (onClick)="importPackables()"
+        showTextFromSize="xs">
+        <mat-icon svgIcon="t-shirt-import"></mat-icon>
+        <span>Import</span>
+      </icon-text-button>
+
+      <icon-text-button
+        (onClick)="newPackable()"
+        showTextFromSize="xs">
+        <mat-icon svgIcon="t-shirt-add"></mat-icon>
+        <span>Create</span>
+      </icon-text-button>
+
+    </ng-template>
+
+  </toolbar>
   <div class="mat-card-list_containter">
-    <mat-card
+    <!-- <mat-card
       class="options"
       [class.cardless]="!editList"
       [class.editing]="editList"
@@ -86,7 +132,7 @@
           [reverse]="true"
           showTextFromSize="xs"></icon-text-button>
       </div>
-    </mat-card>
+    </mat-card> -->
     <ng-container *ngIf="packableList.length>0; else noneToDisplay">
       <div
         @addRemoveElementTrigger

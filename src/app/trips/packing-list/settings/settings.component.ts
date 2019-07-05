@@ -150,6 +150,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
   selectCollections(){
     this.router.navigate(['trips','edit',this.trip.id,'collections'])
   }
+  selectTravelers(){
+    this.router.navigate(['trips','edit',this.trip.id,'travelers'])
+  }
+  changeDestinationDates(){
+    this.router.navigate(['trips','edit',this.trip.id,'destination'])
+  }
 
-  
 }

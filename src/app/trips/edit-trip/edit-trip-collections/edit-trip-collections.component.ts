@@ -1,22 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { destMetaData } from '@app/shared/library/library.model';
-import { TripWeatherData, WeatherService } from '../../../shared/services/weather.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { StoreSelectorService } from '../../../shared/services/store-selector.service';
+import { TripWeatherData } from '../../../shared/services/weather.service';
 import { Trip } from '@app/shared/models/trip.model';
 import { TripFactory } from '../../../shared/factories/trip.factory';
-import { StorageService } from '../../../shared/storage/storage.service';
-import { filter, map, takeUntil, takeWhile, take, first, tap } from 'rxjs/operators';
-import { Location } from '@angular/common';
-import { DestinationDataService } from '../../../shared/services/location-data.service';
 import { WindowService } from '../../../shared/services/window.service';
 import { tripCollectionGroup } from '../../../shared/models/trip.model';
-import { appState } from '@app/shared/app.reducers';
-import { Store } from '@ngrx/store';
-import * as tripActions from '../../store/trip.actions';
 import { TripMemoryService } from '../../../shared/services/trip-memory.service';
-import { isDefined } from '../../../shared/global-functions';
 
 @Component({
   selector: 'app-edit-trip-collections',

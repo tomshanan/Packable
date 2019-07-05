@@ -56,7 +56,9 @@
   }
 
   .activeInput {
-      z-index: 999;
+    z-index: 999;
+    background: white;
+    box-shadow: 0px 0px 7px -1px white;
   }
   .custom-date-input {
       border-right: none;

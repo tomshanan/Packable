@@ -1,10 +1,10 @@
 <mat-card class="mat-card-list-item with-selection" 
   [class.cardless]="!useCard" 
-  [class.popout]="!editList" 
+  [class.popout]="useCard" 
   [class.selectable]="editList" 
   [class.selected]="selected">
 
-    <div class="checkbox-container" *ngIf="editList" @expandAndFadeTrigger>
+    <div class="checkbox-container">
       <mat-checkbox [checked]="selected" (change)="onCheckboxChange($event)"></mat-checkbox>
     </div>
 

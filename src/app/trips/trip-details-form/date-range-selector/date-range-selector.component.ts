@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, HostListener, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener, Output, EventEmitter, Input, ElementRef } from '@angular/core';
 import { NgbDateStruct, NgbCalendar, NgbInputDatepicker, NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 import { WindowService } from '../../../shared/services/window.service';
@@ -26,6 +26,7 @@ const after = (one: NgbDateStruct, two: NgbDateStruct) =>
 })
 export class DateRangeSelectorComponent implements OnInit {
   @ViewChild('d') d: NgbInputDatepicker;
+  @ViewChild('field') field:ElementRef;
   @Output() datesSelected = new EventEmitter<dateSelectionEvent>();
   @Input() setFromDate: moment.Moment;
   @Input() setToDate: moment.Moment;
@@ -41,6 +42,11 @@ export class DateRangeSelectorComponent implements OnInit {
   selectorOpen = false;
   today: NgbDateStruct;
 
+  // template scroll positions
+  scrollY: number;
+  scrollX: number;
+  topPos: number;
+  
   constructor(private calendar: NgbCalendar, public windowSize:WindowService) {
     this.today = calendar.getToday();
   }
@@ -66,6 +72,9 @@ export class DateRangeSelectorComponent implements OnInit {
   toggleDatePicker(state?: string) {
     switch (state) {
       case 'open':
+        this.scrollY = window.scrollY
+        this.scrollX = window.scrollX;
+        (<HTMLElement>this.field.nativeElement).scrollIntoView(true)
         this.d.open()
         this.fromDate = this.isBeforeMin(this.fromDate) ? (this.isBeforeMin(this.toDate) ? null : this.today) : this.fromDate;
         this.toDate = this.isBeforeMin(this.toDate) ? null : this.toDate;
@@ -75,6 +84,7 @@ export class DateRangeSelectorComponent implements OnInit {
         setTimeout(() => { this.selectorOpen = true; }, 1)
         break;
       case 'close':
+        window.scrollTo({left:this.scrollX,top:this.scrollY,behavior:"smooth"})
         if (this.fromDate && !this.toDate) {
           this.fromDate = this.prevDates.from;
           this.toDate = this.prevDates.to;

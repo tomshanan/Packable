@@ -24,14 +24,40 @@
         <span>Print</span>
       </button>
     </mat-menu>
+
     <button
       mat-icon-button
-      activeColor="accent"
-      [disabled]="!packingList || !sortedList"
-      [activeColorState]="packingListSettings.editMode ? 'inactive' : 'muted'"
-      (click)="settingsComp.toggleSettings('editMode')">
-      <mat-icon outlined>edit</mat-icon>
+      activeColor="action"
+      [disabled]="!(packingList && sortedList)"
+      [matMenuTriggerFor]="editTripMenu">
+      <mat-icon>more_vert</mat-icon>
     </button>
+    <mat-menu #editTripMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="settingsComp.changeDestinationDates()">
+        <mat-icon svgIcon="place-edit"></mat-icon>
+        <span>Edit Place & Date</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="settingsComp.selectTravelers()">
+        <mat-icon>group_add</mat-icon>
+        <span>Add/Remove Travelers</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="settingsComp.selectCollections()">
+        <mat-icon svgIcon="collection-add"></mat-icon>
+        <span>Add/Remove Collections</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="settingsComp.editWeather()">
+        <mat-icon svgIcon="weather-edit"></mat-icon>
+        <span>Weather Settings</span>
+      </button>
+    </mat-menu>
   </div>
 </app-nav>
 

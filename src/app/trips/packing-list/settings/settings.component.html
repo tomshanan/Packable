@@ -1,75 +1,18 @@
-<div class="d-flex align-items-center mb-2">
-  <div
-    class="small text-muted"
-    *ngIf="!settings.editMode">
-    <p>
-      <span [innerHtml]="displayTrip.displayDate"></span>
-      &nbsp;({{packingList.data.totalDays}}&nbsp;Days)
-    </p>
-    <p>
-      <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
-      <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
-    </p>
-  </div>
-  <div
-    class="d-inline-flex align-items-baseline"
-    *ngIf="settings.editMode">
+<toolbar>
 
-    <button
-      mat-icon-button
-      activeColor="action"
-      [matMenuTriggerFor]="editTripMenu">
-      <mat-icon svgIcon="list-edit"></mat-icon>
-    </button>
-    <mat-menu #editTripMenu="matMenu">
-      <button
-        mat-menu-item
-        (click)="checkAll()">
-        <mat-icon>done_all</mat-icon>
-        <span>Tick All</span>
-      </button>
-      <button
-        mat-menu-item
-        (click)="resetList()">
-        <mat-icon>replay</mat-icon>
-        <span>Reset List</span>
-      </button>
-      <button
-        mat-menu-item
-        activeColor='danger'
-        (click)="deleteTrip()">
-        <mat-icon outlined>delete</mat-icon>
-        <span>Delete Trip</span>
-      </button>
-    </mat-menu>
-    <button
-      mat-icon-button
-      activeColor="action"
-      (click)="changeDestinationDates()">
-      <mat-icon svgIcon="place-edit"></mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      activeColor="action"
-      (click)="selectTravelers()">
-      <mat-icon>group_add</mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      activeColor="action"
-      (click)="selectCollections()">
-      <mat-icon svgIcon="collection-add"></mat-icon>
-    </button>
-    <button
-      mat-icon-button
-      activeColor="action"
-      (click)="editWeather()">
-      <mat-icon svgIcon="weather-edit"></mat-icon>
-    </button>
-  </div>
-  <div
-    class="ml-auto d-inline-flex align-items-baseline"
-    *ngIf="settings.editMode">
+  <ng-container ngProjectAs="[toolbar-left]">
+    <div class="small text-muted">
+      <p>
+        <span [innerHtml]="displayTrip.displayDate"></span>
+        &nbsp;({{packingList.data.totalDays}}&nbsp;Days)
+      </p>
+      <p>
+        <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
+        <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
+      </p>
+    </div>
+  </ng-container>
+  <ng-container ngProjectAs="[toolbar-right]">
     <button
       mat-icon-button
       activeColor="accent"
@@ -108,5 +51,39 @@
         <span>Removed Packables</span>
       </button>
     </mat-menu>
-  </div>
-</div>
+    <button
+      mat-icon-button
+      activeColor="accent"
+      [activeColorState]="settings.editMode ? 'inactive' : 'muted'"
+      (click)="toggleSettings('editMode')">
+      <mat-icon outlined>edit</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      activeColor="action"
+      [matMenuTriggerFor]="editListMenu">
+      <mat-icon svgIcon="list-edit"></mat-icon>
+    </button>
+    <mat-menu #editListMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="checkAll()">
+        <mat-icon>done_all</mat-icon>
+        <span>Tick All</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="resetList()">
+        <mat-icon>replay</mat-icon>
+        <span>Reset List</span>
+      </button>
+      <button
+        mat-menu-item
+        activeColor='danger'
+        (click)="deleteTrip()">
+        <mat-icon outlined>delete</mat-icon>
+        <span>Delete Trip</span>
+      </button>
+    </mat-menu>
+  </ng-container>
+</toolbar>

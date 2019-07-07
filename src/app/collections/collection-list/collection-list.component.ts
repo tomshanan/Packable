@@ -143,14 +143,18 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       })
     }
   }
-  checkboxChange(e: MatCheckboxChange, id: string) {
-    if (e.checked) {
+  checkboxChange(id: string) {
+    console.log(id)
+    if (!this.isSelected(id)) {
       this.selected.add(id)
       if(!this.listEditing){
         this.toggleListEditing(true);
       }
     } else {
       this.selected.remove(id)
+      if(this.selected.length === 0){
+        this.toggleListEditing(false);
+      }
     }
   }
   masterCheckboxChange(e: MatCheckboxChange) {
@@ -174,7 +178,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (this.listEditing && this.currentlyOpenPanel) {
       this.collapseCollection(this.context.collectionId, true)
-    } else {
+    } else if(!this.listEditing){
       this.selected.clear()
     }
     console.log('toggleListEditing:',this.listEditing);

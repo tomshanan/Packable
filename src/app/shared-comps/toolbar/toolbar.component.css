@@ -13,11 +13,6 @@
   top: 40px;
 }
 
-:host-context(.small-device toolbar~*) {
-  top: 78px;
-  z-index: 16;
-}
-
 :host-context(.small-device):not(.nested) {
   border-bottom: 1px solid #efefef;
   box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.1);

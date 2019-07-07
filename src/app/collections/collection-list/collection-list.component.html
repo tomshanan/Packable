@@ -81,7 +81,7 @@
             <mat-checkbox
               [class.o-06]="!listEditing"
               [checked]="isSelected(collection.id)"
-              (change)="checkboxChange($event, collection.id)"></mat-checkbox>
+              (click)="checkboxChange(collection.id)"></mat-checkbox>
           </div>
           {{collection.name}}
           <ng-container *ngIf="profileId && collection.essential">

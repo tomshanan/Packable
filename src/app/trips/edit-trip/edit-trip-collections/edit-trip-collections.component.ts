@@ -7,6 +7,7 @@ import { TripFactory } from '../../../shared/factories/trip.factory';
 import { WindowService } from '../../../shared/services/window.service';
 import { tripCollectionGroup } from '../../../shared/models/trip.model';
 import { TripMemoryService } from '../../../shared/services/trip-memory.service';
+import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
 
 @Component({
   selector: 'app-edit-trip-collections',
@@ -23,6 +24,7 @@ export class EditTripCollectionsComponent implements OnInit {
   constructor(
     private tripFac: TripFactory,
     private tripService: TripMemoryService,
+    private bulkActions:BulkActionsService,
     public windowService: WindowService,
   ) { }
 
@@ -40,6 +42,7 @@ export class EditTripCollectionsComponent implements OnInit {
   }
   onConfirm() {
     if (this.isValid) {
+      this.bulkActions.pushMissingCollectionsToProfiles(this.trip.collections)
       this.tripService.saveTrip(this.trip)
       this.touched = false;
     }

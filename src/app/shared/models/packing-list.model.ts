@@ -5,13 +5,13 @@ import { timeStamp } from '../global-functions';
 import { Avatar } from './profile.model';
 
 export class packingListData {
-    destination:Destination = null;
-    totalDays:number = null;
-    totalNights:number = null;
+    destination: Destination = null;
+    totalDays: number = null;
+    totalNights: number = null;
     weatherData: TripWeatherData = new TripWeatherData();
-    constructor(data?:Partial<packingListData>){
-        if(data){
-            Object.assign(this,data)
+    constructor(data?: Partial<packingListData>) {
+        if (data) {
+            Object.assign(this, data)
         }
     }
 }
@@ -19,7 +19,7 @@ export class packingListData {
 export class Reason {
     constructor(
         public text: string,
-        public active = true){
+        public active = true) {
     }
 
 }
@@ -28,24 +28,24 @@ export class listCollection {
     id: string = ''
     packables: PackingListPackable[] = []
     constructor(list: Partial<listCollection> = {}) {
-      Object.assign(this, list)
+        Object.assign(this, list)
     }
     validPackables(): number {
-      return this.packables.reduce((count, p) => {
-        return pass(p) ? count + 1 : count
-      }, 0)
+        return this.packables.reduce((count, p) => {
+            return pass(p) ? count + 1 : count
+        }, 0)
     }
-  }
+}
 
-  export class DisplayPackingList {
+export class DisplayPackingList {
     header: string = ''
     id: string = ''
     avatar: Avatar = new Avatar()
     collections: listCollection[] = []
     constructor(list: Partial<DisplayPackingList> = {}) {
-      Object.assign(this, list)
+        Object.assign(this, list)
     }
-  }
+}
 
 export interface PackingListPackable {
     profileID: string,
@@ -61,19 +61,24 @@ export interface PackingListPackable {
     weatherReasons: Reason[],
     weatherNotChecked: boolean,
     forcePass: boolean,
-    recentlyAdded?:boolean,
-    dateModified:number,
+    recentlyAdded?: boolean,
+    dateModified: number,
 }
 
-
+/**
+    * @property showInvalid: boolean = false;
+    * @property showWarnings: boolean  = true;
+    * @property showCalculations: boolean  = false;
+    * @property editMode:boolean = true;
+ */
 export class PackingListSettings {
     showInvalid: boolean = false;
-    showWarnings: boolean  = true;
-    showCalculations: boolean  = false;
-    editMode:boolean = true;
-    constructor(settings?:Partial<PackingListSettings>){
-        if(settings){
-            Object.assign(this,settings)
+    showWarnings: boolean = true;
+    showCalculations: boolean = false;
+    editMode: boolean = true;
+    constructor(settings?: Partial<PackingListSettings>) {
+        if (settings) {
+            Object.assign(this, settings)
         }
     }
 }
@@ -83,12 +88,13 @@ export class PackingList {
     constructor(
         public id: string,
         public data: packingListData = new packingListData(),
-        public packables: PackingListPackable[] =[],
+        public packables: PackingListPackable[] = [],
+        public instaPackables: PackingListPackable[] = [],
         public dateModified: number = timeStamp(),
-    ){}
+    ) { }
 
 }
 
-export function pass(p:PackingListPackable):boolean{
+export function pass(p: PackingListPackable): boolean {
     return (p.passChecks || p.forcePass) && p.quantity > 0
 }

@@ -53,7 +53,9 @@ ul.packingList {
     align-self: center;
     padding: 0.2em;
     transition: all 100ms;
+    position: absolute;
+    transform: translateX(-14px);
 }
 .mat-expansion-indicator.expanded{
-    transform: rotate(180deg);
+    transform:translateX(-14px) rotate(180deg);
 }

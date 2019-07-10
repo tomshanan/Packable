@@ -12,6 +12,12 @@ import { take } from 'rxjs/operators';
 import { PackingListService } from '../packing-list.service';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
+import { Observable } from 'rxjs';
+import { Guid, isDefined } from '../../../shared/global-functions';
+import { editCollectionDialog_data } from '@app/collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
+import { EditCollectionDialogComponent } from '../../../collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
+import { CollectionComplete } from '../../../shared/models/collection.model';
+import { CollectionFactory } from '../../../shared/factories/collection.factory';
 
 @Component({
   selector: 'packing-list-collection',
@@ -20,6 +26,7 @@ import { PackableFactory } from '../../../shared/factories/packable.factory';
 })
 export class ListCollectionComponent implements OnInit {
   @Input() collection:listCollection;
+  @Input() profile:string;
   @Input() trip:Trip;
   @Input() editingPackable: ListPackableComponent;
   @Input() listSettings: PackingListSettings = new PackingListSettings();
@@ -27,17 +34,19 @@ export class ListCollectionComponent implements OnInit {
   @Output() editingPackableChange = new EventEmitter<ListPackableComponent>()
   
   profiles:ProfileComplete[];
-
+  settings$:Observable<PackingListSettings>;
   constructor(
     private dialog: MatDialog,
     private context: ContextService,
     private profileFactory: ProfileFactory,
+    private colFac: CollectionFactory,
     private packingListService: PackingListService,
     private pacFac:PackableFactory,
   ) { }
 
   ngOnInit() {
     this.profiles = this.profileFactory.getCompleteProfilesByIds(this.trip.profiles)
+    this.settings$ = this.packingListService.settingsEmitter.pipe()
   }
 
   onUpdatePackable(packable:PackingListPackable, save:boolean= true){
@@ -110,5 +119,47 @@ export class ListCollectionComponent implements OnInit {
       this.editingPackable = null
     }
     this.editingPackableChange.emit(this.editingPackable)
+  }
+
+  newPackable() {
+    let editingPackable = new PackableComplete()
+    editingPackable.userCreated = true;
+    this.context.setBoth(this.collection.id, (this.profile != 'shared' ? this.profile : null))
+    let data: DialogData_EditPackable = {
+      pakable: editingPackable,
+      isNew: true,
+    }
+    let dialogRef = this.dialog.open(EditPackableDialogComponent, {
+      disableClose:true,
+      data: data,
+    });
+    dialogRef.afterClosed().pipe(take(1)).subscribe((newPackable: PackableComplete) => {
+      console.log(`Received from modal:`, newPackable);
+      if(newPackable){
+        this.packingListService.generateAndStorePackingList()
+        //this.packingListService.refreshPackingList()
+      }
+    })
+  }
+
+  editCollection(){
+    let profileId = (this.profile != 'shared' ? this.profile : null)
+    let collection = this.colFac.getCompleteById(this.collection.id,profileId)
+    this.context.setBoth(this.collection.id,profileId)
+    let data: editCollectionDialog_data = {
+      collection:collection,
+      profileGroup: this.profileFactory.getAllProfilesAndMakeComplete()
+    }
+    this.dialog.open(EditCollectionDialogComponent, {
+      disableClose: true,
+      data: data
+    }).afterClosed().pipe(take(1)).subscribe((collection:CollectionComplete)=>{
+      if(isDefined(collection)){
+        console.log(`${collection.name} has been updated`,collection)
+        this.packingListService.generateAndStorePackingList()
+        this.packingListService.refreshPackingList()
+      }
+    })
+
   }
 }

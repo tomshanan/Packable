@@ -17,8 +17,8 @@
     position: relative;
     padding: 5px;
     min-height: 35px;
-    max-height: 30vh;
-    overflow-y: auto;
+    max-height: 20vh;
+    overflow: auto;
 }
 #basket-text{
     display: block;

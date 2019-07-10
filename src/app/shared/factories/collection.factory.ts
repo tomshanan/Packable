@@ -136,7 +136,7 @@ export class CollectionFactory {
                     collection.dateModified,
                     original.locations,
                     original.deleted,
-                    original.weatherOverride,
+                    collection.weatherOverride,
                 )
             }
         } else {

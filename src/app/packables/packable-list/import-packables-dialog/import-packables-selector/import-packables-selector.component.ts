@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CollectionComplete } from '../../../../shared/models/collection.model';
-import { filterItem } from '../../../../shared-comps/item-selector/item-selector.component';
+import { searchableItem } from '../../../../shared-comps/item-selector/item-selector.component';
 import { StoreSelectorService } from '../../../../shared/services/store-selector.service';
 import { PackableOriginal, PackableOriginalWithMetaData } from '../../../../shared/models/packable.model';
 import { PackableFactory } from '../../../../shared/factories/packable.factory';
@@ -23,9 +23,9 @@ import { transitionTrigger } from '../../../../shared/animations';
 export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
   @Input() collection:CollectionComplete;
   loaded: boolean = false;
-  usedList:filterItem[] = []
-  completeList:filterItem[];
-  selected: filterItem[];
+  usedList:string[] = []
+  completeList:searchableItem[];
+  selected: string[];
   remotePackables: PackableOriginalWithMetaData[];
   originalPackables: PackableOriginal[];
   sub:Subscription;
@@ -65,31 +65,33 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
   }
   initList(){
     this.originalPackables= this.storeSelector.originalPackables.filter(p=>!p.deleted).sort(sortByMostRecent)
-    let localList = this.createFilterObject(this.originalPackables)
+    let originalsWithMeta = this.pacFac.getPackablesWithMetaData(this.originalPackables)
+    let localList = this.createFilterObject(originalsWithMeta)
     let usedIds = this.originalPackables.map(p=>p.id)
     this.remotePackables = this.storeSelector.getRemotePackablesWithMetaData().filter(p=>!usedIds.includes(p.id)).sort(sortByMetaData)
     let remoteList = this.createFilterObject(this.remotePackables)
     this.completeList = [...localList,...remoteList] 
     console.log('import packables collection input:',this.collection)
     if(this.collection){
-      this.usedList = this.createFilterObject(this.collection.packables)
+      this.usedList = this.collection.packables.ids()
     } else {
-      this.usedList = [...localList]
+      this.usedList = localList.ids()
     }
     console.log('Used List:',this.usedList,'\nCompelte List::',this.completeList)
     this.setLoaded(true)
   }
-  createFilterObject(inputObjects:Array<PackableOriginal|PackableOriginalWithMetaData>):filterItem[]{
-    return inputObjects.map((obj) => {
+  createFilterObject(packables:Array<PackableOriginalWithMetaData>):searchableItem[]{
+    return packables.map((p) => {
       return {
-        id: obj.id,
-        name: obj.name,
+        name: p.name,
+        id: p.id,
+        allNames: [p.name,...p.metaData.altNames],
+        tags: p.metaData.tags      
       }
     })
   }
-  updateSelected(filterItems:filterItem[]){
-    this.selected = filterItems;
-    this.emitSelected.emit(this.selected.ids())
+  updateSelected(selected:string[]){
+    this.selected = selected;
+    this.emitSelected.emit(this.selected)
   }
-
 }

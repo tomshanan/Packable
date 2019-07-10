@@ -68,8 +68,8 @@
   transition: all 300ms ease;
 }
 
-.profile.interactive:not(.selected) .icon_container {
-  opacity: 0.5;
+.profile.interactive:not(.selected):not(.dim) .icon_container {
+  opacity: 0.9;
 }
 
 .profile.dim .icon_container, .profile.dim .profile_name {

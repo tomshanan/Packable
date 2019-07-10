@@ -1,29 +1,27 @@
 <div id="container">
   <div class="sticky-row">
     <search-field
-      [(value)]="searchFilterInput"
-      (valueChange)="typeSearch()"
-      (keyEnter)="addItemFromSearch(listFiltered.filtered[0])"
+      [value]="searchFilterInput"
+      (valueChange)="typeSearch($event)"
+      (keyEnter)="addItemFromSearch(listFiltered[0])"
       placeholder="Search Packables">
     </search-field>
     <div
       id="basket"
-      [animateSize]="animateItemsState"
-      [startHeight]="startHeight"
       #basket>
       <div
         class="ps-selected-container"
-        *ngIf="selected.length > 0"
+        class.hidden="selected.length > 0"
         @quickTransitionTrigger>
         <span
-          *ngFor="let item of selected; let i = index"
-          class="tag"
-          [@listItemTrigger]
-          (@listItemTrigger.start)="animateItemStart($event)"
-          (@listItemTrigger.done)="animateItemEnd($event)">
+          *ngFor="let item of selected"
+          class="tag">
           <span class="tag-text">{{item.name}}</span>
-          <i class="material-icons pointer ml-1"
-            (click)="removeItemFromSelection(item.id)">close</i>
+          <i
+            class="material-icons pointer ml-1"
+            (click)="toggleItem(item)">
+            close
+          </i>
         </span>
       </div>
       <div
@@ -40,40 +38,44 @@
       class="list"
       *ngIf="listFiltered && listOriginal">
       <!-- ADD MESSAGES HERE -->
+      <ng-container *ngFor="let item of listFiltered; let i = index">
 
-      <a
-        class="list-item d-flex justify-content-start align-items-center"
-        *ngFor="let item of listFiltered.filtered; let i = index"
-        [ngClass]="{
-        'list-item-used': objectUsed(item), 
-        'list-item-selected': objectSelected(item), 
-        'border border-primary rounded': searchFilterInput!='' && i==0 && !objectUsed(item)}"
-        [activeColor]="objectSelected(item) ? 'accent' : 'muted'"
-        [disabled]="objectUsed(item)"
-        [colorTarget]="buttons"
-        (click)="!objectUsed(item) && toggleItemInSelection(item,i)">
-        <div class="item-name align-self-stretch d-flex flex-column justify-content-center">
-          <span>{{item.name}}</span>
-        </div>
-        <div class="button-container" #buttons>
-          <button
-            mat-icon-button
-            *ngIf="!objectSelected(item) && !objectUsed(item)">
-            <mat-icon>radio_button_unchecked</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            *ngIf="objectSelected(item)">
-          <mat-icon outlined>check_circle</mat-icon>
-          </button>
-          <button
-            disabled
-            mat-icon-button
-            *ngIf="objectUsed(item)">
-            <mat-icon outlined>check</mat-icon>
-          </button>
-        </div>
-      </a>
+        <a
+          class="list-item d-flex justify-content-start align-items-center"
+          *ngIf="item.show"
+          [ngClass]="{
+          'list-item-used': item.used, 
+          'list-item-selected': item.selected, 
+          'border border-primary rounded': searchFilterInput!='' && i==0 && !item.used}"
+          [activeColor]="item.selected ? 'accent' : 'muted'"
+          [disabled]="item.used"
+          [colorTarget]="buttons"
+          (click)="toggleItem(item)">
+          <div class="item-name align-self-stretch d-flex flex-column justify-content-center">
+            <span>{{item.name}}</span>
+          </div>
+          <div
+            class="button-container"
+            #buttons>
+            <button
+              mat-icon-button
+              *ngIf="!item.selected && !item.used">
+              <mat-icon>radio_button_unchecked</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              *ngIf="item.selected">
+              <mat-icon outlined>check_circle</mat-icon>
+            </button>
+            <button
+              disabled
+              mat-icon-button
+              *ngIf="item.used">
+              <mat-icon outlined>check</mat-icon>
+            </button>
+          </div>
+        </a>
+      </ng-container>
     </div>
   </div>
 </div>

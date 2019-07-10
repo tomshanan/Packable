@@ -1,7 +1,7 @@
 import { cities, countries, countryData, cityData } from '../location-data-object';
 import { Injectable } from '@angular/core';
 import { Pipe } from '@angular/core';
-import { round } from '../global-functions';
+import { round, matchWordsScore, anySpaces } from '../global-functions';
 export interface Destination {
   cityId: string,
   countryId: string,
@@ -54,67 +54,35 @@ export class DestinationDataService {
   findDestination(cityId: string): Destination {
     return this._destinations.find(x => x.cityId == cityId);
   }
-  private nonLetters = /[\s\.\,\-\'\;\:]+/g
+  
 
 
   getScoreOfSearch(searchString: string, dest: Destination, doDebug: boolean = false): number {
     let score = 0;
-    let searchWords: string[] = searchString ? searchString.toLowerCase().split(this.nonLetters) : []
-    let debug: boolean = doDebug
+    let searchWords: string[] = searchString ? searchString.toLowerCase().split(anySpaces) : []
+    let debug: boolean = doDebug;
     let cityScores = []
     let countryScores = []
+    let fullnameScore = 0;
     searchWords.forEach((searchWord, i) => {
-      let cityMatches = dest.cityNames.map(city => this.matchWordsScore(searchWord, city, debug))
-      let countryMatches = dest.countryNames.map(country => this.matchWordsScore(searchWord, country, debug))
+      let cityMatches = dest.cityNames.map(city => matchWordsScore(searchWord, city, false, debug))
+      let countryMatches = dest.countryNames.map(country => matchWordsScore(searchWord, country, false,debug))
+      fullnameScore += matchWordsScore(searchWord, dest.fullName, false, debug)*(i+1-(i*0.8))
       if (Math.max(...cityMatches) < Math.max(...countryMatches)) {
         countryScores.push(Math.max(...countryMatches))
       } else {
         cityScores.push(Math.max(...cityMatches))
       }
     })
-    let fullnameScore = this.matchWordsScore(searchString.replace(this.nonLetters, ''), dest.fullName.replace(this.nonLetters, ''), debug)
-    score = Math.max(Math.max(...cityScores) + Math.max(...countryScores), fullnameScore)
+    
+    const maxCountryScore = countryScores.length>0 ? Math.max(...countryScores) : 0;
+    const maxCityScore = cityScores.length>0 ? Math.max(...cityScores) : 0;
+    debug && console.log(`maxCityScore:`,maxCityScore,`maxCountryScore:`, maxCountryScore,`fullnameScore:`, fullnameScore)
+    score =  Math.max(maxCityScore + maxCountryScore, fullnameScore)
     debug && console.log(`${dest.fullName}\n= ${score}`)
     return score;
   }
-  matchWordsScore(searchString: string, resultString: string, debug: boolean = false): number {
-    searchString = searchString.toLowerCase()
-    resultString = resultString.toLowerCase()
-    let score = 0
-    let addScore = (num: number, reason: string = '') => {
-      score += num
-      debugText += (reason + ` --> Score += ${num} (${score})\n`)
-    }
-    let maxScore = searchString.length
-    let scoreLetterByIndex = (indexFound): number => {
-      let x = indexFound
-      let z = maxScore
-      return round(z / (x + 1 - (x * 0.7)),2)
-    }
-    let debugText = ''
-    debugText += (`"${searchString}" / "${resultString} (max score = ${maxScore})"\n`)
-
-    let arrayOfLetters = resultString.split('')
-    let baseIndex = 0;
-
-    for (let letterIndex = 0; letterIndex < searchString.length; letterIndex++) {
-      let letter = searchString[letterIndex]
-      debugText += `[${letterIndex}: ${letter}]`
-      let searchArray = arrayOfLetters.slice().splice(baseIndex, arrayOfLetters.length - 1)
-      if (searchArray.includes(letter)) {
-        let foundAtIndex = searchArray.indexOf(letter) + baseIndex
-        let p = scoreLetterByIndex(foundAtIndex) + scoreLetterByIndex(letterIndex)
-        addScore(p,` Found at ${foundAtIndex}`)
-        baseIndex = foundAtIndex
-      } else {
-        debugText += (` Not Found\n`)
-      }
-    }
-    score = round(score,2)
-    debugText += (`FINAL SCORE (${searchString}/${resultString}): ${score}`)
-    debug && console.log(debugText)
-    return score
-  }
+  
     // getScoreOfSearch(search: string, dest: Destination, debug = false): number {
     //   let consoleOutput = '';
     //   consoleOutput += `${dest.fullName} \n`;

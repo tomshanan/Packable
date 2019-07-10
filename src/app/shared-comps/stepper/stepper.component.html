@@ -5,10 +5,8 @@
             [text]="step.text"
             [matIcon]="step.icon.type =='mat' ? step.icon.name : null"
             [svgIcon]="step.icon.type =='svg' ? step.icon.name : null"
-            [disabled]="i+2 > currentStep"
-            [color]="currentStep > i+1 ? 'action' :  currentStep ==  i+1 ? 'accent' : 'muted'"
+            [color]="currentStep > i+1 ? 'action' :  (currentStep ==  i+1 ? 'accent' : 'muted')"
             showTextFromSize="lg"
-            buttonWidth="30px"
             innerPadding="0.2em"
             (onClick)="onClickStep(i+1)">
           </icon-text-button>

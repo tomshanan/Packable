@@ -1,20 +1,18 @@
-    <div class="d-inline-flex flex-row align-items-start">
-        <profile-selector 
-        iconWidth="50px" 
-        [profiles]="profileGroup" 
-        [showQuickButtons]="false"
-        [selected]="selected"
-        (selectedChange)="onSelectedChange($event)" 
-        [multiselect]="true"
-        [showNames]="true">
-      </profile-selector>
-      <div class="d-inline-block">
-          <icon-text-button
-            svgIcon="circle-add"
-            (onClick)="newProfile()"
-            buttonWidth="50px"
-            innerPadding="0.1em">
-          </icon-text-button>
-      </div>
-    </div>
-    
+<div class="d-inline-flex flex-row align-items-start">
+  <profile-selector
+    iconWidth="50px"
+    [profiles]="profileGroup"
+    [showQuickButtons]="false"
+    [selected]="selected"
+    (selectedChange)="onSelectedChange($event)"
+    [multiselect]="true"
+    [showNames]="true">
+    <big-button
+      size="50px"
+      innerPadding="0.2em"
+      [icon]="{svg:'circle-add'}"
+      (click)="newProfile()"
+      activeColor="action">
+    </big-button>
+  </profile-selector>
+</div>

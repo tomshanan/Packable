@@ -1,15 +1,39 @@
-<h6>{{collection.header}}</h6>
+<div class="d-flex align-items-center" style="min-height: 40px;">
+  <h6 class="ml-2">{{collection.header}}</h6>
+  <button
+    mat-icon-button
+    *ngIf="(settings$ | async)?.editMode"
+    class="ml-auto"
+    activeColor="muted"
+    [matMenuTriggerFor]="editColMenu">
+    <mat-icon outlined>settings</mat-icon>
+  </button>
+  <mat-menu #editColMenu="matMenu">
+      <button
+      mat-menu-item
+      (click)="newPackable()">
+      <mat-icon>add</mat-icon>
+      <span>New Packable</span>
+    </button>
+    <button
+      mat-menu-item
+      (click)="editCollection()">
+      <mat-icon>settings</mat-icon>
+      <span>Collection Settings</span>
+    </button>
+  </mat-menu>
+</div>
 <ul class="packingList">
-  <ng-container *ngFor="let packable of collection.packables"> 
-      <list-packable 
+  <ng-container *ngFor="let packable of collection.packables">
+    <list-packable
       #edititingP
-      [packable]="packable" 
-      (toggleCheck)="toggleCheck(packable)" 
-      [listSettings]="listSettings" 
+      [packable]="packable"
+      (toggleCheck)="toggleCheck(packable)"
+      [listSettings]="listSettings"
       (addInvalid)="addInvalid(packable)"
       (editRules)="editPackableRules(packable)"
       (updateQuantity)="onUpdatePackable($event)"
       (toggleEdit)="onToggleEditPackable($event,edititingP)">
     </list-packable>
-</ng-container>
+  </ng-container>
 </ul>

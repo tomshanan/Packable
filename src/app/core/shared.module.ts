@@ -104,6 +104,8 @@ import { EditTripProfilesComponent } from '../trips/edit-trip/edit-trip-profiles
 import { EditTripComponent } from '../trips/edit-trip/edit-trip.component';
 import { EditTripDestinationDatesComponent } from '../trips/edit-trip/edit-trip-destination-dates/edit-trip-destination-dates.component';
 import { ToolbarComponent } from '../shared-comps/toolbar/toolbar.component';
+import { BigButtonComponent } from '../shared-comps/big-button/big-button.component';
+import { ListProfileComponent } from '../trips/packing-list/list-profile/list-profile.component';
 
 
 let imports = [
@@ -183,7 +185,7 @@ let imports = [
         MatSortModule,
         NgbModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RecommendedCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent, PrintComponent, PrintSettingsDialogComponent, ToggleIconDirective, EditTripCollectionsComponent, EditTripProfilesComponent, EditTripComponent, EditTripDestinationDatesComponent, ToolbarComponent],
+    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RecommendedCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent, PrintComponent, PrintSettingsDialogComponent, ToggleIconDirective, EditTripCollectionsComponent, EditTripProfilesComponent, EditTripComponent, EditTripDestinationDatesComponent, ToolbarComponent, BigButtonComponent, ListProfileComponent],
     exports: [...imports]
 })
 export class SharedModule {

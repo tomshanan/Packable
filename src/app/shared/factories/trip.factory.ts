@@ -127,7 +127,7 @@ export class TripFactory {
             }
         }
         debug.push('\n\nTrip Object:\n',JSON.stringify(trip))
-        console.log('TRIP VALIDATION:', validArray.join(' ,'),doDebug?'\n'+debug.join(''):'')
+        // console.log('TRIP VALIDATION:', validArray.join(' ,'),doDebug?'\n'+debug.join(''):'')
         return validArray
     }
     public validateTripProperties = (trip: Trip, required: tripProperties[]): boolean => {

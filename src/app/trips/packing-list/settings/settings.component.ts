@@ -60,7 +60,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.settings[setting] = !this.settings[setting]
     this.packingListService.storeSettings(this.settings)
     if (setting === 'showInvalid') {
-      this.packingListService.refreshPackingList()
+      //this.packingListService.refreshPackingList()
     }
   }
   anySettingToggled():boolean{
@@ -85,12 +85,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
       }
     })
   }
-  checkAll() {
+  checkAll(bool:boolean = true) {
     let packinglist = this.packingListService.packingList
     let stamp = timeStamp()
     packinglist.packables.forEach(p => {
       if (pass(p)) {
-        p.checked = true;
+        p.checked = bool;
         p.dateModified = stamp;
       }
     })
@@ -107,7 +107,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     })
     confirmDialog.afterClosed().pipe(take(1)).subscribe((confirm: boolean) => {
       if (confirm) {
-        this.packingListService.setPackingList(null)
+        //this.packingListService.setPackingList(null)
         this.packingListService.updatePackingListBySetting('auto', { save: true })
       }
     })

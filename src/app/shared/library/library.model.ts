@@ -35,6 +35,8 @@ export class Metadata {
     usedOnTrip: number = 0 // how many users have used this on a trip (does not include deleted trips or incomplete trips)
     modified: number = 0 // how many times users modified the item (does not include deleting the item)
     description: string = ''
+    tags:string[] = []
+    altNames:string[] = []
     constructor(id:string, metaData:Partial<Metadata> = {}){
         this.id = id
         Object.assign(this,metaData)

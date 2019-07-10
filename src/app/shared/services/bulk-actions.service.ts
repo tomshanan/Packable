@@ -217,6 +217,7 @@ export class BulkActionsService {
           }
         })
       })
+      console.log(`pushCompleteCollectionsToProfiles`,profiles)
       this.store.dispatch(new profileActions.editProfiles(profiles))
     }
   }

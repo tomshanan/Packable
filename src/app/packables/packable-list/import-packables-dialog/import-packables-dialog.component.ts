@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { filterItem, filterItemLocality } from '@app/shared-comps/item-selector/item-selector.component';
+import { searchableItem, filterItemLocality } from '@app/shared-comps/item-selector/item-selector.component';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { PackableComplete, PackablePrivate, PackableOriginal } from '../../../shared/models/packable.model';

@@ -6,6 +6,7 @@
 }
 
 .nav-container {
+  pointer-events: none;
   visibility: hidden;
   position: fixed;
   top: 0;
@@ -19,6 +20,7 @@
 }
 
 .nav-container.active {
+  pointer-events: all;
   visibility: visible;
   background: rgba(0, 0, 0, 0.3);
   z-index: 100;
@@ -35,20 +37,18 @@
   position: absolute;
   overflow: hidden;
   direction: rtl;
+  transform: translateX(-103%);
   left: 0;
   top: 0;
   padding-top: 40px;
-  min-width: 0vw;
   min-height: 100%;
-  width: 0px;
+  width: 250px;
   transition: 0.3s;
   box-shadow: 3px 1px 4px 0px rgba(0, 0, 0, 0.35);
 }
 .slider-nav.active {
-  min-width: 25vw;
-  max-width: 100vw;
-  width: 250px;
   transition: 0.4s;
+  transform: translateX(0);
 }
 
 .nav-list-container{

@@ -101,8 +101,8 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
     let searchterm:string = ''
     this.filteredDestOptions = this.destination.valueChanges
       .pipe(
+        debounceTime(150),
         tap(val=>console.log(`this.destination=`,val)),
-        debounceTime(300),
         startWith<string | Destination>(''),
         map(value => typeof value === 'string' ? value : value.fullName),
         map(val => {
@@ -134,7 +134,7 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
         }),
         // show the score calculations for first result and output Comparison Log
         // tap(results=>{
-        //   let firstResult = (results && results[0] && this.destService.DestinationByCityId(results[0].cityId)) || null
+        //   let firstResult = (results && results[0] && this.destService.findDestination(results[0].cityId)) || null
         //   firstResult && console.log("First Result: "+firstResult.fullName + "="+this.destService.getScoreOfSearch(searchterm,firstResult,true))
         //   console.log('---COMPARIOSON TESTS---\n'+logComparison)
         // })

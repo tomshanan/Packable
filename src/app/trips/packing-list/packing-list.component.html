@@ -57,6 +57,18 @@
         <mat-icon svgIcon="weather-edit"></mat-icon>
         <span>Weather Settings</span>
       </button>
+      <button
+        mat-menu-item
+        activeColor='danger'
+        (click)="settingsComp.deleteTrip()">
+        <mat-icon
+          activeColor='danger'
+          outlined>
+          delete
+        </mat-icon>
+        <span>Delete Trip</span>
+      </button>
+
     </mat-menu>
   </div>
 </app-nav>
@@ -92,8 +104,10 @@
           *ngFor="let profile of sortedList; let i = index"
           [hideToggle]="true"
           [class.mat-elevation-z0]="windowService.max('sm')"
-          [expanded]="windowService.min('sm')"
-          [disabled]="windowService.min('sm')"
+          [expanded]="sortedList.length === 1 || panelsOpen[profile.id] || windowService.min('sm')"
+          [disabled]="sortedList.length === 1 || windowService.min('sm')"
+          (opened)="panelsOpen[profile.id]=true"
+          (closed)="panelsOpen[profile.id]=false"
           #panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -151,17 +165,25 @@
               </mat-menu>
             </div>
           </mat-expansion-panel-header>
-          <app-column-divider [cols]="windowService.max('sm') ? 1 : (windowService.max('xxl') ? 2 : 3)">
+          <list-profile
+            [columns]="windowService.max('sm') ? 1 : (windowService.max('xxl') ? 2 : 3)"
+            [packingListSettings]="packingListSettings"
+            [profile]="profile"
+            [trip]="trip"
+            [(editingPackable)]="editingPackable">
+          </list-profile>
+          <!-- <app-column-divider [cols]="windowService.max('sm') ? 1 : (windowService.max('xxl') ? 2 : 3)">
             <ng-container *ngFor="let collection of profile.collections">
               <packing-list-collection
                 *ngIf="collection.validPackables() > 0 || packingListSettings.showInvalid"
                 [listSettings]="packingListSettings"
                 [(collection)]="collection"
+                [profile]="profile.id"
                 [trip]="trip"
                 [(editingPackable)]="editingPackable">
               </packing-list-collection>
             </ng-container>
-          </app-column-divider>
+          </app-column-divider> -->
         </mat-expansion-panel>
       </mat-accordion>
     </div>

@@ -12,9 +12,10 @@
 }
 
 .checkbox-container{
+    align-self: flex-start;
     flex: 0 0 0;
-    padding: 0.4em;
-    margin-left: -0.4em;
+    padding: 0 0.4em;
+    /* margin-left: -0.4em; */
 }
 .packable {
     flex: 1 0 auto;
@@ -22,9 +23,9 @@
     flex-direction: column;
     align-items: stretch;
 }
-.checkbox-container + .packable {
+/* .checkbox-container + .packable {
     padding-left: 0.4em;
-}
+} */
 
 .packable .first-row {
     display: flex;
@@ -58,11 +59,10 @@
     font-size: 1.5em;
     height: 1em;
     width: 1em;
-    margin: 0.1em;
  }
  
 mat-card.cardless {
-    padding: 0.2em 0em;
+    padding: 0.4em 0em;
     margin: 0;
     box-shadow: none;
 }

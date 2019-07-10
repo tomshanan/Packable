@@ -1,0 +1,11 @@
+:host{
+  display: inline-block;
+  box-sizing: content-box;
+  overflow: hidden;
+}
+
+.mat-icon-button{
+  height: inherit;
+  width: inherit;
+  line-height: inherit;
+}

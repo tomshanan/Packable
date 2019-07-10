@@ -13,6 +13,32 @@
     </div>
   </ng-container>
   <ng-container ngProjectAs="[toolbar-right]">
+      <button
+      mat-icon-button
+      activeColor="action"
+      [matMenuTriggerFor]="editListMenu">
+      <mat-icon svgIcon="list-edit"></mat-icon>
+    </button>
+    <mat-menu #editListMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="checkAll()">
+        <mat-icon>done_all</mat-icon>
+        <span>Tick All</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="checkAll(false)">
+        <mat-icon outlined>indeterminate_check_box</mat-icon>
+        <span>Untick all</span>
+      </button>
+      <button
+        mat-menu-item
+        (click)="resetList()">
+        <mat-icon>replay</mat-icon>
+        <span>Reset List</span>
+      </button>
+    </mat-menu>
     <button
       mat-icon-button
       activeColor="accent"
@@ -58,32 +84,5 @@
       (click)="toggleSettings('editMode')">
       <mat-icon outlined>edit</mat-icon>
     </button>
-    <button
-      mat-icon-button
-      activeColor="action"
-      [matMenuTriggerFor]="editListMenu">
-      <mat-icon svgIcon="list-edit"></mat-icon>
-    </button>
-    <mat-menu #editListMenu="matMenu">
-      <button
-        mat-menu-item
-        (click)="checkAll()">
-        <mat-icon>done_all</mat-icon>
-        <span>Tick All</span>
-      </button>
-      <button
-        mat-menu-item
-        (click)="resetList()">
-        <mat-icon>replay</mat-icon>
-        <span>Reset List</span>
-      </button>
-      <button
-        mat-menu-item
-        activeColor='danger'
-        (click)="deleteTrip()">
-        <mat-icon outlined>delete</mat-icon>
-        <span>Delete Trip</span>
-      </button>
-    </mat-menu>
   </ng-container>
 </toolbar>

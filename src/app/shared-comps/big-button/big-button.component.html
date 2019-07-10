@@ -1,0 +1,6 @@
+<button
+  mat-icon-button
+  [disabled]="disabled">
+  <mat-icon [inline]="true" *ngIf="icon.svg" [svgIcon]="icon.svg"></mat-icon>
+  <mat-icon [inline]="true" *ngIf="icon.mat">{{icon.mat}}</mat-icon>
+</button>

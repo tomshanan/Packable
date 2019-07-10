@@ -76,17 +76,14 @@
         (selectedChange)="onSelectedProfiles($event)"
         [color]="storeSelector.isLibraryStore ? 'white' : null"
         [fullFrame]="storeSelector.isLibraryStore ? true : false">
-
+        <big-button
+        size="55px"
+        innerPadding="0.2em"
+        [icon]="{svg:'circle-add'}"
+        (click)="newProfile()"
+        activeColor="action">
+      </big-button>
       </profile-selector>
-      <div class="d-inline-block" style="height: 1em;
-      line-height: 1em;">
-        <icon-text-button
-          svgIcon="circle-add"
-          (onClick)="newProfile()"
-          buttonWidth="55px"
-          innerPadding="0.1em">
-        </icon-text-button>
-      </div>
     </horizontal-icon-selector>
   </div>
 </div>

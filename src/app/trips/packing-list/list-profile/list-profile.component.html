@@ -1,0 +1,12 @@
+  <div class="column" *ngFor="let column of sortedColumns">
+    <ng-container *ngFor="let collection of column">
+      <packing-list-collection
+      *ngIf="collection.validPackables() > 0 || packingListSettings.showInvalid"
+      [listSettings]="packingListSettings"
+      [(collection)]="collection"
+      [profile]="profile.id"
+      [trip]="trip"
+      [(editingPackable)]="editingPackable">
+    </packing-list-collection>
+  </ng-container>
+  </div>

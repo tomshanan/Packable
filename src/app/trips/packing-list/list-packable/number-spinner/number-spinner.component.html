@@ -6,7 +6,7 @@
     [matRippleColor]="appColors.accent.ripple">
     <span>−</span>
   </div>
-  <input type="tel" class="spinner_input" [(ngModel)]="number" (keyup)="manualInput()" (click)="$event.target.select()" autocomplete="off">
+  <input type="tel" class="spinner_input" [(ngModel)]="number" (blur)="manualInput()" (click)="$event.target.select()" autocomplete="off">
   <div class="spinner_button" (click)="add()" [activeColor]="!isValid(number+1) ? 'muted' : 'accent'"
     matRipple
     [matRippleAnimation]="rippleAnimationConfig"

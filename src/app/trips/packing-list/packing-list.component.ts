@@ -17,7 +17,7 @@ import { TripFactory } from '../../shared/factories/trip.factory';
 import { PrintOptions } from './print/print.component';
 import { printDialog_data, PrintSettingsDialogComponent } from './settings/print-settings-dialog/print-settings-dialog.component';
 import { take, defaultIfEmpty } from 'rxjs/operators';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatExpansionPanel } from '@angular/material';
 import { SettingsComponent } from './settings/settings.component';
 
 @Component({
@@ -40,6 +40,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   showInvalidPackables = true // for template
   menuIcon:Icon = {icon:{type:'mat',name:'settings'},text:'Options'}
   editingPackable: ListPackableComponent; // for list-collection-component
+  panelsOpen: {[id:string]:boolean} = {};
 
   forecastString:string = 'Loading Weather';
   customWeatherForm: FormGroup; 
@@ -163,6 +164,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
         packable.forcePass = false
         packable.checked = false
     })
+    this.packingListService.generateAndStorePackingList()
   }
   modifyPackablesForProfile(profile:DisplayPackingList,changePackable:(p:PackingListPackable)=>void){
     let savePackables:PackingListPackable[] = []

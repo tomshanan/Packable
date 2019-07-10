@@ -3,6 +3,7 @@ import { StoreSelectorService } from '../services/store-selector.service';
 import { PackableOriginal, PackablePrivate, PackableAny, PackableComplete, isPackableOriginal, isPackablePrivate, isPackableComplete, QuantityRule,  PackableOriginalWithMetaData } from '../models/packable.model';
 import { weatherFactory } from './weather.factory';
 import { isDefined } from '../global-functions';
+import { Metadata } from '../library/library.model';
 
 @Injectable()
 export class PackableFactory {
@@ -141,5 +142,12 @@ export class PackableFactory {
             returnStrings.push(phrase)
         })
         return returnStrings
+    }
+    public getPackablesWithMetaData(packables:Array<PackableOriginal>):PackableOriginalWithMetaData[] {
+        return packables.map(p=>{
+            let completeCol = this.makeComplete(p)
+            let metaData = this.storeSelector.getMetaDataForId(p.id) || new Metadata(p.id);
+            return new PackableOriginalWithMetaData(completeCol,metaData)
+        })
     }
 }

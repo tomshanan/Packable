@@ -5,29 +5,30 @@
     <div class="flex-container">
       <div class="flex-item actionBox">
         <ng-container *ngIf="actionType=='button'">
-          <icon-text-button
-            [svgIcon]="'circle-'+buttonState"
+          <big-button
+            size="40px"
             [disabled]="disabled"
-            (onClick)="action()"
-            [buttonWidth]="buttonWidth()+'px'">
-          </icon-text-button>
+            [icon]="{svg:'circle-'+buttonState}"
+            (click)="action()"
+            appColor="action">
+          </big-button>
         </ng-container>
         <ng-container *ngIf="actionType=='selection'">
-          <icon-text-button
-            [svgIcon]="selectionState ? selectionOnIcon : selectionOffIcon"
+          <big-button
             [disabled]="disabled"
-            (onClick)="action()"
-            [buttonWidth]="buttonWidth()+'px'"
-            [color]="selectionState ? 'accent' : 'action'">
-          </icon-text-button>
+            size="40px"
+            (click)="action()"
+            [icon]="selectionState ? {svg:selectionOnIcon} : {svg:selectionOffIcon}"
+            [appColor]="selectionState ? 'accent' : 'action'">
+          </big-button>
         </ng-container>
         <ng-container *ngIf="actionType=='none'">
-          <icon-text-button
-            [svgIcon]="staticIcon"
+          <big-button
+            size="40px"
             [disabled]="true"
-            [buttonWidth]="buttonWidth()+'px'"
-            color="muted">
-          </icon-text-button>
+            [icon]="{svg:staticIcon}"
+            appColor="muted">
+          </big-button>
         </ng-container>
       </div>
       <div
@@ -56,8 +57,10 @@
                 container="body"
                 placement="left"
                 triggers="click:mouseleave"
-                InnerLink>error_outline</mat-icon>
-              
+                InnerLink>
+                error_outline
+              </mat-icon>
+
               <ng-template #weatherError>
                 <p
                   class="p-0 m-0 small"

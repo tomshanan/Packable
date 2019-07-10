@@ -24,7 +24,7 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
   rippleRadius: number;
   @Input() buttonWidth: string = null
   @Input() innerPadding: string = null
-  @ViewChild('rippleTrigger') rippleTrigger: ElementRef;
+  // @ViewChild('rippleTrigger') rippleTrigger: ElementRef;
   @Output('onClick') emitClick = new EventEmitter<void>()
   windowSub: Subscription;
   hoverState = false;
@@ -48,32 +48,32 @@ export class IconTextButtonComponent implements OnInit,OnChanges,OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.initSizing()
-    this.windowSub = this.windowService.change.subscribe(()=>{
-      this.initSizing()
-    })
+    // this.initSizing()
+    // this.windowSub = this.windowService.change.subscribe(()=>{
+    //   this.initSizing()
+    // })
   }
   ngOnChanges(changes:SimpleChanges){
-    this.initSizing()
+    //this.initSizing()
   }
   ngOnDestroy(){
-    this.windowSub.unsubscribe()
+    // this.windowSub && this.windowSub.unsubscribe()
   }
   initSizing(){
-    this.color = this.appColors[this.inputColor]
-    if (this.setSize()){
-      this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', this.buttonWidth)
-      this.renderer.setStyle(this.hostElement.nativeElement, 'line-height', '1em')
-      this.renderer.setStyle(this.hostElement.nativeElement, 'height', '1em')
-      let width = this.hostElement.nativeElement.clientWidth
-    } else {
-      this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', 'inherit')
-      this.renderer.removeClass(this.hostElement.nativeElement,'line-height')
-      this.renderer.removeClass(this.hostElement.nativeElement,'height')
-    }
-    if(!!this.innerPadding){
-      this.renderer.setStyle(this.rippleTrigger.nativeElement,'padding',this.innerPadding)
-    }
+    // this.color = this.appColors[this.inputColor]
+    // if (this.setSize()){
+    //   this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', this.buttonWidth)
+    //   this.renderer.setStyle(this.hostElement.nativeElement, 'line-height', '1em')
+    //   this.renderer.setStyle(this.hostElement.nativeElement, 'height', '1em')
+    //   let width = this.hostElement.nativeElement.clientWidth
+    // } else {
+    //   this.renderer.setStyle(this.hostElement.nativeElement, 'font-size', 'inherit')
+    //   this.renderer.removeClass(this.hostElement.nativeElement,'line-height')
+    //   this.renderer.removeClass(this.hostElement.nativeElement,'height')
+    // }
+    // if(!!this.innerPadding){
+    //   // this.renderer.setStyle(this.rippleTrigger.nativeElement,'padding',this.innerPadding)
+    // }
   }
   setSize(): boolean {
     return !this.showText() && isDefined(this.buttonWidth)

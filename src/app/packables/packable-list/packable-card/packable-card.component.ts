@@ -72,6 +72,7 @@ EDIT    -> handle modal window for packable
   packable: packableDetails;
 
   ngOnInit() {
+    this.useCard = false
     // use input packable and build backable view object
     this.packable = this.buildViewObject(this.inputPackable)
   }

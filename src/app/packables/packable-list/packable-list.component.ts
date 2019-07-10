@@ -74,6 +74,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   ngOnInit() {
     this.selected = [];
     this.editList = false;
+    this.useCard = false
     this.initView()
   }
   ngOnChanges(changes:SimpleChanges){

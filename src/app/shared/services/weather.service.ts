@@ -41,7 +41,6 @@ export class TripWeatherData {
     constructor(data?: Partial<TripWeatherData>) {
         if (data) {
             Object.assign(this, data)
-            console.log('[TripWeatherData assigned new data]', this)
         }
     }
     get isValid(): boolean {

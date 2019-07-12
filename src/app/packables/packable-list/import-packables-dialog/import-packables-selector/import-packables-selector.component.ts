@@ -71,13 +71,11 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
     this.remotePackables = this.storeSelector.getRemotePackablesWithMetaData().filter(p=>!usedIds.includes(p.id)).sort(sortByMetaData)
     let remoteList = this.createFilterObject(this.remotePackables)
     this.completeList = [...localList,...remoteList] 
-    console.log('import packables collection input:',this.collection)
     if(this.collection){
       this.usedList = this.collection.packables.ids()
     } else {
       this.usedList = localList.ids()
     }
-    console.log('Used List:',this.usedList,'\nCompelte List::',this.completeList)
     this.setLoaded(true)
   }
   createFilterObject(packables:Array<PackableOriginalWithMetaData>):searchableItem[]{

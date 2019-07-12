@@ -102,16 +102,20 @@ export class PackingListService {
         const id = paramMap.get('id')
         let loadedPackingList: PackingList;
         let loadedTrip: Trip;
+        let weatherData: TripWeatherData;
         if (isDefined(id)) {
           loadedPackingList = tripState.packingLists.findId(id)
           loadedTrip = tripState.trips.findId(id)
         } else if (isDefined(memoryTrip)) {
-          loadedPackingList = tripState.packingLists.findId(memoryTrip.id)
           loadedTrip = tripState.trips.findId(memoryTrip.id)
+          loadedPackingList = tripState.packingLists.findId(memoryTrip.id)
         }
+        if(this.tripMemory.tripSetAndValid){
+          weatherData = this.tripMemory.destWeatherData
+        } 
         if (isDefined(loadedTrip)) {
           log('Received packinglist from tripState', loadedPackingList)
-          this.autoUpdatePackingList(loadedTrip, loadedPackingList)
+          this.autoUpdatePackingList(loadedTrip, loadedPackingList,weatherData)
         } else {
           warn('Could not load trip')
           this.setloading(false);
@@ -126,33 +130,33 @@ export class PackingListService {
       })
     )
   }
-  autoUpdatePackingList(newTrip: Trip, loadedPackingList: PackingList) {
+  autoUpdatePackingList(newTrip: Trip, loadedPackingList: PackingList, weatherData:TripWeatherData) {
     const tripUpdated = isDefined(this.trip) && newTrip.dateModified > this.trip.dateModified;
     this.trip = newTrip
     log(`autoUpdate using trip`, this.trip)
     this.displayTrip = this.tripFac.makeDisplayTrip(this.trip)
     // THERES A SAVED PACKING LIST and TRIP IS NOT UPDATED
     if (loadedPackingList && !tripUpdated) {
-      // THIS SERVICE ALREADY HAS LOADED A PACKING LIST
+      // THIS SERVICE ALREADY HAS LOADED A PACKING LIST AND WE HAVE A TRIP WEATHER
       if (this.packingList && this.tripWeather) {
         if (this.packingList.dateModified < loadedPackingList.dateModified) {
           // NEW LIST IS NEWER
           this.setPackingList(this.tripFac.cleanUpList(loadedPackingList))
         } else {
-          log(`new packing list does not have a later time stamp\nOLD:`, this.packingList, '\nNEW:', loadedPackingList)
+          log(`loaded packing list does not have a later time - did nothing`)
         }
       } else {
-        log('Weather or PackingList not setup, updatingListBySetting,\n', 'Packinglist:', this.packingList, '\nTripWeather:', this.tripWeather)
+        // WEATEHR OR PACKNG LIST NOT SET UP
+        log('Weather or PackingList not setup')
         this.packingList = loadedPackingList
-        this.updatePackingListBySetting(loadedPackingList.data.weatherData.dataInput, { save: true })
+        this.updatePackingListBySetting(loadedPackingList.data.weatherData.dataInput, {save: true ,weatherData:weatherData})
       }
-      // THERES NO SAVED PACKING LIST
-    } else {
+    } else { // THERES NO SAVED PACKING LIST
       if (tripUpdated) {
         this.setPackingList(null)
         log(`Received updated trip`)
       }
-      this.updatePackingListBySetting('auto', { save: true })
+      this.updatePackingListBySetting('auto', { save: true , weatherData:weatherData})
     }
   }
 
@@ -165,8 +169,7 @@ export class PackingListService {
     }
   }
   updateUsingWeatherAPI({ weatherData, save }: updateOptions = { save: true }) {
-
-    if (weatherData && weatherData.isValid) {
+    if (weatherData && weatherData.isValid && moment(weatherData.dateModified).diff(moment(),'hours') < 24) {
       log(`using input weatherData`);
       this.setTripWeather(weatherData)
       this.updateWeather(save)
@@ -184,7 +187,7 @@ export class PackingListService {
   }
   updateUsingCustomWeather({ weatherData, save }: updateOptions = { save: true }) {
     this.packingListEmitter.next(null)
-    if (weatherData) {
+    if (weatherData && weatherData.isValid) {
       this.setTripWeather(weatherData)
     } else if (this.packingList) {
       this.setTripWeather(this.packingList.data.weatherData)
@@ -273,7 +276,6 @@ export class PackingListService {
       })
     })
     newPackingList.packables.forEach(p => this.checkPackableChanges(oldPackingList, p))
-    newPackingList.instaPackables = oldPackingList.instaPackables || []
     newPackingList.data = data;
     log(`Generated updated list`, newPackingList)
     return newPackingList
@@ -326,6 +328,7 @@ export class PackingListService {
       checked: false,
       quantity: accQuantity,
       id: packable.id,
+      type: 'LOCAL',
       profileID: profile.id,
       collectionID: collection.id,
       quantityReasons: [],
@@ -334,6 +337,7 @@ export class PackingListService {
       passChecks: passChecks,
       weatherReasons: weatherReasons,
       forcePass: false,
+      forceRemove: false,
       forceQuantity: false,
       recentlyAdded: false,
       dateModified: timeStamp(),
@@ -388,22 +392,22 @@ export class PackingListService {
   }
 
   addPackableToList(newP: PackingListPackable, packingList: PackingList): void {
-    let oldPackableIndex = packingList.packables.findIndexBy(newP, ['id', 'profileID'])
+    let existingPackableIndex = packingList.packables.findIndexBy(newP, ['id', 'profileID'])
     // COMPARE OLD PACKABLE'S QUANTITIES AND WEATHER CHECKS
-    if (oldPackableIndex != -1) {
-      let oldP = packingList.packables[oldPackableIndex]
+    if (existingPackableIndex != -1) {
+      let exP = packingList.packables[existingPackableIndex]
       let voidWeather = (p: PackingListPackable) => {
         p.weatherReasons.forEach(r => r.active = false)
       }
       let voidQuantity = (p: PackingListPackable) => {
         p.quantityReasons.forEach(r => r.active = false)
       }
-      if (newP.passChecks || newP.passChecks == oldP.passChecks) {
-        voidWeather(oldP)
-        copyProperties(oldP, newP, ['weatherNotChecked', 'passChecks', 'checked'])
-        if (newP.quantity >= oldP.quantity) {
-          voidQuantity(oldP)
-          copyProperties(oldP, newP, ['quantity'])
+      if (newP.passChecks || newP.passChecks == exP.passChecks) {
+        voidWeather(exP)
+        copyProperties(exP, newP, ['weatherNotChecked', 'passChecks', 'checked'])
+        if (newP.quantity >= exP.quantity) {
+          voidQuantity(exP)
+          copyProperties(exP, newP, ['quantity'])
         } else {
           voidQuantity(newP)
         }
@@ -411,8 +415,8 @@ export class PackingListService {
         voidWeather(newP)
         voidQuantity(newP)
       }
-      oldP.quantityReasons.push(...newP.quantityReasons)
-      oldP.weatherReasons.push(...newP.weatherReasons)
+      exP.quantityReasons.push(...newP.quantityReasons)
+      exP.weatherReasons.push(...newP.weatherReasons)
     } else {
       packingList.packables.push(newP)
     }

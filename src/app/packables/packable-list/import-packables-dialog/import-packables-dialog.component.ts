@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { searchableItem, filterItemLocality } from '@app/shared-comps/item-selector/item-selector.component';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { PackableComplete, PackablePrivate, PackableOriginal } from '../../../shared/models/packable.model';
@@ -9,20 +8,16 @@ import { CollectionComplete } from '../../../shared/models/collection.model';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
 import { Profile } from '../../../shared/models/profile.model';
 import { Store } from '@ngrx/store';
-import * as packableActions from '@app/packables/store/packables.actions';
-import * as collectionActions from '@app/collections/store/collections.actions'
-import * as profileActions from '@app/profiles/store/profile.actions'
 import * as fromApp from '@shared/app.reducers';
-import { setPackableState } from '../../store/packables.actions';
 import { transitionTrigger } from '../../../shared/animations';
-import { CollectionProfile } from '../edit-packable-dialog/choose-collections-form/choose-collections-form.component';
-import { timeStamp } from '../../../shared/global-functions';
 import { CollectionFactory } from '@app/shared/factories/collection.factory';
 import { WindowService } from '../../../shared/services/window.service';
+import { isDefined } from '../../../shared/global-functions';
 
 export interface importPackables_data {
   header: string,
-  usedPackables: PackableComplete[]
+  usedPackables: PackableComplete[],
+  selected?:string[]
 }
 export interface importPackables_result {
   packables: string[],
@@ -60,7 +55,6 @@ export class ImportPackablesDialogComponent implements OnInit {
       this.collection = context.getCollection();
       this.collectionName = this.collection.name
     }
-
   }
 
   ngOnInit() {
@@ -68,9 +62,17 @@ export class ImportPackablesDialogComponent implements OnInit {
       this.profileGroup = this.storeSelector.getProfilesWithCollectionId(this.context.collectionId)
       if (this.context.profileId) {
         this.selectedProfiles = [this.context.profileId]
+      } else {
+        this.selectedProfiles = this.profileGroup.ids()
       }
     }
-    this.dialogRef.addPanelClass('dialog-tall')
+    console.log( `imported-packable-diaglog selected:`,this.data.selected)
+    if(isDefined(this.data.selected)){
+      this.onUpdateSelected(this.data.selected)
+      this.onConfirm()
+    } else {
+      this.dialogRef.addPanelClass('dialog-tall')
+    }
   }
   onUpdateSelected(selected:string[]){
     this.selectedIds = selected;

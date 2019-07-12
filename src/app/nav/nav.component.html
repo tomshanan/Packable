@@ -30,28 +30,29 @@
 </div>
 
 <div
-  class="nav-container d-md-none"
-  [class.active]="navOpen"
-  (click)="toggleNav(false)">
-
-<div
-  class="d-block d-md-none slider-nav bg-dark text-white justify-content-end"
-  style="z-index: 101;"
-  [class.active]="navOpen" InnerLink>
-  <div class="w-100 text-right rtl text-">
-    <div class="closeButton">
-      <button
-        mat-icon-button
-        (click)="toggleNav()"
-        activeColor="muted">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-    <div class="nav-list-container">
+  *ngIf="windowService.max('md')"
+  class="nav-wrapper"
+  [class.active]="navOpen">
+  <div class="black-overlay" 
+  (click)="toggleNav(false)"></div>
+  <div
+    class="slider-nav"
+    style="z-index: 101;"
+    [class.active]="navOpen">
+    <div class="w-100 text-right rtl text-">
+      <div class="closeButton">
+        <button
+          mat-icon-button
+          (click)="toggleNav()"
+          activeColor="muted">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="nav-list-container">
         <app-nav-list (navigate)="toggleNav()"></app-nav-list>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <ng-template #rightButton>

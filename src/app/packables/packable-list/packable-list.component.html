@@ -2,7 +2,7 @@
   @blockInitialAnimations
   *ngIf="packableList">
   <toolbar [editMode]="editList" [class.nested]="editingCollectionId">
-    <div class="checkbox-container" [class.m-0]="!editingCollectionId">
+    <div class="checkbox-container" [class.m-0]="!editingCollectionId" *ngIf="packableList.length>0">
       <mat-checkbox
         [indeterminate]="masterCheckboxIsIntermediate()"
         [checked]="masterCheckboxIsChecked()"

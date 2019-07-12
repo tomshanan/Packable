@@ -100,14 +100,15 @@ export class SettingsComponent implements OnInit, OnDestroy {
   resetList() {
     let data: ConfirmDialogData = {
       header: 'Reset List? ',
-      content: 'Resetting the packing list will recalculate your packing list and all Packables will be unchecked.',
+      content: '<p>Resetting the packing list will recalculate your packing list.</p><p>All Packables will be unchecked, and any manually added packables will be deleted.</p><p><b>Are you sure you want to continue?</b></p>',
+      activeColor:'danger',
     }
     let confirmDialog = this.dialog.open(ConfirmDialog, {
       data: data
     })
     confirmDialog.afterClosed().pipe(take(1)).subscribe((confirm: boolean) => {
       if (confirm) {
-        //this.packingListService.setPackingList(null)
+        this.packingListService.setPackingList(null)
         this.packingListService.updatePackingListBySetting('auto', { save: true })
       }
     })

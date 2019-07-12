@@ -1,15 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
-body{
-    scroll-behavior: smooth; 
+body {
+    scroll-behavior: smooth;
 }
-html.modal-open, html.modal-open body, body.modal-open{
+
+html.modal-open, html.modal-open body, body.modal-open {
     overflow: hidden;
     position: relative;
     height: 100%;
 }
+
 .dialog-default {
     max-width: 100%;
     max-height: 100%;
@@ -41,12 +42,15 @@ html.modal-open, html.modal-open body, body.modal-open{
     padding: 0;
     margin: 0;
 }
+
 .form-mobile-padding {
     padding-bottom: 80px;
 }
+
 .form-actions {
     margin-top: 80px;
 }
+
 .form-actions-sticky {
     position: sticky;
     bottom: 0;
@@ -364,10 +368,10 @@ input.rule-input {
     width: 100%;
     max-width: 500px;
 }
-.w-500{
-    width:500px;
-}
 
+.w-500 {
+    width: 500px;
+}
 
 .collection {
     padding: 10px;
@@ -613,9 +617,39 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
 .mat-expansion-panel-header[aria-disabled=true] {
     color: inherit;
 }
-.mat-expansion-panel.collection-panel.overflow{
+
+.mat-expansion-panel.collection-panel.overflow {
     overflow: initial;
 }
+
 .mat-expansion-panel.collection-panel.overflow .mat-expansion-panel-content {
     overflow: initial;
+}
+
+.caret:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0px;
+    border-top: 4px solid currentColor;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+}
+
+.caret:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 1px;
+    border-top: 3px solid #fff;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+}
+.caret.caret-left:before{
+    left: 0px;
+    right:unset;
+}
+.caret.caret-left:after{
+    left: 1px;
+    right:unset;
 }

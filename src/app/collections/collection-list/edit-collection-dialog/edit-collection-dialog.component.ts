@@ -64,9 +64,7 @@ export class EditCollectionDialogComponent implements OnInit {
   ngOnInit() {
     this.usedNames = this.storeSelector.originalCollections.map(c=>c.name)
   }
-  getUsedNames():string[]{
-    return this.storeSelector.getUsedCollectionNames()
-  }
+
   changeNameEvent(e:NameInputChangeEvent){
     this.nameValid = e.valid
     if(e.valid){

@@ -4,7 +4,7 @@ import * as profileActions from '@app/profiles/store/profile.actions'
 import * as fromApp from '@shared/app.reducers';
 import { Store } from '@ngrx/store';
 
-import { isDefined, Guid } from '@shared/global-functions';
+import { isDefined, Guid, hasNameAndId } from '@shared/global-functions';
 import { FormControl, Validators } from '@angular/forms';
 import { CollectionComplete } from '@shared/models/collection.model';
 import { StoreSelectorService } from '@shared/services/store-selector.service';
@@ -12,7 +12,7 @@ import { PackableOriginal } from '@shared/models/packable.model';
 import { PackableFactory } from '@shared/factories/packable.factory';
 import { Profile } from '@shared/models/profile.model';
 import { ContextService } from '@shared/services/context.service';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ProfileFactory } from '@shared/factories/profile.factory';
 import { BulkActionsService } from '@shared/services/bulk-actions.service';
 import { CollectionFactory } from '@app/shared/factories/collection.factory';
@@ -21,6 +21,8 @@ import * as packableActions from '@app/packables/store/packables.actions';
 import { NameInputChangeEvent } from '@app/shared-comps/name-input/name-input.component';
 import { filter } from 'rxjs/operators';
 import { WindowService } from '../../../shared/services/window.service';
+import { hasOrigin, comparableName } from '../../../shared/global-functions';
+import { ImportCollectionDialogComponent, importCollections_data } from '../import-collection-dialog/import-collection-dialog.component';
 
 export interface newCollectionDialog_data {
   profileGroup?: Profile[];
@@ -39,11 +41,11 @@ export interface newCollectionDialog_result {
 export class NewCollectionDialogComponent implements OnInit {
   collectionName: string;
   collection: CollectionComplete;
-  usedCollectionNames: string[];
+  usedCollectionNames: Array<hasNameAndId & hasOrigin>;
   collectionNameValid: boolean = false;
   step: number = 1;
   remotePackableIds: string[] = [];
-
+  allowImport:boolean = false
   profileGroup: Profile[];
   selectedProfiles: string[] = [];
 
@@ -51,6 +53,7 @@ export class NewCollectionDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: newCollectionDialog_data,
     public dialogRef: MatDialogRef<NewCollectionDialogComponent>,
+    private dialog:MatDialog,
     private store: Store<fromApp.appState>,
     private bulkActions: BulkActionsService,
     private storeSelector: StoreSelectorService,
@@ -77,8 +80,12 @@ export class NewCollectionDialogComponent implements OnInit {
 
   setName(e: NameInputChangeEvent) {
     this.collectionNameValid = e.valid
-    if (e.valid) {
-      this.collectionName = e.value
+    this.collectionName = e.value
+    if (!e.valid) {
+      let col = this.usedCollectionNames.find(c=>comparableName(c.name)===comparableName(e.value))
+      if(col && (col.origin === 'remote' || this.context.profileId)){
+        this.allowImport = true
+      }
     }
   }
   onClose(collection: CollectionComplete = null, profiles: Profile[] = []) {
@@ -97,14 +104,14 @@ export class NewCollectionDialogComponent implements OnInit {
   updatePackables(ids: string[]) {
     this.remotePackableIds = ids
   }
-  valid(){
+  valid() {
     switch (this.step) {
       case 1:
-          return this.collectionNameValid
+        return this.collectionNameValid
       case 2:
-          return this.remotePackableIds.length>0
+        return true
       case 3:
-          return true
+        return true
       default:
         break;
     }
@@ -124,17 +131,35 @@ export class NewCollectionDialogComponent implements OnInit {
         break;
     }
   }
-
+  importRequest(name:string){
+    name = comparableName(name)
+    let col = this.usedCollectionNames.find(p=>comparableName(p.name)===name)
+    if(col){
+      let data:importCollections_data={
+        selectedCollections: [col.id],
+        profileName:this.context.profileId ? this.context.getProfile().name : '',
+      }
+      this.dialog.open(ImportCollectionDialogComponent, {
+        disableClose: true,
+        data: data
+      });
+      this.dialogRef.close(null)
+    }
+  }
   confirmPackables() {
-    let remotePackables = this.storeSelector.getRemotePackablesWithMetaData(this.remotePackableIds)
-    let completePackables = this.pacFac.makeCompleteFromArray(remotePackables)
-    this.collection.packables = completePackables
+    if (this.remotePackableIds.length > 0) {
+      let remotePackables = this.storeSelector.getRemotePackablesWithMetaData(this.remotePackableIds)
+      let completePackables = this.pacFac.makeCompleteFromArray(remotePackables)
+      this.collection.packables = completePackables
+    }
     this.nextStep()
 
   }
   confirmProfiles() {
     let originalCollection = this.colFac.completeToOriginal(this.collection)
-    this.bulkActions.addMissingPackableIdsFromRemote(this.remotePackableIds)
+    if (this.remotePackableIds.length > 0) {
+      this.bulkActions.addMissingPackableIdsFromRemote(this.remotePackableIds)
+    }
     this.store.dispatch(new collectionActions.updateOriginalCollections([originalCollection]))
     this.bulkActions.pushCompleteCollectionsToProfiles([this.collection], this.selectedProfiles)
     const profiles = this.profileGroup.filter(p => this.selectedProfiles.includes(p.id))
@@ -155,27 +180,11 @@ export class NewCollectionDialogComponent implements OnInit {
       this.dialogRef.addPanelClass('dialog-tall')
     }
   }
-  validate_usedName(control: FormControl): { [s: string]: boolean } {
-    let input = control.value.toLowerCase();
-    if (this.usedCollectionNames.indexOf(input) > -1) {
-      return { 'usedName': true };
-    }
-    return null;
-  }
-
-  profileSelect(select: 'all' | 'none') {
-    if (select == 'all') {
-      this.selectedProfiles = this.profileGroup.map(p => p.id)
-    } else {
-      this.selectedProfiles = [];
-    }
-  }
-
   stepTitle(): string {
     switch (this.step) {
-      case 1: return 'New Collection'; 
-      case 2: return 'Choose Packables'; 
-      case 3: return 'Add To Profiles'; 
+      case 1: return 'New Collection';
+      case 2: return 'Choose Packables';
+      case 3: return 'Add To Profiles';
     }
   }
 

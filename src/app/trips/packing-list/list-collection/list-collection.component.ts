@@ -13,11 +13,12 @@ import { PackingListService } from '../packing-list.service';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import { Observable } from 'rxjs';
-import { Guid, isDefined } from '../../../shared/global-functions';
+import { Guid, isDefined, allowedNameRegEx } from '../../../shared/global-functions';
 import { editCollectionDialog_data } from '@app/collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
 import { EditCollectionDialogComponent } from '../../../collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
 import { CollectionComplete } from '../../../shared/models/collection.model';
 import { CollectionFactory } from '../../../shared/factories/collection.factory';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'packing-list-collection',
@@ -35,6 +36,7 @@ export class ListCollectionComponent implements OnInit {
   
   profiles:ProfileComplete[];
   settings$:Observable<PackingListSettings>;
+  newPackableName:FormControl;
   constructor(
     private dialog: MatDialog,
     private context: ContextService,
@@ -42,7 +44,10 @@ export class ListCollectionComponent implements OnInit {
     private colFac: CollectionFactory,
     private packingListService: PackingListService,
     private pacFac:PackableFactory,
-  ) { }
+    private fb:FormBuilder,
+  ) { 
+    this.newPackableName = fb.control('',[Validators.pattern(allowedNameRegEx),Validators.required])
+  }
 
   ngOnInit() {
     this.profiles = this.profileFactory.getCompleteProfilesByIds(this.trip.profiles)
@@ -120,7 +125,9 @@ export class ListCollectionComponent implements OnInit {
     }
     this.editingPackableChange.emit(this.editingPackable)
   }
-
+  addManualPackable(str){
+    console.log('Adding simple packable:',str)
+  }
   newPackable() {
     let editingPackable = new PackableComplete()
     editingPackable.userCreated = true;
@@ -157,7 +164,6 @@ export class ListCollectionComponent implements OnInit {
       if(isDefined(collection)){
         console.log(`${collection.name} has been updated`,collection)
         this.packingListService.generateAndStorePackingList()
-        this.packingListService.refreshPackingList()
       }
     })
 

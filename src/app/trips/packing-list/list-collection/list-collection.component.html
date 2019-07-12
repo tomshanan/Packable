@@ -1,4 +1,6 @@
-<div class="d-flex align-items-center" style="min-height: 40px;">
+<div
+  class="d-flex align-items-center"
+  style="min-height: 40px;">
   <h6 class="ml-2">{{collection.header}}</h6>
   <button
     mat-icon-button
@@ -9,7 +11,7 @@
     <mat-icon outlined>settings</mat-icon>
   </button>
   <mat-menu #editColMenu="matMenu">
-      <button
+    <button
       mat-menu-item
       (click)="newPackable()">
       <mat-icon>add</mat-icon>
@@ -36,4 +38,29 @@
       (toggleEdit)="onToggleEditPackable($event,edititingP)">
     </list-packable>
   </ng-container>
+  <form (ngSubmit)="addManualPackable(newPackableName.value)">
+    <div class="new-packable">
+      <button
+        type="button"
+        activeColor="action"
+        activeColorState="muted"
+        (click)="nameInput.focus()"
+        mat-icon-button>
+        <mat-icon>add</mat-icon>
+      </button>
+      <input
+        type="text"
+        class="invisibleInput"
+        placeholder="Add Packable..."
+        [formControl]="newPackableName"
+        #nameInput>
+      <button
+        type="submit"
+        *ngIf="newPackableName.valid"
+        activeColor="accent"
+        mat-icon-button>
+        <mat-icon>check</mat-icon>
+      </button>
+    </div>
+  </form>
 </ul>

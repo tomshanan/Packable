@@ -352,7 +352,7 @@ export class CollectionListComponent implements OnInit, OnChanges, OnDestroy {
       disableClose: true,
     });
     newCollectionDialog.afterClosed().pipe(take(1)).subscribe((result: newCollectionDialog_result) => {
-      if (result.collection) {
+      if (result && result.collection) {
         console.log(`Created collection:\n`,result.collection);
         this.toggleListEditing(false)
       }

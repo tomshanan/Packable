@@ -1,5 +1,5 @@
 <div [class.flex-device-height]="windowService.max('md')">
-  <app-nav [header]="'New Trip'" [rightIcon]="windowService.max('md') ? (step < 4 ? nextIcon : packIcon) : null" (rightClick)="onConfirmStep(step)" [rightDisabled]="!stepValid"></app-nav>
+  <app-nav [header]="'New Trip'" [rightIcon]="windowService.max('md') ? (step < 3 ? nextIcon : packIcon) : null" (rightClick)="onConfirmStep(step)" [rightDisabled]="!stepValid"></app-nav>
   <div class="scrollable">
     <app-stepper [steps]="steps" [currentStep]="step" (stepClicked)="nextStep($event)"></app-stepper>
     <div class="step centered" *ngIf="step===1">

@@ -30,14 +30,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
   state_subscription: Subscription = new Subscription();
   saveTimeout = setTimeout(() => { }, 0);
   loading$:Observable<boolean>;
-  absoluteMaxTemp = absoluteMax // for template
-  absoluteMinTemp = absoluteMin // for template
-  lastSave: string; // for template
   navParams: navParams; // for template
-  tempOptions = tempOptions; // for template
-  weatherTypeOptions = weatherOptions; // for template
-  settingsOpen = false; // for template
-  showInvalidPackables = true // for template
   menuIcon:Icon = {icon:{type:'mat',name:'settings'},text:'Options'}
   editingPackable: ListPackableComponent; // for list-collection-component
   panelsOpen: {[id:string]:boolean} = {};
@@ -102,50 +95,11 @@ export class PackingListComponent implements OnInit, OnDestroy {
     this.trip = this.packingListService.trip
     this.displayTrip = this.packingListService.displayTrip
     this.forecastString = newPackinglist.data.weatherData.forecastString()
-    this.patchWeatherForm(this.packingList)
-    this.lastSave = moment().format('MMM Do, hh:mm')
     if (!this.sortedList) {
       this.sortedList = this.tripFac.createDisplayPackingList(this.packingList.packables)
     } else {
       this.tripFac.createDisplayPackingList(this.packingList.packables, this.sortedList)
     }
-  }
-
-  updatePackingListWithCustomWeather() {
-    this.packingList = null;
-    let formWeather = this.getWeatherDataFromForm();
-    setTimeout(()=>{
-      this.packingListService.updateUsingCustomWeather({weatherData:formWeather,save:true})
-    },0)
-  }
-  updatePackingListWithWeatherAPI(){
-    this.packingList = null;
-    this.forecastString = 'Loading Weather...'
-    setTimeout(()=>{
-      this.packingListService.updateUsingWeatherAPI({save:true})
-    },0)
-  }
-
-  getWeatherDataFromForm(): TripWeatherData {
-    let tripWeather = new TripWeatherData();
-    tripWeather.minTemp = this.customWeatherForm.get('min').value
-    tripWeather.maxTemp = this.customWeatherForm.get('max').value
-    tripWeather.weatherTypes = this.customWeatherForm.get('types').value
-    tripWeather.dataInput = 'manual';
-    return tripWeather
-  }
-
-  reloadPackingList() {
-    this.packingListService.generateAndStorePackingList()
-  }
-
-  patchWeatherForm(NewPackingList: PackingList) {
-    let weatherDataObj = NewPackingList.data.weatherData;
-    this.customWeatherForm.patchValue({
-      min: weatherDataObj.minTemp,
-      max: weatherDataObj.maxTemp,
-      types: weatherDataObj.weatherTypes
-    })
   }
 
 
@@ -163,6 +117,7 @@ export class PackingListComponent implements OnInit, OnDestroy {
         packable.forceQuantity = false
         packable.forcePass = false
         packable.checked = false
+        packable.forceRemove = false
     })
     this.packingListService.generateAndStorePackingList()
   }

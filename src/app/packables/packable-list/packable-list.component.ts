@@ -79,17 +79,8 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   }
   ngOnChanges(changes:SimpleChanges){
     if(changes['inputPackables'] || changes['inputCollectionId'] || changes['inputProfileId']){
-      // console.log(`packableList recieved new packables`, this.inputPackables);
       this.initView()
     }
-    // if(changes['inputCollectionId']){
-    //   // console.log(`packableList recieved new collection Id`, this.inputCollectionId);
-    //   this.initView()
-    // }
-    // if(changes['inputProfileId']){
-    //   // console.log(`packableList recieved new profile id`, this.inputProfileId);
-    //   this.initView()
-    // }
   }
   ngOnDestroy(){
   }
@@ -224,6 +215,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     let data: DialogData_EditPackable = {
       pakable: editingPackable,
       isNew: true,
+      usedPackables: this.packableList
     }
     let dialogRef = this.dialog.open(EditPackableDialogComponent, {
       disableClose:true,
@@ -333,7 +325,6 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     });
     importPackablesDialog.afterClosed().pipe(take(1)).subscribe((result:importPackables_result)=>{
       if(isDefined(result) && isDefined(result.packables) && (!this.editingProfileId || result.selectedProfiles.includes(this.editingProfileId))){
-        //this.updateViewObject(result.packables, 'add')
         this.toggleEditList(false)
         this.selected = []
       }

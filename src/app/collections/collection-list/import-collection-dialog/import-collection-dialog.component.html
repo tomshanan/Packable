@@ -8,8 +8,7 @@
 <mat-dialog-content>
   <div
     *ngIf="step === 1"
-    @transitionTrigger
-    (@transitionTrigger.start)="step === 2 && windowService.updateOpenDialogs()">
+    @transitionTrigger>
     <div id="sticky">
       <p class="form-heading">Import Collections:</p>
       <search-field
@@ -38,7 +37,6 @@
   <div
     class="dialog-row"
     *ngIf="step === 2"
-    (@transitionTrigger.start)="step === 1 && windowService.updateOpenDialogs()"
     @transitionTrigger>
     <p class="text-center my-1">Import Collections to Travelers:</p>
     <div class="text-center my-2">

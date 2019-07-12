@@ -10,12 +10,13 @@
     <div
       *ngIf="step===1"
       #inputName
-      (@transitionTrigger.done)="windowService.updateOpenDialogs()"
       @transitionTrigger>
       <name-input
         title="Collection"
         [value]='collectionName'
         [usedNames]='usedCollectionNames'
+        [allowImport]="allowImport"
+        (importRequest)="importRequest($event)"
         (changeEvent)='setName($event)'>
       </name-input>
     </div>
@@ -23,7 +24,6 @@
     <div
       *ngIf="step===2"
       #selectPackables
-      (@transitionTrigger.done)="windowService.updateOpenDialogs()"
       @transitionTrigger>
       <import-packables-selector
         [collection]="collection"
@@ -33,7 +33,6 @@
 
     <div
       *ngIf="step===3"
-      (@transitionTrigger.done)="windowService.updateOpenDialogs()"
       @transitionTrigger>
       <div class="text-center my-2">
         <profile-selector

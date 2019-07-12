@@ -5,6 +5,15 @@ import { Metadata, HasMetaData } from './library/library.model';
 export type hasId = {
   id: string
 }
+export type hasNameAndId = {
+  name:string
+  id: string
+}
+type origin = 'local'|'remote'
+export interface hasOrigin {
+  origin:origin
+}
+
 export function timeStamp(): number {
   let newStamp = new Date().valueOf()
   return newStamp
@@ -143,7 +152,7 @@ export function decodeHtml(html: string) {
 }
 
 export function comparableName(str: string) {
-  return str.trim().toLowerCase().split(allowedSpacesRegEx).join()
+  return str.trim().toUpperCase().split(allowedSpacesRegEx).join('')
 }
 type hasDateModified = { dateModified: number }
 export function sortByMostRecent(a: hasDateModified, b: hasDateModified): number {

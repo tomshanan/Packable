@@ -39,13 +39,13 @@
       text="Import"
       svgIcon="collection-import"
       (onClick)="bulkActionImportCollections()"
-      showTextFromSize="xs"
+      showTextFromSize="xxs"
       *ngIf="profileId || !storeSelector.isLibraryStore"></icon-text-button>
     <icon-text-button
       text="Create"
       svgIcon="collection-add"
       (onClick)="actionNewCollection()"
-      showTextFromSize="xs"></icon-text-button>
+      showTextFromSize="xxs"></icon-text-button>
   </ng-container>
   <ng-container *ngIf="listEditing" ngProjectAs="[toolbar-right]">
     <button

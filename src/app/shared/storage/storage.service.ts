@@ -448,7 +448,7 @@ export class StorageService {
         return this.wrapForStorage(packingLists.map(list=>{
             return {
                 ...list,
-                packables: this.wrapPackingListsPackables(list.packables)
+                packables: this.wrapPackingListsPackables(list.packables),
             }
         }))
     }

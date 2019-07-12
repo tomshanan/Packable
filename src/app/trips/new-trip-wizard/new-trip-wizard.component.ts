@@ -112,13 +112,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   fetchLibraryData() {
     // check that all the trips properties that are required for weather data are present
     if (this.tripFac.validateTripProperties(this.trip, ['startDate', 'startDate', 'destinationId'])) {
-      this.storageService.getLibrary()
-      this.destWeatherData$ = from(this.weatherService.getTripWeatherData(this.trip))
-      this.destMetaData$ = this.storeSelector.libraryState$
-        .pipe(
-          filter((state) => !state.loading),
-          map(state => new destMetaData(state.destMetaData[this.trip.destinationId]))
-        )
+      
       console.log('TRIP WIZARD', `subscribing to lib/weatherAPI`)
     } else {
       console.log(`🚫 could not fetch library and weather data because trip is not set up correctly`, this.trip)
@@ -150,13 +144,14 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
   }
 
   // STEP MANAGEMENT
-  stepActions(step: number): boolean {
+  stepActions(step: number) {
     switch (step) {
       case 1:
-        // subscribe to library to fetch items, and get destination weather data
-        this.fetchLibraryData()
-        
-        return true
+        // subscribe to library to fetch items, and get destination weatherdata and metadata
+        this.storageService.getLibrary()
+        this.destWeatherData$ = this.tripMemory.destWeatherData$
+        this.destMetaData$ = this.tripMemory.destMetaData$
+        break;
       case 2:
         // remove missing IDs from trip collections groups
         let profileIds = this.trip.profiles
@@ -164,20 +159,19 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
           c.profiles = c.profiles.filter(pId => profileIds.includes(pId))
         })
         this.profileGroup = this.storeSelector.profiles.filter(p => profileIds.includes(p.id))
-        
-        return true
+        break;
       case 3:
         this.bulkActions.pushMissingCollectionsToProfiles(this.trip.collections)
         this.tripMemory.saveTripAndDeleteTemp(this.trip)
         this.router.navigate(['trips', 'packing-list', this.trip.id])
-        return false
+        break;
     }
-    this.validateStep(step+1)
   }
+
   onConfirmStep(step: number) {
     if (this.checkStep(step)) {
-      let cont = this.stepActions(step)
-      if (cont) {
+      this.stepActions(step)
+      if (step < 3) {
         this.tripMemory.saveTempTrip(this.trip)
         this.nextStep(step + 1)
       }

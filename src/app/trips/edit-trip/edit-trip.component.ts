@@ -21,10 +21,8 @@ import { Icon } from '@app/shared-comps/stepper/stepper.component';
   styleUrls: ['./edit-trip.component.css']
 })
 export class EditTripComponent implements OnInit,OnDestroy {
-  destWeatherData$: Observable<TripWeatherData>;
-  destMetaData$: Observable<destMetaData>;
+
   displayTrip: DisplayTrip;
-  sub:Subscription;
 
   tripLinks=[
     {path:'destination',text:'Place and Dates',svgIcon:'place-edit'},
@@ -50,17 +48,21 @@ export class EditTripComponent implements OnInit,OnDestroy {
   ngOnInit() {
     this.storageService.getLibrary()
     let id = this.route.snapshot.paramMap.get('id')
-    if(!isDefined(id)){
+    let tripSetAndValid = this.tripService.tripSetAndValid
+    if(!isDefined(id) && !tripSetAndValid){
       console.warn('trip id was not set')
       this._location.back()
-    }
-    this.tripService.setTripById(id)
-    this.sub = this.tripService.tripEmitter.pipe(first(trip=>isDefined(trip))).subscribe(trip=>{
+    } else if(tripSetAndValid){
       this.displayTrip = this.tripService.displayTrip
-    })
+    } else if(isDefined(id)){
+      console.log(`tripSetAndValid returned false`,this.tripService)
+      this.tripService.setTripById(id)
+      this.tripService.tripEmitter.pipe(first(trip=>isDefined(trip))).subscribe(trip=>{
+        this.displayTrip = this.tripService.displayTrip
+      })
+    }
   }
   ngOnDestroy(){
-    this.sub && this.sub.unsubscribe();
   }
   goToPackinglist(){
     this.router.navigate(['trips/packing-list',this.displayTrip.id])

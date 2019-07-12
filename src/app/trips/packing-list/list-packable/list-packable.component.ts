@@ -54,10 +54,12 @@ export class ListPackableComponent implements OnInit,OnChanges {
     this.packable.checked = false
     this.packable.forcePass = false
     this.packable.passChecks = false
+    this.packable.forceRemove = true
     this.updateQuantityEmitter.emit(this.packable)
   }
   addInvalid(){
     this.packable.forcePass = true;
+    this.packable.forceRemove = false;
     if(this.packable.quantity > 0){
       this.addInvalidEmitter.emit(this.packable)
     } else {

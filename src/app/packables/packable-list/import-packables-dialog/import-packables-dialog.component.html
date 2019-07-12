@@ -6,7 +6,6 @@
 <mat-dialog-content>
   <div
     @transitionTrigger
-    (@transitionTrigger.done)="windowService.updateOpenDialogs()"
     *ngIf="step == 1">
     <import-packables-selector
       [collection]="collection"
@@ -15,7 +14,6 @@
   </div>
   <div
     @transitionTrigger
-    (@transitionTrigger.done)="windowService.updateOpenDialogs()"
     *ngIf="step == 2"
     class="text-center">
     <p class="text-small">

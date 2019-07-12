@@ -7,6 +7,7 @@
             <mat-icon *ngIf="type.value == 'period'">date_range</mat-icon>
             <mat-icon *ngIf="type.value == 'profile'">person</mat-icon>
             <mat-icon *ngIf="type.value == 'trip'" svgIcon="together"></mat-icon>
+            <div class="caret"></div>
         </button>
         <mat-menu #typeMenu="matMenu" [hasBackdrop]="true">
             <button mat-menu-item (click)="changeType('period')">

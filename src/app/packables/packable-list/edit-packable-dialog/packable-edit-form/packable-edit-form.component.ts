@@ -4,7 +4,7 @@ import { PackableOriginal, QuantityRule } from '@shared/models/packable.model';
 import { WeatherRule } from '@models/weather.model';
 import { PackableComplete } from '@shared/models/packable.model';
 import { ProfileComplete } from '@shared/models/profile.model';
-import { isDefined, titleCase } from '@shared/global-functions';
+import { isDefined, titleCase, hasNameAndId, hasOrigin } from '@shared/global-functions';
 import { Profile } from '@shared/models/profile.model';
 import { ProfileFactory } from '@shared/factories/profile.factory';
 import { CollectionComplete } from '@shared/models/collection.model';
@@ -13,6 +13,7 @@ import { QuantityRuleListComponent } from './quantity-rule-list/quantity-rule-li
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { ContextService } from '@app/shared/services/context.service';
 import { NameInputChangeEvent, NameInputComponent } from '@app/shared-comps/name-input/name-input.component';
+import { comparableName } from '../../../../shared/global-functions';
 
 
 export interface editPackableForm_update{
@@ -42,18 +43,20 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
   @Input('collection') collectionId: string;
   @Input() isNew: boolean = false;
   @Input() editName: boolean = false;
+  
 
   @Output() update = new EventEmitter<editPackableForm_update>()
+  @Output() importRequest = new EventEmitter<string>()
 
   @ViewChild('nameInput') nameInput:NameInputComponent;
   @ViewChild(QuantityRuleListComponent) quantityRuleComponent:QuantityRuleListComponent;
   
   showProfileSelector: boolean = false;
   isDefined = isDefined;
-  usedPackableNames: string[] =[];
+  usedPackableNames: Array<hasNameAndId & hasOrigin> =[];
   packableName: string = ''
   nameValid: boolean = true;
-
+  allowImport:boolean = false;
 
   ngOnInit() {
       this.resetForm()
@@ -75,7 +78,7 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
     }
     this.showProfileSelector = (this.collectionId && this.profileGroup && this.profileGroup.length > 0) ? true : false
     if (this.editName){
-      this.usedPackableNames = this.storeSelector.getUsedPackableNames()
+        this.usedPackableNames = this.storeSelector.getUsedPackableNames()
     }
   }
 
@@ -106,8 +109,14 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
 
   onEditName(e:NameInputChangeEvent) {
     this.nameValid = e.valid;
-    if(e.valid){
-      this.packableName = titleCase(e.value.trim())
+    this.packableName = titleCase(e.value.trim())
+    if(e.valid === false){
+      let p = this.usedPackableNames.find(p=>comparableName(p.name) === comparableName(e.value))
+      if(p && this.isNew){
+        if(p.origin === 'remote' || this.collectionId){
+          this.allowImport = true;
+        }
+      }
     }
     this.emitChange()
   }
@@ -132,6 +141,15 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
     }
     console.log('form validation:'+(valid?'valid':'invalid'))
     return valid
+  }
+
+  onImportRequest(name:string){
+    if(this.isNew){
+      let item = this.usedPackableNames.find(n=>comparableName(n.name)===comparableName(name))
+      if(item){
+        this.importRequest.emit(item.id)
+      }
+    }
   }
 
 }

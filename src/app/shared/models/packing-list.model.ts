@@ -47,11 +47,15 @@ export class DisplayPackingList {
     }
 }
 
+
+export type ListPackableType = 'LOCAL' | 'REMOTE' | 'SIMPLE';
+
 export interface PackingListPackable {
     profileID: string,
     collectionID: string,
     id: string,
     name: string,
+    type: ListPackableType,
     quantity: number,
     quantityReasons: Reason[],
     forceQuantity: boolean,
@@ -61,7 +65,8 @@ export interface PackingListPackable {
     weatherReasons: Reason[],
     weatherNotChecked: boolean,
     forcePass: boolean,
-    recentlyAdded?: boolean,
+    forceRemove:boolean,
+    recentlyAdded: boolean,
     dateModified: number,
 }
 
@@ -89,12 +94,11 @@ export class PackingList {
         public id: string,
         public data: packingListData = new packingListData(),
         public packables: PackingListPackable[] = [],
-        public instaPackables: PackingListPackable[] = [],
         public dateModified: number = timeStamp(),
     ) { }
 
 }
 
 export function pass(p: PackingListPackable): boolean {
-    return (p.passChecks || p.forcePass) && p.quantity > 0
+    return !p.forceRemove && (p.passChecks || p.forcePass) && p.quantity > 0
 }

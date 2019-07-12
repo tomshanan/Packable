@@ -97,7 +97,6 @@ export class BulkActionsService {
         profileIds.forEach(pId=>{
           if(trip.profiles.includes(pId)){
             trip.collections.forEach(col=>{
-              console.log(col);
               if(collectionIds.includes(col.id)){
                 col.profiles = isDefined(col.profiles) ? col.profiles.filter(pId=>!profileIds.includes(pId)) : []
                 tripChanges++

@@ -1,7 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatInput } from '@angular/material';
-import { allowedNameRegEx, comparableName } from '@app/shared/global-functions';
+import { allowedNameRegEx, comparableName, hasNameAndId, hasOrigin } from '@app/shared/global-functions';
+
+
 
 export interface NameInputChangeEvent {
   oldValue:string,
@@ -16,10 +18,12 @@ export interface NameInputChangeEvent {
 export class NameInputComponent implements OnInit,AfterViewInit {
   @Input() title: string = 'Item';
   @Input() value: string = '';
-  @Input('usedNames') usedNamesInput: string[] = [];
+  @Input() allowImport: boolean = false;
+  @Input('usedNames') usedNamesInput: Array<hasNameAndId & hasOrigin> = [];
   usedNames: string[] = [];
   @Output() valueChange = new EventEmitter<string>()
   @Output() changeEvent = new EventEmitter<NameInputChangeEvent>()
+  @Output() importRequest = new EventEmitter<string>()
   @ViewChild('editNameInput') editNameInput: ElementRef;
   allowedName: string;
   
@@ -44,7 +48,7 @@ export class NameInputComponent implements OnInit,AfterViewInit {
     return null;
   }
   ngOnInit() {
-    this.usedNames = this.usedNamesInput.map(str=>comparableName(str))
+    this.usedNames = this.usedNamesInput.map(used=>comparableName(used.name))
     this.allowedName = this.value;
     this.nameInput= new FormControl(this.value, [
       Validators.required, 
@@ -53,13 +57,19 @@ export class NameInputComponent implements OnInit,AfterViewInit {
     ])
   }
   ngAfterViewInit(){
-    setTimeout(()=>{
-      this.editNameInput.nativeElement.focus()
-    },100)
+    if(!this.nameInput.valid){
+      window.scrollTo(0,0)
+      setTimeout(()=>{
+        this.editNameInput.nativeElement.focus()
+      },500)
+    }
   }
   resetName(){
     this.nameInput.setValue('')
     this.emitChange()
+  }
+  import(){
+    this.importRequest.emit(this.nameInput.value)
   }
   emitChange(){
     this.valueChange.emit(this.nameInput.value)

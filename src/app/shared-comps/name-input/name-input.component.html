@@ -1,24 +1,34 @@
 <mat-form-field class="w-100">
-  <input matInput 
-  [placeholder]="'Name your '+title" 
-  name="name" 
-  [formControl]="nameInput" 
-  (change)="emitChange()"
-  (keyup)="emitChange()"
-  autofocus
-  autocomplete="off"
-  #editNameInput>
+  <input
+    matInput
+    [placeholder]="'Name your '+title"
+    name="name"
+    [formControl]="nameInput"
+    (change)="emitChange()"
+    (keyup)="emitChange()"
+    [autofocus]="!nameInput.valid"
+    autocomplete="off"
+    #editNameInput>
 
-  <button mat-button 
-  *ngIf="nameInput.value!=''" 
-  matSuffix mat-icon-button aria-label="Clear" 
-  (click)="resetName()">
+  <button
+    mat-button
+    *ngIf="nameInput.value!=''"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    (click)="resetName()">
     <mat-icon>close</mat-icon>
   </button>
   <mat-error *ngIf="nameInput.hasError('pattern') && !nameInput.hasError('usedName')">
     Please select a valid name (a-z, A-Z, 0-9)
   </mat-error>
   <mat-error *ngIf="nameInput.hasError('usedName')">
-    This {{title}} name is already used
+    This {{title}} name already exists.
+    <a
+      class="inline-link"
+      *ngIf="allowImport"
+      (click)="import()">
+      Import it instead?
+    </a>
   </mat-error>
 </mat-form-field>

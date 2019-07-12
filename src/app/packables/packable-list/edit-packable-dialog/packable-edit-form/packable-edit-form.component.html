@@ -4,6 +4,8 @@
   [value]='packableName'
   [usedNames]='usedPackableNames'
   (changeEvent)='onEditName($event)'
+  [allowImport]="allowImport"
+  (importRequest)="onImportRequest($event)"
   #nameInput>
 </name-input>
 

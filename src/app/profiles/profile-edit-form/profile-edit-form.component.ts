@@ -5,7 +5,7 @@ import { StoreSelectorService } from '../../shared/services/store-selector.servi
 import { NameInputChangeEvent, NameInputComponent } from '../../shared-comps/name-input/name-input.component';
 import { IconService } from '../../shared/services/icon.service';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
-import { isDefined } from '../../shared/global-functions';
+import { isDefined, hasNameAndId } from '../../shared/global-functions';
 
 @Component({
   selector: 'profile-edit-form',
@@ -18,7 +18,7 @@ export class ProfileEditFormComponent implements OnInit {
   @Output() validChange = new EventEmitter<boolean>()
   edittedProfile: ProfileComplete;
   valid: boolean = true;
-  usedProfileNames:string[] = []
+  usedProfileNames:hasNameAndId[] = []
   icons: string[] = []
   templateIcons: boolean = false;
   @ViewChild('nameInput') nameInput: NameInputComponent;
@@ -43,7 +43,7 @@ export class ProfileEditFormComponent implements OnInit {
   ngOnInit() {
     this.edittedProfile = new ProfileComplete(this.profile.id, this.profile.name, this.profile.collections.slice(),this.profile.avatar)
     this.profileName = this.edittedProfile.name
-    this.usedProfileNames = this.storeSelector.profiles.map(p=>p.name.toLowerCase())
+    this.usedProfileNames = this.storeSelector.profiles.map(p=>{return {id:p.id,name:p.name}})
     let icon = this.edittedProfile.avatar.icon
     this.selectedIcon = icon !='default' ? [icon] : [];
     this.initialValidation();

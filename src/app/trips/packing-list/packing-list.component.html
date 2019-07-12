@@ -13,15 +13,15 @@
       <mat-icon svgIcon="share"></mat-icon>
     </button>
     <mat-menu #packinglistMenu="matMenu">
-      <button mat-menu-item>
+      <button disabled mat-menu-item>
         <mat-icon outlined>share</mat-icon>
-        <span>Share List</span>
+        <span>Share List...</span>
       </button>
       <button
         mat-menu-item
         (click)="settingsComp.print()">
         <mat-icon outlined>print</mat-icon>
-        <span>Print</span>
+        <span>Print...</span>
       </button>
     </mat-menu>
 
@@ -37,25 +37,25 @@
         mat-menu-item
         (click)="settingsComp.changeDestinationDates()">
         <mat-icon svgIcon="place-edit"></mat-icon>
-        <span>Edit Place & Date</span>
+        <span>Edit Place & Date...</span>
       </button>
       <button
         mat-menu-item
         (click)="settingsComp.selectTravelers()">
         <mat-icon>group_add</mat-icon>
-        <span>Add/Remove Travelers</span>
+        <span>Select Travelers...</span>
       </button>
       <button
         mat-menu-item
         (click)="settingsComp.selectCollections()">
         <mat-icon svgIcon="collection-add"></mat-icon>
-        <span>Add/Remove Collections</span>
+        <span>Select Collections...</span>
       </button>
       <button
         mat-menu-item
         (click)="settingsComp.editWeather()">
         <mat-icon svgIcon="weather-edit"></mat-icon>
-        <span>Weather Settings</span>
+        <span>Weather Settings...</span>
       </button>
       <button
         mat-menu-item
@@ -66,7 +66,7 @@
           outlined>
           delete
         </mat-icon>
-        <span>Delete Trip</span>
+        <span>Delete Trip...</span>
       </button>
 
     </mat-menu>
@@ -148,7 +148,7 @@
               <mat-menu #profileDropDown="matMenu">
                 <button mat-menu-item>
                   <mat-icon outlined>share</mat-icon>
-                  <span>Share</span>
+                  <span>Share...</span>
                 </button>
                 <button
                   mat-menu-item
@@ -160,7 +160,7 @@
                   mat-menu-item
                   (click)="resetAllProfile(profile)">
                   <mat-icon>replay</mat-icon>
-                  <span>Reset List</span>
+                  <span>Reset List...</span>
                 </button>
               </mat-menu>
             </div>

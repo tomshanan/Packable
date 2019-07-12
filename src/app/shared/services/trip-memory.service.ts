@@ -8,7 +8,7 @@ import { Observable, from, Subject, BehaviorSubject } from 'rxjs';
 import { destMetaData } from '../library/library.model';
 import { TripWeatherData, WeatherService } from './weather.service';
 import { StoreSelectorService } from './store-selector.service';
-import { filter, map, takeWhile, take, first } from 'rxjs/operators';
+import { filter, map, takeWhile, take, first, tap } from 'rxjs/operators';
 import { isDefined, propertiesAreSame, timeStamp } from '../global-functions';
 
 @Injectable({
@@ -26,10 +26,17 @@ export class TripMemoryService {
 
   private _trip: Trip;
   public get trip() { return this._trip ? this.tripFac.duplicateTrip(this._trip) : null }
+  get tripSetAndValid():boolean{
+    let tripDefined = isDefined(this._trip)
+    let tripValid =  tripDefined && this.tripFac.validateTrip(this._trip).length === 5
+    return tripDefined && tripValid
+  }
   public tripEmitter = new BehaviorSubject<Trip>(null)
   public displayTrip: DisplayTrip;
   public destWeatherData$: Observable<TripWeatherData>;
+  public destWeatherData: TripWeatherData;
   public destMetaData$: Observable<destMetaData>;
+
   private subs;
   setTripById(id: string): void {
     this.subs = this.storeSelector.trips$.pipe(
@@ -44,6 +51,7 @@ export class TripMemoryService {
     this.displayTrip = this.tripFac.makeDisplayTrip(trip)
     if (!propertiesAreSame(trip, this._trip, ['startDate', 'endDate', 'destinationId'])) {
       this.destWeatherData$ = from(this.weatherService.getTripWeatherData(trip))
+      this.destWeatherData$.pipe(first(data=>data.isValid)).subscribe(data=>{this.destWeatherData = data; console.log('TripMemoryService updated dest weather data',this.destWeatherData)})
     }
     if (!propertiesAreSame(trip, this._trip, ['destinationId'])) {
       this.destMetaData$ = this.storeSelector.libraryState$.pipe(
@@ -54,6 +62,7 @@ export class TripMemoryService {
     this._trip = this.tripFac.duplicateTrip(trip)
     this.tripEmitter.next(this.trip)
   }
+  
   clear() {
     this._trip = null;
     this.displayTrip = null;
@@ -71,8 +80,8 @@ export class TripMemoryService {
     this.store.dispatch(new tripActions.updateTrips([trip]))
   }
   saveTripAndDeleteTemp(trip: Trip) {
+    this.setTrip(trip)
     this.store.dispatch(new tripActions.updateTrips([trip]))
     this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
-    this.clear()
   }
 }

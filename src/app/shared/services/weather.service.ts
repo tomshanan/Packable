@@ -123,7 +123,7 @@ export class WeatherService {
     constructor(private http: HttpClient, private destService: DestinationDataService) {
     }
     getCityWeather(destId: string | number): Promise<{}> {
-        return this.http.get('http://packable.app/weather.php?cityId=' + destId).toPromise()
+        return this.http.get('https://www.packable.app/weather.php?cityId=' + destId).toPromise()
     }
     getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Promise<DayWeatherData[]> {
         let weatherId = this.destService.findDestination(destId).weatherId

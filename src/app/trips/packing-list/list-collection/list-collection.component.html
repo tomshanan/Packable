@@ -15,13 +15,13 @@
       mat-menu-item
       (click)="newPackable()">
       <mat-icon>add</mat-icon>
-      <span>New Packable</span>
+      <span>New Packable...</span>
     </button>
     <button
       mat-menu-item
       (click)="editCollection()">
       <mat-icon>settings</mat-icon>
-      <span>Collection Settings</span>
+      <span>Collection Settings...</span>
     </button>
   </mat-menu>
 </div>
@@ -38,29 +38,5 @@
       (toggleEdit)="onToggleEditPackable($event,edititingP)">
     </list-packable>
   </ng-container>
-  <form (ngSubmit)="addManualPackable(newPackableName.value)">
-    <div class="new-packable">
-      <button
-        type="button"
-        activeColor="action"
-        activeColorState="muted"
-        (click)="nameInput.focus()"
-        mat-icon-button>
-        <mat-icon>add</mat-icon>
-      </button>
-      <input
-        type="text"
-        class="invisibleInput"
-        placeholder="Add Packable..."
-        [formControl]="newPackableName"
-        #nameInput>
-      <button
-        type="submit"
-        *ngIf="newPackableName.valid"
-        activeColor="accent"
-        mat-icon-button>
-        <mat-icon>check</mat-icon>
-      </button>
-    </div>
-  </form>
+  <quick-add-packable [collectionId]="collection.id" [profileId]="profileId"></quick-add-packable>
 </ul>

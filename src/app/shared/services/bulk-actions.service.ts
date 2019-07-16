@@ -113,7 +113,6 @@ export class BulkActionsService {
         profileIds.forEach(pId=>{
           if(trip.profiles.includes(pId)){
             trip.collections.forEach(col=>{
-              console.log(col);
               if(collectionIds.includes(col.id)){
                 col.profiles = isDefined(col.profiles) ? col.profiles.filter(pId=>!profileIds.includes(pId)) : [];
                 incompleteTripChanges++
@@ -143,7 +142,6 @@ export class BulkActionsService {
     })
     let newOriginals = selectedRemoteCollections.map(c=>this.colFac.duplicateOriginalCollection(c))
     newOriginals.forEach(c=>c.dateModified=timeStamp())
-    console.log('BULK ACTION: dispatch updateOriginalCollections',newOriginals)
     this.store.dispatch(new collectionActions.updateOriginalCollections(newOriginals))
     // REVIVE / ADD MISSING PACKABLES TO PACKABLE STORE
     this.addPackablesFromRemoteCollections(selectedRemoteCollections)
@@ -173,8 +171,6 @@ export class BulkActionsService {
   public addMissingPackableIdsFromRemote(ids:string[]):PackableOriginal[]{
     let allRemotePackables = <PackableOriginal[]>this.storeSelector.getLibraryItems('packables')
     let allLocalPackables = this.storeSelector.originalPackables.filter(p=>!p.deleted) // only show living packables
-    console.log('BULK ACTION: allLocalPackables',allLocalPackables)
-    console.log('BULK ACTION: allRemotePackables',allRemotePackables)
     let missingPackables = 
       allRemotePackables
       .filter(p=>ids.includes(p.id)) // filter allRemotePackables for the ones required

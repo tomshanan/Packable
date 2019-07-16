@@ -223,10 +223,10 @@ export class CollectionFactory {
             let pacIndex = collection.packables.idIndex(packable.id)
             if (pacIndex === -1) {
                 collection.packables.unshift(packable)
-                console.log('PACK-FACTORY:','adding packable', packable);
+                console.log('COL-FACTORY:','adding packable', packable);
             } else {
                 collection.packables.splice(pacIndex, 1, packable)
-                console.log('PACK-FACTORY:','updating packable', packable);
+                console.log('COL-FACTORY:','updating packable', packable);
             }
         });
         return collection

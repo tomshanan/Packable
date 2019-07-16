@@ -2,8 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ListPackableComponent } from '../list-packable/list-packable.component';
 import { PackingListPackable, PackingListSettings, listCollection } from '../../../shared/models/packing-list.model';
 import { PackableComplete } from '../../../shared/models/packable.model';
-import { DialogData_EditPackable, EditPackableDialogComponent } from '../../../packables/packable-list/edit-packable-dialog/edit-packable-dialog.component';
-import { MatDialog } from '@angular/material';
+import { EditPackableDialog_data, EditPackableDialogComponent, EditPackableDialog_result } from '../../../packables/packable-list/edit-packable-dialog/edit-packable-dialog.component';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { ContextService } from '../../../shared/services/context.service';
 import { ProfileFactory } from '../../../shared/factories/profile.factory';
 import { ProfileComplete } from '../../../shared/models/profile.model';
@@ -13,12 +13,12 @@ import { PackingListService } from '../packing-list.service';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
 import { Observable } from 'rxjs';
-import { Guid, isDefined, allowedNameRegEx } from '../../../shared/global-functions';
+import { Guid, isDefined } from '../../../shared/global-functions';
 import { editCollectionDialog_data } from '@app/collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
 import { EditCollectionDialogComponent } from '../../../collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
 import { CollectionComplete } from '../../../shared/models/collection.model';
 import { CollectionFactory } from '../../../shared/factories/collection.factory';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { importPackables_result } from '@app/packables/packable-list/import-packables-dialog/import-packables-dialog.component';
 
 @Component({
   selector: 'packing-list-collection',
@@ -26,39 +26,38 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./list-collection.component.css']
 })
 export class ListCollectionComponent implements OnInit {
-  @Input() collection:listCollection;
-  @Input() profile:string;
-  @Input() trip:Trip;
+  @Input() collection: listCollection;
+  @Input('profile') inputProfile: string;
+  profileId:string;
+  @Input() trip: Trip;
   @Input() editingPackable: ListPackableComponent;
   @Input() listSettings: PackingListSettings = new PackingListSettings();
   @Output() collectionChange = new EventEmitter<listCollection>()
   @Output() editingPackableChange = new EventEmitter<ListPackableComponent>()
-  
-  profiles:ProfileComplete[];
-  settings$:Observable<PackingListSettings>;
-  newPackableName:FormControl;
+
+  profiles: ProfileComplete[];
+  settings$: Observable<PackingListSettings>;
   constructor(
     private dialog: MatDialog,
     private context: ContextService,
     private profileFactory: ProfileFactory,
     private colFac: CollectionFactory,
     private packingListService: PackingListService,
-    private pacFac:PackableFactory,
-    private fb:FormBuilder,
-  ) { 
-    this.newPackableName = fb.control('',[Validators.pattern(allowedNameRegEx),Validators.required])
+    private pacFac: PackableFactory,
+  ) {
   }
 
   ngOnInit() {
     this.profiles = this.profileFactory.getCompleteProfilesByIds(this.trip.profiles)
+    this.profileId = this.inputProfile != 'shared' ? this.inputProfile : null
     this.settings$ = this.packingListService.settingsEmitter.pipe()
   }
 
-  onUpdatePackable(packable:PackingListPackable, save:boolean= true){
+  onUpdatePackable(packable: PackingListPackable, save: boolean = true) {
     console.log(`onUpdatePackable: updatePackable.emit  collectionChange.emit`)
     this.collectionChange.emit(this.collection)
-    this.packingListService.onUpdatePackables([packable],save)
-  } 
+    this.packingListService.onUpdatePackables([packable], save)
+  }
 
   toggleCheck(packable: PackingListPackable) {
     packable.checked = !packable.checked
@@ -70,12 +69,12 @@ export class ListCollectionComponent implements OnInit {
   }
   editPackableRules(packable: PackingListPackable) {
     let editingPackable: PackableComplete
-    let data: DialogData_EditPackable
-    
-    let selected:string[];
-    if(packable.profileID){
+    let data: EditPackableDialog_data
+
+    let selected: string[];
+    if (packable.profileID) {
       let editingProfile = this.profiles.findId(packable.profileID)
-      let eiditingCollection =  editingProfile.collections.findId(packable.collectionID)
+      let eiditingCollection = editingProfile.collections.findId(packable.collectionID)
       editingPackable = eiditingCollection.packables.findId(packable.id);
       this.context.setBoth(packable.collectionID, packable.profileID)
       selected = [packable.profileID]
@@ -93,25 +92,31 @@ export class ListCollectionComponent implements OnInit {
       isNew: false
     }
     let dialogRef = this.dialog.open(EditPackableDialogComponent, {
-      maxWidth: "99vw",
-      maxHeight: "99vh",
-      width: "500px",
       disableClose: true,
       autoFocus: false,
       data: data,
     });
-    dialogRef.afterClosed().pipe(take(1)).subscribe((newPackable: PackableComplete) => {
-      console.log(`Received from modal:`, newPackable);
-      if(newPackable){
-        if (this.editingPackable && this.editingPackable.editToggle) {
-          this.editingPackable.toggleEditing(false)
+    dialogRef.afterClosed().pipe(take(1))
+      .subscribe((
+        { resultPackable, newDialogRef }: EditPackableDialog_result
+      ) => {
+        console.log(`Received from modal:`, resultPackable);
+        if (resultPackable) {
+          if (this.editingPackable && this.editingPackable.editToggle) {
+            this.editingPackable.toggleEditing(false)
+          }
+          packable.forceQuantity = false
+          packable.forcePass = false
+          this.onUpdatePackable(packable, false)
+          this.packingListService.generateAndStorePackingList()
+        } else if (newDialogRef) {
+          newDialogRef.afterClosed().pipe(take(1)).subscribe((r:importPackables_result)=>{
+            if(r && r.packables){
+              this.packingListService.generateAndStorePackingList()
+            }
+          })
         }
-        packable.forceQuantity = false
-        packable.forcePass = false
-        this.onUpdatePackable(packable,false)
-        this.packingListService.generateAndStorePackingList()
-      }
-    })
+      })
   }
 
   onToggleEditPackable(editing: boolean, editingPackable: ListPackableComponent) {
@@ -125,44 +130,50 @@ export class ListCollectionComponent implements OnInit {
     }
     this.editingPackableChange.emit(this.editingPackable)
   }
-  addManualPackable(str){
-    console.log('Adding simple packable:',str)
+  quickAddPackable(str:string) {
+    console.log('Adding simple packable:', str)
   }
   newPackable() {
     let editingPackable = new PackableComplete()
     editingPackable.userCreated = true;
-    this.context.setBoth(this.collection.id, (this.profile != 'shared' ? this.profile : null))
-    let data: DialogData_EditPackable = {
+    this.context.setBoth(this.collection.id, this.profileId)
+    let data: EditPackableDialog_data = {
       pakable: editingPackable,
       isNew: true,
     }
     let dialogRef = this.dialog.open(EditPackableDialogComponent, {
-      disableClose:true,
+      disableClose: true,
       data: data,
     });
-    dialogRef.afterClosed().pipe(take(1)).subscribe((newPackable: PackableComplete) => {
-      console.log(`Received from modal:`, newPackable);
-      if(newPackable){
+    dialogRef.afterClosed().pipe(take(1)).subscribe(({ resultPackable, newDialogRef }: EditPackableDialog_result) => {
+      console.log(`Received from modal:`, resultPackable);
+      if (resultPackable) {
         this.packingListService.generateAndStorePackingList()
         //this.packingListService.refreshPackingList()
+      } else if (newDialogRef) {
+        newDialogRef.afterClosed().pipe(take(1)).subscribe((r:importPackables_result)=>{
+          if(r && r.packables){
+            this.packingListService.generateAndStorePackingList()
+          }
+        })
       }
     })
   }
 
-  editCollection(){
-    let profileId = (this.profile != 'shared' ? this.profile : null)
-    let collection = this.colFac.getCompleteById(this.collection.id,profileId)
-    this.context.setBoth(this.collection.id,profileId)
+  editCollection() {
+    let profileId = this.profileId
+    let collection = this.colFac.getCompleteById(this.collection.id, profileId)
+    this.context.setBoth(this.collection.id, profileId)
     let data: editCollectionDialog_data = {
-      collection:collection,
+      collection: collection,
       profileGroup: this.profileFactory.getAllProfilesAndMakeComplete()
     }
     this.dialog.open(EditCollectionDialogComponent, {
       disableClose: true,
       data: data
-    }).afterClosed().pipe(take(1)).subscribe((collection:CollectionComplete)=>{
-      if(isDefined(collection)){
-        console.log(`${collection.name} has been updated`,collection)
+    }).afterClosed().pipe(take(1)).subscribe((collection: CollectionComplete) => {
+      if (isDefined(collection)) {
+        console.log(`${collection.name} has been updated`, collection)
         this.packingListService.generateAndStorePackingList()
       }
     })

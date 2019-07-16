@@ -11,8 +11,8 @@ import { ModalComponent } from '@shared-comps/modal/modal.component';
 import { PackableFactory } from '@shared/factories/packable.factory';
 import { StoreSelectorService } from '@shared/services/store-selector.service';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { EditPackableDialogComponent } from './edit-packable-dialog/edit-packable-dialog.component';
-import { DialogData_EditPackable } from './edit-packable-dialog/edit-packable-dialog.component';
+import { EditPackableDialogComponent, EditPackableDialog_result } from './edit-packable-dialog/edit-packable-dialog.component';
+import { EditPackableDialog_data } from './edit-packable-dialog/edit-packable-dialog.component';
 import { WindowService } from '@shared/services/window.service';
 import { weatherFactory } from '@app/shared/factories/weather.factory';
 import { CollectionFactory } from '@shared/factories/collection.factory';
@@ -189,7 +189,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
   }
   editPackable(packableId: string) { // EDIT PACKABLE DIALOG CREATES AND STORES THE EDITTED PACKABLE
     let editingPackable: PackableComplete,
-      data: DialogData_EditPackable
+      data: EditPackableDialog_data
     this.context.setBoth(this.editingCollectionId, this.editingProfileId)
     let selected = this.editingProfileId ? [this.editingProfileId] : [];
     editingPackable = this.inputPackables.findId(packableId)
@@ -202,9 +202,8 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       disableClose: true,
       data: data,
     });
-    dialogRef.afterClosed().pipe(take(1)).subscribe((packable:PackableComplete) => {
-      console.log(`Received from modal:`, packable);
-      //this.updateViewObject(packables, 'update')
+    dialogRef.afterClosed().pipe(take(1)).subscribe(({resultPackable}:EditPackableDialog_result) => {
+      console.log(`Received from modal:`, resultPackable);
     })
   }
 
@@ -212,7 +211,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
     let editingPackable = new PackableComplete()
     editingPackable.userCreated = true;
     this.context.setBoth(this.editingCollectionId, this.editingProfileId)
-    let data: DialogData_EditPackable = {
+    let data: EditPackableDialog_data = {
       pakable: editingPackable,
       isNew: true,
       usedPackables: this.packableList
@@ -221,11 +220,18 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       disableClose:true,
       data: data,
     });
-    dialogRef.afterClosed().pipe(take(1)).subscribe((packables:PackableComplete[]) => {
-      console.log(`Received from modal:`, packables);
-      //this.updateViewObject(packables, 'add')
-      this.toggleEditList(false)
-      this.selected = []
+    dialogRef.afterClosed().pipe(take(1)).subscribe(({ resultPackable, newDialogRef }: EditPackableDialog_result) => {
+      if(resultPackable){
+        this.toggleEditList(false)
+        this.selected = []
+      } else if (newDialogRef){
+        newDialogRef.afterClosed().pipe(take(1)).subscribe((result)=>{
+          if(result){
+            this.toggleEditList(false)
+            this.selected = []
+          }
+        })
+      }
     })
   }
 

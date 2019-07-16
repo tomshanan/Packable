@@ -31,7 +31,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
   settings_sub: Subscription = new Subscription();
 
   @Input() trip: Trip;
-  @Input() displayTrip:DisplayTrip;
   @Input() packingList:PackingList;
 
   constructor(

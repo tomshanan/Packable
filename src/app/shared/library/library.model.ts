@@ -49,6 +49,7 @@ export interface State {
     metaData: MetaDataNode,
     destMetaData: destMetaDataNode,
     loading: boolean,
+    loaded:boolean,
     error: string
 }
 
@@ -58,6 +59,7 @@ export const initialLibrary: ItemLibrary = {
     profiles: []
 }
 export const initialLibraryState:State = {
+    loaded:false,
     loading: false,
     error: null,
     library: initialLibrary,

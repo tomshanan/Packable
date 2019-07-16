@@ -8,7 +8,7 @@ import { takeUntil, filter, take } from 'rxjs/operators';
 import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 import { MatDialog } from '@angular/material';
 import { NewProfileDialogComponent } from '../new-profile-dialog/new-profile-dialog.component';
-import { isDefined } from '../../shared/global-functions';
+import { isDefined, sortByMostRecent } from '../../shared/global-functions';
 import { StoreSelectorService } from '@app/core';
 import { ConfirmDialog, ConfirmDialogData } from '@app/shared-comps/dialogs/confirm-dialog/confirm.dialog';
 import { horizontalShringAndFade } from '../../shared/animations';
@@ -52,6 +52,7 @@ export class ProfileSelectorPanelComponent implements OnInit,OnChanges {
     return this.profiles.findId(this.selected).name
   }
   ngOnInit() {
+    this.profiles.sort(sortByMostRecent)
   }
   ngOnChanges(changes:SimpleChanges){
     if(changes['profiles'] || changes['selected']){

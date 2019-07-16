@@ -9,6 +9,7 @@ export function libarayReducers(state = initialLibraryState, action: libraryActi
                 metaData: action.payload.metaData,
                 destMetaData: action.payload.destMetaData,
                 loading: false,
+                loaded: action.payload.library.packables.length >0,
                 error: null
             }
         case libraryActions.UPDATE_META_DATA:

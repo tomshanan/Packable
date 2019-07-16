@@ -1,18 +1,3 @@
-<toolbar>
-
-  <ng-container ngProjectAs="[toolbar-left]">
-    <div class="small text-muted">
-      <p>
-        <span [innerHtml]="displayTrip.displayDate"></span>
-        &nbsp;({{packingList.data.totalDays}}&nbsp;Days)
-      </p>
-      <p>
-        <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
-        <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
-      </p>
-    </div>
-  </ng-container>
-  <ng-container ngProjectAs="[toolbar-right]">
       <button
       mat-icon-button
       activeColor="action"
@@ -84,5 +69,3 @@
       (click)="toggleSettings('editMode')">
       <mat-icon outlined>edit</mat-icon>
     </button>
-  </ng-container>
-</toolbar>

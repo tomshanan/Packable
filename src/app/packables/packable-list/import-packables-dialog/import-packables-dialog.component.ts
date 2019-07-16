@@ -18,6 +18,8 @@ export interface importPackables_data {
   header: string,
   usedPackables: PackableComplete[],
   selected?:string[]
+  profileGroup?: Profile[];
+  selectedProfiles?: string[];
 }
 export interface importPackables_result {
   packables: string[],
@@ -59,12 +61,8 @@ export class ImportPackablesDialogComponent implements OnInit {
 
   ngOnInit() {
     if (this.context.collectionId) {
-      this.profileGroup = this.storeSelector.getProfilesWithCollectionId(this.context.collectionId)
-      if (this.context.profileId) {
-        this.selectedProfiles = [this.context.profileId]
-      } else {
-        this.selectedProfiles = this.profileGroup.ids()
-      }
+      this.profileGroup = this.data.profileGroup || this.storeSelector.getProfilesWithCollectionId(this.context.collectionId)
+      this.selectedProfiles = this.data.selectedProfiles || (this.context.profileId ?  [this.context.profileId] :  this.profileGroup.ids())
     }
     console.log( `imported-packable-diaglog selected:`,this.data.selected)
     if(isDefined(this.data.selected)){

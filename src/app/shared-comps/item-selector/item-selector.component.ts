@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, Type, TemplateRef, Renderer2, ElementRef, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
-import { FilteredArray, anySpaces, matchWordsScore, isDefined } from '../../shared/global-functions';
+import { FilteredArray, anySpaces, matchWordsScore, isDefined, sortByName } from '../../shared/global-functions';
 import { listItemTrigger, quickTransitionTrigger, animateSize } from '../../shared/animations';
 import { AnimationEvent } from '@angular/animations';
 import { WindowService } from '../../shared/services/window.service';
@@ -71,11 +71,7 @@ export class ItemSelectorComponent implements OnInit {
     })
   }
   sortByName() {
-    this.listFiltered.sort((a, b) => {
-      if (a.name < b.name) { return -1; }
-      if (a.name > b.name) { return 1; }
-      return 0;
-    })
+    this.listFiltered.sort(sortByName)
   }
 
 

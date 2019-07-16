@@ -43,11 +43,11 @@ export class ListProfileComponent implements OnInit, OnChanges {
     }
     if (showInvalid) {
       this.profile.collections.sort((a, b) => {
-        return (b.packables.length + 1) - (a.packables.length + 1)
+        return (b.packables.length + 2) - (a.packables.length + 2)
       })
     } else {
       this.profile.collections.sort((a, b) => {
-        return (b.validPackables() + 1) - (a.validPackables() + 1)
+        return (b.validPackables() + 2) - (a.validPackables() + 2)
       })
     }
     this.profile.collections.forEach(collection => {
@@ -67,7 +67,7 @@ export class ListProfileComponent implements OnInit, OnChanges {
 
   countPackables(column: listCollection[], countInvalid: boolean = false): number {
     return column.reduce((a, b) => {
-      a += countInvalid ? b.packables.length + 1 : b.validPackables() + 1
+      a += countInvalid ? b.packables.length + 2 : b.validPackables() + 2
       return a
     }, 0)
   }

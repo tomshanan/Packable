@@ -1,0 +1,16 @@
+.new-packable{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 40px;
+  line-height: 40px;
+}
+.new-packable input.invisibleInput {
+  border: 0;
+  height: 2em;
+  line-height: 2em;
+  outline: none;
+  padding-top: 1px;
+  flex-grow: 1;
+}

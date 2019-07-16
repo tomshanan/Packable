@@ -1,0 +1,41 @@
+<form (ngSubmit)="createNewPackableFromName(newPackableName.value)">
+  <div class="new-packable">
+    <button
+      type="button"
+      activeColor="action"
+      activeColorState="muted"
+      (click)="nameInput.focus()"
+      mat-icon-button>
+      <mat-icon>add</mat-icon>
+    </button>
+    <input
+      type="text"
+      class="invisibleInput"
+      placeholder="Add Packable..."
+      [formControl]="newPackableName"
+      [matAutocomplete]="auto"
+      #nameInput>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onSelectOption($event)">
+        <mat-option *ngFor="let packable of filteredList | async" [value]="packable" >
+          <div class="d-flex align-items-center w-100">
+            <span>{{packable.name}}</span>
+            <mat-icon appColor="muted" class="ml-auto">get_app</mat-icon>
+          </div>
+        </mat-option>
+      </mat-autocomplete>
+    <button
+      type="submit"
+      *ngIf="newPackableName.valid"
+      activeColor="accent"
+      mat-icon-button>
+      <mat-icon>check</mat-icon>
+    </button>
+    <button
+      type="submit"
+      *ngIf="!newPackableName.valid && firstResult"
+      activeColor="accent"
+      mat-icon-button>
+      <mat-icon>get_app</mat-icon>
+    </button>
+  </div>
+</form>

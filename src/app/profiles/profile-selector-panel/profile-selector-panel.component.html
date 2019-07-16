@@ -3,8 +3,7 @@
   #container>
   <div
     class="selectedProfile d-flex flex-row align-items-center"
-    [class.hide]="selectorOpen"
-    *ngIf="selected">
+    *ngIf="selected && !selectorOpen" [@.disabled]="windowService.max('sm')">
     <button
       mat-icon-button
       activeColor="action"
@@ -17,6 +16,7 @@
       <div class="selectedProfile-iconContainer">
         <profile-icon
           [profileId]='selected'
+          [debug]="true"
           [showName]="false"
           [isInteractive]="false"
           [isButton]="false"

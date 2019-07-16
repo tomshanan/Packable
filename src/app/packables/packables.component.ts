@@ -10,6 +10,7 @@ import { ContextService } from '../shared/services/context.service';
 import { blockInitialAnimations } from '../shared/animations';
 import { Subscription } from 'rxjs';
 import { StorageService } from '../shared/storage/storage.service';
+import { sortByName } from '../shared/global-functions';
 
 @Component({
   selector: 'app-packables',

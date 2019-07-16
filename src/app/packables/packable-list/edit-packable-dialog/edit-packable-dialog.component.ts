@@ -14,10 +14,10 @@ import { timeStamp, isDefined } from '../../../shared/global-functions';
 import { ContextService } from '../../../shared/services/context.service';
 import { BulkActionsService } from '../../../shared/services/bulk-actions.service';
 import { editPackableForm_update, PackableEditFormComponent } from './packable-edit-form/packable-edit-form.component';
-import { ImportPackablesDialogComponent, importPackables_data } from '../import-packables-dialog/import-packables-dialog.component';
+import { ImportPackablesDialogComponent, importPackables_data, importPackables_result } from '../import-packables-dialog/import-packables-dialog.component';
 import { take } from 'rxjs/operators';
 
-export interface DialogData_EditPackable {
+export interface EditPackableDialog_data {
   pakable?: PackableComplete,
   limitProfileGroup?: Array<string>,
   limitCollectionGroup?: Array<string>,
@@ -25,6 +25,12 @@ export interface DialogData_EditPackable {
   isNew?: boolean,
   usedPackables?: PackableComplete[];
 }
+export interface EditPackableDialog_result { 
+  resultPackable: PackableComplete, 
+  newDialogRef: MatDialogRef<any> 
+}
+
+
 @Component({
   selector: 'app-edit-packable-dialog',
   templateUrl: './edit-packable-dialog.component.html',
@@ -55,7 +61,7 @@ export class EditPackableDialogComponent implements OnInit, AfterViewInit {
 
   constructor(
     private storeSelector: StoreSelectorService,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData_EditPackable,
+    @Inject(MAT_DIALOG_DATA) public data: EditPackableDialog_data,
     public dialogRef: MatDialogRef<EditPackableDialogComponent>,
     public dialog: MatDialog,
     private wFactory: weatherFactory,
@@ -135,14 +141,18 @@ export class EditPackableDialogComponent implements OnInit, AfterViewInit {
           header: 'Packables',
           usedPackables: this.data.usedPackables,
           selected:[id],
+          profileGroup: this.profileGroup,
+          selectedProfiles: this.selectedProfiles
         }
-        this.dialog.open(ImportPackablesDialogComponent, {
+        let importDialog = this.dialog.open(ImportPackablesDialogComponent, {
           data: data
         });
+        this.onClose(null,importDialog)
       } else {
         this.bulkActions.addMissingPackableIdsFromRemote([id])
+        this.onClose(null)
       }
-      this.dialogRef.close()
+      
     }
   }
   onConfirmPackable() {
@@ -187,7 +197,8 @@ export class EditPackableDialogComponent implements OnInit, AfterViewInit {
     }
     this.onClose(this.packable);
   }
-  onClose(packable: PackableComplete) {
-    this.dialogRef.close(packable ? packable : null);
+  onClose(newPackable: PackableComplete,newDialogRef:MatDialogRef<any>=null) {
+    console.log('EditPackableDialog closing dialog with vars:',newPackable,newDialogRef)
+    this.dialogRef.close({resultPackable:newPackable,newDialogRef:newDialogRef});
   }
 }

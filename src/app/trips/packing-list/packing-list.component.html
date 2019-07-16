@@ -13,7 +13,9 @@
       <mat-icon svgIcon="share"></mat-icon>
     </button>
     <mat-menu #packinglistMenu="matMenu">
-      <button disabled mat-menu-item>
+      <button
+        disabled
+        mat-menu-item>
         <mat-icon outlined>share</mat-icon>
         <span>Share List...</span>
       </button>
@@ -72,7 +74,27 @@
     </mat-menu>
   </div>
 </app-nav>
-
+<toolbar *ngIf="packingList && sortedList">
+    <ng-container ngProjectAs="[toolbar-left]">
+      <div class="small text-muted trip-details">
+          <p>
+            <span [innerHtml]="displayTrip.displayDate"></span>
+            &nbsp;({{packingList.data.totalDays}}&nbsp;Days)
+          </p>
+          <p>
+            <span [innerHtml]="packingList.data.weatherData.forecastString()"></span>
+            <span *ngIf="packingList.data.weatherData.dataInput == 'manual'">&nbsp;(Set Manually)</span>
+          </p>
+        </div>
+    </ng-container>
+    <ng-container ngProjectAs="[toolbar-right]">
+        <packinglist-settings
+        #settingsComp
+        [trip]="trip"
+        [packingList]="packingList">
+      </packinglist-settings>
+    </ng-container>
+</toolbar>
 <div class="row">
   <ng-template #notLoaded>
     <ng-container *ngIf="(loading$ | async) === false; else loadingTemplate">
@@ -85,17 +107,11 @@
       </div>
     </ng-template>
   </ng-template>
+
   <div
     *ngIf="packingList && sortedList; else notLoaded"
     class="col"
     id="section-to-print">
-    <packinglist-settings
-      #settingsComp
-      [trip]="trip"
-      [packingList]="packingList"
-      [displayTrip]="displayTrip">
-    </packinglist-settings>
-
     <div class="row my-2">
       <mat-accordion
         multi="true"

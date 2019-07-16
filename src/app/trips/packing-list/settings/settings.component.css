@@ -1,0 +1,6 @@
+:host{
+  display: flex;
+}
+.trip-details{
+  flex-grow: 1;
+}

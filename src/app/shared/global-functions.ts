@@ -152,7 +152,7 @@ export function decodeHtml(html: string) {
 }
 
 export function comparableName(str: string) {
-  return str.trim().toUpperCase().split(allowedSpacesRegEx).join('')
+  return str.trim().toUpperCase().replace(anySpaces, '');
 }
 type hasDateModified = { dateModified: number }
 export function sortByMostRecent(a: hasDateModified, b: hasDateModified): number {
@@ -160,6 +160,11 @@ export function sortByMostRecent(a: hasDateModified, b: hasDateModified): number
 }
 export function sortByMetaData(a: HasMetaData, b: HasMetaData): number {
   return b.metaData.metaScore - a.metaData.metaScore
+}
+export function sortByName(a, b):number {
+  if (a.name < b.name) { return -1; }
+  if (a.name > b.name) { return 1; }
+  return 0;
 }
 export const anySpaces = /[\s\.\,\_\-\'\;\:]+/g
 export const allowedSpacesRegEx = /[\s\-\_\(\)]+/;
@@ -189,9 +194,10 @@ export function stringArraysAreSame(a: Array<string>, b: Array<string>): boolean
 
 
 export function copyProperties<T extends Object>(to: T, from: T, props: Array<keyof T>) {
+  let debugText:string[] = []
   props.forEach(prop => {
     if (prop in from) {
-      Object.assign(to, from[prop])
+      to[prop] = from[prop]
     }
   })
 }

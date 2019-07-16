@@ -139,6 +139,8 @@ export class TripFactory {
         packingListPackables: PackingListPackable[],
         displayList: DisplayPackingList[] = []
     ): DisplayPackingList[] => {
+        console.log('👕 updating display list unsing new packing list:\n',packingListPackables)
+
         const firstTime = displayList.length === 0
         packingListPackables.forEach(item => {
             let profileIndex = displayList.findIndex(p => p.id == item.profileID)
@@ -198,17 +200,21 @@ export class TripFactory {
         if (SharedListIndex != -1) {
             displayList.push(...displayList.splice(SharedListIndex, 1))
         }
+        const foundList: string[] = []
         const removeList: PackingListPackable[] = []
         displayList.forEach(profileList => {
             profileList.collections.forEach(colList => {
-                colList.packables.forEach(p => {
-                    // FIND MISSING PACKABLES
-                    const i = packingListPackables.findIndexBy(p, ['id', 'profileID', 'collectionID'])
-                    if (i === -1) {
-                        //console.log(`👕 Couldnt find ${p.name}`, p)
-                        removeList.push(p)
-                    }
-                })
+                colList.packables.compare(packingListPackables.filter(p=>p.profileID===profileList.id && p.collectionID===colList.id))
+                // colList.packables.forEach(p => {
+                //     // FIND MISSING PACKABLES
+                //     const i = packingListPackables.findIndexBy(p, ['id', 'profileID', 'collectionID'])
+                //     if (i === -1) {
+                //         console.log(`👕 Couldnt find ${p.name}`, p)
+                //         removeList.push(p)
+                //     } else {
+                //         foundList.push(`\nfound ${p.name} in ${profileList.header}/${colList.header}`)
+                //     }
+                // })
                 firstTime && colList.packables.sort((a, b) => {
                     const nameA = a.name.toUpperCase();
                     const nameB = b.name.toUpperCase();
@@ -219,7 +225,8 @@ export class TripFactory {
                     })
             })
         })
-        removeList.forEach(p => this.removePackableFromSortedList(p, displayList))
+        //console.log('👕 FOUND LIST:',foundList)
+        //removeList.forEach(p => this.removePackableFromSortedList(p, displayList))
         return displayList;
     }
     removePackableFromSortedList(_p: PackingListPackable, list: DisplayPackingList[]) {
@@ -227,7 +234,11 @@ export class TripFactory {
             .findId(_p.profileID).collections
             .findId(_p.collectionID).packables
         const sortedListIndex = packables.findIndex(p => p.id === _p.id)
-        //console.log(`👕 removing ${_p.name} -  found at ${sortedListIndex}`, packables.slice())
+        console.log(`
+        👕 removing ${_p.name} 
+        from ${list.findId(_p.profileID).header}
+        /${list.findId(_p.profileID).collections.findId(_p.collectionID).header}`, 
+        packables.slice())
         packables.splice(sortedListIndex, 1)
     }
 }

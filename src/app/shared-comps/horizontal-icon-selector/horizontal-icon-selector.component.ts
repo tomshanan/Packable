@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ViewChild, ElementRef, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild, ElementRef, OnDestroy, Input, Output, EventEmitter, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { WindowService } from '../../shared/services/window.service';
 import { AppColors } from '../../shared/app-colors';
 import { Subscription, Subject } from 'rxjs';
@@ -11,7 +11,7 @@ import { fadeInOut } from '../../shared/animations';
   styleUrls: ['./horizontal-icon-selector.component.css'],
   animations: [fadeInOut]
 })
-export class HorizontalIconSelectorComponent implements OnInit, OnDestroy {
+export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterContentInit {
   @Input('stepWidth') steps:number = 50;
   @Output('scrollEvent') emitScrollEvent = new EventEmitter<number>();
   public scrolling = new Subject<number>()
@@ -26,16 +26,18 @@ export class HorizontalIconSelectorComponent implements OnInit, OnDestroy {
 
   constructor(
     public windowService:WindowService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private cd:ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
-    setTimeout(()=>{
-      this.scrollEvent();
-    }, 1)
     this.windowSub = this.windowService.change.subscribe(()=>{
       this.scrollEvent();
     })
+  }
+  ngAfterContentInit(){
+    this.scrollEvent()
+    this.cd.markForCheck()
   }
   ngOnDestroy(){
     this.windowSub.unsubscribe();

@@ -143,11 +143,15 @@ export class PackableFactory {
         })
         return returnStrings
     }
+    public getAllPackablesWithMetaData():PackableOriginalWithMetaData[]{
+        let local = this.storeSelector.originalPackables.filter(p=>!p.deleted)
+        let remote = this.storeSelector.libraryState.library.packables.filter(p=>!local.hasId(p.id))
+        return this.getPackablesWithMetaData([...local,...remote])
+    }
     public getPackablesWithMetaData(packables:Array<PackableOriginal>):PackableOriginalWithMetaData[] {
         return packables.map(p=>{
-            let completeCol = this.makeComplete(p)
             let metaData = this.storeSelector.getMetaDataForId(p.id) || new Metadata(p.id);
-            return new PackableOriginalWithMetaData(completeCol,metaData)
+            return new PackableOriginalWithMetaData(p,metaData)
         })
     }
 }

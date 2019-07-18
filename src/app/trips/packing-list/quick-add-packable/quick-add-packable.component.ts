@@ -56,7 +56,7 @@ export class QuickAddPackableComponent implements OnInit {
       map(value => typeof value === 'string' ? value : value.name),
       map(value => value!='' ? this._filter(value) : []),
       tap(list=>{
-        if (list.length===1){
+        if (list.length>0){
           this.firstResult = list[0]
         } else if(list.length === 0){
           this.firstResult = null;

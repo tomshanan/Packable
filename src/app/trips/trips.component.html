@@ -4,77 +4,100 @@
 <ng-template #modalContent>
   <H5>Trips</H5>
   <p>
-    Here you can set up a trip and generate a packing list!
+    Here you can set up a Trip and generate a Packing List!
   </p>
   <p>
-    Be sure to set up some Packables, Collections and Travelers, and when you're ready, use this tool to create a Trip,
-    indicating where you are going and when, who's coming and what you might do while you're there!
+    A Trip is created by settings a destination and dates, selecting the Travelers that will be going, and the various collections you may need for this trip.
+  </p>
+  <p>
+    If your Travelers have "Essential Collections" those will automatically be selected for you when you set up your Trip.
   </p>
 </ng-template>
+
+
+
+
+
+<card-button
+  (click)="newTrip()"
+  activeColor="accent"
+  [colorTarget]="addNew">
+  <div
+    class="d-flex align-items-center"
+    #addNew>
+    <h5 class="m-0">Create a new Trip</h5>
+  </div>
+</card-button>
 <div
   *ngFor="let trip of incomplete; let i = index"
   @evaporateTransitionTrigger>
-  <card-button
+  <div
     *ngIf="i===0"
     (click)="continueIncomplete(trip.id)"
-    @evaporateTransitionTrigger>
-    <div class="d-flex flex-row align-items-center">
-      <button
-        mat-icon-button
-        class="mr-1"
-        color="primary"
-        (click)="removeIncomplete(trip)"
-        InnerLink>
-        <mat-icon>close</mat-icon>
-      </button>
+    @evaporateTransitionTrigger
+    class="d-flex flex-row align-items-center my-1">
+      
       <p
         class="small"
-        activeColor="accent">
+        activeColor="action">
         Finish setting up your trip to
         <b>{{trip.destinationName}}</b>
         ({{trip.displayDate}}?)
       </p>
-    </div>
-  </card-button>
-</div>
-<mat-card>
-  <div class="trip-form-container">
-    <h5>Where to next?</h5>
-    <trip-details-form
-      (tripChange)="onTripChange($event)"
-      #tripDetailsForm>
-    </trip-details-form>
-    <button
-      mat-fab
-      class="mx-1"
-      appColor="action"
-      (click)="confirmNewTrip()"
-      [disabled]="!tripDetailsForm.valid">
-      <mat-icon>check</mat-icon>
-    </button>
+      <button
+        mat-icon-button
+        class="ml-auto"
+        appColor="muted"
+        (click)="removeIncomplete(trip)"
+        InnerLink>
+        <mat-icon>close</mat-icon>
+      </button>
   </div>
-</mat-card>
+</div>
 <mat-card
   *ngFor="let trip of trips"
-  class="my-1">
-  <div class="d-flex flex-row align-items-center">
-    <button
-      mat-icon-button
-      activeColor="danger"
-      (click)="deleteTrip(trip.id)">
-      <mat-icon outlined>delete</mat-icon>
-    </button>
-    <div>
-      <h5>{{trip.destinationName}}</h5>
-      <p class="text-muted">({{trip.displayDate}})</p>
+  class="trip-card">
+    <div (click)="loadPackingList(trip.id)" class="trip-details pointer">
+      <h4>
+        {{trip.destinationName}}
+      </h4>
+      <p>
+        <span class="font-weight-light" [innerHtml]="trip.displayDate"></span>,&nbsp;
+        <span [innerHtml]="trip.temp"></span>
+      </p>
+      <div>
+        <div
+          class="d-inline-flex align-items-center"
+          *ngFor="let profile of trip.profiles">
+          <profile-icon
+            [avatar]="profile.avatar"
+            width="30px"></profile-icon>
+          <span>{{profile.name}}</span>
+        </div>
+      </div>
     </div>
-    <a
-      class="inline-link ml-auto align-self-start"
-      (click)="loadPackingList(trip.id)">
-      view packing list
-    </a>
-  </div>
-
-
-
+    <div class="ml-auto">
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="tripMenu"
+        activeColor="muted">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #tripMenu="matMenu">
+        <!-- ADD: SHARE PACKING LIST -->
+        <button *ngIf="!trip.past"
+          mat-menu-item
+          (click)="editTrip(trip.id)">
+          <mat-icon outlined>edit</mat-icon>
+          <span>Edit Trip Details</span>
+        </button>
+        <button
+          mat-menu-item
+          activeColor="danger"
+          (click)="deleteTrip(trip)">
+          <mat-icon outlined>delete</mat-icon>
+          <span>Delete Trip</span>
+        </button>
+      </mat-menu>
+    </div>
 </mat-card>

@@ -1,11 +1,11 @@
 <mat-card 
 class="cardButton pointer" 
 matRipple
-[matRippleColor]="appColors.action.ripple"
+[matRippleColor]="appColors[activeColor].ripple"
 [matRippleDisabled]="disabled"
 matRippleRadius="300"
 [matRippleUnbounded]="false"
-[activeColor]="disabled ? 'muted' : 'action'"
+[activeColor]="disabled ? 'muted' : activeColor"
 [colorTarget]="targetColor"
 [class.disabled]="disabled">
   <div class="flex-item content"><ng-content></ng-content></div>

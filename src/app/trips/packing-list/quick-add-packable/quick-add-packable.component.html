@@ -15,14 +15,23 @@
       [formControl]="newPackableName"
       [matAutocomplete]="auto"
       #nameInput>
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onSelectOption($event)">
-        <mat-option *ngFor="let packable of filteredList | async" [value]="packable" >
-          <div class="d-flex align-items-center w-100">
-            <span>{{packable.name}}</span>
-            <mat-icon appColor="muted" class="ml-auto">get_app</mat-icon>
-          </div>
-        </mat-option>
-      </mat-autocomplete>
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      [displayWith]="displayFn"
+      [autoActiveFirstOption]="true"
+      (optionSelected)="onSelectOption($event)">
+      <mat-option
+        *ngFor="let packable of filteredList | async"
+        [value]="packable">
+        <div class="d-flex align-items-center w-100">
+            <mat-icon
+            appColor="muted">
+            get_app
+          </mat-icon>
+          <span>{{packable.name}}</span>
+        </div>
+      </mat-option>
+    </mat-autocomplete>
     <button
       type="submit"
       *ngIf="newPackableName.valid"

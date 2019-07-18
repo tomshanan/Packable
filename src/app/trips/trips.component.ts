@@ -27,12 +27,11 @@ export class TripsComponent implements OnInit, OnDestroy {
   trips$: Observable<tripState>;
   trips: DisplayTrip[] = []
   incomplete: DisplayTrip[] = []
-  newTrip:Trip;
-
+  loadingTrips:boolean = false;
   constructor(
     private modalService:NgbModal, 
-    private router:Router, 
     private activeRoute:ActivatedRoute,
+    private router:Router, 
     private tripMemory:TripMemoryService,
     private storeSelector: StoreSelectorService,
     private store: Store<fromApp.appState>,
@@ -42,30 +41,33 @@ export class TripsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.trips$ = this.store.select('trips');
     this.state_subscription = this.trips$.subscribe((tripState)=>{
-      let displayTrips=tripState.trips.map(trip=>this.tripFac.makeDisplayTrip(trip)) 
-      this.trips.compare(displayTrips)
-      this.trips.sort((a,b)=>{
-        return a.firstDate < b.firstDate ? -1 : 1;
+      this.loadingTrips = true
+      this.tripFac.getDisplayTrips(tripState.trips.ids()).then(trips=>{
+        this.setTrips(trips)
+        this.loadingTrips = false
+      }).catch(e=>{
+        console.warn(e)
+        this.loadingTrips = false
       })
+      
       let incompleteDisplay =tripState.incomplete.map(trip => this.tripFac.makeDisplayTrip(trip))
       this.incomplete.compare(incompleteDisplay)
       this.incomplete.sort(sortByMostRecent)
       console.log(this.incomplete)
     })
   }
+  setTrips(trips:DisplayTrip[]){
+    this.trips.compare(trips)
+    this.trips.sort((a,b)=>{
+      return a.firstDate < b.firstDate ? -1 : 1;
+    })
+  }
   ngOnDestroy(){
     this.state_subscription.unsubscribe()
-  }
-  onTripChange(trip:Trip){
-    this.newTrip = trip;
   }
   openModal(tempRef: TemplateRef<any> ) {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.inputTemplate = tempRef;
-  }
-  confirmNewTrip(){
-    this.tripMemory.saveTempTrip(this.newTrip)
-    this.router.navigate(['new'], {relativeTo: this.activeRoute})
   }
   continueIncomplete(id:string){
     let incTrip = this.storeSelector.getIncompleteTripById(id)
@@ -76,26 +78,10 @@ export class TripsComponent implements OnInit, OnDestroy {
     this.incomplete.removeElements([trip])
     this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
   }
-  deleteTrip(id:string){
-    this.store.dispatch(new tripActions.removeTrips([id]))
+  editTrip(id:string){
+    this.router.navigate(['trips','edit',id])
   }
   loadPackingList(tripId:string){
     this.router.navigate(['packing-list',tripId],{relativeTo: this.activeRoute})
   }
-  // makeTripName(displayTrip: displayTrip, trip: Trip){
-  //   let reverseDate = (dateString:string):string=>{ return dateString.split('-').reverse().join('')}
-  //   return `${displayTrip.destinationName.replace(/[^A-Za-z]/g,'')}${reverseDate(trip.startDate)}-${reverseDate(trip.endDate)}`
-  // }
-  // editTrip(displayTrip: displayTrip){
-  //   let trip = this.storeSelector.getTripById(displayTrip.id)
-  //   let TripName = this.makeTripName(displayTrip,trip)
-  //   this.memoryService.set('TRIP',trip);
-  //   this.router.navigate([TripName], {relativeTo: this.activeRoute})
-  // }
-  // viewPackingList(displayTrip: displayTrip){
-  //   let trip = this.storeSelector.getTripById(displayTrip.id)
-  //   let TripName = this.makeTripName(displayTrip,trip)
-  //   this.memoryService.set('TRIP',trip);
-  //   this.router.navigate([TripName,'packing-list'], {relativeTo: this.activeRoute})
-  // }
 }

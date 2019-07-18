@@ -1,0 +1,18 @@
+<mat-card>Create Your first Traveler</mat-card>
+<mat-card>
+  <div class="trip-form-container">
+    <h5>Where to next?</h5>
+    <trip-details-form
+      (tripChange)="onTripChange($event)"
+      #tripDetailsForm>
+    </trip-details-form>
+    <button
+      mat-fab
+      class="mx-1"
+      appColor="action"
+      (click)="confirmNewTrip()"
+      [disabled]="!tripDetailsForm.valid">
+      <mat-icon>check</mat-icon>
+    </button>
+  </div>
+</mat-card>

@@ -1,6 +1,8 @@
 import { searchableItem } from '@app/shared-comps/item-selector/item-selector.component';
 import * as moment from 'moment'
 import { Metadata, HasMetaData } from './library/library.model';
+import { FormControl, ValidatorFn, FormGroupDirective, NgForm } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material';
 
 export type hasId = {
   id: string
@@ -154,6 +156,23 @@ export function decodeHtml(html: string) {
 export function comparableName(str: string) {
   return str.trim().toUpperCase().replace(anySpaces, '');
 }
+
+
+export function usedNamesValidator(usedNames:string[]=[],allowedName?:string):ValidatorFn{
+  return (control: FormControl): { [s: string]: boolean } | null => {
+    let input = comparableName(control.value)
+    if (usedNames.includes(input) && input !== comparableName(allowedName)) {
+      return { 'usedName': true };
+    }
+    return null;
+  }
+}
+export class MatchImmediately implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+}
+
 type hasDateModified = { dateModified: number }
 export function sortByMostRecent(a: hasDateModified, b: hasDateModified): number {
   return a.dateModified > b.dateModified ? -1 : 1;

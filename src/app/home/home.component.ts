@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2, TemplateRef } from '@angular/core';
 import { IconService } from '@app/core';
 import { StoreSelectorService } from '@shared/services/store-selector.service';
 import { Profile } from '@shared/models/profile.model';
@@ -10,6 +10,14 @@ import { CollectionFactory } from '../shared/factories/collection.factory';
 import { randomBetween } from '@app/shared/global-functions';
 import { ProfileFactory } from '../shared/factories/profile.factory';
 import { TripWeatherData } from '../shared/services/weather.service';
+import { Trip } from '../shared/models/trip.model';
+import { Router, ActivatedRoute } from '@angular/router';
+import { TripMemoryService } from '../shared/services/trip-memory.service';
+import { AuthService } from '../user/auth.service';
+import { Observable } from 'rxjs';
+import { Icon } from '../shared-comps/stepper/stepper.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalComponent } from '../shared-comps/modal/modal.component';
 
 @Component({
   selector: 'app-home',
@@ -18,37 +26,22 @@ import { TripWeatherData } from '../shared/services/weather.service';
   animations: [quickTransitionTrigger]
 })
 export class HomeComponent implements OnInit {
-  loadingWeather:boolean = false;
-  weatherData = new TripWeatherData()
-
+  authenticated$: Observable<boolean>;
+  helpIcon: Icon = {icon:{type:'mat',name:'help_outline'},text:'Help'}
+  loginIcon: Icon = {icon:null,text:'Login'}
   constructor(
-    private store:StoreSelectorService,
-    private colFac:CollectionFactory,
-    private proFac: ProfileFactory,
-    private iconService:IconService,
-    private storage: StorageService,
     public windowService: WindowService,
-    private rendere: Renderer2,
+    public auth: AuthService,
+    private modalService:NgbModal, 
   ) { 
-    // this.icons = iconService.profileIcons.icons.slice()
   }
-  log(e){
-    console.log(e);
-  }
+
   ngOnInit() {
-   
+    this.authenticated$ = this.auth.isAuthenticated$.pipe()
   }
 
-  
-  generateData(){
-    if(confirm("This Will override your user data, Are you sure?")){
-      this.storage.generateDummyData();
-    }
+  openModal(tempRef: TemplateRef<any> ) {
+    const modal = this.modalService.open(ModalComponent);
+    modal.componentInstance.inputTemplate = tempRef;
   }
-  saveDummyDate(){
-    if(confirm("This Will SAVE the dummy data! Are you sure?")){
-      this.storage.setAllUserItemsAndSettings();
-    }
-  }
-
 }

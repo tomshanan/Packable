@@ -23,9 +23,10 @@ export class DisplayTrip {
         public firstDate: string,
         public temp: string,
         public destinationName: string,
-        public profileNames: string[],
+        public profiles: Profile[],
         public collectionNames: string[],
-        public dateModified: number
+        public dateModified: number,
+        public past:boolean,
     ){
     }
 }

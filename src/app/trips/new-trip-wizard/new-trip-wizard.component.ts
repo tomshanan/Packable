@@ -70,7 +70,6 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     { icon: { type: 'svg', name: 'place-edit' }, text: 'Where & When' },
     { icon: { type: 'mat', name: 'group' }, text: 'Who' },
     { icon: { type: 'svg', name: 'collection-alt' }, text: 'What' },
-    { icon: { type: 'svg', name: 'minimalist' }, text: 'Pack' },
   ]
   ngOnInit() {
     this.trip = this.tripMemory.trip || new Trip();

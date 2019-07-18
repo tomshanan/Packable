@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { MatInput } from '@angular/material';
-import { allowedNameRegEx, comparableName, hasNameAndId, hasOrigin } from '@app/shared/global-functions';
-
+import { FormControl, Validators} from '@angular/forms';
+import { allowedNameRegEx, comparableName, hasNameAndId, hasOrigin, usedNamesValidator, MatchImmediately } from '@app/shared/global-functions';
 
 
 export interface NameInputChangeEvent {
@@ -26,6 +24,7 @@ export class NameInputComponent implements OnInit,AfterViewInit {
   @Output() importRequest = new EventEmitter<string>()
   @ViewChild('editNameInput') editNameInput: ElementRef;
   allowedName: string;
+  matcher = new MatchImmediately()
   
 /**
  <name-input
@@ -40,20 +39,15 @@ export class NameInputComponent implements OnInit,AfterViewInit {
 
   constructor() {
   }
-  validate_usedName(control: FormControl): { [s: string]: boolean } {
-    let input = comparableName(control.value)
-    if (this.usedNames.includes(input) && input !== comparableName(this.allowedName)) {
-      return { 'usedName': true };
-    }
-    return null;
-  }
+  
   ngOnInit() {
+    console.log(this.usedNamesInput)
     this.usedNames = this.usedNamesInput.map(used=>comparableName(used.name))
     this.allowedName = this.value;
     this.nameInput= new FormControl(this.value, [
       Validators.required, 
       Validators.pattern(allowedNameRegEx), 
-      this.validate_usedName.bind(this)
+      usedNamesValidator(this.usedNames,this.allowedName)
     ])
   }
   ngAfterViewInit(){
@@ -72,6 +66,7 @@ export class NameInputComponent implements OnInit,AfterViewInit {
     this.importRequest.emit(this.nameInput.value)
   }
   emitChange(){
+    //console.log(this.nameInput)
     this.valueChange.emit(this.nameInput.value)
     this.changeEvent.emit({
       oldValue: this.value,

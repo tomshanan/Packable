@@ -1,4 +1,69 @@
-<app-nav [header]="'Home'"></app-nav>
+<app-nav
+  [header]="'Packable.app'"
+  [rightIcon]="(authenticated$ | async)?helpIcon:null"
+  (rightClick)="openModal(aboutPackable)">
+</app-nav>
 
 
-<p>Welcome to Packable!</p>
+<user-landing *ngIf="(authenticated$ | async); else notSignedIn">
+</user-landing>
+<ng-template #notSignedIn>
+  <p class="text-center d-md-none">
+    Welcome to Packable.app
+    <br>
+    <a
+      routerLink="/user"
+      fragment="login"
+      class="inline-link">
+      Login
+    </a>
+    &nbsp;or&nbsp;
+    <a
+      routerLink="/user"
+      fragment="register"
+      class="inline-link">
+      register
+    </a>
+  </p>
+  <ng-container *ngTemplateOutlet="aboutPackable"></ng-container>
+</ng-template>
+<ng-template #aboutPackable>
+  <h4>Packable.app</h4>
+  <p class="lead">
+    Packable.app allows you to quickly create a packing list for your upcoming trips.
+  </p>
+  <p>
+    You can use pre-defined templates to create a Traveler profile, and later customize your preferences so that next time you travel you can simple rely on Packable.app to calculate and tell you exactly what you need to pack.
+  </p>
+  <h4>Packables</h4>
+  <p class="lead">
+    Packables are "smart" items you take with you on a trip.
+  </p>
+  <p>
+    Each Packable has its own Quantity Rules (eg.
+    <i>1 Per day</i>
+    ) and Weather Conditions (eg.
+    <i>only for rainy weather</i>
+    ), to help the app calculate how many and when to pack them.
+  </p>
+  <h4>Collections</h4>
+  <p class="lead">
+    Collections are groups of Packables that share the same category (e.g. Toiletries).
+  </p>
+  <p>
+    You can pick the Collections for every trip based on the activities planned, like a <i>Beach Collection</i>, while others can be set as Essential Collections, and will automatically be considered for every trip, like a <i>Basic Clothes Collection</i>.
+  </p>
+  <p>
+    Each Collections can have its own Weather Conditions to limit when the app would suggest you should pack its contained Packables.
+  </p>
+  <h4>Travelers</h4>
+  <p class="lead">
+    Traveler profiles help you group Collections with custom preferences, so that the app could know what you always need to pack, and remember your individual preferences for each Traveler profile.
+  </p>
+  <p>
+    You can define multiple Traveler profiles for various types of travel, like one for a business trip and another for holidays, each with different rules for their Collections.
+  </p>
+  <p>
+    <i>Going away with your family or friends?</i> No problem, you can add multiple Traveler profiles to a single trip, each with their own preferences and it would help you keep track of Shared Packables too so you won't pack sunscreen twice!
+  </p>
+</ng-template>

@@ -11,8 +11,8 @@ import * as collectionActions from '@app/collections/store/collections.actions'
 import * as profileActions from '@app/profiles/store/profile.actions'
 import * as fromApp from '@shared/app.reducers';
 import { Store } from '@ngrx/store';
-import { timeStamp } from '@app/shared/global-functions';
-import { isDefined } from '../../../shared/global-functions';
+import { timeStamp, hasOrigin } from '@app/shared/global-functions';
+import { isDefined, hasNameAndId } from '../../../shared/global-functions';
 import { expandAndFadeTrigger } from '../../../shared/animations';
 
 export interface editCollectionDialog_data {
@@ -29,7 +29,7 @@ export interface editCollectionDialog_data {
 export class EditCollectionDialogComponent implements OnInit {
   profileId: string;
   collection: CollectionComplete;
-  usedNames: string[]
+  usedNames: Array<hasNameAndId & hasOrigin>;
   nameValid: boolean = true
   showProfileSelector: boolean;
   profileGroup: Profile[]
@@ -62,7 +62,7 @@ export class EditCollectionDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usedNames = this.storeSelector.originalCollections.map(c=>c.name)
+    this.usedNames = this.storeSelector.getUsedCollectionNames()
   }
 
   changeNameEvent(e:NameInputChangeEvent){

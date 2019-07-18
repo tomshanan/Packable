@@ -336,22 +336,23 @@ export class PackingListService {
 
     const basePackable: PackingListPackable = {
       name: packable.name,
-      checked: false,
       quantity: accQuantity,
       id: packable.id,
-      type: 'LOCAL',
+      type: 'PRIVATE',
       profileID: profile.id,
       collectionID: collection.id,
       quantityReasons: [],
-      changedAfterChecked: false,
+      weatherReasons: weatherReasons,
       weatherNotChecked: weatherNotChecked,
       passChecks: passChecks,
-      weatherReasons: weatherReasons,
+      checked: false,
+      changedAfterChecked: false,
       forcePass: false,
       forceRemove: false,
       forceQuantity: false,
       recentlyAdded: false,
       dateModified: timeStamp(),
+      userCreated: packable.userCreated,
     }
     // CHECK QUANTITY RULES
     packable.quantityRules.forEach(rule => {
@@ -374,8 +375,8 @@ export class PackingListService {
             returnListPackable.push(
               {
                 ...basePackable,
-                profileID: SHARED, // TO SHARE
                 quantity: rule.amount,
+                type:SHARED,
                 quantityReasons: [new Reason(reasonText)],
               }
             )
@@ -403,7 +404,7 @@ export class PackingListService {
   }
 
   addPackableToList(newP: PackingListPackable, packingList: PackingList): void {
-    let existingPackableIndex = packingList.packables.findIndexBy(newP, ['id', 'profileID'])
+    let existingPackableIndex = packingList.packables.findIndexBy(newP, ['id', 'profileID','type'])
     // COMPARE OLD PACKABLE'S QUANTITIES AND WEATHER CHECKS
     if (existingPackableIndex != -1) {
       let oldP = packingList.packables[existingPackableIndex]
@@ -440,7 +441,7 @@ export class PackingListService {
   }
   checkPackableChanges(oldList: PackingList, newPackable: PackingListPackable) {
     if (oldList) {
-      let oldPackable = oldList.packables.findBy(newPackable, ['id', 'profileID'])
+      let oldPackable = oldList.packables.findBy(newPackable, ['id', 'profileID','type'])
       if (oldPackable) {
         if (oldPackable.forceQuantity && !newPackable.forceQuantity) {
           newPackable.forceQuantity = true
@@ -464,6 +465,9 @@ export class PackingListService {
         newPackable.recentlyAdded = true;
       } else {
         newPackable.recentlyAdded = false;
+        if(oldPackable){
+          newPackable.collectionID = oldPackable.collectionID
+        }
       }
     }
   }
@@ -490,7 +494,7 @@ export class PackingListService {
       this.packingList.dateModified = stamp
       newPackables.forEach(newP => {
         newP.dateModified = stamp
-        const i = this.packingList.packables.findIndexBy(newP, ['id', 'profileID'])
+        const i = this.packingList.packables.findIndexBy(newP, ['id', 'profileID','type'])
         if(i!==-1){
           if(!this.packingList.packables[i].passChecks){
             this.packingList.packables[i] = newP

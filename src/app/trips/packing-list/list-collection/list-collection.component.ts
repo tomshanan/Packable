@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ListPackableComponent } from '../list-packable/list-packable.component';
 import { PackingListPackable, PackingListSettings, listCollection } from '../../../shared/models/packing-list.model';
 import { PackableComplete } from '../../../shared/models/packable.model';
@@ -12,7 +12,7 @@ import { take } from 'rxjs/operators';
 import { PackingListService } from '../packing-list.service';
 import { StoreSelectorService } from '../../../shared/services/store-selector.service';
 import { PackableFactory } from '../../../shared/factories/packable.factory';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Guid, isDefined } from '../../../shared/global-functions';
 import { editCollectionDialog_data } from '@app/collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
 import { EditCollectionDialogComponent } from '../../../collections/collection-list/edit-collection-dialog/edit-collection-dialog.component';
@@ -25,7 +25,7 @@ import { importPackables_result } from '@app/packables/packable-list/import-pack
   templateUrl: './list-collection.component.html',
   styleUrls: ['./list-collection.component.css']
 })
-export class ListCollectionComponent implements OnInit {
+export class ListCollectionComponent implements OnInit,OnDestroy {
   @Input() collection: listCollection;
   @Input('profile') inputProfile: string;
   profileId:string;
@@ -37,10 +37,12 @@ export class ListCollectionComponent implements OnInit {
 
   profiles: ProfileComplete[];
   settings$: Observable<PackingListSettings>;
+  subs:Subscription;
   constructor(
     private dialog: MatDialog,
+    private storeSelector: StoreSelectorService,
     private context: ContextService,
-    private profileFactory: ProfileFactory,
+    private proFac: ProfileFactory,
     private colFac: CollectionFactory,
     private packingListService: PackingListService,
     private pacFac: PackableFactory,
@@ -48,11 +50,15 @@ export class ListCollectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.profiles = this.profileFactory.getCompleteProfilesByIds(this.trip.profiles)
+    this.subs = this.storeSelector.profiles$.subscribe(profileState=>{
+      this.profiles = this.proFac.getCompleteProfilesByIds(this.trip.profiles)
+    })
     this.profileId = this.inputProfile != 'shared' ? this.inputProfile : null
     this.settings$ = this.packingListService.settingsEmitter.pipe()
   }
-
+  ngOnDestroy(){
+    this.subs.unsubscribe()
+  }
   onUpdatePackable(packable: PackingListPackable, save: boolean = true) {
     console.log(`onUpdatePackable: updatePackable.emit  collectionChange.emit`)
     this.collectionChange.emit(this.collection)
@@ -166,7 +172,7 @@ export class ListCollectionComponent implements OnInit {
     this.context.setBoth(this.collection.id, profileId)
     let data: editCollectionDialog_data = {
       collection: collection,
-      profileGroup: this.profileFactory.getAllProfilesAndMakeComplete()
+      profileGroup: this.proFac.getAllProfilesAndMakeComplete()
     }
     this.dialog.open(EditCollectionDialogComponent, {
       disableClose: true,

@@ -48,7 +48,7 @@ export class DisplayPackingList {
 }
 
 
-export type ListPackableType = 'LOCAL' | 'REMOTE' | 'SIMPLE';
+export type ListPackableType = 'SHARED' | 'PRIVATE';
 
 export interface PackingListPackable {
     profileID: string,
@@ -56,6 +56,7 @@ export interface PackingListPackable {
     id: string,
     name: string,
     type: ListPackableType,
+    userCreated:boolean,
     quantity: number,
     quantityReasons: Reason[],
     forceQuantity: boolean,

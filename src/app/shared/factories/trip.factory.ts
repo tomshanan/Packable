@@ -9,9 +9,9 @@ import { TripWeatherData, WeatherService } from '../services/weather.service';
 import { tempC } from '../models/weather.model';
 import { PackingListPackable, DisplayPackingList as DisplayPackingList, pass, listCollection, PackingList } from '../models/packing-list.model';
 import { ColorGeneratorService } from '../services/color-gen.service';
-import { Avatar } from '../models/profile.model';
+import { Avatar, Profile } from '../models/profile.model';
 
-export const SHARED = 'shared'
+export const SHARED = 'SHARED'
 export type tripProperties = keyof Trip
 @Injectable()
 export class TripFactory {
@@ -53,7 +53,7 @@ export class TripFactory {
             if (isDefined(packinglist)
                 && isDefined(packinglist.data.weatherData)
                 && packinglist.data.weatherData.isValid
-                && moment(packinglist.data.weatherData.dateModified).diff(moment(), 'days') < 3
+                && moment(packinglist.data.weatherData.dateModified).diff(moment(), 'hours') < 12
             ) {
                 weatherData = new TripWeatherData(packinglist.data.weatherData)
             } else {
@@ -71,9 +71,8 @@ export class TripFactory {
     public makeDisplayTrip = (trip: Trip, weatherData?: TripWeatherData): DisplayTrip => {
         let destination = this.destServices.findDestination(trip.destinationId)
         let dates: string = this.tripDatesToDateString(trip)
-        let profiles: string[] = this.storeSelector.profiles
+        let profiles: Profile[] = this.storeSelector.profiles
             .filter(p => trip.profiles.includes(p.id))
-            .map(p => p.name);
         let collections: string[] = this.storeSelector.originalCollections
             .filter(c => trip.collections.idIndex(c.id) > -1)
             .map(c => c.name);
@@ -85,7 +84,8 @@ export class TripFactory {
             destination.fullName,
             profiles,
             collections,
-            trip.dateModified
+            trip.dateModified,
+            moment(trip.startDate).isBefore(moment(),'day')
         )
     }
 
@@ -143,10 +143,10 @@ export class TripFactory {
 
         const firstTime = displayList.length === 0
         packingListPackables.forEach(item => {
-            let profileIndex = displayList.findIndex(p => p.id == item.profileID)
-            if (profileIndex == -1) {
+            let listIndex = displayList.findIndex(p => p.id === (item.type === SHARED ? SHARED : item.profileID)) 
+            if (listIndex == -1) {
                 const profile = this.storeSelector.getProfileById(item.profileID)
-                if (profile) {
+                if (item.type==='PRIVATE') {
                     displayList.push(
                         new DisplayPackingList({
                             header: profile.name,
@@ -165,27 +165,27 @@ export class TripFactory {
                         })
                     )
                 }
-                profileIndex = displayList.findIndex(p => p.id == item.profileID)
+                listIndex = displayList.findIndex(p => p.id === (item.type === SHARED ? SHARED : item.profileID))
             }
-            let collectionIndex = displayList[profileIndex].collections.findIndex(c => c.id == item.collectionID)
+            let collectionIndex = displayList[listIndex].collections.findIndex(c => c.id == item.collectionID)
             if (collectionIndex == -1) {
                 const collection = this.storeSelector.getCollectionById(item.collectionID)
-                displayList[profileIndex].collections.push(
+                displayList[listIndex].collections.push(
                     new listCollection({
                         header: collection.name,
                         id: item.collectionID,
                         packables: []
                     })
                 )
-                collectionIndex = displayList[profileIndex].collections.findIndex(p => p.id == item.collectionID)
+                collectionIndex = displayList[listIndex].collections.findIndex(p => p.id == item.collectionID)
             }
-            let packableIndex = displayList[profileIndex].collections[collectionIndex].packables.findIndex(p => p.id == item.id)
+            let packableIndex = displayList[listIndex].collections[collectionIndex].packables.findIndex(p => p.id == item.id)
             if (packableIndex === -1) {
-                //console.log(`👕 Added ${item.name} to ${displayList[profileIndex].header}/${displayList[profileIndex].collections[collectionIndex].header}`)
+                console.log(`👕 Added ${item.name} to ${displayList[listIndex].header}/${displayList[listIndex].collections[collectionIndex].header}`)
                 item.recentlyAdded = firstTime ? item.recentlyAdded : true;
-                displayList[profileIndex].collections[collectionIndex].packables.push(item)
+                displayList[listIndex].collections[collectionIndex].packables.push(item)
             } else {
-                let p = displayList[profileIndex].collections[collectionIndex].packables[packableIndex]
+                let p = displayList[listIndex].collections[collectionIndex].packables[packableIndex]
                 if (p.dateModified < item.dateModified) {
                     //console.log(`👕 Updated ${displayList[profileIndex].header}/${displayList[profileIndex].collections[collectionIndex].header}/${item.name} new:`, item, 'old:', p);
                     if ((!pass(p) && pass(item))) {
@@ -200,11 +200,13 @@ export class TripFactory {
         if (SharedListIndex != -1) {
             displayList.push(...displayList.splice(SharedListIndex, 1))
         }
-        const foundList: string[] = []
-        const removeList: PackingListPackable[] = []
+        // const foundList: string[] = []
+        // const removeList: PackingListPackable[] = []
         displayList.forEach(profileList => {
             profileList.collections.forEach(colList => {
-                colList.packables.compare(packingListPackables.filter(p=>p.profileID===profileList.id && p.collectionID===colList.id))
+                colList.packables.compare(packingListPackables.filter(p=>{
+                    return profileList.id === SHARED ? ( p.type === SHARED && p.collectionID === colList.id) : ( p.profileID === profileList.id && p.collectionID === colList.id && p.type === 'PRIVATE')
+                }))
                 // colList.packables.forEach(p => {
                 //     // FIND MISSING PACKABLES
                 //     const i = packingListPackables.findIndexBy(p, ['id', 'profileID', 'collectionID'])

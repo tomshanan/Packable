@@ -61,6 +61,11 @@ export class ProfileSelectorPanelComponent implements OnInit,OnChanges {
         this.onSelectedProfiles([null])
       } else if(!isDefined(this.selected)){
         this.selectorOpen = true;
+        if(this.selectorOpen){
+          setTimeout(() => {
+            this.iconSelector.scrollEvent()
+          }, 200);
+        }
       }
     }
   }

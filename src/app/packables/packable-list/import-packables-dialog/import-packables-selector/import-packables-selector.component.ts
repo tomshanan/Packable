@@ -9,7 +9,7 @@ import { StorageService } from '../../../../shared/storage/storage.service';
 import * as libraryActions from '@shared/library/library.actions'
 import {State as libraryState} from '@shared/library/library.model'
 import { Store } from '@ngrx/store';
-import { sortByMostRecent, sortByMetaData } from '../../../../shared/global-functions';
+import { sortByMostRecent, sortByMetascore } from '../../../../shared/global-functions';
 import { WindowService } from '../../../../shared/services/window.service';
 import { transitionTrigger } from '../../../../shared/animations';
 
@@ -68,7 +68,7 @@ export class ImportPackablesSelectorComponent implements OnInit, OnDestroy{
     let originalsWithMeta = this.pacFac.getPackablesWithMetaData(this.originalPackables)
     let localList = this.createFilterObject(originalsWithMeta)
     let usedIds = this.originalPackables.map(p=>p.id)
-    this.remotePackables = this.storeSelector.getRemotePackablesWithMetaData().filter(p=>!usedIds.includes(p.id)).sort(sortByMetaData)
+    this.remotePackables = this.storeSelector.getRemotePackablesWithMetaData().filter(p=>!usedIds.includes(p.id)).sort(sortByMetascore)
     let remoteList = this.createFilterObject(this.remotePackables)
     this.completeList = [...localList,...remoteList] 
     if(this.collection){

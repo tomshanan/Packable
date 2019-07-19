@@ -6,7 +6,7 @@ import { Subscription, Observable, combineLatest } from 'rxjs';
 import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { ProfileFactory } from '../../shared/factories/profile.factory';
 import { Profile } from '../../shared/models/profile.model';
-import { indexOfId, isDefined, sortByMetaData } from '../../shared/global-functions';
+import { indexOfId, isDefined, sortByMetascore } from '../../shared/global-functions';
 import { MatDialog } from '@angular/material';
 import { SelectCollectionProfilesDialogComponent, CollectionProfilesDialog_data } from './select-collection-profiles-dialog/select-collection-profiles-dialog.component';
 import { take, filter, takeWhile, first } from 'rxjs/operators';
@@ -106,7 +106,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
     if (sort) {
       this.sortedCollections
         // by heighest meta data
-        .sort(sortByMetaData)
+        .sort(sortByMetascore)
         // most used collection per profile
         .sort((a, b) => this.sortColProGroup(a, b, this.collectionProfileGroups))
       this.weatherService.sortByConditionsMet(this.sortedCollections, this.weatherData)
@@ -128,7 +128,7 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
     this.recommendedCollections.compare(filteredRecommended)
     if (sort) {
       this.recommendedCollections
-        .sort(sortByMetaData)
+        .sort(sortByMetascore)
         .sort((a, b) => {
           const aCount = this.destMetaData.collections[a.id] || 0
           const bCount = this.destMetaData.collections[b.id] || 0

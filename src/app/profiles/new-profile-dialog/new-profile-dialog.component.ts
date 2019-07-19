@@ -12,7 +12,7 @@ import { CollectionComplete, CollectionWithMetadata } from '@app/shared/models/c
 import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { Subscription } from 'rxjs';
 import { ColorGeneratorService } from '../../shared/services/color-gen.service';
-import { titleCase, Guid, timeStamp, sortByMetaData } from '../../shared/global-functions';
+import { titleCase, Guid, timeStamp, sortByMostRecent, sortByMetascore } from '@shared/global-functions';
 import * as libraryActions from '@shared/library/library.actions';
 import * as collectionActions from '@app/collections/store/collections.actions';
 import * as packableActions from '@app/packables/store/packables.actions';
@@ -37,7 +37,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   collections: CollectionComplete[];
   selectedCollections: string[] = [];
   selectedEssentialCollections: string[] = [];
-
+  selectedProfile: string = null;
   allProfiles: ProfileComplete[];
   templateProfiles: ProfileCompleteWithMetadata[]
   profileCollectionStrings: {id:string,list:string[]}[] = [];
@@ -68,22 +68,13 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     this.store.dispatch(new libraryActions.loadLibrary())
   }
   init(){
-    this.collections = this.colFac.getImportCollectionList()
-    this.allProfiles = this.proFac.getAllProfilesAndMakeComplete()
-    console.log('NEWPROFILE DIALOG: allProfiles', this.allProfiles)
-    this.templateProfiles = this.proFac.getAllRemoteAndMakeComplete() 
-    this.templateProfiles.sort(sortByMetaData)
-    console.log('NEWPROFILE DIALOG: templateProfiles', this.templateProfiles)
-    this.profileCollectionStrings = [...this.allProfiles, ...this.templateProfiles].map(p=>{
-      return {
-        id: p.id,
-        list: p.collections.map(c=> titleCase(c.name))
-      }
-    })
+    this.collections = this.colFac.getImportCollectionList();
+    this.allProfiles = this.proFac.getAllProfilesAndMakeComplete().sort(sortByMostRecent);
+    console.log('NEWPROFILE DIALOG: allProfiles', this.allProfiles);
+    this.templateProfiles = this.proFac.getAllRemoteAndMakeComplete();
+    this.templateProfiles.sort(sortByMetascore);
   }
-  getCollectionListById(id:string):string[]{
-    return this.profileCollectionStrings.findId(id).list
-  }
+
   ngOnDestroy() {
   }
   backStep() {
@@ -101,13 +92,21 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   // check validity of profile
   // set method
   //this.step++
+  onNextStep(){
+    if(this.storeSelector.isLibraryStore){
+      this.onComplete()
+    } else {
+      this.onChooseMethod('template')
+    }
+  }
   onChooseMethod(method: profileCreationMethod) {
     this.method = method;
+    this.selectedProfile = null;
     if(!this.color){
       this.color = this.colorGen.getUnused()
       this.profile.avatar.color = this.color
     }
-    if (this.profileForm.valid) {
+    if (this.step === 1) {
       this.dialogRef.addPanelClass('dialog-tall')
       this.step++
     }
@@ -118,6 +117,12 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     get collections and apply to this.profile
     then complete
   */
+ chooseCopy(){
+  this.onChooseProfile(this.allProfiles.findId(this.selectedProfile))
+ }
+  chooseTemplate(){
+    this.onChooseProfile(this.templateProfiles.findId(this.selectedProfile))
+  }
   onChooseProfile(profile: ProfileComplete) {
     this.selectedCollections = profile.collections.map(c=>c.id)
     this.onComplete()
@@ -129,9 +134,6 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
       let complete = this.bulkActions.processImportCollections(this.selectedCollections)
       // Set Essential Collections in profile
       this.profile.collections = complete
-      this.profile.collections.forEach(c=>{
-        c.essential = true
-      })
     }
     
     this.profile.id = Guid.newGuid()

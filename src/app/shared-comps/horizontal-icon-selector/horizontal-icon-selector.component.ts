@@ -11,7 +11,7 @@ import { fadeInOut } from '../../shared/animations';
   styleUrls: ['./horizontal-icon-selector.component.css'],
   animations: [fadeInOut]
 })
-export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterViewInit {
+export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterViewInit, AfterContentInit {
   @Input('stepWidth') steps:number = 50;
   @Output('scrollEvent') emitScrollEvent = new EventEmitter<number>();
   public scrolling = new Subject<number>()
@@ -33,7 +33,10 @@ export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterV
   ngOnInit() {
   }
   ngAfterViewInit(){
-    this.scrollEvent()
+  }
+  ngAfterContentInit(){
+    // allow ng-content to load before checking if we need arrows
+    this.scrollEvent();
     this.windowSub = this.windowService.change.subscribe(()=>{
       this.scrollEvent();
     })
@@ -43,21 +46,21 @@ export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterV
     this.scrolling.complete();
   }
   scrollEvent(){
-    this.emitScrollEvent.emit(this.scrollPosition)
-    this.scrolling.next(this.scrollPosition)
+    this.emitScrollEvent.emit(this.scrollPosition())
+    this.scrolling.next(this.scrollPosition())
     setTimeout(() => {
-      this.moreLeft = this.scrollPosition > 0
-      this.moreRight = this.rightSpace>0;
+      this.moreLeft = this.scrollPosition() > 0
+      this.moreRight = this.rightSpace()>0;
     }, 0);
     this.cd.markForCheck()
   }
   scrollRight(){
-    let newScrollPisition = this.containerWidth - 40 + this.scrollPosition
+    let newScrollPisition = this.containerWidth() - 40 + this.scrollPosition()
     newScrollPisition = newScrollPisition -(newScrollPisition%this.steps) - 40
     this.renderer.setProperty(this.scrollArea.nativeElement,'scrollLeft',newScrollPisition)
   }
   scrollLeft(){
-    let newScrollPisition = this.scrollPosition - this.containerWidth + 40
+    let newScrollPisition = this.scrollPosition() - this.containerWidth() + 40
     newScrollPisition = newScrollPisition + (newScrollPisition%this.steps)
     this.renderer.setProperty(this.scrollArea.nativeElement,'scrollLeft',newScrollPisition)
   }
@@ -66,16 +69,16 @@ export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterV
     this.scrollEvent()
   }  
 
-  get scrollPosition() {
+  scrollPosition() {
     return this.scrollArea.nativeElement.scrollLeft
   }
-  get containerWidth() {
+  containerWidth() {
     return this.scrollArea.nativeElement.clientWidth
   }
-  get scrollAreaWidth(){
+  scrollAreaWidth(){
     return this.scrollArea.nativeElement.scrollWidth
   }
-  get rightSpace () {
-    return this.scrollAreaWidth - this.containerWidth - this.scrollPosition
+  rightSpace () {
+    return this.scrollAreaWidth() - this.containerWidth() - this.scrollPosition()
   }
 }

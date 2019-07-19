@@ -1,5 +1,7 @@
 
-
+:host{
+    z-index: 2;
+}
 .dialog-header {
     position: relative;
     text-align: center;

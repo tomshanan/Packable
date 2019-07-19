@@ -177,7 +177,7 @@ type hasDateModified = { dateModified: number }
 export function sortByMostRecent(a: hasDateModified, b: hasDateModified): number {
   return a.dateModified > b.dateModified ? -1 : 1;
 }
-export function sortByMetascore(a: HasMetaData, b: HasMetaData): number {
+export function sortByMetaScore(a: HasMetaData, b: HasMetaData): number {
   return b.metaData.metaScore - a.metaData.metaScore
 }
 export function sortByName(a, b):number {

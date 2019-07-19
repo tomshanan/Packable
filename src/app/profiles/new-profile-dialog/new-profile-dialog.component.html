@@ -3,11 +3,6 @@
   (close)="onClose()"
   [showReturn]="step>1"
   (return)="backStep()"></app-dialog-header>
-
-
-
-
-
 <ng-container *ngIf="step === 1">
   <mat-dialog-content>
     <div @transitionTrigger>
@@ -16,16 +11,17 @@
         (validChange)="profileEditFormValidation($event)"
         #profileForm>
       </profile-edit-form>
-      <div class="my-3 text-center" *ngIf="allProfiles && allProfiles.length > 0">
-         <button
-         mat-raised-button
-           [disabled]="!profileFormValid"
-           (click)="onChooseMethod('copy')">
-           <mat-icon outlined>fasce</mat-icon>
-           <span>Copy Existing Traveler</span>
-         </button>
-         <p>or create blank Traveler...</p>
-       </div>
+      <div
+        class="my-3 text-center"
+        *ngIf="!profileFormValid && storeSelector.isLibraryStore && allProfiles && allProfiles.length > 0">
+        <a
+          class="inline-link withIcon"
+          (click)="onChooseMethod('copy')">
+          <mat-icon outlined>fasce</mat-icon>
+          <span>Copy Existing Traveler</span>
+        </a>
+        <p>or create blank Traveler...</p>
+      </div>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
@@ -41,13 +37,16 @@
     </dialog-confirm-button>
   </mat-dialog-actions>
 </ng-container>
+
+
+
 <ng-container
   *ngIf="step === 2"
   [ngSwitch]="method">
   <ng-container *ngSwitchCase="'copy'">
     <mat-dialog-content>
       <div @transitionTrigger>
-        <div style="position: sticky;top:0;z-index:1; background: white;">
+        <div class="sticky">
           <div class="text-center">
             <profile-icon
               [profile]="profile"
@@ -55,61 +54,62 @@
               width="65px">
             </profile-icon>
           </div>
-          <p class="text-center">Select a Traveler to copy:</p>
         </div>
+        <p class="text-center">Select a Traveler to copy:</p>
         <div>
           <div class="profile-card-container">
-          <ng-container *ngFor="let profile of allProfiles">
-                <div
-                  class="profile-card-flex"
-                  [class.selected]="selectedProfile === profile.id"
-                  (click)="selectedProfile = profile.id">
-                  <div class="profile-card-icon">
-                    <profile-icon
-                      [profile]="profile"
-                      [showName]="true"
-                      width="80px">
-                    </profile-icon>
-                  </div>
+            <ng-container *ngFor="let profile of allProfiles">
+              <div
+                class="profile-card-flex"
+                [class.selected]="selectedProfile === profile.id"
+                (click)="selectedProfile = profile.id">
+                <div class="profile-card-icon">
+                  <profile-icon
+                    [profile]="profile"
+                    [showName]="true"
+                    width="80px">
+                  </profile-icon>
                 </div>
-              </ng-container>
-            </div>
-            <div class="my-3 text-center" *ngIf="storeSelector.isLibraryStore === false">
-              <p>or...</p>
-              <button
-              mat-raised-button
-                [disabled]="!profileFormValid"
-                (click)="onChooseMethod('template')">
-                <mat-icon outlined>assignment_ind</mat-icon>
-                <span>Use Templates</span>
-              </button>
-            </div>
+              </div>
+            </ng-container>
+          </div>
+          <div
+            class="my-3 text-center"
+            *ngIf="storeSelector.isLibraryStore === false">
+            <p>or...</p>
+            <a
+              (click)="onChooseMethod('template')"
+              class="inline-link
+              withIcon">
+              <mat-icon outlined>assignment_ind</mat-icon>
+              <span>Use Templates</span>
+            </a>
+          </div>
         </div>
       </div>
     </mat-dialog-content>
     <mat-dialog-actions>
-        <dialog-confirm-button>
-          <button
-            mat-fab
-            class="mx-1"
-            activeColor="action"
-            (click)="chooseCopy()"
-            [disabled]="!selectedProfile">
-            <mat-icon>check</mat-icon>
-          </button>
-        </dialog-confirm-button>
-      </mat-dialog-actions>
+      <dialog-confirm-button>
+        <button
+          mat-fab
+          class="mx-1"
+          activeColor="action"
+          (click)="chooseCopy()"
+          [disabled]="!selectedProfile">
+          <mat-icon>check</mat-icon>
+        </button>
+      </dialog-confirm-button>
+    </mat-dialog-actions>
   </ng-container>
 
 
 
 
 
-
   <ng-container *ngSwitchCase="'template'">
-    <mat-dialog-content>
+    <mat-dialog-content class="d-block position-relative">
       <div @transitionTrigger>
-        <div style="position: sticky;top:0;z-index:1; background: white;">
+        <div class="sticky">
           <div class="text-center">
             <profile-icon
               [profile]="profile"
@@ -117,8 +117,8 @@
               width="65px">
             </profile-icon>
           </div>
-          <p class="text-center">Select a Traveler Template:</p>
         </div>
+        <p class="text-center">Select a Traveler Template:</p>
         <div class="dialog-row scrollable">
           <div class="profile-card-container">
             <ng-container *ngFor="let profile of templateProfiles">
@@ -139,15 +139,16 @@
               </div>
             </ng-container>
           </div>
-          <div class="my-3 text-center" *ngIf="allProfiles && allProfiles.length > 0">
-             <p>or...</p>
-            <button
-            mat-raised-button
-              [disabled]="!profileFormValid"
-              (click)="onChooseMethod('copy')">
+          <div
+            class="my-3 text-center"
+            *ngIf="allProfiles && allProfiles.length > 0">
+            <p>or...</p>
+            <a
+              (click)="onChooseMethod('copy')"
+              class="inline-link withIcon">
               <mat-icon outlined>face</mat-icon>
               <span>Copy Existing Traveler</span>
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -165,48 +166,4 @@
       </dialog-confirm-button>
     </mat-dialog-actions>
   </ng-container>
-  <!-- <ng-container *ngSwitchCase="'new'">
-      <mat-dialog-content>
-          <div @transitionTrigger>
-            <div>
-              <div class="text-center">
-                <profile-icon
-                  [profile]="profile"
-                  [showName]="true"
-                  width="65px">
-                </profile-icon>
-              </div>
-              <p>
-                Select the Essential Collections you wish to pack on EVERY trip. Collections and Packables with weather rules will only be added once conditions are met.
-              </p>
-            </div>
-            <div style="position: sticky;top:0;z-index:1; background: white;">
-              <search-field
-                [(value)]="searchString"
-                placeholder="Search Collections">
-              </search-field>
-            </div>
-            <div>
-              <collection-selector
-                [collections]="collections"
-                [(selected)]="selectedCollections"
-                [filterInput]="searchString">
-              </collection-selector>
-            </div>
-          </div>
-        </mat-dialog-content>
-        <mat-dialog-actions>
-          <dialog-confirm-button>
-            <button
-              mat-fab
-              class="mx-1"
-              activeColor="action"
-              (click)="onComplete()"
-              [disabled]="selectedCollections.length===0">
-              <mat-icon>check</mat-icon>
-            </button>
-          </dialog-confirm-button>
-        </mat-dialog-actions>
-      
-  </ng-container> -->
 </ng-container>

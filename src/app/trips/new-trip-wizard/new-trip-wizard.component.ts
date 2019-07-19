@@ -28,7 +28,6 @@ import { take, takeWhile, filter, map } from 'rxjs/operators';
 import { expandAndFadeTrigger } from '../../shared/animations';
 import { Router } from '@angular/router';
 import { StorageService } from '../../shared/storage/storage.service';
-import { deflate } from 'zlib';
 
 @Component({
   selector: 'app-new-trip-wizard',

@@ -1,186 +1,188 @@
-<toolbar
-  [class.notSticky]="!listEditing"
-  *ngIf="optionsEnabled">
-  <!-- <ng-container *ngIf="listEditing === false" ngProjectAs="[toolbar-right]">
-    <icon-text-button
-      text="Edit"
-      [reverse]="true"
-      svgIcon="list"
-      (onClick)="toggleListEditing(true)"></icon-text-button>
-  </ng-container> -->
-
-  <ng-container *ngIf="listEditing">
-    <mat-checkbox
-      style="padding-left: 24px; padding-right: 0.2em"
-      [checked]="!selected.isEmpty"
-      [indeterminate]="!selected.isEmpty && collectionList.length > selected.length"
-      (change)="masterCheckboxChange($event)">
-    </mat-checkbox>
-  </ng-container>
-
-  <ng-container *ngIf="listEditing && !selected.isEmpty">
-    <icon-text-button
-      [text]="'Remove('+selected.length+')'"
-      svgIcon="users-remove"
-      class="text-warning text-danger-hover"
-      color="danger"
-      (onClick)="bulkActionRemoveSelectedCollections()"></icon-text-button>
-    <icon-text-button
-      *ngIf="!context.profileId"
-      [text]="'Delete('+selected.length+')'"
-      matIcon="delete"
-      class="text-danger text-danger-hover"
-      color="danger"
-      (onClick)="bulkActionDeleteSelectedCollections()"></icon-text-button>
-  </ng-container>
-
-  <ng-container *ngIf="selected.isEmpty">
-    <icon-text-button
-      text="Import"
-      svgIcon="collection-import"
-      (onClick)="bulkActionImportCollections()"
-      showTextFromSize="xxs"
-      *ngIf="profileId || !storeSelector.isLibraryStore"></icon-text-button>
-    <icon-text-button
-      text="Create"
-      svgIcon="collection-add"
-      (onClick)="actionNewCollection()"
-      showTextFromSize="xxs"></icon-text-button>
-  </ng-container>
-  <ng-container *ngIf="listEditing" ngProjectAs="[toolbar-right]">
-    <button
-      mat-icon-button
-      (click)="toggleListEditing(false)"
-      class="closeButton">
-      <mat-icon color="primary">close</mat-icon>
-    </button>
-  </ng-container>
-</toolbar>
-<mat-accordion #collectionAccordion>
-  <div
-    *ngFor="let collection of collectionList"
-    @evaporateTransitionTrigger>
-
-    <mat-expansion-panel
-      class="collection-panel"
-      (opened)="expandCollection(collection.id, collectionMatPanel)"
-      (closed)="collapseCollection(collection.id)"
-      (afterExpand)="panelAnimating=false"
-      (afterCollapse)="panelAnimating=false"
-      [class.overflow]="!panelAnimating"
-      [disabled]="listEditing"
-      [class.listEditing]="listEditing"
-      hideToggle
-      #collectionMatPanel>
-      <mat-expansion-panel-header>
-        <mat-panel-title
-          class="collection-title"
-          [class.small]="windowService.max('xs')">
-          <div
-            class="collection-checkbox" InnerLink>
-            <mat-checkbox
-              [class.o-06]="!listEditing"
-              [checked]="isSelected(collection.id)"
-              (click)="checkboxChange(collection.id)"></mat-checkbox>
-          </div>
-          {{collection.name}}
-          <ng-container *ngIf="profileId && collection.essential">
-            <mat-icon
-              style="align-self: center;"
-              title="Essential Collection">
-              star
-            </mat-icon>
-          </ng-container>
-        </mat-panel-title>
-        <mat-panel-description class="collection-nav">
-          &nbsp;
-          <div
-            class="used-by-container"
-            *ngIf="!context.profileId && collection.profileGroup.length >0"
-            @transitionTrigger>
-
+<div>
+  <toolbar
+    [class.notSticky]="!listEditing"
+    *ngIf="optionsEnabled">
+    <!-- <ng-container *ngIf="listEditing === false" ngProjectAs="[toolbar-right]">
+      <icon-text-button
+        text="Edit"
+        [reverse]="true"
+        svgIcon="list"
+        (onClick)="toggleListEditing(true)"></icon-text-button>
+    </ng-container> -->
+  
+    <ng-container *ngIf="listEditing">
+      <mat-checkbox
+        style="padding-left: 24px; padding-right: 0.2em"
+        [checked]="!selected.isEmpty"
+        [indeterminate]="!selected.isEmpty && collectionList.length > selected.length"
+        (change)="masterCheckboxChange($event)">
+      </mat-checkbox>
+    </ng-container>
+  
+    <ng-container *ngIf="listEditing && !selected.isEmpty">
+      <icon-text-button
+        [text]="'Remove('+selected.length+')'"
+        svgIcon="users-remove"
+        class="text-warning text-danger-hover"
+        color="danger"
+        (onClick)="bulkActionRemoveSelectedCollections()"></icon-text-button>
+      <icon-text-button
+        *ngIf="!context.profileId"
+        [text]="'Delete('+selected.length+')'"
+        matIcon="delete"
+        class="text-danger text-danger-hover"
+        color="danger"
+        (onClick)="bulkActionDeleteSelectedCollections()"></icon-text-button>
+    </ng-container>
+  
+    <ng-container *ngIf="selected.isEmpty">
+      <icon-text-button
+        text="Import"
+        svgIcon="collection-import"
+        (onClick)="bulkActionImportCollections()"
+        showTextFromSize="xxs"
+        *ngIf="profileId || !storeSelector.isLibraryStore"></icon-text-button>
+      <icon-text-button
+        text="Create"
+        svgIcon="collection-add"
+        (onClick)="actionNewCollection()"
+        showTextFromSize="xxs"></icon-text-button>
+    </ng-container>
+    <ng-container *ngIf="listEditing" ngProjectAs="[toolbar-right]">
+      <button
+        mat-icon-button
+        (click)="toggleListEditing(false)"
+        class="closeButton">
+        <mat-icon color="primary">close</mat-icon>
+      </button>
+    </ng-container>
+  </toolbar>
+  <mat-accordion #collectionAccordion>
+    <div
+      *ngFor="let collection of collectionList"
+      @evaporateTransitionTrigger>
+  
+      <mat-expansion-panel
+        class="collection-panel"
+        (opened)="expandCollection(collection.id, collectionMatPanel)"
+        (closed)="collapseCollection(collection.id)"
+        (afterExpand)="panelAnimating=false"
+        (afterCollapse)="panelAnimating=false"
+        [class.overflow]="!panelAnimating"
+        [disabled]="listEditing"
+        [class.listEditing]="listEditing"
+        hideToggle
+        #collectionMatPanel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            class="collection-title"
+            [class.small]="windowService.max('xs')">
             <div
-              *ngFor="let profile of collection.profileGroup; let i = index"
-              style="line-height:0em;"
-              @horizontalShringAndFade>
-              <profile-icon
-                *ngIf="i<usedByAmount"
-                [profileId]="profile.id"
-                width="20px"
-                [inline]="true"
-                [fullFrame]="true">
-              </profile-icon>
+              class="collection-checkbox" InnerLink>
+              <mat-checkbox
+                [class.o-06]="!listEditing"
+                [checked]="isSelected(collection.id)"
+                (click)="checkboxChange(collection.id)"></mat-checkbox>
             </div>
-            <div
-              class="used-by-more small"
-              *ngIf="collection.profileGroup.length>usedByAmount"
-              @horizontalShringAndFade>
-              +{{collection.profileGroup.length-usedByAmount}}
-            </div>
-          </div>
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            InnerLink
-            *ngIf="!listEditing"
-            @horizontalShringAndFade>
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button
-              mat-menu-item
-              (click)="actionEditSettings(collection)">
-              <mat-icon outlined>settings</mat-icon>
-              <span>Edit Settings</span>
-            </button>
-            <ng-container *ngIf="optionsEnabled">
-              <button
-                mat-menu-item
-                (click)="actionAddCollection(collection)"
-                *ngIf="totalProfiles > collection.profileGroup.length">
-                <mat-icon svgIcon="users-add"></mat-icon>
-                <span>Add to Travelers...</span>
-              </button>
-              <button
-                mat-menu-item
-                (click)="actionApplyCollection(collection)"
-                *ngIf="collection.profileGroup.length > 0">
-                <mat-icon svgIcon="users-push"></mat-icon>
-                <span>Apply settings to Travelers...</span>
-              </button>
-              <button
-                mat-menu-item
-                activeColor="danger"
-                (click)="actionRemoveCollection(collection)"
-                *ngIf="collection.profileGroup.length != 0">
-                <mat-icon svgIcon="users-remove"></mat-icon>
-                <span>Remove from Travelers...</span>
-              </button>
-              <button
-                mat-menu-item
-                activeColor="danger"
-                (click)="bulkActionDeleteSelectedCollections(collection.id)"
-                *ngIf="!context.profileId">
-                <mat-icon outlined>delete</mat-icon>
-                <span>Delete forever...</span>
-              </button>
+            {{collection.name}}
+            <ng-container *ngIf="profileId && collection.essential">
+              <mat-icon
+                style="align-self: center;"
+                title="Essential Collection">
+                star
+              </mat-icon>
             </ng-container>
-          </mat-menu>
-
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div
-        *ngIf="collection.expanded"
-        @transitionTrigger>
-        <app-collection-panel
-          [collection]="collection.complete"
-          [profileId]="profileId"
-          (removeCollection)="onRemoveCollection(collection.id)"
-          (change)="updateViewObject(collection.id)">
-        </app-collection-panel>
-
-      </div>
-    </mat-expansion-panel>
-
-  </div>
-</mat-accordion>
+          </mat-panel-title>
+          <mat-panel-description class="collection-nav">
+            &nbsp;
+            <div
+              class="used-by-container"
+              *ngIf="!context.profileId && collection.profileGroup.length >0"
+              @transitionTrigger>
+  
+              <div
+                *ngFor="let profile of collection.profileGroup; let i = index"
+                style="line-height:0em;"
+                @horizontalShringAndFade>
+                <profile-icon
+                  *ngIf="i<usedByAmount"
+                  [profileId]="profile.id"
+                  width="20px"
+                  [inline]="true"
+                  [fullFrame]="true">
+                </profile-icon>
+              </div>
+              <div
+                class="used-by-more small"
+                *ngIf="collection.profileGroup.length>usedByAmount"
+                @horizontalShringAndFade>
+                +{{collection.profileGroup.length-usedByAmount}}
+              </div>
+            </div>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              InnerLink
+              *ngIf="!listEditing"
+              @horizontalShringAndFade>
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button
+                mat-menu-item
+                (click)="actionEditSettings(collection)">
+                <mat-icon outlined>settings</mat-icon>
+                <span>Edit Settings</span>
+              </button>
+              <ng-container *ngIf="optionsEnabled">
+                <button
+                  mat-menu-item
+                  (click)="actionAddCollection(collection)"
+                  *ngIf="totalProfiles > collection.profileGroup.length">
+                  <mat-icon svgIcon="users-add"></mat-icon>
+                  <span>Add to Travelers...</span>
+                </button>
+                <button
+                  mat-menu-item
+                  (click)="actionApplyCollection(collection)"
+                  *ngIf="collection.profileGroup.length > 0">
+                  <mat-icon svgIcon="users-push"></mat-icon>
+                  <span>Apply settings to Travelers...</span>
+                </button>
+                <button
+                  mat-menu-item
+                  activeColor="danger"
+                  (click)="actionRemoveCollection(collection)"
+                  *ngIf="collection.profileGroup.length != 0">
+                  <mat-icon svgIcon="users-remove"></mat-icon>
+                  <span>Remove from Travelers...</span>
+                </button>
+                <button
+                  mat-menu-item
+                  activeColor="danger"
+                  (click)="bulkActionDeleteSelectedCollections(collection.id)"
+                  *ngIf="!context.profileId">
+                  <mat-icon outlined>delete</mat-icon>
+                  <span>Delete forever...</span>
+                </button>
+              </ng-container>
+            </mat-menu>
+  
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div
+          *ngIf="collection.expanded"
+          @transitionTrigger>
+          <app-collection-panel
+            [collection]="collection.complete"
+            [profileId]="profileId"
+            (removeCollection)="onRemoveCollection(collection.id)"
+            (change)="updateViewObject(collection.id)">
+          </app-collection-panel>
+  
+        </div>
+      </mat-expansion-panel>
+  
+    </div>
+  </mat-accordion>
+</div>

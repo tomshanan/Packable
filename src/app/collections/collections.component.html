@@ -1,7 +1,12 @@
-<app-nav [header]="'Collections'" (rightClick)="openModal(collectionModal)"></app-nav>
+<app-nav
+  [header]="'Collections'"
+  (rightClick)="openModal(collectionModal)"></app-nav>
 <div class="row">
   <div class="col-12">
-    <app-collection-list [collections]="collections" @blockInitialAnimations #usedCollectionsComponent></app-collection-list>
+    <app-collection-list
+      [collections]="collections"
+      @blockInitialAnimations
+      #usedCollectionsComponent></app-collection-list>
   </div>
 </div>
 <!-- <div class="row mt-3"  *ngIf="unusedCollections && unusedCollections.length>0">
@@ -12,19 +17,39 @@
 </div> -->
 
 <ng-template #collectionModal>
-  <H5>Collections</H5>
-  <p>Collections are a groups of Packables that usually have a common theme, or used in a certain situation. </p>
-  <p>You can download prepared Collections, edit them or even make your own from scratch</p>
-  <p>Once you have created or downloaded a collection you can add it to any of your profiles and then customise further
-    it if you wish.</p>
-  <p>You can set conditions on the Collection and it's Packables, and only if those conditions are met then the
-    Packables will be added to a trip per their individual settings.</p>
-  <p class="alert alert-info">E.g You can set a weather condition to only pack a Jumper, a Sweater and a Rain Jacker if
-    the temperature is Below 15 Degrees during a certain trip</p>
-  <H5>Activities</H5>
-  <p>You can also mark a Collection as an Activity, and the items inside it will only show on trips where that activity
-    is selected. <br>Note: You must add this Activity to each profile that may need to use it on a future trip.</p>
-  <p class="alert alert-info">E.g A Diving Collection can contain your diving equipment, sunscreen and a towel. If you
-    mark it as an Activity and add it to a Profile, it would appear as an option in your Trip Settings. Selecting that
-    option when creating your trip would add the Collection Packables to your packing list on that Trip.</p>
+  <h4>Collections</h4>
+  <p class="lead">
+    Collections are groups of Packables that share the same category (eg. Toiletries) or relate to a certain activity (eg. Swimming).
+  </p>
+  <p>
+    You can pick the Collections for every trip based on the activities planned, like a
+    <i>Beach Collection</i>
+    , while others can be set as Essential Collections, and will automatically be considered for every trip, like a
+    <i>Basic Clothes Collection</i>
+    .
+  </p>
+  <p>
+    Each Collections can have its own Weather Conditions to limit when the app would suggest you should pack its contained Packables.
+  </p>
+  <p>
+    You can import Collections we've set up for you, or simply make your own.
+  </p>
+  <p>
+    You can customise your Collections and import them to your Travelers, then customize them further for every Traveler.
+  </p>
+  <p class="alert alert-info">
+    While you may want to pack your <i>shaving razor</i> with your <i>toiletries</i>, your 9 year old kid could probably do without one!
+  </p>
+  <p>
+    You can set conditions on the Collection and it's Packables, and only if those conditions are met then the
+    Packables will be added to a trip.
+  </p>
+  <p class="alert alert-info">
+    E.g You can set a weather condition to only pack a Jumper, a Sweater and a Rain Jacker if
+    the temperature is Below 15 Degrees during a certain trip
+  </p>
+  <H5>Essential Collections</H5>
+  <p>
+    Marking a collection as Essential means it will always be automatically selected when you set a trip. This is perticularly useful for basic needs like clothes and toiletries. </p>
+    <p> You can still set weather conditions on Essential Collections, and the Packing List calculator would take that into account.
 </ng-template>

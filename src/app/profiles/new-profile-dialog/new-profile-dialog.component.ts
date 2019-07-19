@@ -12,7 +12,7 @@ import { CollectionComplete, CollectionWithMetadata } from '@app/shared/models/c
 import { CollectionFactory } from '../../shared/factories/collection.factory';
 import { Subscription } from 'rxjs';
 import { ColorGeneratorService } from '../../shared/services/color-gen.service';
-import { titleCase, Guid, timeStamp, sortByMostRecent, sortByMetascore } from '@shared/global-functions';
+import { titleCase, Guid, timeStamp, sortByMostRecent, sortByMetaScore } from '@shared/global-functions';
 import * as libraryActions from '@shared/library/library.actions';
 import * as collectionActions from '@app/collections/store/collections.actions';
 import * as packableActions from '@app/packables/store/packables.actions';
@@ -72,7 +72,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     this.allProfiles = this.proFac.getAllProfilesAndMakeComplete().sort(sortByMostRecent);
     console.log('NEWPROFILE DIALOG: allProfiles', this.allProfiles);
     this.templateProfiles = this.proFac.getAllRemoteAndMakeComplete();
-    this.templateProfiles.sort(sortByMetascore);
+    this.templateProfiles.sort(sortByMetaScore);
   }
 
   ngOnDestroy() {

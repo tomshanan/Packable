@@ -1,8 +1,11 @@
-<app-nav [header]="'Travelers'" (rightClick)="openModal(profileModal)"></app-nav>
+<app-nav
+  [header]="'Travelers'"
+  (rightClick)="openModal(profileModal)"></app-nav>
 
-<profile-selector-panel @blockInitialAnimations 
-  [profiles]="profiles" 
-  [(selected)]="selectedProfileId" 
+<profile-selector-panel
+  @blockInitialAnimations
+  [profiles]="profiles"
+  [(selected)]="selectedProfileId"
   (selectedChange)="onSelectedProfiles()"
   (clickSettings)="editProfile()"
   (deleteProfile)="onDeleteProfile($event)">
@@ -11,20 +14,29 @@
 <ng-container *ngIf="selectedProfileId">
   <div class="row">
     <div class="col-12">
-      <app-collection-list [profileId]="selectedProfileId" [collections]="profileCollections"></app-collection-list>
+      <app-collection-list
+        [profileId]="selectedProfileId"
+        [collections]="profileCollections"></app-collection-list>
     </div>
   </div>
 </ng-container>
 
-
-
-
 <ng-template #profileModal>
-    <H5>Profiles</H5>
-    <p>Profiles can be created for each person you may want to pack for. </p>
-    <p>A Profile may contain loose Packables, or Collections with Packables.</p> 
-    <p>You can also customise the quantities and conditions for each Packable or Collection you add, without affecting other profiles that use the same Packables.</p>
-    <p>Once you finished creating a Profile you can add it to a Trip and create a packing list per your settings.</p>
-    <p>You should always tweak and change your profile after each trip to optimise it's settings until you have the perfect set up for any trip!</p>
-    <p>You may download basic Profiles, with common Packables to get you started.</p>
+  <h4>Travelers</h4>
+  <p class="lead">
+    Traveler profiles help you group Collections with custom preferences, so that the app could know what you always need to pack, and remember your individual preferences for each Traveler profile.
+  </p>
+  <p>
+    We've set up a few templates to choose from, but once you get started you can add or remove collections and packables to make that Traveler suit your needs.
+  </p>
+  <p>
+    Changes you make to Collections and Packables while editing a Traveler will not change other Traveler profiles or even the default Packable and Collection rules.
+  </p>
+  <p>
+    You can define multiple Traveler profiles for various types of travel, like one for a business trip and another for holidays, each with different rules for their Collections.
+  </p>
+  <p>
+    <i>Going away with your family or friends?</i>
+    No problem, you can add multiple Traveler profiles to a single trip, each with their own preferences and it would help you keep track of Shared Packables too so you won't pack sunscreen twice!
+  </p>
 </ng-template>

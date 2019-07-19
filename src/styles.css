@@ -541,9 +541,9 @@ button.mat-icon-button.mini {
     vertical-align: bottom;
 }
 
-.mat-dialog-container {
+/* .mat-dialog-container {
     overflow: hidden !important;
-}
+} */
 
 .listEditing .mat-content, .listEditing .mat-expansion-panel-header-title {
     overflow: visible!important;

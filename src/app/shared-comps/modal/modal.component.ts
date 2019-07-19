@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, TemplateRef, ViewContainerRef, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, TemplateRef, ViewContainerRef, AfterViewInit, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 interface button {
@@ -17,7 +17,8 @@ export interface modalConfig {
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.css']
+  styleUrls: ['./modal.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ModalComponent implements OnInit,AfterViewInit {
   @Input() inputTemplate: TemplateRef<any>;

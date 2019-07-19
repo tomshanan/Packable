@@ -1,18 +1,40 @@
-<mat-card>Create Your first Traveler</mat-card>
-<mat-card>
-  <div class="trip-form-container">
-    <h5>Where to next?</h5>
-    <trip-details-form
-      (tripChange)="onTripChange($event)"
-      #tripDetailsForm>
-    </trip-details-form>
+<ng-container *ngIf="(travelers$ | async)?.length===0; else tripForm">
+  <p>Welcome to Packable!</p>
+  <p>
+    We are sure you can't wait to plan your first trip, but before that let's set you up with your first Traveler profile!
+  </p>
+  <p class="text-center h2">
     <button
-      mat-fab
-      class="mx-1"
-      appColor="action"
-      (click)="confirmNewTrip()"
-      [disabled]="!tripDetailsForm.valid">
-      <mat-icon>check</mat-icon>
+      mat-raised-button
+      class="text-center"
+      (click)="newProfile()"
+      activeColor="accent"
+      [colorTarget]="addNew">
+      <mat-icon
+        outlined
+        [inline]="true">
+        face
+      </mat-icon>
+      Create your first Traveler
     </button>
-  </div>
-</mat-card>
+  </p>
+</ng-container>
+<ng-template #tripForm>
+  <mat-card>
+    <div class="trip-form-container">
+      <h5>Where to next?</h5>
+      <trip-details-form
+        (tripChange)="onTripChange($event)"
+        #tripDetailsForm>
+      </trip-details-form>
+      <button
+        mat-fab
+        class="mx-1"
+        appColor="action"
+        (click)="confirmNewTrip()"
+        [disabled]="!tripDetailsForm.valid">
+        <mat-icon>check</mat-icon>
+      </button>
+    </div>
+  </mat-card>
+</ng-template>

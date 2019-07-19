@@ -2,7 +2,7 @@
   [header]="'Trips'"
   (rightClick)="openModal(modalContent)"></app-nav>
 <ng-template #modalContent>
-  <H5>Trips</H5>
+  <H4>Trips</H4>
   <p>
     Here you can set up a Trip and generate a Packing List!
   </p>
@@ -10,7 +10,10 @@
     A Trip is created by settings a destination and dates, selecting the Travelers that will be going, and the various collections you may need for this trip.
   </p>
   <p>
-    If your Travelers have "Essential Collections" those will automatically be selected for you when you set up your Trip.
+    If your Travelers have "Essential Collections" those will automatically be selected for you when you set up your Trip. 
+  </p>
+  <p>
+    Collections which have Weather Conditions will not be automatically added to the Packing List if the conditions aren't met, even if they were selected. You would be able to add them manually if you wish.
   </p>
 </ng-template>
 

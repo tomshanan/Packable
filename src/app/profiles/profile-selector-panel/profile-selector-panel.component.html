@@ -16,7 +16,6 @@
       <div class="selectedProfile-iconContainer">
         <profile-icon
           [profileId]='selected'
-          [debug]="true"
           [showName]="false"
           [isInteractive]="false"
           [isButton]="false"
@@ -62,7 +61,7 @@
   </div>
   <div
     class="horizontalSelector"
-    [class.hide]="!selectorOpen">
+    *ngIf="selectorOpen">
     <horizontal-icon-selector
       stepWidth="55"
       #iconSelector>

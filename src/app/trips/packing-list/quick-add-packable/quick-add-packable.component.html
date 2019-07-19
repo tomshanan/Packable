@@ -18,10 +18,12 @@
     <mat-autocomplete
       #auto="matAutocomplete"
       [displayWith]="displayFn"
-      [autoActiveFirstOption]="true"
       (optionSelected)="onSelectOption($event)">
+      <div style="padding:0 16px;">
+          <p class="text-muted small">{{newPackableName.valid ? 'Create "'+newPackableName.value+'"' : "Import:"}}</p>
+      </div>
       <mat-option
-        *ngFor="let packable of filteredList | async"
+        *ngFor="let packable of filteredList | async; let i = index"
         [value]="packable">
         <div class="d-flex align-items-center w-100">
             <mat-icon

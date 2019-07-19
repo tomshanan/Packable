@@ -1,16 +1,24 @@
-.mat-card-list-item.with-selection{
+:host:not(:last-of-type){
+    border-bottom: 1px solid #f2f2f2;
+}
+.packable-container{
     display: flex;
     flex-direction: row;
     align-items: center;
-}
-.mat-card-list-item.selectable{
     cursor: pointer;
     transition: all 300ms;
+    background: white;
 }
-.mat-card-list-item.selectable.selected{
+.packable-container.selected{
     background: hsl(340, 100%, 96%)!important;
 }
 
+@media(hover){
+    .packable-container:hover{
+        cursor: pointer;
+        background:rgba(0,0,0,.04);
+    }
+}
 .checkbox-container{
     align-self: flex-start;
     flex: 0 0 0;
@@ -34,7 +42,7 @@
 }
 .packable .first-row > .name {
     flex: 1 1 0;
-    transition: color 500ms;
+    transition: color 200ms;
     margin: 0.1em 0;
 }
 .packable .first-row > .name > p {

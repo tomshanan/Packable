@@ -27,7 +27,6 @@ export class ProfileIconComponent implements OnInit, OnChanges, AfterViewInit, O
   @Input() fullFrame: boolean = false;
   @Input('width') inputWidth: string = "50px";
   @Input() inline:boolean = false;
-  @Input() debug:boolean = false;
 
   @Input() profileId:string; 
   @Input('profile') profileInput:Profile;   // will override profileId
@@ -43,7 +42,7 @@ export class ProfileIconComponent implements OnInit, OnChanges, AfterViewInit, O
   @Output('onClick') click = new EventEmitter<void>()
   @ViewChild('profile') profileIcon: ElementRef;
   sub: Subscription;
-
+  currentSvg: any;
 
   constructor(
     private iconService:IconService, //for template
@@ -68,16 +67,16 @@ export class ProfileIconComponent implements OnInit, OnChanges, AfterViewInit, O
   ngAfterViewChecked(){
 
   }
-  loadSvg(){
+  loadSvg(replace:boolean = false){
     log('loadSvg called')
     let svgHost:HTMLElement = this.profileIcon.nativeElement.querySelector('.svgHost')
-    let svgEl = svgHost.querySelector('svg')
-    if(svgEl){
-      this.renderer.removeChild(svgHost,svgEl)
+    if(replace){
+      this.renderer.removeChild(svgHost,this.currentSvg)
     }
     let svgElementObs = this.iconService.registry.getNamedSvgIcon(this.icon)
     svgElementObs.pipe(take(1)).subscribe((svgElement)=>{
       this.renderer.appendChild(svgHost,svgElement)
+      this.currentSvg = svgElement
     })
   }
   ngOnInit() {
@@ -92,15 +91,14 @@ export class ProfileIconComponent implements OnInit, OnChanges, AfterViewInit, O
   init(){
     this.renderer.setStyle(this.profileIcon.nativeElement, 'width', this.inputWidth)
     this.profile = this.profileInput || (this.profileId ? this.storeSelector.getProfileById(this.profileId) : null);
-    this.debug && console.log(`Profile Icon Loaded Profile:`,this.profile.id)
     this.avatar = this.avatarInput || (this.profile ? this.profile.avatar : new Avatar())
-    this.debug && console.log(`Profile Icon Loaded AVATAR:`,this.avatar.icon,this.avatar.color)
     this.name = this.nameInput || (this.profile ? this.profile.name : 'Traveler')
     this.icon = this.iconInput || this.avatar.icon || 'default';
-    this.debug && console.log(`Profile Icon Loaded ICON:`,this.icon)
     let color: string|string[] = this.inputColor || this.avatar.color || ['#dae2f8', '#d6a4a4'];
-    this.debug && console.log(`Profile Icon Loaded ICON:`,color)
     this.colors = Array.isArray(color) ? color : [color];
+    if(this.currentSvg!=null){
+      this.loadSvg(true)
+    }
   }
   offset(i:number):number{
     return this.colors.length>1 ? (i * (100 / (this.colors.length-1))) : 1

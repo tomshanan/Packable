@@ -1,7 +1,7 @@
 import {Directive, HostListener} from "@angular/core";
 
 @Directive({
-    selector: "[InnerLink]"
+    selector: "[InnerLink],[innerLink]"
 })
 export class InnerLinkDirective
 {

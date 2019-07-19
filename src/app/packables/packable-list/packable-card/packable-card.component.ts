@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
 import { PackableComplete } from '../../../shared/models/packable.model';
 import { MatCheckboxChange } from '@angular/material';
 import { weatherFactory } from '../../../shared/factories/weather.factory';
@@ -26,7 +26,7 @@ interface packableDetails {
   styleUrls: [
     '../../../shared/css/mat-card-list.css',
     './packable-card.component.css'],
-  animations: [expandAndFadeTrigger, addRemoveElementTrigger]
+  animations: [addRemoveElementTrigger]
 
 })
 export class PackableCardComponent implements OnInit, OnChanges {
@@ -60,7 +60,9 @@ EDIT    -> handle modal window for packable
   @Input() useCard: boolean = true;
   @Input() editList: boolean = false;
   @Input() selected: boolean = false;
-
+  @HostBinding('@addRemoveElementTrigger') get addRemoveElementTrigger() {
+    return true;
+  }
   timeout = setTimeout(()=>{},0)
 
   constructor(

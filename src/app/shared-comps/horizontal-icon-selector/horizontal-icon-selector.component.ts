@@ -16,8 +16,8 @@ export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterV
   @Output('scrollEvent') emitScrollEvent = new EventEmitter<number>();
   public scrolling = new Subject<number>()
 
-  public moreLeft:boolean;
-  public moreRight:boolean;
+  public moreLeft:boolean = false;
+  public moreRight:boolean = false;
   public windowSub:Subscription;
 
   @ViewChild('selectorContainer') selectorContainer: ElementRef;
@@ -31,23 +31,25 @@ export class HorizontalIconSelectorComponent implements OnInit, OnDestroy,AfterV
   ) { }
 
   ngOnInit() {
+  }
+  ngAfterViewInit(){
+    this.scrollEvent()
     this.windowSub = this.windowService.change.subscribe(()=>{
       this.scrollEvent();
     })
   }
-  ngAfterViewInit(){
-    this.scrollEvent()
-    this.cd.markForCheck()
-  }
   ngOnDestroy(){
     this.windowSub.unsubscribe();
-    this.scrolling.complete()
+    this.scrolling.complete();
   }
   scrollEvent(){
     this.emitScrollEvent.emit(this.scrollPosition)
     this.scrolling.next(this.scrollPosition)
-    this.moreLeft = this.scrollPosition > 0
-    this.moreRight = this.rightSpace>0;
+    setTimeout(() => {
+      this.moreLeft = this.scrollPosition > 0
+      this.moreRight = this.rightSpace>0;
+    }, 0);
+    this.cd.markForCheck()
   }
   scrollRight(){
     let newScrollPisition = this.containerWidth - 40 + this.scrollPosition

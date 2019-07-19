@@ -84,7 +84,6 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
     return dest ? dest.fullName : undefined;
   }
   isDestination(input:any): input is Destination {
-    console.log('isDestination input',input)
     const isObject = typeof input === 'object'
     const cityIdDefined = input && isDefined(input['cityId'])
     const isDestinationIdValid = cityIdDefined && this.isDestinationIdValid(input.cityId)
@@ -102,7 +101,7 @@ export class TripDestinationSelectorComponent implements OnInit, AfterViewInit,O
     this.filteredDestOptions = this.destination.valueChanges
       .pipe(
         debounceTime(150),
-        tap(val=>console.log(`this.destination=`,val)),
+        // tap(val=>console.log(`this.destination=`,val)),
         startWith<string | Destination>(''),
         map(value => typeof value === 'string' ? value : value.fullName),
         map(val => {

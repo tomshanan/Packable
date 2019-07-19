@@ -1,4 +1,4 @@
-.mat-card-list-item.with-selection{
+/* .mat-card-list-item.with-selection{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -12,13 +12,13 @@
 }
 .bottom-seperator{
     border-bottom: 1px solid #f2f2f2;
-}
+} */
 
 .checkbox-container{
     flex: 0 0 0;
     padding: 0 0.4em;
 }
-
+/* 
 .cardless .rule-icons {
     flex-wrap: nowrap;
 }
@@ -32,7 +32,7 @@ mat-card.cardless:hover:not(.selectable) {
     box-shadow: none;
     transform: none;
     color: #0069d9;
-}
+} */
 
 /* .options{
     display: flex;

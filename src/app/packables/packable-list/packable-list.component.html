@@ -49,11 +49,8 @@
   </toolbar>
   <div class="mat-card-list_containter">
     <ng-container *ngIf="packableList.length>0; else noneToDisplay">
-      <div
-        @addRemoveElementTrigger
-        *ngFor="let packable of packableList; let i = index"
-        [class.bottom-seperator]="!useCard && packableList.length-1 > i">
         <packable-card
+          *ngFor="let packable of packableList"
           [packable]="packable"
           [useCard]="useCard"
           [editList]="editList"
@@ -64,7 +61,6 @@
           (press)="testPress($event)"
           (checkboxChange)="toggleSelection(packable.id, $event)">
         </packable-card>
-      </div>
     </ng-container>
     <ng-template #noneToDisplay>
       <p class="small text-muted">There are no Packables to display</p>

@@ -78,10 +78,20 @@ export class TripsComponent implements OnInit, OnDestroy {
     this.incomplete.removeElements([trip])
     this.store.dispatch(new tripActions.removeIncomplete([trip.id]))
   }
+  deleteTrip(trip:DisplayTrip){
+    this.trips.removeElements([trip])
+    this.store.dispatch(new tripActions.removeTrips([trip.id]))
+  }
+  newTrip(){
+    this.tripMemory.clear()
+    this.router.navigate(['trips','new'])
+  }
   editTrip(id:string){
+    this.tripMemory.clear()
     this.router.navigate(['trips','edit',id])
   }
   loadPackingList(tripId:string){
+    this.tripMemory.clear()
     this.router.navigate(['packing-list',tripId],{relativeTo: this.activeRoute})
   }
 }

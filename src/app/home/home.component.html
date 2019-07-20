@@ -5,8 +5,8 @@
 </app-nav>
 
 
-<user-landing *ngIf="(authenticated$ | async); else notSignedIn">
-</user-landing>
+
+<user-landing *ngIf="(authenticated$ | async); else notSignedIn"></user-landing>
 <ng-template #notSignedIn>
   <p class="text-center d-md-none">
     Welcome to Packable.app
@@ -29,10 +29,18 @@
 </ng-template>
 <ng-template #aboutPackable>
   <p class="lead">
-    Packable.app allows you to quickly create a packing list for your upcoming trips.
+    <span>
+      Packable.app allows you to quickly create a packing list for your upcoming trips.
+    </span>
   </p>
   <p>
-    You can use pre-defined templates to create a Traveler profile, and later customize your preferences so that next time you travel you can simple rely on Packable.app to calculate and tell you exactly what you need to pack.
+    <span>
+      You can use pre-defined templates to create a Traveler profile, and later customize your preferences so that next time you travel you can simple rely on Packable.app to calculate and tell you exactly what you need to pack.
+    </span>
   </p>
 
+
 </ng-template>
+<div class="image-pos">
+  <div class="image-container"></div>
+</div>

@@ -1,3 +1,21 @@
 p {
   margin-bottom: 1em;
 }
+p>span{
+  background-color: rgba(255, 255, 255, 0.6);
+}
+.image-pos{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+}
+.image-container{
+  background-image: url("/assets/images/homebg.jpg");
+  width:500px;
+  max-width: 100%;
+  padding-top: 100%;
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: contain;
+}

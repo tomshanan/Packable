@@ -40,7 +40,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   selectedProfile: string = null;
   allProfiles: ProfileComplete[];
   templateProfiles: ProfileCompleteWithMetadata[]
-  profileCollectionStrings: {id:string,list:string[]}[] = [];
+  profileCollectionStrings: { id: string, list: string[] }[] = [];
   remoteCollections: CollectionWithMetadata[];
   subs: Subscription;
   loadingCollections: boolean;
@@ -53,12 +53,12 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     private colFac: CollectionFactory,
     private storeSelector: StoreSelectorService,
     private colorGen: ColorGeneratorService,
-    private bulkActions:BulkActionsService,
+    private bulkActions: BulkActionsService,
   ) { }
 
   ngOnInit() {
-    this.subs = this.storeSelector.libraryState$.subscribe((state)=>{
-      if(state.loading){
+    this.subs = this.storeSelector.libraryState$.subscribe((state) => {
+      if (state.loading) {
         this.loadingCollections = true
       } else {
         this.init()
@@ -67,7 +67,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     })
     this.store.dispatch(new libraryActions.loadLibrary())
   }
-  init(){
+  init() {
     this.collections = this.colFac.getImportCollectionList();
     this.allProfiles = this.proFac.getAllProfilesAndMakeComplete().sort(sortByMostRecent);
     console.log('NEWPROFILE DIALOG: allProfiles', this.allProfiles);
@@ -79,7 +79,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   }
   backStep() {
     this.step--
-    if(this.step===1){
+    if (this.step === 1) {
       this.dialogRef.removePanelClass('dialog-tall')
     }
   }
@@ -92,8 +92,8 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   // check validity of profile
   // set method
   //this.step++
-  onNextStep(){
-    if(this.storeSelector.isLibraryStore){
+  onNextStep() {
+    if (this.storeSelector.isLibraryStore) {
       this.onComplete()
     } else {
       this.onChooseMethod('template')
@@ -102,7 +102,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   onChooseMethod(method: profileCreationMethod) {
     this.method = method;
     this.selectedProfile = null;
-    if(!this.color){
+    if (!this.color) {
       this.color = this.colorGen.getUnused()
       this.profile.avatar.color = this.color
     }
@@ -117,25 +117,24 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     get collections and apply to this.profile
     then complete
   */
- chooseCopy(){
-  this.onChooseProfile(this.allProfiles.findId(this.selectedProfile))
- }
-  chooseTemplate(){
+  chooseCopy() {
+    this.onChooseProfile(this.allProfiles.findId(this.selectedProfile))
+  }
+  chooseTemplate() {
     this.onChooseProfile(this.templateProfiles.findId(this.selectedProfile))
   }
   onChooseProfile(profile: ProfileComplete) {
-    this.selectedCollections = profile.collections.map(c=>c.id)
+    this.selectedCollections = profile.collections.map(c => c.id)
+    this.profile.collections = profile.collections
     this.onComplete()
   }
 
   onComplete() {
-    if(this.selectedCollections.length>0){
+    if (this.selectedCollections.length > 0) {
       // SAVE REMOTE REMOTE COLLECTIONS IN STORAGE
-      let complete = this.bulkActions.processImportCollections(this.selectedCollections)
-      // Set Essential Collections in profile
-      this.profile.collections = complete
+      this.bulkActions.processImportCollections(this.selectedCollections)
     }
-    
+
     this.profile.id = Guid.newGuid()
     this.profile.dateModified = timeStamp()
     let newProfile = this.proFac.completeToPrivate(this.profile)
@@ -146,7 +145,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     this.dialogRef.close(profile)
   }
 
-  log(any){
+  log(any) {
     console.log(any);
   }
 }

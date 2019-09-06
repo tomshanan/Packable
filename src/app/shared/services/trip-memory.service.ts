@@ -26,16 +26,15 @@ export class TripMemoryService {
 
   private _trip: Trip;
   public get trip() { return this._trip ? this.tripFac.duplicateTrip(this._trip) : null }
-  get tripSetAndValid():boolean{
+  get tripSetAndValid(): boolean {
     let tripDefined = isDefined(this._trip)
-    let tripValid =  tripDefined && this.tripFac.validateTrip(this._trip).length === 5
+    let tripValid = tripDefined && this.tripFac.validateTrip(this._trip).length === 5
     return tripDefined && tripValid
   }
   public tripEmitter = new BehaviorSubject<Trip>(null)
   public displayTrip: DisplayTrip;
-  public destWeatherData$: Observable<TripWeatherData>;
-  public destWeatherData: TripWeatherData;
-  public destMetaData$: Observable<destMetaData>;
+  public destWeatherData$ = new BehaviorSubject<TripWeatherData>(null);
+  public destMetaData$ = new BehaviorSubject<destMetaData>(null);
 
   private subs;
   setTripById(id: string): void {
@@ -50,24 +49,30 @@ export class TripMemoryService {
     console.log(`TRIP MEMEORY set new trip`, trip);
     this.displayTrip = this.tripFac.makeDisplayTrip(trip)
     if (!propertiesAreSame(trip, this._trip, ['startDate', 'endDate', 'destinationId'])) {
-      this.destWeatherData$ = from(this.weatherService.getTripWeatherData(trip))
-      this.destWeatherData$.pipe(first(data=>data.isValid)).subscribe(data=>{this.destWeatherData = data; console.log('TripMemoryService updated dest weather data',this.destWeatherData)})
+      this.weatherService.getTripWeatherData(trip).then(wData => {
+        console.log(`setTrip got weatherData`,wData)
+        this.destWeatherData$.next(wData)
+      })
     }
     if (!propertiesAreSame(trip, this._trip, ['destinationId'])) {
-      this.destMetaData$ = this.storeSelector.libraryState$.pipe(
-        filter((state) => !state.loading),
-        map(state => new destMetaData(state.destMetaData[trip.destinationId]))
-      )
+      console.log(`setTrip requesting destData for ${trip.destinationId}`)
+      this.storeSelector.libraryState$.pipe(
+        first((state) => !state.loading)
+      ).subscribe(state=>{
+        let newDestData = new destMetaData(state.destMetaData[trip.destinationId])
+        console.log(`setTrip got destData`,newDestData)
+        this.destMetaData$.next(newDestData)
+      })
     }
     this._trip = this.tripFac.duplicateTrip(trip)
     this.tripEmitter.next(this.trip)
   }
-  
+
   clear() {
     this._trip = null;
     this.displayTrip = null;
-    this.destWeatherData$ = null
-    this.destMetaData$ = null
+    this.destWeatherData$.next(null)
+    this.destMetaData$.next(null)
     this.tripEmitter.next(null)
   }
   saveTempTrip(trip: Trip) {

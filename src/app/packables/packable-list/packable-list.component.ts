@@ -25,7 +25,7 @@ import { PushPackables_DialogData, PushPackablesDialogComponent } from './push-p
 import { ContextService } from '../../shared/services/context.service';
 import { BulkActionsService } from '../../shared/services/bulk-actions.service';
 import { ImportPackablesDialogComponent, importPackables_result } from './import-packables-dialog/import-packables-dialog.component';
-import { isDefined, timeStamp } from '../../shared/global-functions';
+import { isDefined, timeStamp, sortByName } from '../../shared/global-functions';
 
 
 type updateViewAction = 'update' | 'add' | 'remove';
@@ -93,6 +93,7 @@ export class PackableListComponent implements OnInit, OnDestroy, OnChanges {
       this.packableList.compare(newPackables,(changeItem,action)=>{
         this.updateViewObject([changeItem],action)
       });
+      this.packableList.sort(sortByName)
     } else {
       // if the cotnext changed, reset the list completely
       this.selected = [];

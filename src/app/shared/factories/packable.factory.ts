@@ -5,6 +5,10 @@ import { weatherFactory } from './weather.factory';
 import { isDefined } from '../global-functions';
 import { Metadata } from '../library/library.model';
 
+function log (...args){
+    //console.log('PACFAC',...args)
+}
+
 @Injectable()
 export class PackableFactory {
     constructor(

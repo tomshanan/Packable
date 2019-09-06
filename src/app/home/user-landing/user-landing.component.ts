@@ -29,7 +29,7 @@ export class UserLandingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.travelers$ = this.storeSelector.profiles$.pipe(first(state=>!!state.profiles),map(state=>state.profiles))
+    this.travelers$ = this.storeSelector.profiles$.pipe(map(state=>state.profiles))
   }
   onTripChange(trip:Trip){
     this.newTrip = trip;

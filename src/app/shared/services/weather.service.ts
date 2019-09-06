@@ -123,13 +123,11 @@ export class WeatherService {
     constructor(private http: HttpClient, private destService: DestinationDataService) {
     }
     getCityWeather(destId: string | number): Promise<{}> {
-        return this.http.get('https://www.packable.app/weather.php?cityId=' + destId).toPromise()
+        return this.http.get('https://www.packable.app/api.php?cityId=' + destId).toPromise()
     }
     getDailyWeatherForCity(destId: string, dates: moment.Moment[]): Promise<DayWeatherData[]> {
         let weatherId = this.destService.findDestination(destId).weatherId
         return this.getCityWeather(weatherId).then(data => {
-            console.warn('WEATHER RECIEVED FROM API', data);
-
             let weatherArray = [];
             dates.forEach((date, i) => {
                 let forecastObject = data['city']['forecast']['forecastDay'].find(obj => obj.forecastDate == date.format('YYYY-MM-DD'))
@@ -147,10 +145,10 @@ export class WeatherService {
         })
 
     }
-    willItRain(weatherObject: DayWeatherData[]): boolean {
+    willItRain(dayWeatherArray: DayWeatherData[]): boolean {
         if (
-            weatherObject.some(wObj => wObj.chanceOfRain == 1) ||
-            weatherObject.reduce((total, current) => {
+            dayWeatherArray.some(dayWeather => dayWeather.chanceOfRain == 1) ||
+            dayWeatherArray.reduce((total, current) => {
                 total += current.chanceOfRain > 0.6 ? 1 : 0
                 return total;
             }, 0) > 2
@@ -160,34 +158,33 @@ export class WeatherService {
             return false
         }
     }
-    getMinTemp(weatherObject: DayWeatherData[]): number {
-        if (weatherObject.every(wObj => typeof wObj.minTemp == 'number')) {
-            return Math.min(...weatherObject.map(wObj => wObj.minTemp))
+    getMinTemp(dayWeatherArray: DayWeatherData[]): number {
+        if (dayWeatherArray.every(dayWeather => typeof dayWeather.minTemp === 'number')) {
+            return Math.min(...dayWeatherArray.map(dayWeather => dayWeather.minTemp))
         } else {
             return null;
         }
-
     }
-    getMaxTemp(weatherObject: DayWeatherData[]): number {
-        if (weatherObject.every(wObj => typeof wObj.maxTemp == 'number')) {
-            return Math.max(...weatherObject.map(wObj => wObj.maxTemp))
+    getMaxTemp(dayWeatherArray: DayWeatherData[]): number {
+        if (dayWeatherArray.every(dayWeather => typeof dayWeather.maxTemp === 'number')) {
+            return Math.max(...dayWeatherArray.map(dayWeather => dayWeather.maxTemp))
         } else {
             return null;
         }
     }
     getTripWeatherData(trip: Trip): Promise<TripWeatherData> {
-        let dates = getAllDates(trip.startDate, trip.endDate);
+        const dates:moment.Moment[] = getAllDates(trip.startDate, trip.endDate);
         return this.getDailyWeatherForCity(trip.destinationId, dates)
             .then((weatherArray: DayWeatherData[]): TripWeatherData => {
-                let weatherDataObj = new TripWeatherData();
-                this.willItRain(weatherArray) && weatherDataObj.weatherTypes.push('rain');
-                weatherDataObj.weatherArray = weatherArray;
-                weatherDataObj.minTemp = this.getMinTemp(weatherArray)
-                weatherDataObj.maxTemp = this.getMaxTemp(weatherArray)
-                weatherDataObj.weatherTypes.push(
-                    ...weatherArray.map(wObj => wObj.weatherType).filter((x, pos, arr) => (x != 'rain' && x != null && arr.indexOf(x) == pos))
+                let tripWeatherData = new TripWeatherData();
+                this.willItRain(weatherArray) && tripWeatherData.weatherTypes.push('rain');
+                tripWeatherData.weatherArray = weatherArray;
+                tripWeatherData.minTemp = this.getMinTemp(weatherArray)
+                tripWeatherData.maxTemp = this.getMaxTemp(weatherArray)
+                tripWeatherData.weatherTypes.push(
+                    ...weatherArray.map(dayWeather => dayWeather.weatherType).filter((x, pos, arr) => (x != 'rain' && x != null && arr.indexOf(x) == pos))
                 )
-                return weatherDataObj
+                return tripWeatherData
             }).catch(err => {
                 console.log(err)
                 return new TripWeatherData()

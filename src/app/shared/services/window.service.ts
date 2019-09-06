@@ -79,7 +79,7 @@ export class WindowService {
         return this.width >= screenSizes[size]
     }
     public max(size: screenSize): boolean {
-        return this.width <= screenSizes[size]
+        return this.width < screenSizes[size]
     }
 
     public between(min: screenSize, max: screenSize): boolean {

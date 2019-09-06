@@ -29,7 +29,8 @@ export interface editCollectionDialog_data {
 export class EditCollectionDialogComponent implements OnInit {
   profileId: string;
   collection: CollectionComplete;
-  usedNames: Array<hasNameAndId & hasOrigin>;
+  usedNamesWithData: Array<hasNameAndId & hasOrigin>;
+  usedNames: string[];
   nameValid: boolean = true
   showProfileSelector: boolean;
   profileGroup: Profile[]
@@ -62,7 +63,8 @@ export class EditCollectionDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usedNames = this.storeSelector.getUsedCollectionNames()
+    this.usedNamesWithData = this.storeSelector.getUsedCollectionNames()
+    this.usedNames = this.usedNamesWithData.map(n=>n.name)
   }
 
   changeNameEvent(e:NameInputChangeEvent){
@@ -96,7 +98,7 @@ export class EditCollectionDialogComponent implements OnInit {
         this.store.dispatch(new collectionActions.updateOriginalCollections([originalCollection]))
       } 
       if(this.selectedProfiles.length>0){
-        this.bulkActions.pushCompleteCollectionsToProfiles([this.collection],this.selectedProfiles)
+        this.bulkActions.pushCollectionSettingsToProfiles(this.collection,this.selectedProfiles)
       }
       this.onClose(this.collection)
     } else {

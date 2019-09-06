@@ -1,11 +1,11 @@
 <div class="container-fluid" [class.small-device]="windowService.max('md')">
   <div class="row">
-    <div class="full-height d-none d-md-flex col-3 col-lg-3 bg-dark text-white pt-md-4 justify-content-end">
+    <div class="full-height d-none d-md-flex col-3 col-lg-3 bg-dark text-white pt-md-4 justify-content-end" *ngIf="windowService.min('md')">
       <app-nav-list></app-nav-list>
     </div>
     <div class="
     col-12 
-    offset-md-0 col-md-8 pt-md-4 pl-md-4
+    offset-md-0 col-md-9 pt-md-4 pl-md-4
     col-xl-7 position-static">
       <router-outlet></router-outlet>
     </div>

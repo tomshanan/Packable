@@ -20,6 +20,7 @@ import * as packableActions from '@app/packables/store/packables.actions';
 import { takeUntil, single, take, first } from 'rxjs/operators';
 import { WindowService } from '../../../shared/services/window.service';
 import { isDefined } from '../../../shared/global-functions';
+import { tripCollectionGroup } from '../../../shared/models/trip.model';
 
 export interface importCollections_data {
   profileName?: string,
@@ -136,7 +137,11 @@ export class ImportCollectionDialogComponent implements OnInit, OnDestroy {
   }
 
   onSelectProfiles() {
-    this.bulkActions.processImportCollections(this.selectedCollections, this.selectedProfiles)
+    this.selectedCollections
+    let colGorups:tripCollectionGroup[] = this.selectedCollections.map(c=>{
+      return {id: c, profiles:this.selectedProfiles}
+    })
+    this.bulkActions.pushMissingCollectionsToProfiles(colGorups)
     let allComplete = this.collections.filter(c => this.selectedCollections.includes(c.id))
     this.onClose(allComplete, this.selectedProfiles)
   }

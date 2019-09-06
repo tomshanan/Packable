@@ -54,7 +54,7 @@ export function profileReducers(state = initialState, action: ProfileActions.the
             ids.forEach(id=>{
                 stateProfiles.forEach(profile => {
                     profile.collections.forEach(collection =>{
-                        let i = indexOfId(collection.packables,id)
+                        let i = collection.packables.idIndex(id)
                         if (i>-1){
                             collection.packables.splice(i,1)
                         }

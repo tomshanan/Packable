@@ -1,0 +1,30 @@
+<div
+  class="col-12 col-lg-10 offset-lg-1 pt-1">
+  <mat-card>
+    <mat-tab-group
+      #tabGroup
+      [(selectedIndex)]="selectedIndex"
+      (selectedTabChange)="changeFragment($event)">
+      <mat-tab
+        label="Login"
+        #login>
+        <div class="pt-3">
+          <app-login
+            (onSuccess)="onLogin()"
+            *ngIf="selectedIndex == 0"
+            [(email)]="sharedEmail"></app-login>
+        </div>
+      </mat-tab>
+      <mat-tab
+        label="Register"
+        #register>
+        <div class="pt-3">
+          <app-register
+            (onSuccess)="onLogin()"
+            *ngIf="selectedIndex == 1"
+            [(email)]="sharedEmail"></app-register>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>

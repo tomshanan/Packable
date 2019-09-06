@@ -91,7 +91,6 @@ export class ActiveColorDirective implements OnInit, OnChanges {
   selector: '[appColor]',
   host: {
     '[style.transition]': '"all 200ms"',
-    '[style.cursor]': 'disabled ? "initial" : "pointer"',
   }
 })
 export class AppColorDirective implements OnInit, OnChanges {

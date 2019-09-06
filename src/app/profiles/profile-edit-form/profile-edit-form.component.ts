@@ -18,7 +18,7 @@ export class ProfileEditFormComponent implements OnInit {
   @Output() validChange = new EventEmitter<boolean>()
   edittedProfile: ProfileComplete;
   valid: boolean = true;
-  usedProfileNames:hasNameAndId[] = []
+  usedProfileNames:string[] = []
   icons: string[] = []
   templateIcons: boolean = false;
   @ViewChild('nameInput') nameInput: NameInputComponent;
@@ -43,7 +43,7 @@ export class ProfileEditFormComponent implements OnInit {
   ngOnInit() {
     this.edittedProfile = new ProfileComplete(this.profile.id, this.profile.name, this.profile.collections.slice(),this.profile.avatar)
     this.profileName = this.edittedProfile.name
-    this.usedProfileNames = this.storeSelector.profiles.map(p=>{return {id:p.id,name:p.name}})
+    this.usedProfileNames = this.storeSelector.profiles.map(p=>p.name)
     let icon = this.edittedProfile.avatar.icon
     this.selectedIcon = icon !='default' ? [icon] : [];
     this.initialValidation();

@@ -1,0 +1,11 @@
+<mat-card>
+  <edit-alias-form [alias]="userSettings.alias"></edit-alias-form>
+  <setting-toggle
+    (editModeChange)="editPassword($event)"
+    actionState="edit"
+    [editMode]="false">
+    <div class="setting-name">Password</div>
+    <div class="static-mode">••••••••</div>
+    <div class="edit-mode"></div>
+  </setting-toggle>
+</mat-card>

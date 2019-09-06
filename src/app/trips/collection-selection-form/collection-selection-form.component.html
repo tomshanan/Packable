@@ -10,30 +10,8 @@
     #collectionList
     *ngIf="sortedCollections && recommendedCollections"
     @blockInitialAnimations>
-    <ng-container *ngIf="recommendedCollections.length>0">
-      <div class="text-center w-100 position-relative">
-        <h6>Recommended</h6>
-      </div>
-      <div
-        *ngFor="let collection of recommendedCollections; let i = index">
-        <collection-details-card
-          *ngIf="i===0"
-          [collection]="collection"
-          actionType="selection"
-          selectionOnIcon="circle-added"
-          selectionOffIcon="circle"
-          [weatherData]="weatherData"
-          [boxClickActive]="true"
-          [selectionState]="selectedGroup[collection.id] && selectedGroup[collection.id].length>0"
-          [profileGroup]="selectedGroup[collection.id] || []"
-          (actionClick)="toggleCollection(collection.id)"
-          (boxClick)="setProfiles(collection.id)">
-        </collection-details-card>
-      </div>
-    </ng-container>
     <ng-container *ngIf="sortedCollections.length>0">
       <div class="text-center w-100 position-relative">
-        <h6>All Collections</h6>
         <a
           class="small inline-link newColLink"
           (click)="newCollection()">
@@ -53,7 +31,7 @@
           [selectionState]="selectedGroup[collection.id] && selectedGroup[collection.id].length>0"
           [profileGroup]="selectedGroup[collection.id] || []"
           (actionClick)="toggleCollection(collection.id)"
-          (boxClick)="setProfiles(collection.id)">
+          (boxClick)="editSelected(collection.id)">
         </collection-details-card>
       </div>
     </ng-container>

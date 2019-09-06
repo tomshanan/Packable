@@ -102,7 +102,7 @@ export class RecommendedCollectionSelectionFormComponent implements OnInit, OnCh
   }
   onClickCollection(col: CollectionComplete) {
     if (this.inputTripProfiles.length === 1) {
-      this.bulkActions.processImportCollections([col.id], this.inputTripProfiles)
+      this.bulkActions.processImportCollections([col], this.inputTripProfiles)
       this.emitChange(col, this.tripProfiles)
     } else {
       let data: CollectionProfilesDialog_data = {
@@ -120,7 +120,7 @@ export class RecommendedCollectionSelectionFormComponent implements OnInit, OnCh
       dialog.afterClosed().pipe(take(1)).subscribe((profiles: Profile[]) => {
         console.log('select profile dialog returned', profiles)
         if (isDefined(profiles)) {
-          this.bulkActions.processImportCollections([col.id], profiles.ids())
+          this.bulkActions.processImportCollections([col], profiles.ids())
           this.emitChange(col, profiles)
         } else {
           console.log('select profile returned null')

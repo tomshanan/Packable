@@ -1,0 +1,23 @@
+.setting-row{
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.setting-row:not(:last-of-type){
+  padding-bottom:.5em;
+}
+
+.setting-description{
+  width:100px;
+  padding-right:1em;
+}
+.setting-right{
+  display: flex;
+  align-items: baseline;
+  flex-grow: 1;
+}
+.setting-value{
+  width:200px;
+  padding-right:1em;
+  flex-grow: 1;
+}

@@ -19,12 +19,8 @@ import { Subscription, combineLatest, from, of, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as fromApp from '@shared/app.reducers';
 import * as libraryActions from '@shared/library/library.actions';
-import * as tripActions from '../store/trip.actions';
 import { TripWeatherData } from '@app/core';
 import { WeatherService } from '../../shared/services/weather.service';
-import { MatDialog } from '@angular/material';
-import { ImportCollectionDialogComponent, importCollections_result, importCollections_data } from '../../collections/collection-list/import-collection-dialog/import-collection-dialog.component';
-import { take, takeWhile, filter, map } from 'rxjs/operators';
 import { expandAndFadeTrigger } from '../../shared/animations';
 import { Router } from '@angular/router';
 import { StorageService } from '../../shared/storage/storage.service';
@@ -83,7 +79,10 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
       } else {
         console.log(`trip wizard did not confirm step ${i}`)
         this.step = i;
-        this.validateStep(i)
+        this.validateStep(this.step)
+        if(this.step === 3){
+          this.stepTouched[3] = true
+        }
         break;
       }
     }
@@ -127,7 +126,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     this.trip.profiles = ids;
     this.validateStep(2)
     this.stepTouched[2] = true
-    console.log('updated trip ', this.trip)
+    console.log('setSelectedProfiles ', this.trip)
   }
 
   // STEP 3 - collections
@@ -144,7 +143,7 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
     this.trip.collections = cGroups
     this.validateStep(3)
     this.stepTouched[3] = true
-    console.log('updated trip ', this.trip)
+    console.log('setCollections ', this.trip)
   }
 
   // STEP MANAGEMENT
@@ -194,15 +193,15 @@ export class NewTripWizardComponent implements OnInit, OnDestroy {
       console.log(`stepping from ${this.prevStep} to ${this.step}`)
     }
   }
-
   validateStep(step: number) {
     this.stepErrors = this.stepValidationErrors(step)
     this.stepValid = this.stepErrors.length === 0
+    console.log(`stepErrors:`, this.stepErrors)
   }
   checkStep(step: number): boolean {
-    let stepErrors = this.stepValidationErrors(step)
-    console.log(`stepErrors:`, stepErrors)
-    return stepErrors.length === 0
+    this.stepErrors = this.stepValidationErrors(step)
+    console.log(`stepErrors:`, this.stepErrors)
+    return this.stepErrors.length === 0
   }
 
   stepValidationErrors(step: number): string[] {

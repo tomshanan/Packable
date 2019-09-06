@@ -1,0 +1,22 @@
+<setting-toggle (editModeChange)="editAlias($event)" [actionState]="actionState" [editMode]="editMode">
+  <div class="setting-name">Nickname</div>
+  <div class="static-mode">{{alias}}</div>
+  <div class="edit-mode">
+    <mat-form-field class="w-100">
+      <input
+        matInput
+        placeholder="Enter a new nickname"
+        name="alias"
+        [formControl]="aliasInput"
+        (keyup)="checkChange()"
+        [autofocus]="true"
+        autocomplete="off"
+        hintLabel="At least 4 characters, letters and numbers only."
+        #aliasInputRef>
+      <mat-error *ngIf="aliasInput.hasError('nameUsed')">This nickanme is already taken.</mat-error>
+      <mat-error *ngIf="aliasInput.hasError('pattern')">Use letters and numebers only</mat-error>
+      <mat-error *ngIf="aliasInput.hasError('minlength')">At least 4 characters</mat-error>
+      <mat-error *ngIf="aliasInput.hasError('error')">Unknown Error, could not change nickname.</mat-error>
+    </mat-form-field>
+  </div>
+</setting-toggle>

@@ -2,7 +2,7 @@ import {Effect, Actions, ofType} from '@ngrx/effects'
 import { Injectable } from '@angular/core';
 import { switchMap, mergeMap, catchError, tap } from 'rxjs/operators';
 import { from, of } from 'rxjs';
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import * as AuthActions from './auth.actions'
 import { TryLogin } from './auth.actions';
 import { StorageService } from '../../shared/storage/storage.service';

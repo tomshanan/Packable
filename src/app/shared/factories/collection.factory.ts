@@ -9,7 +9,9 @@ import { CollectionProfile } from '../../packables/packable-list/edit-packable-d
 import { MetaDataNode, Metadata } from '../library/library.model';
 
 type T = { packables: PackablePrivate[] }
-
+function log (...args){
+    //console.log('COLFAC',...args)
+}
 @Injectable()
 export class CollectionFactory {
     constructor(
@@ -140,7 +142,7 @@ export class CollectionFactory {
                 )
             }
         } else {
-            console.log('colFac.makeComplete: collection was not defined. Returned UNDEFINED');
+            // log('colFac.makeComplete: collection was not defined. Returned UNDEFINED');
             return undefined
         }
     }
@@ -157,7 +159,7 @@ export class CollectionFactory {
             let profile = this.storeSelector.getProfileById(profileId)
             return this.makeComplete(profile.collections.findId(colId))
         } else {
-            return this.makeComplete(this.storeSelector.getCollectionById(colId))
+            return this.makeComplete((this.storeSelector.getCollectionById(colId) || this.storeSelector.getRemoteCollectionsWithMetadata([colId])[0]))
         }
     }
 
@@ -181,7 +183,7 @@ export class CollectionFactory {
     }
     public getImportCollectionList():CollectionComplete[]{
         let localCollections = this.getAllComplete()
-        console.log('getImportCollectionList: localCollections:', localCollections);
+        // log('getImportCollectionList: localCollections:', localCollections);
         
         let idsImported = localCollections.map(c=>c.id)
     
@@ -190,13 +192,14 @@ export class CollectionFactory {
         let filteredRemoteCollections = allRemoteCollections.filter(c=>!idsImported.includes(c.id)).sort((a,b)=>{
           return a.metaData.metaScore - b.metaData.metaScore
         })
-        console.log('getImportCollectionList: filteredRemoteCollections:', filteredRemoteCollections);
+        // log('getImportCollectionList: filteredRemoteCollections:', filteredRemoteCollections);
 
         let completeRemote = this.makeCompleteArray(filteredRemoteCollections)
         return [...localCollections,...completeRemote]
     }
 
     public makeCompleteWithMetaData(cols:Array<CollectionOriginal>):CollectionCompleteWithMetadata[] {
+        // log(`makeCompleteWithMetaData called with `,cols)
         return cols.map(col=>{
             let completeCol = this.makeComplete(col)
             let metaData = this.storeSelector.getMetaDataForId(col.id) || new Metadata(col.id);
@@ -223,10 +226,10 @@ export class CollectionFactory {
             let pacIndex = collection.packables.idIndex(packable.id)
             if (pacIndex === -1) {
                 collection.packables.unshift(packable)
-                console.log('COL-FACTORY:','adding packable', packable);
+                // log('adding packable', packable);
             } else {
                 collection.packables.splice(pacIndex, 1, packable)
-                console.log('COL-FACTORY:','updating packable', packable);
+                // log('updating packable', packable);
             }
         });
         return collection

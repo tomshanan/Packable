@@ -14,8 +14,8 @@ export interface ItemLibrary{
 }
 export interface idCounter {[id:string]:number}
 export class destMetaData {
-    tripCount: number;
-    collections: idCounter;
+    tripCount: number = 0;
+    collections: idCounter = {};
     constructor(metaData?:Partial<destMetaData>){
         if(metaData){
             this.tripCount = metaData.tripCount || 0;

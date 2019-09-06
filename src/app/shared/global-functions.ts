@@ -22,7 +22,7 @@ export function timeStamp(): number {
 }
 export function isDefined(...objs) {
   return objs.every(obj => {
-    return obj !== null && obj !== undefined && obj !== '' && (!Array.isArray(obj) || obj.length > 0)
+    return obj !== null && obj !== undefined && obj !== '' && obj !== {} && (!Array.isArray(obj) || obj.length > 0)
   })
 }
 export function indexOfId(obj: Array<{ id: string }>, id: string): number {

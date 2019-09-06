@@ -12,8 +12,8 @@ import { NavListComponent } from '../nav/nav-list/nav-list.component';
 import { DateRangeSelectorComponent } from '../trips/trip-details-form/date-range-selector/date-range-selector.component';
 import { PackingListComponent } from '../trips/packing-list/packing-list.component';
 import { WeatherConditionsFormComponent } from '../shared-comps/weather-conditions-form/weather-conditions-form.component';
-import { LoginComponent } from '../user/login/login.component';
-import { RegisterComponent } from '../user/register/register.component';
+import { LoginComponent } from '../user/auth/login/login.component';
+import { RegisterComponent } from '../user/auth/register/register.component';
 import { UserComponent } from '../user/user.component';
 import { ItemSelectorComponent } from '../shared-comps/item-selector/item-selector.component';
 import { HomeComponent } from '../home/home.component';
@@ -108,9 +108,18 @@ import { BigButtonComponent } from '../shared-comps/big-button/big-button.compon
 import { ListProfileComponent } from '../trips/packing-list/list-profile/list-profile.component';
 import { QuickAddPackableComponent } from '../trips/packing-list/quick-add-packable/quick-add-packable.component';
 import { UserLandingComponent } from '../home/user-landing/user-landing.component';
+import { RecaptchaModule } from 'ng-recaptcha';
+import { ForgotPasswordDialogComponent } from '../user/auth/login/forgot-password-dialog/forgot-password-dialog.component';
+import { AuthComponent } from '../user/auth/auth.component';
+import { UserSettingsComponent } from '../user/user-settings/user-settings.component';
+import { LogoutComponent } from '../user/auth/logout/logout.component';
+import { SettingToggleComponent } from '../user/user-settings/setting-toggle/setting-toggle.component';
+import { EditAliasComponent } from '../user/user-settings/edit-alias/edit-alias.component';
+import { UserActionsComponent } from '../user/user-actions/user-actions.component';
+import { PasswordFormControlComponent } from '../shared-comps/password-form-control/password-form-control.component';
 
 
-let imports = [
+let declarationImports = [
     ProfilesComponent,
     TripsComponent,
     NavComponent,
@@ -136,42 +145,83 @@ let imports = [
     ProfileSelectorComponent,
     IconSelectorComponent,
     PackableEditFormComponent,
-    QuantityRuleComponent, 
+    QuantityRuleComponent,
     OptionsMenuComponent,
     QuantityRuleListComponent,
     EditPackableDialogComponent,
     ChooseCollectionsFormComponent,
     DialogConfirmButtonComponent,
-    IconCheckboxComponent, 
+    IconCheckboxComponent,
     PackableListComponent,
     CollectionListComponent,
-    CollectionPanelComponent, 
+    CollectionPanelComponent,
     ConfirmDialog,
     ChooseProfileDialogComponent,
-    DialogHeaderComponent, 
-    PushPackablesDialogComponent, 
-    SlideToggleWithTextComponent, 
-    PackableCardComponent, 
+    DialogHeaderComponent,
+    PushPackablesDialogComponent,
+    SlideToggleWithTextComponent,
+    PackableCardComponent,
     ImportPackablesDialogComponent,
     AdminUserTableComponent,
-    AnimateSizeDirective, 
+    AnimateSizeDirective,
     IconTextButtonComponent,
-    CollectionDetailsCardComponent, 
-    ListConcatinatorComponent, 
-    NewCollectionDialogComponent, 
-    ImportPackablesSelectorComponent, 
-    ProfileSelectorPanelComponent, 
-    EditProfileDialogComponent, 
-    ProfileEditFormComponent, 
-    NameInputComponent, 
-    HorizontalIconSelectorComponent, 
-    AppColorDirective, 
+    CollectionDetailsCardComponent,
+    ListConcatinatorComponent,
+    NewCollectionDialogComponent,
+    ImportPackablesSelectorComponent,
+    ProfileSelectorPanelComponent,
+    EditProfileDialogComponent,
+    ProfileEditFormComponent,
+    NameInputComponent,
+    HorizontalIconSelectorComponent,
+    AppColorDirective,
     ActiveColorDirective,
-    NewProfileDialogComponent, 
-    CollectionSelectorComponent, 
-    CardButtonComponent, 
-    SearchFieldComponent, 
+    NewProfileDialogComponent,
+    CollectionSelectorComponent,
+    CardButtonComponent,
+    SearchFieldComponent,
     AdminComponent,
+    UserSettingsComponent,
+    LogoutComponent,
+    SetPermissionsDialogComponent,
+    UsersComponent,
+    EditCollectionDialogComponent, 
+    ImportCollectionDialogComponent, 
+    SimulateUserComponent, 
+    TripDetailsFormComponent, 
+    TripDestinationSelectorComponent, 
+    NewTripWizardComponent, 
+    StepperComponent, 
+    ProfileSelectionFormComponent, 
+    CollectionSelectionFormComponent, 
+    SelectCollectionProfilesDialogComponent, 
+    CollectionDestinationSelectorComponent, 
+    RecommendedCollectionSelectionFormComponent, 
+    CustomiseTripProfilesFormComponent, 
+    ListPackableComponent, 
+    NumberSpinnerComponent,
+    ListCollectionComponent, 
+    ColumnDividerComponent, 
+    OutlinedDirective, 
+    SettingsComponent, 
+    WeatherSettingsDialogComponent, 
+    WeatherSettingsFormComponent, 
+    LoadingOverlayComponent, 
+    PrintComponent, 
+    PrintSettingsDialogComponent, 
+    ToggleIconDirective, 
+    EditTripCollectionsComponent, 
+    EditTripProfilesComponent, 
+    EditTripComponent, 
+    EditTripDestinationDatesComponent, 
+    ToolbarComponent, 
+    BigButtonComponent, 
+    ListProfileComponent, 
+    QuickAddPackableComponent, 
+    UserLandingComponent, 
+    ForgotPasswordDialogComponent,
+    AuthComponent,
+    LogoutComponent,
 ]
 @NgModule({
     imports: [
@@ -186,9 +236,10 @@ let imports = [
         MatPaginatorModule,
         MatSortModule,
         NgbModule.forRoot(),
+        RecaptchaModule.forRoot(),
     ],
-    declarations: [...imports, SetPermissionsDialogComponent, UsersComponent, EditCollectionDialogComponent, ImportCollectionDialogComponent, SimulateUserComponent, TripDetailsFormComponent, TripDestinationSelectorComponent, NewTripWizardComponent, StepperComponent, ProfileSelectionFormComponent, CollectionSelectionFormComponent, SelectCollectionProfilesDialogComponent, CollectionDestinationSelectorComponent, RecommendedCollectionSelectionFormComponent, CustomiseTripProfilesFormComponent, ListPackableComponent, NumberSpinnerComponent, ListCollectionComponent, ColumnDividerComponent, OutlinedDirective, SettingsComponent, WeatherSettingsDialogComponent, WeatherSettingsFormComponent, LoadingOverlayComponent, PrintComponent, PrintSettingsDialogComponent, ToggleIconDirective, EditTripCollectionsComponent, EditTripProfilesComponent, EditTripComponent, EditTripDestinationDatesComponent, ToolbarComponent, BigButtonComponent, ListProfileComponent, QuickAddPackableComponent, UserLandingComponent],
-    exports: [...imports]
+    declarations: [...declarationImports, SettingToggleComponent, EditAliasComponent, UserActionsComponent, PasswordFormControlComponent],
+    exports: [...declarationImports, RecaptchaModule]
 })
 export class SharedModule {
 

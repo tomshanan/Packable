@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { RecaptchaModule } from 'ng-recaptcha';
 
 import { AppRoutingModule } from './core/app-routing.module';
 import { SharedModule } from './core/shared.module';
@@ -36,6 +37,8 @@ import { SelectCollectionProfilesDialogComponent } from './trips/collection-sele
 import { WeatherSettingsDialogComponent } from './trips/packing-list/weather-settings-dialog/weather-settings-dialog.component';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { PrintSettingsDialogComponent } from './trips/packing-list/settings/print-settings-dialog/print-settings-dialog.component';
+import { RECAPTCHA_SETTINGS, RecaptchaSettings } from 'ng-recaptcha';
+import { ForgotPasswordDialogComponent } from './user/auth/login/forgot-password-dialog/forgot-password-dialog.component';
 
 export class CustomHammerConfig extends HammerGestureConfig  {
     overrides = <any>{
@@ -77,12 +80,17 @@ export class CustomHammerConfig extends HammerGestureConfig  {
     SelectCollectionProfilesDialogComponent,
     WeatherSettingsDialogComponent,
     PrintSettingsDialogComponent,
+    ForgotPasswordDialogComponent,
   ],
   providers: [
     {
       provide: HAMMER_GESTURE_CONFIG,
       useClass: CustomHammerConfig
-  }
+  },
+  {
+    provide: RECAPTCHA_SETTINGS,
+    useValue: { siteKey: '6Let4a4UAAAAAHhhBCGTymJlj-v_1ELFjbx6Ac_X' } as RecaptchaSettings,
+  },
   ]
 })
 export class AppModule { }

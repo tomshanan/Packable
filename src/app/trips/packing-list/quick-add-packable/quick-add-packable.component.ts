@@ -12,6 +12,7 @@ import { Store } from '@ngrx/store';
 import * as packableActions from '@app/packables/store/packables.actions';
 import * as fromApp from '@shared/app.reducers';
 import { WeatherRule } from '@app/shared/models/weather.model';
+import { SHARED } from '../../../shared/factories/trip.factory';
 
 @Component({
   selector: 'quick-add-packable',
@@ -104,7 +105,11 @@ export class QuickAddPackableComponent implements OnInit {
   addPackableToProfileAndList(newP:PackableOriginal){
     this.newPackableName.setValue('')
     this.firstResult = null;
-    if(isDefined(this.profileId)){
+    if(this.profileId !== SHARED){
+      // if this is only a shared packable, make it private
+      if(newP.quantityRules.every(rule=>rule.type === 'trip')){
+        newP.quantityRules = [new QuantityRule(1,'profile')]
+      }
       this.bulkActions.pushOriginalPackablesByCP([newP], [{ pId: this.profileId, cId: this.collectionId }])
       this.packingListService.addNewPackableToList(newP,[this.profileId],this.collectionId,
         {forcePass:true,forceRemove:false,profileID:this.profileId})
@@ -116,7 +121,7 @@ export class QuickAddPackableComponent implements OnInit {
       newP.quantityRules = [new QuantityRule(1,'trip',1)]
       this.bulkActions.pushOriginalPackablesByCP([newP], CP)
       this.packingListService.addNewPackableToList(newP,this.packingListService.trip.profiles,this.collectionId,
-        {forcePass:true,forceRemove:false,profileID:'shared'})
+        {forcePass:true,forceRemove:false,type:SHARED})
     }
   }
   validate_usedName(control: FormControl): { [s: string]: boolean } {

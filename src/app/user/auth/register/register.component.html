@@ -1,0 +1,46 @@
+<form
+  #formEl
+  [formGroup]="registerForm"
+  (ngSubmit)="registerForm.valid && captchaRef.execute()"
+  autocomplete="off">
+  <mat-form-field
+    class="w-100"
+    hintLabel="You will be asked to verify the email address">
+    <input
+      type="email"
+      matInput
+      placeholder="Email"
+      name="email"
+      formControlName="email">
+    <mat-error *ngIf="registerForm.get('email').invalid">Not a valid email</mat-error>
+  </mat-form-field>
+  <app-password-form-control
+    (passwordControlChange)="registerForm.setControl('password',$event)"
+    [disabled]="loading"
+    (onSubmit)="formEl.submit()">
+  </app-password-form-control>
+
+  <div class="d-flex mt-2 align-items-start">
+    <span
+      class="text-danger pl-1"
+      *ngIf="error">
+      {{error}}
+    </span>
+    <span
+      class="mat-spinner-wrapper ml-1"
+      *ngIf="loading">
+      <mat-spinner [diameter]='36'></mat-spinner>
+    </span>
+    <re-captcha
+      #captchaRef="reCaptcha"
+      size="invisible"
+      (resolved)="$event && onSubmit()"></re-captcha>
+    <button
+      type="submit"
+      mat-raised-button
+      [disabled]="!registerForm.valid || !registerForm.enabled"
+      class="ml-auto mr-1 mb-1">
+      Register
+    </button>
+  </div>
+</form>

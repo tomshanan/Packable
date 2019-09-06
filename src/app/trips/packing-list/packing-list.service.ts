@@ -117,7 +117,7 @@ export class PackingListService {
           loadedPackingList = tripState.packingLists.findId(memoryTrip.id)
         }
         if (this.tripMemory.tripSetAndValid) {
-          weatherData = this.tripMemory.destWeatherData
+          weatherData = this.tripMemory.destWeatherData$.value
         }
         if (isDefined(loadedTrip)) {
           log('Received packinglist from tripState', loadedPackingList)
@@ -153,7 +153,7 @@ export class PackingListService {
         }
       } else {
         // WEATEHR OR PACKNG LIST NOT SET UP
-        log('Weather or PackingList not setup')
+        log('Weather or PackingList not setup\n')
         this.packingList = loadedPackingList
         if(this.packingList && !weatherData){
           weatherData = this.packingList.data.weatherData
@@ -181,13 +181,13 @@ export class PackingListService {
     if (weatherData && weatherData.isValid && moment(weatherData.dateModified).diff(moment(), 'hours') < 24) {
       log(`using input weatherData`);
       this.setTripWeather(weatherData)
-      this.updateWeather(save)
+      this.onUpdateWeather(save)
     } else {
       log(`fetching trip weather data`);
       this.setloading(true)
       this.weatherService.getTripWeatherData(this.trip).then(tripWeather => {
         this.setTripWeather(tripWeather)
-        this.updateWeather(save)
+        this.onUpdateWeather(save)
         this.setloading(false)
       }).catch(e => {
         log('could not get new weather data', e)
@@ -204,10 +204,10 @@ export class PackingListService {
       this.setTripWeather(new TripWeatherData({ dataInput: 'manual' }))
     }
     setTimeout(() => {
-      this.updateWeather(save)
+      this.onUpdateWeather(save)
     }, 0);
   }
-  updateWeather(save: boolean) {
+  onUpdateWeather(save: boolean) {
     if (save) {
       this.generateAndStorePackingList()
     } else {
@@ -294,163 +294,165 @@ export class PackingListService {
 
 
   applyChecksOnPackable(data: packingListData, packable: PackableComplete, collection: CollectionComplete, profile: ProfileComplete): PackingListPackable[] {
-    let collectionName = collection.name
-    let pacWeatherCheck = this.checkWeatherRules(packable)
-    let colWeatherCheck = this.checkWeatherRules(collection)
-    let pacWeatherIsSet = this.weatherFactory.isSet(packable.weatherRules)
-    let colWeatherIsSet = this.weatherFactory.isSet(collection.weatherRules)
-
-    let accQuantity = 0;
-    let quantitiyReasons: Reason[] = [];
-    let weatherNotChecked = false;
-    let passChecks = true;
-    let weatherReasons: Reason[] = [];
-    let returnListPackable: PackingListPackable[] = []
-
-    // CHECK WEATHER
-    // WILL ADD ERRORS WHEN NEEDED, AND SET PASSCHECKS=FALSE IF FAILS
-    if (pacWeatherIsSet || colWeatherIsSet) { // are weather conditions set
-      if (this.tripWeather.isValid) { // is the trip weather set
-        if (collection.weatherOverride && colWeatherIsSet) { // does collection ovveride packable
-          weatherNotChecked = pacWeatherIsSet
-          weatherNotChecked && weatherReasons.push(new Reason(`[${collectionName}] The Collection's Weather Settings override the Packable's.`))
-          if (!colWeatherCheck.conditionsMet) { // does the col weather setting not meet trip weather
+    let returnListPackables: PackingListPackable[] = []
+    if(packable){ // if packinglist packable
+      let collectionName = collection.name
+      let pacWeatherCheck = this.checkWeatherRules(packable)
+      let colWeatherCheck = this.checkWeatherRules(collection)
+      let pacWeatherIsSet = this.weatherFactory.isSet(packable.weatherRules)
+      let colWeatherIsSet = this.weatherFactory.isSet(collection.weatherRules)
+  
+      let accQuantity = 0;
+      let quantitiyReasons: Reason[] = [];
+      let weatherNotChecked = false;
+      let passChecks = true;
+      let weatherReasons: Reason[] = [];
+  
+      // CHECK WEATHER
+      // WILL ADD ERRORS WHEN NEEDED, AND SET PASSCHECKS=FALSE IF FAILS
+      if (pacWeatherIsSet || colWeatherIsSet) { // are weather conditions set
+        if (this.tripWeather.isValid) { // is the trip weather set
+          if (collection.weatherOverride && colWeatherIsSet) { // does collection ovveride packable
+            weatherNotChecked = pacWeatherIsSet
+            weatherNotChecked && weatherReasons.push(new Reason(`[${collectionName}] The Collection's Weather Settings override the Packable's.`))
+            if (!colWeatherCheck.conditionsMet) { // does the col weather setting not meet trip weather
+              passChecks = false;
+              weatherReasons.push(new Reason(`Required: ` + this.weatherFactory.getWeatherRulesToString(collection.weatherRules)))
+              weatherReasons.push(...colWeatherCheck.response.map(r => new Reason(`[${collectionName}] ${r}`)))
+            }
+          } else if (!pacWeatherCheck.conditionsMet) { // if no override, and packable doesn't meet conditions
             passChecks = false;
-            weatherReasons.push(new Reason(`Required: ` + this.weatherFactory.getWeatherRulesToString(collection.weatherRules)))
-            weatherReasons.push(...colWeatherCheck.response.map(r => new Reason(`[${collectionName}] ${r}`)))
+            weatherReasons.push(
+              new Reason(`[${collectionName}>${packable.name}] Required: ` + this.weatherFactory.getWeatherRulesToString(packable.weatherRules)),
+              ...pacWeatherCheck.response.map(r => new Reason(r)))
           }
-        } else if (!pacWeatherCheck.conditionsMet) { // if no override, and packable doesn't meet conditions
-          passChecks = false;
-          weatherReasons.push(
-            new Reason(`[${collectionName}>${packable.name}] Required: ` + this.weatherFactory.getWeatherRulesToString(packable.weatherRules)),
-            ...pacWeatherCheck.response.map(r => new Reason(r)))
+        } else { // if trip weather is invalid
+          weatherNotChecked = true
+          weatherReasons.push(new Reason(`The destination weather forecast is currently unavailable or uncertain.`))
+          colWeatherIsSet && weatherReasons.push(new Reason(`[${collectionName}] Required: ` + this.weatherFactory.getWeatherRulesToString(collection.weatherRules)))
+          pacWeatherIsSet && weatherReasons.push(new Reason(`[${collectionName}>${packable.name}] Required: ` + this.weatherFactory.getWeatherRulesToString(packable.weatherRules)))
         }
-      } else { // if trip weather is invalid
-        weatherNotChecked = true
-        weatherReasons.push(new Reason(`The destination weather forecast is currently unavailable or uncertain.`))
-        colWeatherIsSet && weatherReasons.push(new Reason(`[${collectionName}] Required: ` + this.weatherFactory.getWeatherRulesToString(collection.weatherRules)))
-        pacWeatherIsSet && weatherReasons.push(new Reason(`[${collectionName}>${packable.name}] Required: ` + this.weatherFactory.getWeatherRulesToString(packable.weatherRules)))
       }
-    }
-
-
-    const basePackable: PackingListPackable = {
-      name: packable.name,
-      quantity: accQuantity,
-      id: packable.id,
-      type: 'PRIVATE',
-      profileID: profile.id,
-      collectionID: collection.id,
-      quantityReasons: [],
-      weatherReasons: weatherReasons,
-      weatherNotChecked: weatherNotChecked,
-      passChecks: passChecks,
-      checked: false,
-      changedAfterChecked: false,
-      forcePass: false,
-      forceRemove: false,
-      forceQuantity: false,
-      recentlyAdded: false,
-      dateModified: timeStamp(),
-      userCreated: packable.userCreated,
-    }
-    // CHECK QUANTITY RULES
-    packable.quantityRules.forEach(rule => {
-      let reasonText: string;
-      switch (rule.type) {
-        case 'period':
-          let ruleQuantity = rule.amount * Math.floor(data.totalDays / rule.repAmount);
-          accQuantity += +ruleQuantity;
-          reasonText = `[${collectionName}] ${rule.amount} per ${rule.repAmount} days = ${ruleQuantity}`;
-          quantitiyReasons.push(new Reason(reasonText))
-          break;
-        case 'profile':
-          accQuantity += +rule.amount;
-          reasonText = `[${collectionName}] ${rule.amount} per Traveler `
-          quantitiyReasons.push(new Reason(reasonText))
-          break;
-        case 'trip':
-          reasonText = `[${profile.name}>${collectionName}] ${rule.amount} to Share `
-          if (this.trip.profiles.length > 1) {
-            returnListPackable.push(
-              {
-                ...basePackable,
-                quantity: rule.amount,
-                type:SHARED,
-                quantityReasons: [new Reason(reasonText)],
-              }
-            )
-          } else {
-            accQuantity += +rule.amount;
-            quantitiyReasons.push(new Reason(reasonText))
-          }
-          break;
-        default:
-          break;
-      }
-    })
-    if (quantitiyReasons.length > 0) {
-      if (accQuantity === 0) {
-        quantitiyReasons.push(new Reason(`[${collectionName}] Minimum 1`))
-      }
-      returnListPackable.push({
-        ...basePackable,
+  
+  
+      const basePackable: PackingListPackable = {
+        name: packable.name,
+        quantity: accQuantity,
+        id: packable.id,
+        type: 'PRIVATE',
+        profileID: profile.id,
+        collectionID: collection.id,
+        quantityReasons: [],
+        weatherReasons: weatherReasons,
+        weatherNotChecked: weatherNotChecked,
         passChecks: passChecks,
-        quantity: accQuantity > 0 ? accQuantity : 1,
-        quantityReasons: [...quantitiyReasons],
+        checked: false,
+        changedAfterChecked: false,
+        forcePass: false,
+        forceRemove: false,
+        forceQuantity: false,
+        recentlyAdded: false,
+        dateModified: timeStamp(),
+        userCreated: packable.userCreated,
+      }
+      // CHECK QUANTITY RULES
+      packable.quantityRules.forEach(rule => {
+        let reasonText: string;
+        switch (rule.type) {
+          case 'period':
+            let ruleQuantity = rule.amount * Math.floor(data.totalDays / rule.repAmount);
+            accQuantity += +ruleQuantity;
+            reasonText = `[${collectionName}] ${rule.amount} per ${rule.repAmount} days = ${ruleQuantity}`;
+            quantitiyReasons.push(new Reason(reasonText))
+            break;
+          case 'profile':
+            accQuantity += +rule.amount;
+            reasonText = `[${collectionName}] ${rule.amount} per Traveler `
+            quantitiyReasons.push(new Reason(reasonText))
+            break;
+          case 'trip':
+            reasonText = `[${profile.name}>${collectionName}] ${rule.amount} to Share `
+            if (this.trip.profiles.length > 1) {
+              returnListPackables.push(
+                {
+                  ...basePackable,
+                  quantity: rule.amount,
+                  type:SHARED,
+                  quantityReasons: [new Reason(reasonText)],
+                }
+              )
+            } else {
+              accQuantity += +rule.amount;
+              quantitiyReasons.push(new Reason(reasonText))
+            }
+            break;
+          default:
+            break;
+        }
       })
-    }
-    return returnListPackable
+      if (quantitiyReasons.length > 0) {
+        if (accQuantity === 0) {
+          quantitiyReasons.push(new Reason(`[${collectionName}] Minimum 1`))
+        }
+        returnListPackables.push({
+          ...basePackable,
+          passChecks: passChecks,
+          quantity: accQuantity > 0 ? accQuantity : 1,
+          quantityReasons: [...quantitiyReasons],
+        })
+      }
+    } 
+    return returnListPackables
   }
 
-  addPackableToList(newP: PackingListPackable, packingList: PackingList): void {
-    let existingPackableIndex = packingList.packables.findIndexBy(newP, ['id', 'profileID','type'])
-    // COMPARE OLD PACKABLE'S QUANTITIES AND WEATHER CHECKS
+  addPackableToList(addedPackable: PackingListPackable, packingList: PackingList): void {
+    let existingPackableIndex = packingList.packables.findIndexBy(addedPackable, ['id', 'profileID','type'])
+    // COMPARE DUPLICATE PACKABLE'S QUANTITIES AND WEATHER CHECKS
     if (existingPackableIndex != -1) {
-      let oldP = packingList.packables[existingPackableIndex]
+      let existingPackable = packingList.packables[existingPackableIndex]
       let voidWeather = (p: PackingListPackable) => {
         p.weatherReasons.forEach(r => r.active = false)
       }
       let voidQuantity = (p: PackingListPackable) => {
         p.quantityReasons.forEach(r => r.active = false)
       }
-      if (!oldP.forcePass && (newP.passChecks || newP.passChecks == oldP.passChecks)) {
-        voidWeather(oldP)
-        log('copied properties \nfrom:',{...newP},'\nto:',{ ...oldP })
-        copyProperties(oldP, newP, ['weatherNotChecked', 'passChecks', 'checked', 'dateModified','collectionID'])
-        log('resulting',{ ...oldP })
-        if (newP.forceQuantity || newP.quantity >= oldP.quantity) {
-          voidQuantity(oldP)
-          copyProperties(oldP, newP, ['quantity'])
+      if (!existingPackable.forcePass && (addedPackable.passChecks || addedPackable.passChecks == existingPackable.passChecks)) {
+        voidWeather(existingPackable)
+        copyProperties(existingPackable, addedPackable, ['weatherNotChecked', 'passChecks', 'checked', 'dateModified','collectionID'])
+        if (addedPackable.forceQuantity || addedPackable.quantity >= existingPackable.quantity) {
+          voidQuantity(existingPackable)
+          copyProperties(existingPackable, addedPackable, ['quantity'])
         } else {
-          voidQuantity(newP)
+          voidQuantity(addedPackable)
         }
       } else {
-        voidWeather(newP)
-        voidQuantity(newP)
+        voidWeather(addedPackable)
+        voidQuantity(addedPackable)
       }
-      oldP.quantityReasons.push(...newP.quantityReasons)
-      oldP.weatherReasons.push(...newP.weatherReasons)
+      existingPackable.quantityReasons.push(...addedPackable.quantityReasons)
+      existingPackable.weatherReasons.push(...addedPackable.weatherReasons)
     } else {
-      packingList.packables.push(newP)
+      packingList.packables.push(addedPackable)
     }
   }
 
   checkWeatherRules(item: { weatherRules: WeatherRule }): weatherCheckResponse {
+  
     return this.weatherService.checkWeatherRules(item.weatherRules, this.tripWeather)
   }
   checkPackableChanges(oldList: PackingList, newPackable: PackingListPackable) {
     if (oldList) {
       let oldPackable = oldList.packables.findBy(newPackable, ['id', 'profileID','type'])
       if (oldPackable) {
-        if (oldPackable.forceQuantity && !newPackable.forceQuantity) {
+        if (oldPackable.forceQuantity) {
           newPackable.forceQuantity = true
           newPackable.collectionID = oldPackable.collectionID
           newPackable.quantity = oldPackable.quantity
           newPackable.quantityReasons.forEach(r => r.active = false)
         }
-        if (oldPackable.forcePass) {
-          newPackable.forcePass = true
+        if (oldPackable.forcePass || oldPackable.forceRemove) {
+          newPackable.forcePass = oldPackable.forcePass
+          newPackable.forceRemove = oldPackable.forceRemove
           newPackable.collectionID = oldPackable.collectionID
         } 
         if (oldPackable.checked) {
@@ -491,7 +493,6 @@ export class PackingListService {
         })
       }
       let stamp = timeStamp()
-      this.packingList.dateModified = stamp
       newPackables.forEach(newP => {
         newP.dateModified = stamp
         const i = this.packingList.packables.findIndexBy(newP, ['id', 'profileID','type'])
@@ -507,6 +508,7 @@ export class PackingListService {
           this.packingList.packables.push(newP)
         }
       })
+      this.packingList.dateModified = stamp
       log(`addNewPackableToList: updated list`,this.packingList,'\nupdated packables',newPackables)
       this.setPackingList(this.packingList)
       this.store.dispatch(new tripActions.updatePackingListPackables({ packingList: this.packingList, packables: newPackables }))

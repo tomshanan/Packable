@@ -8,7 +8,9 @@ export function userReducers(state = defaultUserState, action: userActions.userA
         case userActions.SET_USER_STATE:
             return {
                 ...state,
-                ...action.payload
+                ...action.payload,
+                loaded:true,
+                loading:false
             }
         case userActions.SET_USER_PERMISSIONS:
                 statePermissions = {...statePermissions, ...action.payload}

@@ -64,15 +64,16 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
     const collections$ = this.storeSelector.collections$
     const libState$ = this.storeSelector.libraryState$
     this.subs.add(
-      combineLatest(libState$, collections$, this.weatherData$,this.destMetaData$)
+      combineLatest(libState$, collections$, this.weatherData$, this.destMetaData$)
         .pipe(
-          first(([libState, collectionState, wData,destMetaData]) => {
-            return !libState.loading && wData && !isDefined(libState.error) && isDefined(destMetaData)
+          first(([libState, collectionState, wData, destMetaData]) => {
+            return !libState.loading && wData && !isDefined(libState.error) && destMetaData.hasOwnProperty('tripCount')
           }),
         )
-        .subscribe(([libState, collectionState, wData,destMetaData]) => {
+        .subscribe(([libState, collectionState, wData, destMetaData]) => {
           this.weatherData = wData
           this.destMetaData = destMetaData
+          console.log(this.destMetaData,`is defined? ${isDefined(destMetaData)}?`)
           let originalCollections = collectionState.collections
           let remoteCollections = libState.library.collections.filter(c => !originalCollections.hasId(c.id))
           this.allCollections = this.colFac.makeCompleteWithMetaData([...originalCollections, ...remoteCollections])
@@ -169,11 +170,11 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
           }
         })
       }
-      if(changeMade){
+      
         setTimeout(() => {
           this.emitSelected()
         }, 100)
-      }
+      
     }
   }
 
@@ -212,26 +213,28 @@ export class CollectionSelectionFormComponent implements OnInit, OnChanges, OnDe
       this.selectedGroup[colId] = this.profiles.slice()
       this.emitSelected()
     } else {
-      let data: CollectionProfilesDialog_data = {
-        collection: this.sortedCollections.findId(colId),
-        profileGroup: this.profiles,
-        weatherData: this.weatherData,
-        selectedProfiles: this.selectedGroup[colId] && this.selectedGroup[colId].length > 0 ? this.selectedGroup[colId] : this.profiles
-      }
-      let dialog = this.dialog.open(SelectCollectionProfilesDialogComponent, {
-        data: data,
-        maxHeight: '99vh',
-        maxWidth: '99vw',
-        width: '400px',
-      })
-      dialog.afterClosed().pipe(take(1)).subscribe((profiles: Profile[]) => {
-        if (profiles) {
-          this.selectedGroup[colId] = profiles.slice()
-          this.emitSelected()
-        }
-      })
+      this.editSelected(colId)
     }
-
+  }
+  editSelected(colId: string){
+    let data: CollectionProfilesDialog_data = {
+      collection: this.sortedCollections.findId(colId),
+      profileGroup: this.profiles,
+      weatherData: this.weatherData,
+      selectedProfiles: this.selectedGroup[colId] && this.selectedGroup[colId].length > 0 ? this.selectedGroup[colId] : this.profiles
+    }
+    let dialog = this.dialog.open(SelectCollectionProfilesDialogComponent, {
+      data: data,
+      maxHeight: '99vh',
+      maxWidth: '99vw',
+      width: '400px',
+    })
+    dialog.afterClosed().pipe(take(1)).subscribe((profiles: Profile[]) => {
+      if (profiles) {
+        this.selectedGroup[colId] = profiles.slice()
+        this.emitSelected()
+      }
+    })
   }
   newCollection() {
     const data: newCollectionDialog_data = {

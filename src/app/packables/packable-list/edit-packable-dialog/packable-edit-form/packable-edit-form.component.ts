@@ -53,7 +53,8 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
   
   showProfileSelector: boolean = false;
   isDefined = isDefined;
-  usedPackableNames: Array<hasNameAndId & hasOrigin> =[];
+  usedPackables: Array<hasNameAndId & hasOrigin> =[];
+  usedPackableNames: string[] =[];
   packableName: string = ''
   nameValid: boolean = true;
   allowImport:boolean = false;
@@ -78,7 +79,8 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
     }
     this.showProfileSelector = (this.collectionId && this.profileGroup && this.profileGroup.length > 0) ? true : false
     if (this.editName){
-        this.usedPackableNames = this.storeSelector.getUsedPackableNames()
+        this.usedPackables = this.storeSelector.getUsedPackableNames()
+        this.usedPackableNames = this.usedPackables.map(p=>p.name)
     }
   }
 
@@ -111,7 +113,7 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
     this.nameValid = e.valid;
     this.packableName = titleCase(e.value.trim())
     if(e.valid === false){
-      let p = this.usedPackableNames.find(p=>comparableName(p.name) === comparableName(e.value))
+      let p = this.usedPackables.find(p=>comparableName(p.name) === comparableName(e.value))
       if(p && this.isNew){
         if(p.origin === 'remote' || this.collectionId){
           this.allowImport = true;
@@ -145,7 +147,7 @@ export class PackableEditFormComponent implements OnInit, OnChanges,AfterViewIni
 
   onImportRequest(name:string){
     if(this.isNew){
-      let item = this.usedPackableNames.find(n=>comparableName(n.name)===comparableName(name))
+      let item = this.usedPackables.find(n=>comparableName(n.name)===comparableName(name))
       if(item){
         this.importRequest.emit(item.id)
       }

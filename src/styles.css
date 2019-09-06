@@ -524,6 +524,29 @@ button.mat-icon-button.mini {
     padding-top: 0;
 }
 
+mat-form-field:not(.mini-mat-form-field) {
+    min-height: calc(1.125em + 1.125em + 1.25em + 0.84375em);
+}
+mat-form-field:not(.mini-mat-form-field).ng-valid .mat-form-field-wrapper {
+    padding-bottom: 1.25em;
+}
+mat-form-field:not(.mini-mat-form-field).ng-invalid .mat-form-field-wrapper, 
+mat-form-field:not(.mini-mat-form-field).mat-form-field-invalid .mat-form-field-wrapper {
+    padding-bottom: 7px;
+}
+
+mat-form-field:not(.mini-mat-form-field).ng-untouched .mat-form-field-wrapper {
+    padding-bottom: 1.25em;
+}
+
+mat-form-field:not(.mini-mat-form-field) .mat-form-field-underline {
+    position: static;
+}
+
+mat-form-field:not(.mini-mat-form-field) .mat-form-field-subscript-wrapper {
+    position: static;
+}
+
 .packingList .mat-checkbox-layout {
     margin-bottom: 0!important;
 }
@@ -645,11 +668,46 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
     border-left: 3px solid transparent;
     border-right: 3px solid transparent;
 }
-.caret.caret-left:before{
+
+.caret.caret-left:before {
     left: 0px;
-    right:unset;
+    right: unset;
 }
-.caret.caret-left:after{
+
+.caret.caret-left:after {
     left: 1px;
-    right:unset;
+    right: unset;
 }
+
+/*--------------
+For logo loading animation
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: -300;
+  }
+  50%{
+     stroke-dashoffset:0;
+  }
+  to {
+    stroke-dashoffset: 300;
+  }
+}
+@keyframes dash2 {
+  from {
+    stroke-dashoffset: -140;
+  }
+  to {
+    stroke-dashoffset: 210;
+  }
+}
+.path {
+  stroke-dasharray: 300;
+  animation: dash 3s linear infinite;
+}
+.path2 {
+  stroke-dasharray: 140;
+  animation: dash2 3s linear alternate infinite;
+}
+
+*/

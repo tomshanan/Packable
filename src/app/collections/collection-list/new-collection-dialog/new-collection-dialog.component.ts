@@ -41,7 +41,8 @@ export interface newCollectionDialog_result {
 export class NewCollectionDialogComponent implements OnInit {
   collectionName: string;
   collection: CollectionComplete;
-  usedCollectionNames: Array<hasNameAndId & hasOrigin>;
+  usedCollections: Array<hasNameAndId & hasOrigin>;
+  usedCollectionNames: Array<string>;
   collectionNameValid: boolean = false;
   step: number = 1;
   remotePackableIds: string[] = [];
@@ -67,7 +68,8 @@ export class NewCollectionDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usedCollectionNames = this.storeSelector.getUsedCollectionNames()
+    this.usedCollections = this.storeSelector.getUsedCollectionNames()
+    this.usedCollectionNames = this.usedCollections.map(c=>c.name)
     this.collectionName = ''
     this.collection = new CollectionComplete(Guid.newGuid());
     this.collection.userCreated = true;
@@ -82,7 +84,7 @@ export class NewCollectionDialogComponent implements OnInit {
     this.collectionNameValid = e.valid
     this.collectionName = e.value
     if (!e.valid) {
-      let col = this.usedCollectionNames.find(c=>comparableName(c.name)===comparableName(e.value))
+      let col = this.usedCollections.find(c=>comparableName(c.name)===comparableName(e.value))
       if(col && (col.origin === 'remote' || this.context.profileId)){
         this.allowImport = true
       }
@@ -133,7 +135,7 @@ export class NewCollectionDialogComponent implements OnInit {
   }
   importRequest(name:string){
     name = comparableName(name)
-    let col = this.usedCollectionNames.find(p=>comparableName(p.name)===name)
+    let col = this.usedCollections.find(p=>comparableName(p.name)===name)
     if(col){
       let data:importCollections_data={
         selectedCollections: [col.id],

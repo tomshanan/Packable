@@ -35,7 +35,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
   profileFormValid: boolean;
   searchString = '';
   collections: CollectionComplete[];
-  selectedCollections: string[] = [];
+  selectedCollections: CollectionComplete[] = [];
   selectedEssentialCollections: string[] = [];
   selectedProfile: string = null;
   allProfiles: ProfileComplete[];
@@ -124,7 +124,7 @@ export class NewProfileDialogComponent implements OnInit, OnDestroy {
     this.onChooseProfile(this.templateProfiles.findId(this.selectedProfile))
   }
   onChooseProfile(profile: ProfileComplete) {
-    this.selectedCollections = profile.collections.map(c => c.id)
+    this.selectedCollections = profile.collections
     this.profile.collections = profile.collections
     this.onComplete()
   }

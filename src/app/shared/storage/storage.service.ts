@@ -1,4 +1,8 @@
-import * as firebase from 'firebase';
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
+
+
 import { Injectable, Pipe } from '@angular/core';
 import { Store, Action } from '@ngrx/store';
 import { Observable, bindCallback, of, Subject } from 'rxjs';
@@ -40,6 +44,8 @@ import { PackingList, PackingListPackable } from '../models/packing-list.model';
 import { initialLibraryState } from '../library/library.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TripWeatherData } from '../services/weather.service';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { aliasExists } from '../../../../../Packable-firebase/functions/src/index';
 
 export type nodeOptions = 'packables' | 'collections' | 'profiles' | 'tripState';
 export type nodeOrAll = nodeOptions | 'all'
@@ -75,6 +81,7 @@ export class StorageService {
         private tripFactory: TripFactory,
         private iconService: IconService,
         private colorGen: ColorGeneratorService,
+        private http:HttpClient,
         private weatherFactory: weatherFactory,
         private router: Router,
         private activatedRoute: ActivatedRoute,
@@ -92,7 +99,7 @@ export class StorageService {
             return path(USERS, this.userId)
         }
     }
-    private checkAuth(logmessage: any = ''): boolean {
+    private isAuthenitcated(logmessage: any = ''): boolean {
         if (this.authService.isAuthenticated) {
             return true
         } else {
@@ -100,10 +107,12 @@ export class StorageService {
             return false
         }
     }
-
-
+    checkAliasAvailable(alias:string):Promise<boolean>{
+        const apiUrl = `https://www.packable.app/api.php?aliasExists=`
+        return this.http.get(apiUrl+alias).toPromise().then((res:{aliasExists:boolean})=>!res['aliasExists'])
+    }
     getUserConfig() {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             log('requesting config')
             firebase.database().ref(path(USER_CONFIG, this.userId)).once('value', snapshot => {
                 let data = snapshot.val();
@@ -122,7 +131,7 @@ export class StorageService {
         }
     }
     listenToUserItems() {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             let target: 'user' | 'library' = this.storeSelector.isLibraryStore ? 'library' : 'user';
             log('Current listening target: ' + target)
             let callBack = () => {
@@ -158,7 +167,7 @@ export class StorageService {
         }
     }
     getLibrary() {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             firebase.database().ref(LIBRARY).once('value', snapshot => {
                 log(`received library items`)
                 let data = snapshot.val()
@@ -247,7 +256,7 @@ export class StorageService {
         }
     }
     setUserItemsNode(node: nodeOptions) {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             let data;
             switch (node) {
                 case 'packables':
@@ -276,7 +285,7 @@ export class StorageService {
         }
     }
     saveItemsInUser(node: nodeOptions, items: localItem[], subNodes: string[] = []) {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             let updates: updates = {}
             let wrappedItems = this.wrapForStorage(items)
             for (let item in wrappedItems) {
@@ -293,7 +302,7 @@ export class StorageService {
         }
     }
     savePackingListPackables(packingList:PackingList, packables: PackingListPackable[]) {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             let updates: updates = {}
             Object.values(packables).forEach((packable)=>{
                 let profileId = packable.profileID || 'shared';
@@ -314,7 +323,7 @@ export class StorageService {
         }
     }
     removeItemsInUser(node: nodeOptions, ids: string[], subNode: string = '') {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             let updates: updates = {}
             ids.forEach(id => {
                 let itemPath = path(this.pathToUserItems, node, subNode, id)
@@ -332,7 +341,7 @@ export class StorageService {
 
 
     setAllUserItemsAndSettings() {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             log(`Setting all user items and settings to FireBase (setAllUserItemsAndSettings)`);
             let updates: updates = {}
             let userData = {
@@ -353,44 +362,63 @@ export class StorageService {
         }
     }
     saveUserSettings() {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             let data = this.user.settings
             firebase.database().ref(path(USER_CONFIG, this.userId, SETTINGS)).set(data).then(() => {
                 log('Saved (saveUserSettings)');
             })
         }
     }
-    setInitialUserConfig() {
+    async setInitialUserConfig() {
         log(`setting initial user data`);
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
+            log('signed in as '+firebase.auth().currentUser.email)
             let initialConfig = defaultUserState
-            initialConfig.settings.alias = firebase.auth().currentUser.email.split('@')[0]
-            log(`saving initial data to firebase`);
-            firebase.database().ref(path(USER_CONFIG, this.userId)).set(initialConfig)
+            initialConfig.settings.email = firebase.auth().currentUser.email
+            initialConfig.settings.alias =  await this.createNewAliasName(initialConfig.settings.email)
+            log('Setting alias name:',initialConfig.settings.alias)
+            log(`saving initial data to firebase`,initialConfig);
+            firebase.database().ref(path(USER_CONFIG, this.userId)).set({settings:initialConfig.settings,permissions:initialConfig.permissions})
                 .then(() => {
-                    log('set userState in store:', initialConfig)
+                    log('setting userState in store:\n', initialConfig)
                     this.store.dispatch(new userActions.setUserState(initialConfig))
                 }, (e) => {
-                    log('failed to set userConfig:', e)
+                    log('failed to set userConfig:\n', e)
                 })
         }
     }
-
+    createNewAliasName(email:string,retry:boolean = false):Promise<string> {
+        let alias = email.split('@')[0]
+        if(retry){
+            alias += randomBetween(0,10000).toString().padStart(4,"0")
+        }
+        log('Trying to use alias:',alias)
+        return this.checkAliasAvailable(alias).then(available=>{
+            if(available){
+                log('>',alias," is available")
+                return alias
+            } else {
+                log('>',alias," already exists")
+                return this.createNewAliasName(email,true)
+            }
+        }).catch(rejected=>{
+            log('Could not create alias, using GUID instead')
+            return Guid.newGuid().substr(0,10)
+        })
+    }
 
     adminDeleteUsers(ids: string[]) {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             if (this.user.permissions.userManagement) {
                 log('attempting to delete users')
                 let updates: updates = {}
                 ids.forEach(id => {
-                    updates[path(USER_CONFIG, id)] = null
-                    updates[path(USERS, id)] = null
+                    firebase.database().ref(path(USER_CONFIG, id)).remove().then(() => {
+                        log('users deleted: ',id);
+                    }).catch(e => {
+                        log('unable to delete users', updates, e['message']);
+                    });
                 })
-                firebase.database().ref().update(updates).then(() => {
-                    log('users deleted', updates);
-                }).catch(e => {
-                    log('unable to delete users', updates, e['message']);
-                });
             } else {
                 warn('You are unable to delete users.')
             }
@@ -399,7 +427,7 @@ export class StorageService {
 
     adminSetUserData(action) {
         log('attempting to change permissions', action)
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             if (action.type == AdminActions.ADMIN_SET_PERMISSIONS
                 && this.user.permissions.setPermissions) {
                 log('attempting to change permissions')
@@ -420,7 +448,7 @@ export class StorageService {
 
     //adminUserConfig$: Subject<configItem>
     adminListenToUserConfig(listen: boolean = true) {
-        if (this.checkAuth()) {
+        if (this.isAuthenitcated()) {
             if (this.user.permissions.userManagement) {
                 if (!!listen) {
                     //this.adminUserConfig$ = new Subject()
@@ -502,62 +530,5 @@ export class StorageService {
         return itemArray
     }
 
-
-    generateDummyData() {
-        let packableNames = ['Ski Pants', 'Jumper', 'shorts', 'Belt', 't-shirt', 'gym pants', 'sun glasses', 'toothbrush', 'toothpaste', 'gloves', 'jeans', 'earphones', 'tissues', 'shorts', 'shirt', 'radio', 'towel', 'sun screen']
-        let repTypes = ["period", "profile", "trip"]
-        let allPackables: PackableOriginal[] = [];
-        packableNames.forEach(name => {
-            let amount = Math.floor(Math.random() * 3) + 1
-            let repAmount = Math.floor(Math.random() * 4) + 1
-            let type = repTypes[Math.floor(Math.random() * repTypes.length)]
-            let min, max;
-            if (Math.random() > 0.6) {
-                min = randomBetween(absoluteMin, absoluteMax)
-                max = randomBetween(min, absoluteMax)
-            } else if (Math.random() > 0.5) {
-                max = randomBetween(absoluteMin, absoluteMax)
-                min = randomBetween(absoluteMin, max)
-            } else {
-                max = absoluteMax
-                min = absoluteMin
-            }
-            let numOfConditions = randomBetween(-4, 5);
-            let conditionsUnused: weatherType[] = weatherOptions.slice()
-            let conditionsUsed: weatherType[] = [];
-
-            for (let i = numOfConditions; i > 0; i--) {
-                let choice = randomBetween(0, conditionsUnused.length - 1)
-                conditionsUsed = [...conditionsUsed, ...conditionsUnused.splice(choice, 1)]
-            }
-            let weather = new WeatherRule(min, max, conditionsUsed)
-            let packable = new PackableOriginal(Guid.newGuid(), name, [{ amount: amount, type: <QuantityType>type, repAmount: repAmount }], weather, true, timeStamp(), false)
-            allPackables.push(packable)
-        })
-        this.store.dispatch(new packableActions.setPackableState(allPackables))
-
-        let collectionNames = ['Winter Clothes', 'Hiking', 'Mountain Climbing', 'Swimming', 'Toiletries', 'Road Trip', 'Skiing', 'Baby Stuff']
-        let allCollections: CollectionOriginal[] = [];
-        collectionNames.forEach(name => {
-            let packableIds = allPackables.map(p => this.packableFactory.makePrivate(p)).filter(() => Math.random() > 0.6)
-            let collection = new CollectionOriginal(Guid.newGuid(), name, packableIds, new WeatherRule(), true)
-            allCollections.push(collection)
-        })
-        this.store.dispatch(new collectionActions.setCollectionState(allCollections))
-
-        let profileNames = ['Tom', 'Steven', 'Daniel', 'Ilaria', 'Tasha', 'James', 'Mike', 'Donald', 'Ricky', 'Sam', 'Steve', 'Jordan']
-        let allProfiles: Profile[] = [];
-        profileNames.forEach(name => {
-            let collections = allCollections.filter((v, i, arr) => Math.random() > 0.5 && i != 0).map(c => this.collectionFactory.makePrivate(c))
-            let icons = this.iconService.profileIcons.icons.filter(i => i != 'default')
-            let iconLength = icons.length
-            let randomIcon = icons[randomBetween(0, iconLength - 1)]
-            let color = this.colorGen.getUnusedAndRegister();
-            let avatar = new Avatar(randomIcon, color)
-            let profile = new Profile(Guid.newGuid(), name, collections, avatar)
-            allProfiles.push(profile);
-        })
-        this.store.dispatch(new profileActions.setProfileState(allProfiles))
-    }
 
 }

@@ -1,4 +1,4 @@
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="loginForm" (ngSubmit)="captchaRef.execute()">
   <mat-form-field class="w-100">
     <input type="email" matInput placeholder="Email" name="email" formControlName="email">
     <mat-error *ngIf="loginForm.get('email').invalid">Not a valid email</mat-error>
@@ -6,13 +6,21 @@
 
   <mat-form-field class="w-100">
     <input type="password" matInput placeholder="Password" name="password" formControlName="password">
-    <mat-hint><a class="text-secondary">Forgot password?</a></mat-hint>
+    <mat-hint><a class="text-secondary" (click)="requestNewPassword()">Forgot password?</a></mat-hint>
   </mat-form-field>
   <div class="d-flex mt-2 align-items-start">
     <span class="mat-spinner-wrapper ml-1" *ngIf="loading">
       <mat-spinner [diameter]='36'></mat-spinner>
     </span>
-    <span class="text-danger pl-1 small" *ngIf="error">{{error}}</span>
+    <ng-container *ngIf="!loading">
+      <span class="text-danger pl-1 small" *ngIf="error">{{error}}</span>
+      <span class="text-success pl-1 small" *ngIf="msg">{{msg}}</span>
+    </ng-container>
+    <re-captcha
+      #captchaRef="reCaptcha"
+      size="invisible"
+      (resolved)="$event && onSubmit()"
+    ></re-captcha>
     <button type="submit" mat-raised-button [disabled]="!loginForm.valid || !loginForm.enabled" class="ml-auto mr-1 mb-1">Login</button>
   </div>
 </form>

@@ -4,25 +4,25 @@
   (rightClick)="openModal(aboutPackable)">
 </app-nav>
 
-
-
 <user-landing *ngIf="(authenticated$ | async); else notSignedIn"></user-landing>
 <ng-template #notSignedIn>
-  <p class="text-center d-md-none">
-    Welcome to Packable.app
-    <br>
+  <p class="text-center d-md-none mt-2">
     <a
-      routerLink="/user"
+      routerLink="/user/auth"
       fragment="login"
       class="inline-link">
-      Login
+      <button mat-raised-button activeColor="action">
+          Login
+      </button>
     </a>
     &nbsp;or&nbsp;
     <a
-      routerLink="/user"
+      routerLink="/user/auth"
       fragment="register"
       class="inline-link">
-      register
+      <button mat-raised-button activeColor="action">
+          Register
+      </button>
     </a>
   </p>
   <ng-container *ngTemplateOutlet="aboutPackable"></ng-container>
@@ -35,7 +35,7 @@
   </p>
   <p>
     <span>
-      You can use pre-defined templates to create a Traveler profile, and later customize your preferences so that next time you travel you can simple rely on Packable.app to calculate and tell you exactly what you need to pack.
+      Using rules and conditions you set, Packable would calculate what you need to bring for every trip so you'll never again forget to pack that USB Charger!
     </span>
   </p>
 

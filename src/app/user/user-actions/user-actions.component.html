@@ -1,0 +1,54 @@
+<loading-wrapper [loading]="loading">
+  <div [ngSwitch]="mode">
+    <div *ngSwitchCase="'resetPassword'">
+      <form [formGroup]="passwordResetForm" (ngSubmit)="passwordResetForm.valid && captchaRef.execute()" #formEl>
+        <mat-card>
+          <p class="form-heading">Please choose a new password</p>
+          <p class="text-danger" *ngIf="error">{{error}}</p>
+          <p class="text-success"  *ngIf="msg">{{msg}}</p>
+
+        
+          <input name="email" type="email" [value]="email" class="invisibleInput" disabled>
+
+          <ng-container *ngIf="authenticated && !actionCode">
+            <mat-form-field class="w-100">
+              <input
+                type="password"
+                matInput
+                placeholder="Current Password"
+                name="currentPassword"
+                autocomplete="off"
+                formControlName="currentPassword">
+              <mat-hint>
+                <a
+                  class="text-secondary"
+                  (click)="requestResetPassword()">
+                  Forgot password?
+                </a>
+              </mat-hint>
+            </mat-form-field>
+          </ng-container>
+
+          <app-password-form-control
+            (passwordControlChange)="passwordResetForm.setControl('newPassword',$event)"
+            (onSubmit)="formEl.submit()"
+            [disabled]="loading"></app-password-form-control>
+          <re-captcha
+            #captchaRef="reCaptcha"
+            size="invisible"
+            (resolved)="$event && onConfirmPasswordReset()"></re-captcha>
+
+          <button
+            type="submit"
+            mat-raised-button
+            [disabled]="!passwordResetForm.valid">
+            Set Password
+          </button>
+
+        </mat-card>
+      </form>
+    </div>
+    <div *ngSwitchCase="'verifyEmail'">verify email</div>
+    <div *ngSwitchDefault></div>
+  </div>
+</loading-wrapper>

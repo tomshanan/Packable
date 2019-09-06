@@ -35,6 +35,7 @@
     "hammerjs": "^2.0.8",
     "material-design-icons": "^3.0.1",
     "moment": "^2.24.0",
+    "ng-recaptcha": "^4.3.0",
     "ng5-slider": "^1.2.1",
     "rxjs": "^6.5.2",
     "tslib": "^1.10.0",

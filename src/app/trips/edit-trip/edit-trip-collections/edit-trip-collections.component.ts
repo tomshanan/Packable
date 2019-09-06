@@ -30,8 +30,8 @@ export class EditTripCollectionsComponent implements OnInit {
 
   ngOnInit() {
     this.trip = this.tripService.trip
-    this.destWeatherData$ = this.tripService.destWeatherData$
-    this.destMetaData$ = this.tripService.destMetaData$
+    this.destWeatherData$ = this.tripService.destWeatherData$.pipe()
+    this.destMetaData$ = this.tripService.destMetaData$.pipe()
     this.isValid = this.tripFac.validateTripProperties(this.trip, ['collections'])
   }
 

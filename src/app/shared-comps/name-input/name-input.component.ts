@@ -17,7 +17,7 @@ export class NameInputComponent implements OnInit,AfterViewInit {
   @Input() title: string = 'Item';
   @Input() value: string = '';
   @Input() allowImport: boolean = false;
-  @Input('usedNames') usedNamesInput: Array<hasNameAndId & hasOrigin> = [];
+  @Input('usedNames') usedNamesInput: string[] = [];
   usedNames: string[] = [];
   @Output() valueChange = new EventEmitter<string>()
   @Output() changeEvent = new EventEmitter<NameInputChangeEvent>()
@@ -42,7 +42,7 @@ export class NameInputComponent implements OnInit,AfterViewInit {
   
   ngOnInit() {
     console.log(this.usedNamesInput)
-    this.usedNames = this.usedNamesInput.map(used=>comparableName(used.name))
+    this.usedNames = this.usedNamesInput.map(used=>comparableName(used))
     this.allowedName = this.value;
     this.nameInput= new FormControl(this.value, [
       Validators.required, 

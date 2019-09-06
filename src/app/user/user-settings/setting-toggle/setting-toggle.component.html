@@ -1,0 +1,49 @@
+<div class="setting-row">
+  <div
+    class="setting-description"
+    appColor="muted">
+    <ng-container *ngTemplateOutlet="settingName"></ng-container>
+  </div>
+  <div class="setting-right">
+    <div class="setting-value">
+      <ng-container *ngTemplateOutlet="editMode ? editingModeContent : staticValue"></ng-container>
+    </div>
+    <div
+      class="setting-action"
+      [ngSwitch]="actionState">
+      <button
+        *ngSwitchCase="'edit'"
+        mat-icon-button
+        activeColor="action"
+        (click)="toggleEditMode()">
+        <mat-icon outlined>edit</mat-icon>
+      </button>
+      <button
+        *ngSwitchCase="'confirm'"
+        mat-icon-button
+        activeColor="accent"
+        (click)="toggleEditMode()">
+        <mat-icon>check</mat-icon>
+      </button>
+      <button
+        *ngSwitchCase="'cancel'"
+        mat-icon-button
+        activeColor="muted"
+        (click)="toggleEditMode()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-spinner
+        diameter="40"
+        *ngSwitchCase="'loading'"></mat-spinner>
+    </div>
+  </div>
+</div>
+<ng-template #settingName>
+  <ng-content select="div.setting-name"></ng-content>
+</ng-template>
+<ng-template #staticValue>
+  <ng-content select="div.static-mode"></ng-content>
+</ng-template>
+<ng-template #editingModeContent>
+  <ng-content select="div.edit-mode"></ng-content>
+</ng-template>

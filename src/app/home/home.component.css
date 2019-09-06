@@ -13,7 +13,7 @@ p>span{
 .image-container{
   background-image: url("/assets/images/homebg.jpg");
   width:500px;
-  max-width: 100%;
+  max-width: 100vw;
   padding-top: 100%;
   position: relative;
   background-repeat: no-repeat;

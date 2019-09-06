@@ -139,7 +139,7 @@ export class TripFactory {
         packingListPackables: PackingListPackable[],
         displayList: DisplayPackingList[] = []
     ): DisplayPackingList[] => {
-        console.log('👕 updating display list unsing new packing list:\n',packingListPackables)
+        //console.log('👕 updating display list unsing new packing list:\n',packingListPackables)
 
         const firstTime = displayList.length === 0
         packingListPackables.forEach(item => {
@@ -181,7 +181,7 @@ export class TripFactory {
             }
             let packableIndex = displayList[listIndex].collections[collectionIndex].packables.findIndex(p => p.id == item.id)
             if (packableIndex === -1) {
-                console.log(`👕 Added ${item.name} to ${displayList[listIndex].header}/${displayList[listIndex].collections[collectionIndex].header}`)
+                //console.log(`👕 Added ${item.name} to ${displayList[listIndex].header}/${displayList[listIndex].collections[collectionIndex].header}`)
                 item.recentlyAdded = firstTime ? item.recentlyAdded : true;
                 displayList[listIndex].collections[collectionIndex].packables.push(item)
             } else {
@@ -231,16 +231,11 @@ export class TripFactory {
         //removeList.forEach(p => this.removePackableFromSortedList(p, displayList))
         return displayList;
     }
-    removePackableFromSortedList(_p: PackingListPackable, list: DisplayPackingList[]) {
-        let packables = list
-            .findId(_p.profileID).collections
-            .findId(_p.collectionID).packables
-        const sortedListIndex = packables.findIndex(p => p.id === _p.id)
-        console.log(`
-        👕 removing ${_p.name} 
-        from ${list.findId(_p.profileID).header}
-        /${list.findId(_p.profileID).collections.findId(_p.collectionID).header}`, 
-        packables.slice())
-        packables.splice(sortedListIndex, 1)
-    }
+    // removePackableFromSortedList(_p: PackingListPackable, list: DisplayPackingList[]) {
+    //     let packables = list
+    //         .findId(_p.profileID).collections
+    //         .findId(_p.collectionID).packables
+    //     const sortedListIndex = packables.findIndex(p => p.id === _p.id)
+    //     packables.splice(sortedListIndex, 1)
+    // }
 }

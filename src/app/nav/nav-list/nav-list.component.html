@@ -1,63 +1,71 @@
 <nav class="nav flex-column align-items-stretch">
-    <ng-template ngFor let-listItem [ngForOf]="mainNav">
-        <a 
-            *ngIf="canView(listItem)" 
-            class="nav-link navLink text-right" 
-            [ngClass]="{'small': listItem.size=='sub'}"
-            [routerLink]="[listItem.link]"
-            routerLinkActive="active">
-            {{listItem.text}}
-        </a>
+  <ng-template
+    ngFor
+    let-listItem
+    [ngForOf]="mainNav">
+    <a
+      *ngIf="canView(listItem)"
+      class="nav-link navLink text-right"
+      [ngClass]="{'small': listItem.size=='sub'}"
+      [routerLink]="[listItem.link]"
+      routerLinkActive="active">
+      {{listItem.text}}
+    </a>
 
-        <br *ngIf="listItem.type == 'gap' && listItem.active">
+    <br *ngIf="listItem.type == 'gap' && listItem.active">
+  </ng-template>
+  <br>
+  <ng-container *ngIf="adminViewReducer()">
+    <ng-template
+      ngFor
+      let-listItem
+      [ngForOf]="adminNav">
+      <a
+        *ngIf="adminCanView(listItem)"
+        class="nav-link navLink text-right"
+        [ngClass]="{'small': listItem.size=='sub'}"
+        [routerLink]="[listItem.link]"
+        routerLinkActive="active">
+        {{listItem.text}}
+      </a>
+      <br *ngIf="listItem.type == 'gap' && listItem.active">
     </ng-template>
     <br>
-    <ng-container *ngIf="adminViewReducer()">
-        <ng-template ngFor let-listItem [ngForOf]="adminNav">
-            <a 
-                *ngIf="adminCanView(listItem)"
-                class="nav-link navLink text-right" 
-                [ngClass]="{'small': listItem.size=='sub'}"
-                [routerLink]="[listItem.link]"
-                routerLinkActive="active">
-                {{listItem.text}}
-            </a>
-            <br *ngIf="listItem.type == 'gap' && listItem.active">
-        </ng-template>
-        <br>
-    </ng-container>
-    <ng-container *ngIf="isAuthenticated; else login">
-        <div class="text-right nav-link">
-            <a 
-                class="nav-link-colors"
-                [routerLink]="['/user']"
-                fragment="settings"
-                routerLinkActive="active">
-                {{username}}</a>
-            &nbsp;(<a 
-            class="small nav-link-colors" 
-            [routerLink]="['/user']"
-            fragment="logout"
-            routerLinkActive="active">Logout</a>)
-        </div>
-    </ng-container>
-    <ng-template #login>
-            <a 
-            class="nav-link text-right" 
-            [routerLink]="['/user']"
-            fragment="login"
-            routerLinkActive="active">
-            Login
-        </a>
-        <a 
-            class="nav-link text-right small" 
-            [routerLink]="['/user']"
-            fragment="register"
-            routerLinkActive="active">
-            Register
-        </a>
-    </ng-template>
-    <div *ngIf="user.permissions.creator" class="text-right px-4">
-        <settings-simulate-user></settings-simulate-user>
+  </ng-container>
+  <ng-container *ngIf="isAuthenticated; else login">
+    <div class="text-right nav-link">
+
+      <p class="small text-muted">Signed in as</p>
+      <a
+        class="nav-link-colors"
+        [routerLink]="['/user','settings']"
+        routerLinkActive="active">{{username}}</a>
+      <br>
+      <a
+        class="small nav-link-colors"
+        [routerLink]="['/logout']"
+        routerLinkActive="active">Logout</a>
     </div>
+  </ng-container>
+  <ng-template #login>
+    <a
+      class="nav-link text-right"
+      [routerLink]="['/user','auth']"
+      fragment="login"
+      routerLinkActive="active">
+      Login
+    </a>
+    <a
+      class="nav-link text-right"
+      [routerLink]="['/user','auth']"
+      fragment="register"
+      routerLinkActive="active">
+      Register
+    </a>
+  </ng-template>
+  <div
+    *ngIf="user.permissions.creator"
+    class="text-right px-4">
+    <settings-simulate-user></settings-simulate-user>
+  </div>
 </nav>
